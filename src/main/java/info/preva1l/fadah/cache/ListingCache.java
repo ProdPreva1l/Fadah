@@ -1,0 +1,32 @@
+package info.preva1l.fadah.cache;
+
+import info.preva1l.fadah.records.Listing;
+import lombok.experimental.UtilityClass;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@UtilityClass
+public final class ListingCache {
+    private final List<Listing> listings = new ArrayList<>();
+
+    public void addListing(Listing listing) {
+        listings.add(listing);
+    }
+    public void removeListing(Listing listing) {
+        listings.remove(listing);
+    }
+    public void removeListing(UUID listingID) {
+        listings.removeIf(listing -> listing.id() == listingID);
+    }
+    public Listing getListing(UUID id) {
+        return listings.stream().filter(listing->listing.id() == id).findFirst().orElse(null);
+    }
+    public void purgeListings() {
+        listings.clear();
+    }
+    public List<Listing> getListings() {
+        return new ArrayList<>(listings);
+    }
+}

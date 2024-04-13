@@ -1,0 +1,124 @@
+main:
+  title: "&9&lAuction House"
+  listing:
+    lore-body:
+      - "&8&n---------------------------"
+      - "&fSeller: &e{0}"
+      - "&fCategory: &e{1}"
+      - "&r "
+      - "&fBuy Now: &6${2}"
+      - "&r "
+      - "&fExpires In: &e{3}"
+      - "&8&n---------------------------"
+    lore-footer:
+      buy: "&aClick to buy now!"
+      too-expensive: "&cYou cannot afford this item!"
+      own-listing: "&cYou cannot buy your own listing!"
+  profile-button:
+    name: "&e&lYour Profile"
+    lore:
+      - "&fClick to view your profile!"
+  filter:
+    search:
+      name: "&3&lSearch"
+      lore:
+        - "&fClick to search for an item name/type!"
+    change-type:
+      name: "&eListing Filter"
+      lore:
+        - "&7Left Click to cycle up"
+        - "&7Right Click to cycle down"
+        - "&8-------------------------"
+        - "&f{0}"
+        - "&8> &e{1}"
+        - "&f{2}"
+        - "&8-------------------------"
+    change-direction:
+      name: "&eFilter Direction"
+      lore:
+        - "&7Click To Toggle"
+        - "&8-------------------------"
+        - "{0}"
+        - "{1}"
+        - "&8-------------------------"
+      options:
+        selected: "&8> &e{0}"
+        not-selected: "&f{0}"
+
+
+new-listing:
+  title: "&9&lAuction House &8> &3New Listing"
+  create:
+    name: "&aClick to create listing!"
+    lore:
+      - "&cClicking this button will immediately post"
+      - "&cyour item on the auction house for &a${0}"
+  time:
+    name: "&aTime for listing to be active"
+    lore:
+      - "&fCurrent: &6{0}"
+      - "&7Left Click to Add 1 Hour"
+      - "&7Right Click to Remove 1 Hour"
+      - "&7Shift Left Click to Add 30 Minutes"
+      - "&7Shift Right Click to Remove 30 Minutes"
+
+confirm:
+  title: "&9&lAuction House &8> &aConfirm Purchase"
+
+collection-box:
+  title: "&9&lAuction House &8> &eCollection Box"
+  collectable-lore:
+    - "&8&n---------------------------"
+    - "&fAdded: &e{0} &fago"
+    - "&r "
+    - "&eClick To Claim!"
+    - "&8&n---------------------------"
+
+expired-listings:
+  title: "&9&lAuction House &8> &cExpired Listings"
+  collectable-lore:
+    - "&8&n---------------------------"
+    - "&fAdded: &e{0} &fago"
+    - "&r "
+    - "&eClick To Re-Claim!"
+    - "&8&n---------------------------"
+
+no-items-found:
+  name: "&c&lNo items found!"
+  lore: []
+
+all:
+  close:
+    name: "&c&l✗ Close"
+    lore:
+      - "&7Click to close the menu"
+  back:
+    name: "&cGo Back"
+    lore:
+      - "&7Click to go back"
+  previous_page:
+    name: "&c&lPrevious Page"
+    lore:
+      - "&7Click to go to the previous page"
+  next_page:
+    name: "&a&lNext Page"
+    lore:
+      - "&7Click to go to the next page"
+  scroll_next:
+    name: "&a&lScroll Categories Down"
+    lore:
+      - "&7Click to move the categories down"
+  scroll_previous:
+    name: "&a&lScroll Categories Up"
+    lore:
+      - "&7Click to move the categories up"
+  confirm:
+    name: "&a&lCONFIRM"
+    lore:
+      - "&7Click to confirm"
+  cancel:
+    name: "&c&lCANCEL"
+    lore:
+      - "&7Click to cancel"
+
+menu-border-lore: "&8play.dxtrus.net"

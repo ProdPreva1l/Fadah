@@ -1,0 +1,28 @@
+package info.preva1l.fadah.commands.subcommands;
+
+import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.cache.CategoryCache;
+import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.utils.StringUtils;
+import info.preva1l.fadah.utils.commands.SubCommand;
+import info.preva1l.fadah.utils.commands.SubCommandArgs;
+import info.preva1l.fadah.utils.commands.SubCommandArguments;
+import org.jetbrains.annotations.NotNull;
+
+public class ReloadSubCommand extends SubCommand {
+    public ReloadSubCommand(Fadah plugin) {
+        super(plugin);
+    }
+
+    @SubCommandArgs(name = "reload", aliases = {"rl"}, permission = "fadah.reload")
+    public void execute(@NotNull SubCommandArguments command) {
+        Fadah.getINSTANCE().getConfigFile().load();
+        Fadah.getINSTANCE().getLangFile().load();
+        Fadah.getINSTANCE().getMenusFile().load();
+        Fadah.getINSTANCE().getCategoriesFile().load();
+        CategoryCache.purgeCategories();
+        CategoryCache.loadCategories();
+        Fadah.getINSTANCE().getDatabase().loadListings();
+        command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + "&aConfig reloaded!"));
+    }
+}

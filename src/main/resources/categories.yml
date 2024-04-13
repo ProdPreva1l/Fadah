@@ -1,0 +1,76 @@
+tools:
+  name: "&aTools"
+  priority: 2
+  icon: "DIAMOND_PICKAXE"
+  description:
+    - "&fPickaxes, Axes, Hoes, etc"
+  materials:
+    - "*_AXE"
+    - "*_PICKAXE"
+    - "*_HOE"
+    - "*_SHOVEL"
+  custom-items: false
+  custom-item-ids: []
+
+combat:
+  name: "&cCombat"
+  priority: 2
+  icon: "DIAMOND_SWORD"
+  description:
+    - "&fSwords, Armour and Bows"
+  materials:
+    - "*_SWORD"
+    - "*_BOOTS"
+    - "*_LEGGINGS"
+    - "*_CHESTPLATE"
+    - "*_HELMET"
+    - "BOW"
+  custom-items: false
+  custom-item-ids: []
+
+spawners-and-eggs:
+  name: "&dSpawners and Mob Eggs"
+  priority: 2
+  icon: "CHICKEN_SPAWN_EGG"
+  description:
+    - "&fAll Mob Spawners and Mob Spawn Eggs"
+  materials:
+    - "SPAWNER"
+    - "*_SPAWN_EGG"
+  custom-items: false
+  custom-item-ids: []
+
+custom-enchants:
+  name: "&5Custom Enchants"
+  priority: 3
+  icon: "ENCHANTED_BOOK"
+  description:
+    - "&fCustom Enchants/Runes"
+  materials: []
+  custom-items: true
+  custom-item-ids:
+    - "runes_*"
+    - "runes_super-jump"
+
+building-blocks:
+  name: "&fBuilding Blocks"
+  priority: 2
+  icon: "BRICKS"
+  description:
+    - "&fBlocks used to make <yellow>beautiful <white>buildings!"
+  materials:
+    - "COARSE_DIRT"
+    - "*_TERRACOTTA"
+  custom-items: false
+  custom-item-ids: []
+
+misc:
+  name: "&fMisc"
+  priority: 1
+  icon: "LEATHER"
+  description:
+    - "&fItems that don't fit under any other category."
+  materials:
+    - "*" # * = all items
+  custom-items: false
+  custom-item-ids: []

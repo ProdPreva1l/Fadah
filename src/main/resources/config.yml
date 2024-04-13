@@ -1,0 +1,23 @@
+# Disable if urgent issue! (Use /ah toggle)
+enabled: true
+
+max-listing-price: 1000000000
+
+decimal-format: "#,###.00"
+
+# Enable this if you are experiencing dupes (usually when there is a moderate delay with redis)
+strict-checks: false
+
+database:
+  # Supported: MONGO, MYSQL, MARIADB
+  type: "MONGO"
+  # For Mysql and MariaDB, uri must be a JDBC uri
+  uri: "mongodb://username:password@127.0.0.1:27017/admin?retryWrites=true&readPreference=nearest"
+  database: "SMP"
+
+# Redis is only required for x-server environments.
+# Snapchat's KeyDB is recommended as it is 2x faster than normal redis while still fully compatible.
+redis:
+  enabled: false
+  uri: "redis://username:password@127.0.0.1:6379/0"
+  channel: "auctionhouse.cache"

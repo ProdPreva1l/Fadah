@@ -1,0 +1,103 @@
+package info.preva1l.fadah.guis;
+
+import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.cache.CategoryCache;
+import info.preva1l.fadah.cache.ListingCache;
+import info.preva1l.fadah.config.Menus;
+import info.preva1l.fadah.records.Listing;
+import info.preva1l.fadah.utils.StringUtils;
+import info.preva1l.fadah.utils.TimeUtil;
+import info.preva1l.fadah.utils.guis.FastInv;
+import info.preva1l.fadah.utils.guis.GuiButtonType;
+import info.preva1l.fadah.utils.guis.GuiHelper;
+import info.preva1l.fadah.utils.guis.ItemBuilder;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.UUID;
+
+public class NewListingMenu extends FastInv {
+    private final Player player;
+    private final ItemStack itemToSell;
+    private Instant timeToDelete;
+    private boolean listingStarted = false;
+    public NewListingMenu(Player player, double price) {
+        super(54, Menus.NEW_LISTING_TITLE.toFormattedString());
+        this.player = player;
+        this.itemToSell = player.getInventory().getItemInMainHand().clone();
+
+        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+
+        timeToDelete = Instant.now().plus(6, ChronoUnit.HOURS);
+
+        setClock();
+
+        setItem(30, new ItemBuilder(Material.EMERALD).name(Menus.NEW_LISTING_CREATE_NAME.toFormattedString())
+                .addLore(Menus.NEW_LISTING_CREATE_LORE.toLore(Fadah.getDecimalFormat().format(price))).build(), e -> startListing(timeToDelete, price));
+
+        setItems(getBorders(),
+                GuiHelper.constructButton(GuiButtonType.GENERIC, Material.BLACK_STAINED_GLASS_PANE,
+                        StringUtils.colorize("&r "), Menus.BORDER_LORE.toLore()));
+        addNavigationButtons();
+
+        setItem(22, itemToSell);
+    }
+
+    @Override
+    protected void onClose(InventoryCloseEvent event) {
+        super.onClose(event);
+        if (!listingStarted) player.getInventory().setItemInMainHand(itemToSell);
+    }
+
+    private void setClock() {
+        removeItem(32);
+        setItem(32, new ItemBuilder(Material.CLOCK).name(Menus.NEW_LISTING_TIME_NAME.toFormattedString())
+                .addLore(Menus.NEW_LISTING_TIME_LORE.toLore(TimeUtil.formatTimeUntil(timeToDelete.toEpochMilli()))).build(), e->{
+            if (e.isRightClick()) {
+                if (e.isShiftClick()) {
+                    if (timeToDelete.minus(30, ChronoUnit.MINUTES).toEpochMilli() <= Instant.now().toEpochMilli()) return;
+                    timeToDelete = timeToDelete.minus(30, ChronoUnit.MINUTES);
+                    setClock();
+                    return;
+                }
+                if (timeToDelete.minus(1, ChronoUnit.HOURS).toEpochMilli() <= Instant.now().toEpochMilli()) return;
+                timeToDelete = timeToDelete.minus(1, ChronoUnit.HOURS);
+                setClock();
+            }
+
+            if (e.isLeftClick()) {
+                if (e.isShiftClick()) {
+                    if (timeToDelete.plus(30, ChronoUnit.MINUTES).toEpochMilli() > Instant.now().plus(10, ChronoUnit.DAYS).toEpochMilli()) return;
+                    timeToDelete = timeToDelete.plus(30, ChronoUnit.MINUTES);
+                    setClock();
+                    return;
+                }
+                if (timeToDelete.plus(1, ChronoUnit.HOURS).toEpochMilli() > Instant.now().plus(10, ChronoUnit.DAYS).toEpochMilli()) return;
+                timeToDelete = timeToDelete.plus(1, ChronoUnit.HOURS);
+                setClock();
+            }
+        });
+    }
+
+    //TODO: Double check this works
+    private void startListing(Instant deletionDate, double price) {
+        boolean isCustomItem = itemToSell.hasItemMeta() && itemToSell.getItemMeta().getPersistentDataContainer().has(Fadah.getCustomItemKey());
+        String category = CategoryCache.getCategoryForItem(itemToSell, isCustomItem);
+
+        Listing listing = new Listing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
+                itemToSell, category, price, Instant.now().toEpochMilli(), deletionDate.toEpochMilli());
+
+        Fadah.getINSTANCE().getDatabase().addListing(listing);
+        ListingCache.addListing(listing);
+        listingStarted = true;
+        player.closeInventory();
+    }
+
+    private void addNavigationButtons() {
+        setItem(49, GuiHelper.constructButton(GuiButtonType.CLOSE), e-> e.getWhoClicked().closeInventory());
+    }
+}

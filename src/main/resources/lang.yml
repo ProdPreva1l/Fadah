@@ -1,0 +1,32 @@
+prefix: "&#9555FF&lDXTRUS "
+
+notifications:
+  new-sell:
+    - "&f----------------------------------------------"
+    - "&eYou have sold an item on the Auction House!"
+    - "&fItem: &e{0}"
+    - "&fMoney Made: &a${1}"
+    - "&f----------------------------------------------"
+  new-item:
+    - "&f------------------------------------------"
+    - "&eYou have a new item in your collection box!"
+    - "&f             /ah redeem!"
+    - "&f------------------------------------------"
+
+sort:
+  types:
+    alphabetical: "Sort Alphabetically By Name"
+    age: "Sort By Listing Age"
+  direction:
+    ascending:
+      normal: "Ascending (A-Z)"
+      age: "Newest First"
+    descending:
+      normal: "Descending (Z-A)"
+      age: "Oldest First"
+
+errors:
+  own-listing: "&cYou cannot buy your own listing!"
+  too-expensive: "&cYou cannot afford this item!"
+  inventory-full: "&cYou don't have any free room in your inventory!"
+  does-not-exist: "&cThis listing is no longer for sale!"

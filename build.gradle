@@ -1,0 +1,73 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+plugins {
+    id 'java'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+group = 'info.preva1l'
+version = '1.0'
+
+ext {
+    set 'version', version.toString()
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url 'https://oss.sonatype.org/content/groups/public/' }
+    maven { url 'https://repo.papermc.io/repository/maven-public/' }
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    compileOnly "io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT"
+
+    compileOnly 'redis.clients:jedis:5.1.0'
+    compileOnly 'org.apache.commons:commons-pool2:2.12.0'
+
+    compileOnly 'org.mongodb:mongodb-driver-sync:5.0.0'
+
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+    compileOnly 'com.mysql:mysql-connector-j:8.3.0'
+    compileOnly 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
+
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+
+    compileOnly 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.projectlombok:lombok:1.18.32'
+}
+
+def targetJavaVersion = 17
+java {
+    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+    sourceCompatibility = javaVersion
+    targetCompatibility = javaVersion
+    if (JavaVersion.current() < javaVersion) {
+        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+
+    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
+        options.release.set(targetJavaVersion)
+    }
+}
+
+processResources {
+    filesMatching(['**/*.json', '**/*.yml']) {
+        filter ReplaceTokens as Class, beginToken: '${', endToken: '}',
+                tokens: rootProject.ext.properties
+    }
+}
+
+shadowJar {
+    relocate 'com.zaxxer', 'info.preva1l.libs'
+
+    archiveClassifier.set('')
+    minimize()
+}
+
+logger.lifecycle("Building Fadah ${version}")
