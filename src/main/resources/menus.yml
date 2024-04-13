@@ -18,6 +18,9 @@ main:
     name: "&e&lYour Profile"
     lore:
       - "&fClick to view your profile!"
+    description:
+      - "&fThis is your profile!"
+      - "&fHere you will find items from the auction house relating to you"
   filter:
     search:
       name: "&3&lSearch"
@@ -121,4 +124,5 @@ all:
     lore:
       - "&7Click to cancel"
 
-menu-border-lore: "&8play.dxtrus.net"
+menu-border-lore:
+  - "&8play.dxtrus.net"

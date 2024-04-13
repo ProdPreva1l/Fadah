@@ -4,6 +4,7 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Menus;
+import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
@@ -11,6 +12,7 @@ import info.preva1l.fadah.utils.guis.FastInv;
 import info.preva1l.fadah.utils.guis.GuiButtonType;
 import info.preva1l.fadah.utils.guis.GuiHelper;
 import info.preva1l.fadah.utils.guis.ItemBuilder;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -92,9 +94,14 @@ public class NewListingMenu extends FastInv {
                 itemToSell, category, price, Instant.now().toEpochMilli(), deletionDate.toEpochMilli());
 
         Fadah.getINSTANCE().getDatabase().addListing(listing);
-        ListingCache.addListing(listing);
+        CacheSync.send(listing.id(), false);
+
         listingStarted = true;
         player.closeInventory();
+
+        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("NEW LISTING Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
+                Bukkit.getOfflinePlayer(listing.owner()).getName(), Bukkit.getOfflinePlayer(listing.owner()).getUniqueId().toString(),
+                listing.price(), listing.itemStack().toString()));
     }
 
     private void addNavigationButtons() {

@@ -19,8 +19,8 @@ public class ProfileMenu extends FastInv {
                         StringUtils.colorize("&r "), Menus.BORDER_LORE.toLore()));
 
         setItem(20, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player)
-                .name(Menus.PROFILE_COLLECTION_BOX_NAME.toFormattedString())
-                .addLore(Menus.PROFILE_COLLECTION_BOX_LORE.toLore()).build());
+                .name(Menus.MAIN_PROFILE_NAME.toFormattedString())
+                .addLore(Menus.MAIN_PROFILE_DESCRIPTION.toLore()).build());
 
         setItem(22, new ItemBuilder(Material.CHEST_MINECART)
                 .name(Menus.PROFILE_COLLECTION_BOX_NAME.toFormattedString())

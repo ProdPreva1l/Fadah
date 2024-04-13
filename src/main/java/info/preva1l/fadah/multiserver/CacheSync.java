@@ -3,6 +3,7 @@ package info.preva1l.fadah.multiserver;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TaskManager;
 import lombok.AllArgsConstructor;
@@ -13,22 +14,36 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import redis.clients.jedis.*;
 import redis.clients.jedis.exceptions.JedisException;
+import redis.clients.jedis.util.Pool;
 
 import java.util.UUID;
 
 public class CacheSync extends JedisPubSub {
-    private static Jedis jedis;
+    private static Pool<Jedis> jedisPool;
     public void start() {
         TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
             Fadah.getConsole().info("Connecting to Redis Pool...");
             try {
-                jedis = new Jedis(Config.REDIS_URI.toString());
+                final JedisPoolConfig config = new JedisPoolConfig();
+                config.setMaxIdle(0);
+                config.setTestOnBorrow(true);
+                config.setTestOnReturn(true);
+
+                jedisPool = new JedisPool(config, Config.REDIS_HOST.toString(), Config.REDIS_PORT.toInteger(), 0, Config.REDIS_PASSWORD.toString());
+                try (Jedis jedis = jedisPool.getResource()) {
+                    jedis.subscribe(this, Config.REDIS_CHANNEL.toString());
+                }
             } catch (JedisException e) {
                 Fadah.getConsole().info("Redis Failed to Connect!");
                 throw new RuntimeException(e);
             }
             Fadah.getConsole().info("Redis Connected Successfully!");
         });
+    }
+
+    public void destroy() {
+        jedisPool.destroy();
+        Fadah.getINSTANCE().setCacheSync(null);
     }
 
     @Override
@@ -42,16 +57,26 @@ public class CacheSync extends JedisPubSub {
             throw new RuntimeException(e);
         }
 
-        CacheType cacheType = CacheType.values()[((int) obj.getOrDefault("cache_type", 0))];
+        CacheType cacheType = CacheType.values()[Integer.parseInt(obj.getOrDefault("cache_type", 0).toString())];
         cacheType.handleMessage(obj);
     }
 
-    public static void send(UUID listingUUID) {
+    public static void send(UUID listingUUID, boolean remove) {
         if (Fadah.getINSTANCE().getCacheSync() == null) return;
         JSONObject obj = new JSONObject();
-        obj.put("cache_type", CacheType.LISTINGS.ordinal());
+        CacheType type;
+        if (remove) {
+            type = CacheType.LISTINGS_REMOVE;
+        } else {
+            type = CacheType.LISTINGS_ADD;
+        }
+        obj.put("cache_type", type.ordinal());
         obj.put("listing_uuid", listingUUID.toString());
-        jedis.publish(Config.REDIS_CHANNEL.toString(), obj.toJSONString());
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+            try (Jedis jedis = jedisPool.getResource()) {
+                jedis.publish(Config.REDIS_CHANNEL.toString(), obj.toJSONString());
+            }
+        });
     }
 
     public static void send(CacheType cacheType, UUID playerUUID) {
@@ -59,7 +84,11 @@ public class CacheSync extends JedisPubSub {
         JSONObject obj = new JSONObject();
         obj.put("cache_type", cacheType.ordinal());
         obj.put("player_uuid", playerUUID.toString());
-        jedis.publish(Config.REDIS_CHANNEL.toString(), obj.toJSONString());
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+            try (Jedis jedis = jedisPool.getResource()) {
+                jedis.publish(Config.REDIS_CHANNEL.toString(), obj.toJSONString());
+            }
+        });
     }
 
     public static void send(UUID playerUUID, String message) {
@@ -68,17 +97,37 @@ public class CacheSync extends JedisPubSub {
         obj.put("cache_type", CacheType.NOTIFICATIONS.ordinal());
         obj.put("player_uuid", playerUUID.toString());
         obj.put("message", message);
-        jedis.publish(Config.REDIS_CHANNEL.toString(), obj.toJSONString());
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+            try (Jedis jedis = jedisPool.getResource()) {
+                jedis.publish(Config.REDIS_CHANNEL.toString(), obj.toJSONString());
+            }
+        });
     }
 
     @AllArgsConstructor
     public enum CacheType {
-        LISTINGS() {
+        LISTINGS_ADD {
             @Override
             public void handleMessage(JSONObject obj) {
                 UUID listingUUID = UUID.fromString(obj.get("listing_uuid").toString());
+                Fadah.getConsole().info("Adding Listing " + listingUUID);
+                long delay = Config.STRICT_CHECKS.toBoolean() ? 40L : 20L;
 
-                ListingCache.addListing(Fadah.getINSTANCE().getDatabase().getListing(listingUUID));
+                TaskManager.Sync.runLater(Fadah.getINSTANCE(), ()->{
+                    Listing listing = Fadah.getINSTANCE().getDatabase().getListing(listingUUID);
+                    ListingCache.addListing(listing);
+                }, delay);
+            }
+        },
+        LISTINGS_REMOVE {
+            @Override
+            public void handleMessage(JSONObject obj) {
+                UUID listingUUID = UUID.fromString(obj.get("listing_uuid").toString());
+                Fadah.getConsole().info("Removing Listing " + listingUUID);
+
+                Listing listing = ListingCache.getListing(listingUUID);
+                Fadah.getConsole().info(listing.id().toString());
+                ListingCache.removeListing(listing);
             }
         },
         COLLECTION_BOX {

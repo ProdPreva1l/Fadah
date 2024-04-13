@@ -5,9 +5,10 @@ import info.preva1l.fadah.records.Listing;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public interface Database {
-    void connect();
+    CompletableFuture<Void> connect();
     void destroy();
 
     void addToCollectionBox(UUID playerUUID, CollectableItem collectableItem);
@@ -25,4 +26,6 @@ public interface Database {
     void loadListings();
     List<UUID> getListingIDs();
     Listing getListing(UUID id);
+
+    boolean isConnected();
 }

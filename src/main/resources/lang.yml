@@ -1,4 +1,4 @@
-prefix: "&#9555FF&lDXTRUS "
+prefix: "&#9555FF&lDXTRUS&r "
 
 notifications:
   new-sell:
@@ -30,3 +30,6 @@ errors:
   too-expensive: "&cYou cannot afford this item!"
   inventory-full: "&cYou don't have any free room in your inventory!"
   does-not-exist: "&cThis listing is no longer for sale!"
+  must-be-player: "&cOnly players can run this command!"
+  no-permission: "&cYou do not have permission to execute this command!"
+  database-connecting: "&cDatabase not connected! Please Wait"

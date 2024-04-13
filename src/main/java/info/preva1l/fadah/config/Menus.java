@@ -29,6 +29,7 @@ public enum Menus {
     MAIN_LISTING_FOOTER_OWN_LISTING("main.listing.lore-footer.own-listing", "&cYou cannot buy your own listing!"),
     MAIN_PROFILE_NAME("main.profile-button.name", "&e&lYour Profile"),
     MAIN_PROFILE_LORE("main.profile-button.lore", Collections.singletonList("&fClick to view your profile!")),
+    MAIN_PROFILE_DESCRIPTION("main.profile-button.description", List.of("&fThis is your profile!", "&fHere you will find items from the auction house relating to you.")),
     MAIN_SEARCH_NAME("main.filter.search.name", "&3&lSearch"),
     MAIN_SEARCH_LORE("main.filter.search.lore", Collections.singletonList("&fClick to search for an item name/type!")),
     MAIN_FILTER_TYPE_NAME("main.filter.change-type.name", "&eListing Filter"),
@@ -116,7 +117,7 @@ public enum Menus {
     CONFIRM_BUTTON_LORE("all.confirm.lore", Collections.singletonList("&7Click to confirm")),
     CANCEL_BUTTON_NAME("all.cancel.name", "&c&lCANCEL"),
     CANCEL_BUTTON_LORE("all.cancel.lore", Collections.singletonList("&7Click to cancel")),
-    BORDER_LORE("menu-border-lore", "&8play.dxtrus.net"),
+    BORDER_LORE("menu-border-lore", Collections.singletonList("&8play.dxtrus.net")),
     ;
 
     private final String path;

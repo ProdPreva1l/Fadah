@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 public class MongoDatabase implements Database {
     @Getter @Setter private boolean connected = false;
@@ -32,20 +33,23 @@ public class MongoDatabase implements Database {
     private CacheHandler cacheHandler;
     @Getter private CollectionHelper collectionHelper;
     @Override
-    public void connect() {
-        try {
-            @NotNull String connectionURI = Config.DATABASE_URI.toString();
-            @NotNull String database = Config.DATABASE.toString();
-            Fadah.getConsole().info("Connecting to: " + connectionURI);
-            connectionHandler = new MongoConnectionHandler(connectionURI, database);
-            cacheHandler = new CacheHandler(connectionHandler);
-            collectionHelper = new CollectionHelper(connectionHandler.getDatabase(), cacheHandler);
-            setConnected(true);
-        } catch (Exception e) {
-            destroy();
-            throw new IllegalStateException("Failed to establish a connection to the MongoDB database. " +
-                    "Please check the supplied database credentials in the config file", e);
-        }
+    public CompletableFuture<Void> connect() {
+        return CompletableFuture.supplyAsync(()->{
+            try {
+                @NotNull String connectionURI = Config.DATABASE_URI.toString();
+                @NotNull String database = Config.DATABASE.toString();
+                Fadah.getConsole().info("Connecting to: " + connectionURI);
+                connectionHandler = new MongoConnectionHandler(connectionURI, database);
+                cacheHandler = new CacheHandler(connectionHandler);
+                collectionHelper = new CollectionHelper(connectionHandler.getDatabase(), cacheHandler);
+                setConnected(true);
+            } catch (Exception e) {
+                destroy();
+                throw new IllegalStateException("Failed to establish a connection to the MongoDB database. " +
+                        "Please check the supplied database credentials in the config file", e);
+            }
+            return null;
+        });
     }
 
     @Override

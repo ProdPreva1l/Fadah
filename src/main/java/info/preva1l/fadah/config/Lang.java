@@ -22,6 +22,7 @@ public enum Lang {
     DOES_NOT_EXIST("errors.does-not-exist", "&cThis listing is no longer for sale!"),
     MUST_BE_PLAYER("errors.must-be-player", "&cOnly players can run this command!"),
     NO_PERMISSION("errors.no-permission", "&cYou do not have permission to execute this command!"),
+    DATABASE_CONNECTING("errors.database-connecting", "&cDatabase not connected! Please Wait"),
 
     NOTIFICATION_NEW_SELL("notifications.new-sell", List.of(
             "&f----------------------------------------------",

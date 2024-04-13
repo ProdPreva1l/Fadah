@@ -26,7 +26,9 @@ public enum Config {
     DATABASE("database.database", "SMP"),
 
     REDIS_ENABLED("redis.enabled", false),
-    REDIS_URI("redis.uri", "redis://username:password@127.0.0.1:6379/0"),
+    REDIS_HOST("redis.host", "127.0.0.1"),
+    REDIS_PORT("redis.port", 6379),
+    REDIS_PASSWORD("redis.password", "password"),
     REDIS_CHANNEL("redis.channel", "auctionhouse.cache"),
     ;
 

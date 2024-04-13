@@ -17,8 +17,10 @@ import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.BasicConfig;
+import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TaskManager;
 import info.preva1l.fadah.utils.commands.CommandManager;
+import info.preva1l.fadah.utils.guis.FastInvManager;
 import lombok.Getter;
 import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
@@ -37,11 +39,11 @@ import java.util.logging.SimpleFormatter;
 
 //TODO: Add listing tax
 public final class Fadah extends JavaPlugin {
-    @Getter private static final DecimalFormat decimalFormat = new DecimalFormat(Config.DECIMAL_FORMAT.toString());
+    @Getter private static DecimalFormat decimalFormat;
 
     @Getter private static Fadah INSTANCE;
     @Getter private static AuctionHouseAPI API;
-    @Getter private CacheSync cacheSync;
+    @Getter @Setter private CacheSync cacheSync;
 
     @Getter private BasicConfig configFile;
     @Getter private BasicConfig categoriesFile;
@@ -67,22 +69,23 @@ public final class Fadah extends JavaPlugin {
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
-
-        initLogger();
         loadFiles();
         loadDataAndPopulateCaches();
         loadCommands();
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
-
         TaskManager.Async.runTask(this, listingExpiryTask(), 10L);
+        FastInvManager.register(this);
 
         if (Config.REDIS_ENABLED.toBoolean()) {
             cacheSync = new CacheSync();
             cacheSync.start();
         }
 
+        decimalFormat = new DecimalFormat(Config.DECIMAL_FORMAT.toString());
         customItemKey = NamespacedKey.minecraft("auctionhouse");
+
+        initLogger();
 
         API = new ImplAuctionHouseAPI();
     }
@@ -90,6 +93,7 @@ public final class Fadah extends JavaPlugin {
     @Override
     public void onDisable() {
         if (database != null) database.destroy();
+        if (cacheSync != null) cacheSync.destroy();
     }
 
     private Runnable listingExpiryTask() {
@@ -102,6 +106,10 @@ public final class Fadah extends JavaPlugin {
                     CollectableItem item = new CollectableItem(listing.itemStack(), Instant.now().toEpochMilli());
                     ExpiredListingsCache.addItem(listing.owner(), item);
                     getINSTANCE().getDatabase().addToExpiredItems(listing.owner(), item);
+
+                    Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("LISTING EXPIRED Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
+                            Bukkit.getOfflinePlayer(listing.owner()).getName(), Bukkit.getOfflinePlayer(listing.owner()).getUniqueId().toString(),
+                            listing.price(), listing.itemStack().toString()));
                 }
             }
         };
@@ -138,7 +146,7 @@ public final class Fadah extends JavaPlugin {
             return false;
         }
         economy = rsp.getProvider();
-        return economy.isEnabled();
+        return economy != null;
     }
 
     private void loadDataAndPopulateCaches() {
@@ -146,10 +154,11 @@ public final class Fadah extends JavaPlugin {
             case MONGO -> new MongoDatabase();
             case MYSQL, MARIADB -> new MySQLDatabase();
         };
-        database.connect();
-        database.loadListings();
+        database.connect().thenAccept((v) -> {
+            database.loadListings();
 
-        CategoryCache.loadCategories();
+            CategoryCache.loadCategories();
+        });
     }
 
     private void initLogger() {

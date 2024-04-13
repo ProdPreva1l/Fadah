@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 
 @Setter
 @Getter
@@ -46,55 +47,57 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
-    public void connect() {
-        dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(driverClass);
-        dataSource.setJdbcUrl(Config.DATABASE_URI.toString());
+    public CompletableFuture<Void> connect() {
+        return CompletableFuture.supplyAsync(()->{
+            dataSource = new HikariDataSource();
+            dataSource.setDriverClassName(driverClass);
+            dataSource.setJdbcUrl(Config.DATABASE_URI.toString());
 
-        dataSource.setMaximumPoolSize(10);
-        dataSource.setMinimumIdle(10);
-        dataSource.setMaxLifetime(1800000);
-        dataSource.setKeepaliveTime(0);
-        dataSource.setConnectionTimeout(5000);
-        dataSource.setPoolName("FahabHikarPool");
+            dataSource.setMaximumPoolSize(10);
+            dataSource.setMinimumIdle(10);
+            dataSource.setMaxLifetime(1800000);
+            dataSource.setKeepaliveTime(0);
+            dataSource.setConnectionTimeout(5000);
+            dataSource.setPoolName("FahabHikarPool");
 
-        final Properties properties = new Properties();
-        properties.putAll(
-                Map.of("cachePrepStmts", "true",
-                        "prepStmtCacheSize", "250",
-                        "prepStmtCacheSqlLimit", "2048",
-                        "useServerPrepStmts", "true",
-                        "useLocalSessionState", "true",
-                        "useLocalTransactionState", "true"
-                ));
-        properties.putAll(
-                Map.of(
-                        "rewriteBatchedStatements", "true",
-                        "cacheResultSetMetadata", "true",
-                        "cacheServerConfiguration", "true",
-                        "elideSetAutoCommits", "true",
-                        "maintainTimeStats", "false")
-        );
-        dataSource.setDataSourceProperties(properties);
+            final Properties properties = new Properties();
+            properties.putAll(
+                    Map.of("cachePrepStmts", "true",
+                            "prepStmtCacheSize", "250",
+                            "prepStmtCacheSqlLimit", "2048",
+                            "useServerPrepStmts", "true",
+                            "useLocalSessionState", "true",
+                            "useLocalTransactionState", "true"
+                    ));
+            properties.putAll(
+                    Map.of(
+                            "rewriteBatchedStatements", "true",
+                            "cacheResultSetMetadata", "true",
+                            "cacheServerConfiguration", "true",
+                            "elideSetAutoCommits", "true",
+                            "maintainTimeStats", "false")
+            );
+            dataSource.setDataSourceProperties(properties);
 
-        try (Connection connection = dataSource.getConnection()) {
-            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
-            try (Statement statement = connection.createStatement()) {
-                for (String tableCreationStatement : databaseSchema) {
-                    Fadah.getConsole().info(tableCreationStatement);
-                    statement.execute(tableCreationStatement);
+            try (Connection connection = dataSource.getConnection()) {
+                final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
+                try (Statement statement = connection.createStatement()) {
+                    for (String tableCreationStatement : databaseSchema) {
+                        statement.execute(tableCreationStatement);
+                    }
+                    setConnected(true);
+                } catch (SQLException e) {
+                    setConnected(false);
+                    throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
+                            "and that your connecting user account has privileges to create tables.", e);
                 }
-                setConnected(true);
-            } catch (SQLException e) {
+            } catch (SQLException | IOException e) {
                 setConnected(false);
-                throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
-                        "and that your connecting user account has privileges to create tables.", e);
+                throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
+                        "Please check the supplied database credentials in the config file", e);
             }
-        } catch (SQLException | IOException e) {
-            setConnected(false);
-            throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
-                    "Please check the supplied database credentials in the config file", e);
-        }
+            return null;
+        });
     }
 
     @Override

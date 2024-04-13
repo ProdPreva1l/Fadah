@@ -43,7 +43,11 @@ public class ConfirmPurchaseMenu extends FastInv {
             Fadah.getINSTANCE().getEconomy().depositPlayer(Bukkit.getOfflinePlayer(listing.owner()), listing.price());
 
             // Remove Listing
-            ListingCache.removeListing(listing);
+            if (Fadah.getINSTANCE().getCacheSync() == null) {
+                ListingCache.removeListing(listing);
+            }
+            CacheSync.send(listing.id(), true);
+            Fadah.getConsole().info("Removing Listing " + listing.id());
             Fadah.getINSTANCE().getDatabase().removeListing(listing.id());
 
             // Add to collection box
@@ -52,7 +56,6 @@ public class ConfirmPurchaseMenu extends FastInv {
             CollectionBoxCache.addItem(player.getUniqueId(), collectableItem);
 
             // Send Cache Updates
-            CacheSync.send(listing.id());
             CacheSync.send(CacheSync.CacheType.COLLECTION_BOX, player.getUniqueId());
             CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, listing.owner());
 
@@ -69,7 +72,7 @@ public class ConfirmPurchaseMenu extends FastInv {
                 CacheSync.send(listing.owner(), message);
             }
 
-            Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("Seller: {0} ({1}), Buyer: {2} ({3}), Price: {4}, ItemStack: {5}",
+            Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("ITEM SOLD Seller: {0} ({1}), Buyer: {2} ({3}), Price: {4}, ItemStack: {5}",
                     Bukkit.getOfflinePlayer(listing.owner()).getName(), Bukkit.getOfflinePlayer(listing.owner()).getUniqueId().toString(),
                     player.getName(), player.getUniqueId().toString(),
                     listing.price(), listing.itemStack().toString()));
