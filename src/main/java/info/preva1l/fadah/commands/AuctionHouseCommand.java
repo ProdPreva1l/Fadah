@@ -27,7 +27,7 @@ public class AuctionHouseCommand extends Command {
         subCommands.add(new ExpiredItemsSubCommand(plugin));
     }
 
-    @CommandArgs(name = "auctionhouse", aliases = {"ah", "auctions", "auction"}, permission = "auctionhouse.use")
+    @CommandArgs(name = "auctionhouse", aliases = {"ah", "auctions", "auction"}, permission = "fadah.use")
     public void execute(@NotNull CommandArguments command) {
         if (command.args().length >= 1) {
             if (subCommandExecutor(command, subCommands)) return;
