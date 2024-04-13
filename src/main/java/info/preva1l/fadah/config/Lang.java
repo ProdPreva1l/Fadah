@@ -24,6 +24,8 @@ public enum Lang {
     NO_PERMISSION("errors.no-permission", "&cYou do not have permission to execute this command!"),
     DATABASE_CONNECTING("errors.database-connecting", "&cDatabase not connected! Please Wait"),
 
+    CANCELLED("notifications.cancelled", "&cListing Cancelled!"),
+
     NOTIFICATION_NEW_SELL("notifications.new-sell", List.of(
             "&f----------------------------------------------",
             "&eYou have sold an item on the Auction House!",

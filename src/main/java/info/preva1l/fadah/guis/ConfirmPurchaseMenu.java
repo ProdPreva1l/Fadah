@@ -47,7 +47,6 @@ public class ConfirmPurchaseMenu extends FastInv {
                 ListingCache.removeListing(listing);
             }
             CacheSync.send(listing.id(), true);
-            Fadah.getConsole().info("Removing Listing " + listing.id());
             Fadah.getINSTANCE().getDatabase().removeListing(listing.id());
 
             // Add to collection box

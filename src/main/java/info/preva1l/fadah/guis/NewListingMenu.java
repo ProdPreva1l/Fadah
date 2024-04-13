@@ -94,7 +94,11 @@ public class NewListingMenu extends FastInv {
                 itemToSell, category, price, Instant.now().toEpochMilli(), deletionDate.toEpochMilli());
 
         Fadah.getINSTANCE().getDatabase().addListing(listing);
-        CacheSync.send(listing.id(), false);
+        if (Fadah.getINSTANCE().getCacheSync() != null) {
+            CacheSync.send(listing.id(), false);
+        } else {
+            ListingCache.addListing(listing);
+        }
 
         listingStarted = true;
         player.closeInventory();

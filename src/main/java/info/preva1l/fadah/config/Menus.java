@@ -26,7 +26,7 @@ public enum Menus {
             "&8&n---------------------------")),
     MAIN_LISTING_FOOTER_BUY("main.listing.lore-footer.buy", "&aClick to buy now!"),
     MAIN_LISTING_FOOTER_EXPENSIVE("main.listing.lore-footer.too-expensive", "&cYou cannot afford this item!"),
-    MAIN_LISTING_FOOTER_OWN_LISTING("main.listing.lore-footer.own-listing", "&cYou cannot buy your own listing!"),
+    MAIN_LISTING_FOOTER_OWN_LISTING("main.listing.lore-footer.own-listing", "&cYou cannot buy your own listing! &8(Shift Click to Cancel)"),
     MAIN_PROFILE_NAME("main.profile-button.name", "&e&lYour Profile"),
     MAIN_PROFILE_LORE("main.profile-button.lore", Collections.singletonList("&fClick to view your profile!")),
     MAIN_PROFILE_DESCRIPTION("main.profile-button.description", List.of("&fThis is your profile!", "&fHere you will find items from the auction house relating to you.")),

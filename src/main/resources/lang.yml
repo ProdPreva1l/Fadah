@@ -1,6 +1,7 @@
 prefix: "&#9555FF&lDXTRUS&r "
 
 notifications:
+  cancelled: "&cListing Cancelled!"
   new-sell:
     - "&f----------------------------------------------"
     - "&eYou have sold an item on the Auction House!"

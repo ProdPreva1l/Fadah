@@ -2,11 +2,15 @@ package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
+import info.preva1l.fadah.cache.CollectionBoxCache;
+import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
+import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.Category;
+import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
@@ -22,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
+import java.time.Instant;
 import java.util.*;
 
 public class MainMenu extends FastInv {
@@ -109,6 +114,26 @@ public class MainMenu extends FastInv {
             }
             removeItem(listingSlot.get(i));
             setItem(listingSlot.get(i), itemStack.build(), e->{
+                if (e.isShiftClick()) {
+                    if (ListingCache.getListing(listing.id()) == null) {
+                        player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+                        return;
+                    }
+                    if (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(listing.id()) == null) {
+                        player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+                        return;
+                    }
+                    player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString()));
+                    if (Fadah.getINSTANCE().getCacheSync() == null) {
+                        ListingCache.removeListing(listing);
+                    }
+                    CacheSync.send(listing.id(), true);
+                    Fadah.getINSTANCE().getDatabase().removeListing(listing.id());
+
+                    ExpiredListingsCache.addItem(player.getUniqueId(), new CollectableItem(listing.itemStack(), Instant.now().toEpochMilli()));
+                    CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, player.getUniqueId());
+                    return;
+                }
                 if (player.getUniqueId().equals(listing.owner())) {
                     player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.OWN_LISTING.toFormattedString()));
                     return;

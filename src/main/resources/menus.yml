@@ -13,7 +13,7 @@ main:
     lore-footer:
       buy: "&aClick to buy now!"
       too-expensive: "&cYou cannot afford this item!"
-      own-listing: "&cYou cannot buy your own listing!"
+      own-listing: "&cYou cannot buy your own listing! &8(Shift Click to Cancel)"
   profile-button:
     name: "&e&lYour Profile"
     lore:
