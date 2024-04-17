@@ -7,6 +7,7 @@ notifications:
     - "&fItem: &e{0}"
     - "&fPrice: &a${1}"
     - "&fExpires in: &6{2}"
+    - "&fActive Listings: &d{3}&f/&5{4}"
     - "&f------------------------------------------------"
   cancelled: "&cListing Cancelled!"
   new-sell:
@@ -40,6 +41,8 @@ help-command:
 fail:
   disabled: "&cThe Auction House is currently disabled!"
   max-listings: "&cYou have reached your max listings! &7({0}/{1})"
+  must-be-number: "&cThe price must be a number!"
+  must-hold-item: "&fYou must have an item in your hand to sell!"
   listing-price:
     max: "&fPrice must be less than &a${0}"
     min: "&fPrice must be at least &a${0}"
@@ -52,3 +55,5 @@ errors:
   must-be-player: "&cOnly players can run this command!"
   no-permission: "&cYou do not have permission to execute this command!"
   database-connecting: "&cDatabase not connected! Please Wait"
+  bad-usage: "&cUsage: /{0}"
+  no-command: "&cThis command does not exist!"

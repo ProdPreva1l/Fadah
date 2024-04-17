@@ -4,7 +4,9 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
+import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
@@ -106,7 +108,12 @@ public class NewListingMenu extends FastInv {
 
         player.closeInventory();
 
-        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("NEW LISTING Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
+        String itemname = listing.itemStack().getItemMeta().getDisplayName().isBlank() ? listing.itemStack().getType().name() : listing.itemStack().getItemMeta().getDisplayName();
+        String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemname,
+                new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.price()), TimeUtil.formatTimeUntil(listing.deletionDate()), PermissionsData.getCurrentListings(player), PermissionsData.getMaxListings(player)));
+        player.sendMessage(message);
+
+        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[NEW LISTING] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
                 Bukkit.getOfflinePlayer(listing.owner()).getName(), Bukkit.getOfflinePlayer(listing.owner()).getUniqueId().toString(),
                 listing.price(), listing.itemStack().toString()));
     }

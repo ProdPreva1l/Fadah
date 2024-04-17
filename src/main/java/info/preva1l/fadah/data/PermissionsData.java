@@ -2,17 +2,22 @@ package info.preva1l.fadah.data;
 
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.records.Listing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import java.util.List;
+
 
 @UtilityClass
 public class PermissionsData {
     public int getCurrentListings(Player player) {
-        return ListingCache.getListings().stream().filter(listing -> !listing.isOwner(player)).toList().size();
+        List<Listing> listings = ListingCache.getListings();
+        listings.removeIf(listing -> !listing.isOwner(player));
+        return listings.size();
     }
 
     public int getMaxListings(Player player) {

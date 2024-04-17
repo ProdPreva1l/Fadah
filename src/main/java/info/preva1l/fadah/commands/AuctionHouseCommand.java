@@ -34,11 +34,11 @@ public class AuctionHouseCommand extends Command {
         assert command.getPlayer() != null;
         if (command.args().length >= 1) {
             if (subCommandExecutor(command, subCommands)) return;
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.colorize("&cThis command does not exist!"));
+            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.NO_COMMAND.toFormattedString());
             return;
         }
         if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.colorize("&cThe Auction House is currently disabled!"));
+            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
             return;
         }
         new MainMenu(null, command.getPlayer(), 0, null, null, null).open(command.getPlayer());

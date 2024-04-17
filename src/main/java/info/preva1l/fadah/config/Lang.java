@@ -23,17 +23,29 @@ public enum Lang {
     MUST_BE_PLAYER("errors.must-be-player", "&cOnly players can run this command!"),
     NO_PERMISSION("errors.no-permission", "&cYou do not have permission to execute this command!"),
     DATABASE_CONNECTING("errors.database-connecting", "&cDatabase not connected! Please Wait"),
-
-    CANCELLED("notifications.cancelled", "&cListing Cancelled!"),
+    BAD_USAGE("errors.bad-usage", "&cUsage: /{0}"),
+    NO_COMMAND("errors.no-command", "&cThis command does not exist!"),
 
     AUCTION_DISABLED("fail.disabled", "&cThe Auction House is currently disabled!"),
     MAX_LISTINGS("fail.max-listings", "&cYou have reached your max listings! ({0}/{1})"),
     MAX_LISTING_PRICE("fail.listing-price.max", "&fPrice must be less than &a${0}"),
     MIN_LISTING_PRICE("fail.listing-price.min", "&fPrice must be at least &a${0}"),
+    MUST_BE_NUMBER("fail.must-be-number", "&cThe price must be a number!"),
+    MUST_HOLD_ITEM("fail.must-hold-item", "&fYou must have an item in your hand to sell!"),
 
     HELP_COMMAND_HEADER("help-command.header", "&#9555FF&lAuctionHouse &eHelp"),
     HELP_COMMAND_FORMAT("help-command.format", "&b/{0} &8&l| &f{1}"),
 
+    NOTIFICATION_NEW_LISTING("notifications.listed", List.of(
+            "&f------------------------------------------------",
+            "&eYou have a successfully listed an item for sale!",
+            "&fItem: &e{0}",
+            "&fPrice: &a${1}",
+            "&fExpires in: &6{2}",
+            "&fActive Listings: &d{3}&f/&5{4}",
+            "&f------------------------------------------------"
+    )),
+    CANCELLED("notifications.cancelled", "&cListing Cancelled!"),
     NOTIFICATION_NEW_SELL("notifications.new-sell", List.of(
             "&f----------------------------------------------",
             "&eYou have sold an item on the Auction House!",

@@ -3,6 +3,7 @@ package info.preva1l.fadah.guis;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ListingCache;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.multiserver.CacheSync;
@@ -20,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DecimalFormat;
 import java.time.Instant;
 
 public class ConfirmPurchaseMenu extends FastInv {
@@ -63,7 +65,7 @@ public class ConfirmPurchaseMenu extends FastInv {
             player.sendMessage(String.join("\n", Lang.NOTIFICATION_NEW_ITEM.toLore()));
 
             String itemname = listing.itemStack().getItemMeta().getDisplayName().isBlank() ? listing.itemStack().getType().name() : listing.itemStack().getItemMeta().getDisplayName();
-            String message = String.join("\n", Lang.NOTIFICATION_NEW_SELL.toLore(itemname, listing.price()));
+            String message = String.join("\n", Lang.NOTIFICATION_NEW_SELL.toLore(itemname, new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.price())));
 
             Player seller = Bukkit.getPlayer(listing.owner());
             if (seller != null) {
