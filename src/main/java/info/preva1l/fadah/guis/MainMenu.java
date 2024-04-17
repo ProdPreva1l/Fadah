@@ -26,6 +26,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.*;
 
@@ -103,7 +104,7 @@ public class MainMenu extends FastInv {
 
             ItemBuilder itemStack = new ItemBuilder(listing.itemStack().clone())
                     .addLore(Menus.MAIN_LISTING_LORE.toLore(listing.ownerName(), listing.categoryID(),
-                            Fadah.getDecimalFormat().format(listing.price()), TimeUtil.formatTimeUntil(listing.deletionDate())));
+                            new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.price()), TimeUtil.formatTimeUntil(listing.deletionDate())));
 
             if (player.getUniqueId().equals(listing.owner())) {
                 itemStack.addLore(Menus.MAIN_LISTING_FOOTER_OWN_LISTING.toFormattedString());
@@ -112,32 +113,51 @@ public class MainMenu extends FastInv {
             } else {
                 itemStack.addLore(Menus.MAIN_LISTING_FOOTER_EXPENSIVE.toFormattedString());
             }
+            if (listing.itemStack().getType().name().toUpperCase().endsWith("_SHULKER_BOX")) {
+                itemStack.addLore(Menus.MAIN_LISTING_FOOTER_SHULKER.toFormattedString());
+            }
             removeItem(listingSlot.get(i));
             setItem(listingSlot.get(i), itemStack.build(), e->{
-                if (e.isShiftClick()) {
-                    if (ListingCache.getListing(listing.id()) == null) {
-                        player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
-                        return;
-                    }
-                    if (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(listing.id()) == null) {
-                        player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
-                        return;
-                    }
-                    player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString()));
-                    if (Fadah.getINSTANCE().getCacheSync() == null) {
-                        ListingCache.removeListing(listing);
-                    }
-                    CacheSync.send(listing.id(), true);
-                    Fadah.getINSTANCE().getDatabase().removeListing(listing.id());
-
-                    ExpiredListingsCache.addItem(player.getUniqueId(), new CollectableItem(listing.itemStack(), Instant.now().toEpochMilli()));
-                    CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, player.getUniqueId());
+                // Shulker Preview
+                if (listing.itemStack().getType().name().toUpperCase().endsWith("_SHULKER_BOX") && e.isRightClick()) {
+                    new ShulkerBoxPreviewMenu(listing, player, category, page, search, sortingMethod, sortingDirection).open(player);
                     return;
                 }
+
+
+                // Cancel listing
                 if (player.getUniqueId().equals(listing.owner())) {
+                    if (e.isShiftClick()) {
+                        if (ListingCache.getListing(listing.id()) == null) {
+                            player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+                            return;
+                        }
+                        if (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(listing.id()) == null) {
+                            player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+                            return;
+                        }
+                        player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString()));
+                        if (Fadah.getINSTANCE().getCacheSync() == null) {
+                            ListingCache.removeListing(listing);
+                        }
+                        CacheSync.send(listing.id(), true);
+                        Fadah.getINSTANCE().getDatabase().removeListing(listing.id());
+
+                        ExpiredListingsCache.addItem(player.getUniqueId(), new CollectableItem(listing.itemStack(), Instant.now().toEpochMilli()));
+                        CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, player.getUniqueId());
+                        new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player);
+
+                        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING REMOVED] Seller: {0} ({1}), Price: {4}, ItemStack: {5}",
+                                Bukkit.getOfflinePlayer(listing.owner()).getName(), Bukkit.getOfflinePlayer(listing.owner()).getUniqueId().toString(),
+                                listing.price(), listing.itemStack().toString()));
+
+                        return;
+                    }
                     player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.OWN_LISTING.toFormattedString()));
                     return;
                 }
+
+                // Purchase
                 if (!Fadah.getINSTANCE().getEconomy().has(player, listing.price())) {
                     player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.TOO_EXPENSIVE.toFormattedString()));
                     return;
@@ -225,7 +245,7 @@ public class MainMenu extends FastInv {
         // Search
         setItem(49, new ItemBuilder(Material.OAK_SIGN).name(Menus.MAIN_SEARCH_NAME.toFormattedString())
                 .lore(Menus.MAIN_SEARCH_LORE.toLore()).build(), e ->
-                new SearchMenu(player, search -> new MainMenu(category, player, 0, search, sortingMethod, sortingDirection).open(player)));
+                new SearchMenu(player, search -> new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player)));
 
         // Filter Direction Toggle
         String l1 = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.ASCENDING ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toString() : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toString(),

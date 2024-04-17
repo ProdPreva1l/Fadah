@@ -24,7 +24,8 @@ import java.time.Instant;
 
 public class ConfirmPurchaseMenu extends FastInv {
 
-    public ConfirmPurchaseMenu(Listing listing, Player player, @Nullable Category category, int page,
+    public ConfirmPurchaseMenu(Listing listing, Player player,
+                               @Nullable Category category, int page,
                                @Nullable String search,
                                @Nullable SortingMethod sortingMethod,
                                @Nullable SortingDirection sortingDirection) {
@@ -71,14 +72,14 @@ public class ConfirmPurchaseMenu extends FastInv {
                 CacheSync.send(listing.owner(), message);
             }
 
-            Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("ITEM SOLD Seller: {0} ({1}), Buyer: {2} ({3}), Price: {4}, ItemStack: {5}",
+            Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING SOLD] Seller: {0} ({1}), Buyer: {2} ({3}), Price: {4}, ItemStack: {5}",
                     Bukkit.getOfflinePlayer(listing.owner()).getName(), Bukkit.getOfflinePlayer(listing.owner()).getUniqueId().toString(),
                     player.getName(), player.getUniqueId().toString(),
                     listing.price(), listing.itemStack().toString()));
         });
 
         setItem(32, GuiHelper.constructButton(GuiButtonType.CANCEL), e->{
-            new MainMenu(category, player, 0, search, sortingMethod, sortingDirection).open(player);
+            new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player);
         });
 
         setItem(22, listing.itemStack().clone());

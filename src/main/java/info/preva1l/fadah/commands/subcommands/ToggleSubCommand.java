@@ -13,7 +13,7 @@ public class ToggleSubCommand extends SubCommand {
         super(plugin);
     }
 
-    @SubCommandArgs(name = "toggle", inGameOnly = false, permission = "fadah.toggle-status")
+    @SubCommandArgs(name = "toggle", inGameOnly = false, permission = "fadah.toggle-status", description = "Toggles the auction house on or off.")
     public void execute(@NotNull SubCommandArguments command) {
         boolean enabled = Fadah.getINSTANCE().getConfigFile().getBoolean("enabled");
         Fadah.getINSTANCE().getConfigFile().getConfiguration().set("enabled", !enabled);

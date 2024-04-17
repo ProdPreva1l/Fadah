@@ -13,4 +13,5 @@ public @interface SubCommandArgs {
     String[] aliases() default {};
     boolean inGameOnly() default true;
     boolean async() default false;
+    String description() default "";
 }

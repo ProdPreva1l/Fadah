@@ -15,7 +15,7 @@ public class DevSubCommand extends SubCommand {
         super(plugin);
     }
 
-    @SubCommandArgs(name = "dev", aliases = {"dev-tools"}, permission = "fadah.developer")
+    @SubCommandArgs(name = "dev", aliases = {"dev-tools"}, permission = "fadah.developer", description = "A Basic Debug Command for testing")
     public void execute(@NotNull SubCommandArguments command) {
         for (Category category : CategoryCache.getCategories()) {
             String string = "ID: {0}<newline>" +

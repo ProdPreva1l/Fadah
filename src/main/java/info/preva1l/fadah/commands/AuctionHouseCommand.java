@@ -9,13 +9,14 @@ import info.preva1l.fadah.utils.commands.Command;
 import info.preva1l.fadah.utils.commands.CommandArgs;
 import info.preva1l.fadah.utils.commands.CommandArguments;
 import info.preva1l.fadah.utils.commands.SubCommand;
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class AuctionHouseCommand extends Command {
-    private final List<SubCommand> subCommands = new ArrayList<>();
+    @Getter private static final List<SubCommand> subCommands = new ArrayList<>();
     public AuctionHouseCommand(Fadah plugin) {
         super(plugin);
         subCommands.add(new DevSubCommand(plugin));
@@ -25,10 +26,12 @@ public class AuctionHouseCommand extends Command {
         subCommands.add(new CollectionBoxSubCommand(plugin));
         subCommands.add(new ToggleSubCommand(plugin));
         subCommands.add(new ExpiredItemsSubCommand(plugin));
+        subCommands.add(new HelpSubCommand(plugin));
     }
 
     @CommandArgs(name = "auctionhouse", aliases = {"ah", "auctions", "auction"}, permission = "fadah.use")
     public void execute(@NotNull CommandArguments command) {
+        assert command.getPlayer() != null;
         if (command.args().length >= 1) {
             if (subCommandExecutor(command, subCommands)) return;
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.colorize("&cThis command does not exist!"));

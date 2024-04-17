@@ -15,10 +15,10 @@ public class ExpiredItemsSubCommand extends SubCommand {
         super(plugin);
     }
 
-    @SubCommandArgs(name = "expired-items", aliases = {"expireditems", "expired"}, permission = "fadah.expired-items")
+    @SubCommandArgs(name = "expired-items", aliases = {"expireditems", "expired"}, permission = "fadah.expired-items", description = "View your Expired Items!")
     public void execute(@NotNull SubCommandArguments command) {
         if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.colorize("&cThe Auction House is currently disabled!"));
+            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
             return;
         }
         assert command.getPlayer() != null;

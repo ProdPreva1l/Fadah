@@ -17,9 +17,6 @@ public final class ListingCache {
     public void removeListing(Listing listing) {
         listings.remove(listing);
     }
-    public void removeListing(UUID listingID) {
-        listings.removeIf(listing -> listing.id() == listingID);
-    }
     public Listing getListing(UUID id) {
         return listings.stream().filter(listing->listing.id() == id).findFirst().orElse(null);
     }

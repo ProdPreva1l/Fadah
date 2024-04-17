@@ -1,21 +1,25 @@
 # Disable if urgent issue! (Use /ah toggle)
 enabled: true
 
-max-listing-price: 1000000000
-
+listing-price:
+  min: 1
+  max: 1000000000
+default-max-listings: 3
 decimal-format: "#,###.00"
 
 # Enable this if you are experiencing dupes (usually when there is a moderate delay with redis)
 strict-checks: false
 
 database:
-  # Supported: MYSQL, MARIADB, MONGO
-  type: "MYSQL"
+  # Supported: SQLITE, MYSQL, MARIADB, MONGO
+  type: "SQLITE"
+  # Below is not required for SQLITE
   # For MySQL and MariaDB, uri must be a JDBC uri
   uri: "jdbc:mysql://username:password@127.0.0.1:3306/Fadah"
   database: "Fadah"
 
 # Redis is only required for x-server environments.
+# This mode is not compatible with SQLITE database
 # Snapchat's KeyDB is recommended as it is 2x faster than normal redis while still fully compatible.
 redis:
   enabled: false

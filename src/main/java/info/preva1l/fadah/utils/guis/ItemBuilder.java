@@ -20,6 +20,7 @@ import java.util.function.Consumer;
  * Simple {@link ItemStack} builder.
  *
  * @author MrMicky
+ * @author Preva1l
  */
 public class ItemBuilder {
 

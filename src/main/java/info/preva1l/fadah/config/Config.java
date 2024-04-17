@@ -15,8 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public enum Config {
-    MAX_LISTING_PRICE("max-listing-price", 1000000000d),
-
+    MAX_LISTING_PRICE("listing-price.max", 1000000000d),
+    MIN_LISTING_PRICE("listing-price.min", 1),
+    DEFAULT_MAX_LISTINGS("default-max-listings", 3),
     DECIMAL_FORMAT("decimal-format", "#,###.00"),
 
     STRICT_CHECKS("strict-checks", false),

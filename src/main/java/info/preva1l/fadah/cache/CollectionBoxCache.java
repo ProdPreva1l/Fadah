@@ -2,6 +2,8 @@ package info.preva1l.fadah.cache;
 
 import info.preva1l.fadah.records.CollectableItem;
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.*;
 
 @UtilityClass
@@ -25,7 +27,10 @@ public class CollectionBoxCache {
     public void purgeCollectionbox(UUID playerUUID) {
         collectionbox.remove(playerUUID);
     }
-    public void load(UUID playerUUID, List<CollectableItem> list) {
+    public void load(UUID playerUUID, @Nullable List<CollectableItem> list) {
+        if (list == null) {
+            list = Collections.emptyList();
+        }
         collectionbox.put(playerUUID, list);
     }
     public List<CollectableItem> getCollectionBox(UUID playerUUID) {

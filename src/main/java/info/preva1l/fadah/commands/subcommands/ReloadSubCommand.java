@@ -14,7 +14,7 @@ public class ReloadSubCommand extends SubCommand {
         super(plugin);
     }
 
-    @SubCommandArgs(name = "reload", aliases = {"rl"}, permission = "fadah.reload")
+    @SubCommandArgs(name = "reload", aliases = {"rl"}, permission = "fadah.reload", description = "Reloads the plugin!")
     public void execute(@NotNull SubCommandArguments command) {
         Fadah.getINSTANCE().getConfigFile().load();
         Fadah.getINSTANCE().getLangFile().load();

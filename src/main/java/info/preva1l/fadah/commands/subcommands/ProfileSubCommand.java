@@ -14,10 +14,10 @@ public class ProfileSubCommand extends SubCommand {
         super(plugin);
     }
 
-    @SubCommandArgs(name = "profile", permission = "fadah.profile")
+    @SubCommandArgs(name = "profile", permission = "fadah.profile", description = "View your Auction Profile!")
     public void execute(@NotNull SubCommandArguments command) {
         if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.colorize("&cThe Auction House is currently disabled!"));
+            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
             return;
         }
         assert command.getPlayer() != null;

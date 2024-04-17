@@ -3,6 +3,7 @@ package info.preva1l.fadah.commands.subcommands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.guis.NewListingMenu;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.commands.SubCommand;
@@ -17,10 +18,10 @@ public class SellSubCommand extends SubCommand {
         super(plugin);
     }
 
-    @SubCommandArgs(name = "sell", aliases = {"new-listing", "create-listing"}, permission = "fadah.use")
+    @SubCommandArgs(name = "sell", aliases = {"new-listing", "create-listing"}, permission = "fadah.use", description = "Create a new listing on the auction house!")
     public void execute(@NotNull SubCommandArguments command) {
         if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.colorize("&cThe Auction House is currently disabled!"));
+            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
             return;
         }
         assert command.getPlayer() != null;
@@ -32,12 +33,18 @@ public class SellSubCommand extends SubCommand {
             command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + "&cUsage: /ah sell <price>"));
             return;
         }
-        if (Double.parseDouble(command.args()[0]) < 1) {
-            command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + "&fPrice must be at least &a$1"));
+        if (Double.parseDouble(command.args()[0]) < Config.MIN_LISTING_PRICE.toDouble()) {
+            command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MIN_LISTING_PRICE.toFormattedString(Config.MIN_LISTING_PRICE.toString())));
             return;
         }
         if (Double.parseDouble(command.args()[0]) > Config.MAX_LISTING_PRICE.toDouble()) {
-            command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + "&fPrice must be less than $1,000,000,000"));
+            command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MAX_LISTING_PRICE.toFormattedString(Config.MAX_LISTING_PRICE.toString())));
+            return;
+        }
+        int currentListings = PermissionsData.getCurrentListings(command.getPlayer());
+        int maxListings = PermissionsData.getMaxListings(command.getPlayer());
+        if (currentListings >= maxListings) {
+            command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MAX_LISTINGS.toFormattedString(currentListings, maxListings)));
             return;
         }
         new NewListingMenu(command.getPlayer(), Double.parseDouble(command.args()[0])).open(command.getPlayer());

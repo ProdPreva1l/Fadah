@@ -3,6 +3,7 @@ package info.preva1l.fadah.guis;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.Listing;
@@ -18,6 +19,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
@@ -39,7 +41,7 @@ public class NewListingMenu extends FastInv {
         setClock();
 
         setItem(30, new ItemBuilder(Material.EMERALD).name(Menus.NEW_LISTING_CREATE_NAME.toFormattedString())
-                .addLore(Menus.NEW_LISTING_CREATE_LORE.toLore(Fadah.getDecimalFormat().format(price))).build(), e -> startListing(timeToDelete, price));
+                .addLore(Menus.NEW_LISTING_CREATE_LORE.toLore(new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(price))).build(), e -> startListing(timeToDelete, price));
 
         setItems(getBorders(),
                 GuiHelper.constructButton(GuiButtonType.GENERIC, Material.BLACK_STAINED_GLASS_PANE,
@@ -101,6 +103,7 @@ public class NewListingMenu extends FastInv {
         }
 
         listingStarted = true;
+
         player.closeInventory();
 
         Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("NEW LISTING Seller: {0} ({1}), Price: {2}, ItemStack: {3}",

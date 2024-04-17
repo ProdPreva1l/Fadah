@@ -9,9 +9,7 @@ import info.preva1l.fadah.commands.AuctionHouseCommand;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
-import info.preva1l.fadah.data.Database;
-import info.preva1l.fadah.data.MongoDatabase;
-import info.preva1l.fadah.data.MySQLDatabase;
+import info.preva1l.fadah.data.*;
 import info.preva1l.fadah.listeners.PlayerListener;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.CollectableItem;
@@ -19,6 +17,7 @@ import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.BasicConfig;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TaskManager;
+import info.preva1l.fadah.utils.TransactionLogFormatter;
 import info.preva1l.fadah.utils.commands.CommandManager;
 import info.preva1l.fadah.utils.guis.FastInvManager;
 import lombok.Getter;
@@ -34,13 +33,12 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.logging.FileHandler;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
 //TODO: Add listing tax
 public final class Fadah extends JavaPlugin {
-    @Getter private static DecimalFormat decimalFormat;
-
     @Getter private static Fadah INSTANCE;
     @Getter private static AuctionHouseAPI API;
     @Getter @Setter private CacheSync cacheSync;
@@ -65,7 +63,9 @@ public final class Fadah extends JavaPlugin {
         console = getLogger();
 
         if (!hookIntoVault()) {
+            getConsole().severe("------------------------------------------");
             getConsole().severe("Disabled due to no Vault dependency found!");
+            getConsole().severe("------------------------------------------");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -78,11 +78,17 @@ public final class Fadah extends JavaPlugin {
         FastInvManager.register(this);
 
         if (Config.REDIS_ENABLED.toBoolean()) {
+            if (Config.DATABASE_TYPE.toDBTypeEnum() == DatabaseType.SQLITE) {
+                getConsole().severe("------------------------------------------");
+                getConsole().severe("Redis has not been enabled as the selected");
+                getConsole().severe("       database is not compatible!");
+                getConsole().severe("------------------------------------------");
+                return;
+            }
             cacheSync = new CacheSync();
             cacheSync.start();
         }
 
-        decimalFormat = new DecimalFormat(Config.DECIMAL_FORMAT.toString());
         customItemKey = NamespacedKey.minecraft("auctionhouse");
 
         initLogger();
@@ -107,7 +113,7 @@ public final class Fadah extends JavaPlugin {
                     ExpiredListingsCache.addItem(listing.owner(), item);
                     getINSTANCE().getDatabase().addToExpiredItems(listing.owner(), item);
 
-                    Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("LISTING EXPIRED Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
+                    Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING EXPIRED] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
                             Bukkit.getOfflinePlayer(listing.owner()).getName(), Bukkit.getOfflinePlayer(listing.owner()).getUniqueId().toString(),
                             listing.price(), listing.itemStack().toString()));
                 }
@@ -153,12 +159,11 @@ public final class Fadah extends JavaPlugin {
         database = switch (Config.DATABASE_TYPE.toDBTypeEnum()) {
             case MONGO -> new MongoDatabase();
             case MYSQL, MARIADB -> new MySQLDatabase();
+            case SQLITE -> new SQLiteDatabase();
         };
-        database.connect().thenAccept((v) -> {
-            database.loadListings();
+        database.connect();
 
-            CategoryCache.loadCategories();
-        });
+        CategoryCache.loadCategories();
     }
 
     private void initLogger() {
@@ -182,7 +187,7 @@ public final class Fadah extends JavaPlugin {
             }
 
             FileHandler fileHandler = new FileHandler(logFile.getAbsolutePath());
-            fileHandler.setFormatter(new SimpleFormatter());
+            fileHandler.setFormatter(new TransactionLogFormatter());
             transactionLogger.addHandler(fileHandler);
         } catch (IOException e) {
             throw new RuntimeException(e);

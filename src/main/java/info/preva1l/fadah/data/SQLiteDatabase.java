@@ -1,11 +1,7 @@
 package info.preva1l.fadah.data;
 
 import com.google.common.collect.Lists;
-import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.cache.CollectionBoxCache;
-import info.preva1l.fadah.cache.ExpiredListingsCache;
-import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.Listing;
@@ -15,70 +11,85 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.sqlite.SQLiteConfig;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.*;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.logging.Level;
 
-@Setter
-@Getter
-public class MySQLDatabase implements Database {
-    private final String driverClass;
-    private boolean connected = false;
-    private HikariDataSource dataSource;
-
-    public MySQLDatabase() {
-        super();
-
-        this.driverClass = Config.DATABASE_TYPE.toDBTypeEnum() == DatabaseType.MARIADB ? "org.mariadb.jdbc.Driver" : "com.mysql.cj.jdbc.Driver";
-    }
-
+public class SQLiteDatabase implements Database {
+    @Getter @Setter private boolean connected = false;
+    private static final String DATABASE_FILE_NAME = "FadahData.db";
+    private File databaseFile;
+    private Connection connection;
     @SuppressWarnings("SameParameterValue")
     @NotNull
     private String[] getSchemaStatements(@NotNull String schemaFileName) throws IOException {
         return new String(Objects.requireNonNull(Fadah.getINSTANCE().getResource(schemaFileName))
                 .readAllBytes(), StandardCharsets.UTF_8).split(";");
     }
-
     private Connection getConnection() throws SQLException {
-        return dataSource.getConnection();
+        if (connection == null) {
+            setConnection();
+        } else if (connection.isClosed()) {
+            setConnection();
+        }
+        return connection;
+    }
+    private void setConnection() {
+        try {
+            if (databaseFile.createNewFile()) {
+                Fadah.getConsole().info("Created the SQLite database file");
+            }
+
+            Class.forName("org.sqlite.JDBC");
+
+            SQLiteConfig config = new SQLiteConfig();
+            config.enforceForeignKeys(true);
+            config.setEncoding(SQLiteConfig.Encoding.UTF8);
+            config.setSynchronous(SQLiteConfig.SynchronousMode.FULL);
+
+            connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getAbsolutePath(), config.toProperties());
+        } catch (IOException e) {
+            Fadah.getConsole().log(Level.SEVERE,"An exception occurred creating the database file", e);
+        } catch (SQLException e) {
+            Fadah.getConsole().log(Level.SEVERE, "An SQL exception occurred initializing the SQLite database", e);
+        } catch (ClassNotFoundException e) {
+            Fadah.getConsole().log(Level.SEVERE, "Failed to load the necessary SQLite driver", e);
+        }
+    }
+
+    private void backupFlatFile(@NotNull File file) {
+        if (!file.exists()) {
+            return;
+        }
+
+        final File backup = new File(file.getParent(), String.format("%s.bak", file.getName()));
+        try {
+            if (!backup.exists() || backup.delete()) {
+                Files.copy(file.toPath(), backup.toPath());
+            }
+        } catch (IOException e) {
+            Fadah.getConsole().log(Level.WARNING, "Failed to backup flat file database", e);
+        }
     }
 
     @Override
     public void connect() {
-        dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(driverClass);
-        dataSource.setJdbcUrl(Config.DATABASE_URI.toString());
+        databaseFile = new File(Fadah.getINSTANCE().getDataFolder(), DATABASE_FILE_NAME);
 
-        dataSource.setMaximumPoolSize(10);
-        dataSource.setMinimumIdle(10);
-        dataSource.setMaxLifetime(1800000);
-        dataSource.setKeepaliveTime(0);
-        dataSource.setConnectionTimeout(5000);
-        dataSource.setPoolName("FahabHikarPool");
+        this.setConnection();
+        this.backupFlatFile(databaseFile);
 
-        final Properties properties = new Properties();
-        properties.putAll(
-                Map.of("cachePrepStmts", "true",
-                        "prepStmtCacheSize", "250",
-                        "prepStmtCacheSqlLimit", "2048",
-                        "useServerPrepStmts", "true",
-                        "useLocalSessionState", "true",
-                        "useLocalTransactionState", "true"
-                ));
-        properties.putAll(
-                Map.of(
-                        "rewriteBatchedStatements", "true",
-                        "cacheResultSetMetadata", "true",
-                        "cacheServerConfiguration", "true",
-                        "elideSetAutoCommits", "true",
-                        "maintainTimeStats", "false")
-        );
-        dataSource.setDataSourceProperties(properties);
-
-        try (Connection connection = dataSource.getConnection()) {
+        try {
             final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
             try (Statement statement = connection.createStatement()) {
                 for (String tableCreationStatement : databaseSchema) {
@@ -90,20 +101,25 @@ public class MySQLDatabase implements Database {
                 throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
                         "and that your connecting user account has privileges to create tables.", e);
             }
-        } catch (SQLException | IOException e) {
-           destroy();
-            throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
-                    "Please check the supplied database credentials in the config file", e);
+        } catch (IOException e) {
+            destroy();
+            throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
+                    "and that your connecting user account has privileges to create tables.", e);
         }
-
         this.loadListings();
     }
 
     @Override
     public void destroy() {
-        if (dataSource == null) return;
-        if (dataSource.isClosed()) return;
-        dataSource.close();
+        try {
+            if (connection != null) {
+                if (!connection.isClosed()) {
+                    connection.close();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
         setConnected(false);
     }
 
@@ -113,7 +129,7 @@ public class MySQLDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `collection_box`
@@ -136,13 +152,12 @@ public class MySQLDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        DELETE FROM `collection_box`
-                        WHERE `playerUUID`=? AND `itemStack`=?
-                        LIMIT 1;"""
-                )) {
+                    DELETE FROM `collection_box`
+                    WHERE `playerUUID`=? AND `itemStack`=?
+                    AND ROWID = (SELECT ROWID FROM `collection_box` WHERE `playerUUID`=? AND `itemStack`=? LIMIT 1);""")) {
                     statement.setString(1,
                             playerUUID.toString());
                     statement.setString(2, ItemSerializer.
@@ -191,7 +206,7 @@ public class MySQLDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `expired_items`
@@ -214,12 +229,12 @@ public class MySQLDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        DELETE FROM `expired_items`
-                        WHERE `playerUUID`=? AND `itemStack`=?
-                        LIMIT 1;""")) {
+                    DELETE FROM `expired_items`
+                    WHERE `playerUUID`=? AND `itemStack`=?
+                    AND ROWID = ( SELECT ROWID FROM `expired_items` WHERE `playerUUID`=? AND `itemStack`=? LIMIT 1);""")) {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
                     statement.executeUpdate();
@@ -260,22 +275,12 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
-    public void loadExpiredItems(UUID playerUUID) {
-        if (!isConnected()) {
-            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
-        }
-        ExpiredListingsCache.purgeExpiredListings(playerUUID);
-        getExpiredItems(playerUUID).thenAccept(items-> ExpiredListingsCache.load(playerUUID, items));
-    }
-
-    @Override
     public void addListing(Listing listing) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `listings`
@@ -293,6 +298,7 @@ public class MySQLDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to listings!");
+                throw new RuntimeException(e);
             }
         });
     }
@@ -303,12 +309,13 @@ public class MySQLDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        DELETE FROM `listings`
-                        WHERE `uuid`=?
-                        LIMIT 1;""")) {
+                    DELETE FROM `listings`
+                    WHERE ROWID =
+                    (SELECT ROWID FROM `listings` WHERE uuid = ? LIMIT 1)
+                    """)) {
                     statement.setString(1, id.toString());
                     statement.executeUpdate();
                 }
@@ -317,21 +324,6 @@ public class MySQLDatabase implements Database {
             }
         });
     }
-
-    @Override
-    public void loadListings() {
-        if (!isConnected()) {
-            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
-        }
-        ListingCache.purgeListings();
-        getListingIDs().thenAccept(uuids -> {
-            for (UUID id : uuids) {
-                getListing(id).thenAccept(ListingCache::addListing);
-            }
-        });
-    }
-
     @Override
     public CompletableFuture<List<UUID>> getListingIDs() {
         if (!isConnected()) {
@@ -368,8 +360,7 @@ public class MySQLDatabase implements Database {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         SELECT  `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `itemStack`
                         FROM `listings`
-                        WHERE `uuid`=?;"""
-                )) {
+                        WHERE `uuid`=?;""")) {
                     statement.setString(1, id.toString());
                     final ResultSet resultSet = statement.executeQuery();
                     if (resultSet.next()) {

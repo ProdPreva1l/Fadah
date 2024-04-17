@@ -14,10 +14,10 @@ public class CollectionBoxSubCommand extends SubCommand {
         super(plugin);
     }
 
-    @SubCommandArgs(name = "collectionbox", aliases = {"collection-box", "redeem"}, permission = "fadah.collection-box")
+    @SubCommandArgs(name = "collectionbox", aliases = {"collection-box", "redeem"}, permission = "fadah.collection-box", description = "View your Collection Box!")
     public void execute(@NotNull SubCommandArguments command) {
         if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.colorize("&cThe Auction House is currently disabled!"));
+            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
             return;
         }
         assert command.getPlayer() != null;

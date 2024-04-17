@@ -2,11 +2,12 @@ import org.apache.tools.ant.filters.ReplaceTokens
 
 plugins {
     id 'java'
+    id 'org.ajoberstar.grgit' version '5.2.2'
     id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 group = 'info.preva1l'
-version = '1.1'
+version = "1.2${versionMetadata()}"
 
 ext {
     set 'version', version.toString()
@@ -21,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly "io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT"
+    compileOnly 'io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT'
 
     compileOnly 'redis.clients:jedis:5.1.0'
     compileOnly 'org.apache.commons:commons-pool2:2.12.0'
@@ -29,6 +30,7 @@ dependencies {
     compileOnly 'org.mongodb:mongodb-driver-sync:5.0.0'
 
     implementation 'com.zaxxer:HikariCP:5.1.0'
+    compileOnly 'org.xerial:sqlite-jdbc:3.45.2.0'
     compileOnly 'com.mysql:mysql-connector-j:8.3.0'
     compileOnly 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
 
@@ -71,3 +73,19 @@ shadowJar {
 }
 
 logger.lifecycle("Building Fadah ${version}")
+
+@SuppressWarnings('GrMethodMayBeStatic')
+def versionMetadata() {
+    if (grgit == null) {
+        return '-' + System.getenv("GITHUB_RUN_NUMBER") ? 'build.' + System.getenv("GITHUB_RUN_NUMBER") : 'unknown'
+    }
+
+    // Get if there is a tag for this commit
+    def tag = grgit.tag.list().find { it.commit.id == grgit.head().id }
+    if (tag != null) {
+        return ''
+    }
+
+    // Otherwise, get the last commit hash and if it's a clean head
+    return '-' + grgit.head().abbreviatedId + (grgit.status().clean ? '' : '-indev')
+}

@@ -1,6 +1,13 @@
 prefix: "&#9555FF&lDXTRUS&r "
 
 notifications:
+  listed:
+    - "&f------------------------------------------------"
+    - "&eYou have a successfully listed an item for sale!"
+    - "&fItem: &e{0}"
+    - "&fPrice: &a${1}"
+    - "&fExpires in: &6{2}"
+    - "&f------------------------------------------------"
   cancelled: "&cListing Cancelled!"
   new-sell:
     - "&f----------------------------------------------"
@@ -25,6 +32,17 @@ sort:
     descending:
       normal: "Descending (Z-A)"
       age: "Oldest First"
+
+help-command:
+  header: "&#9555FF&lAuctionHouse &eHelp"
+  format: "&b/{0} &8&l| &f{1}"
+
+fail:
+  disabled: "&cThe Auction House is currently disabled!"
+  max-listings: "&cYou have reached your max listings! &7({0}/{1})"
+  listing-price:
+    max: "&fPrice must be less than &a${0}"
+    min: "&fPrice must be at least &a${0}"
 
 errors:
   own-listing: "&cYou cannot buy your own listing!"

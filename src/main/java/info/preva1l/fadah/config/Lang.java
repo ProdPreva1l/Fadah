@@ -26,6 +26,14 @@ public enum Lang {
 
     CANCELLED("notifications.cancelled", "&cListing Cancelled!"),
 
+    AUCTION_DISABLED("fail.disabled", "&cThe Auction House is currently disabled!"),
+    MAX_LISTINGS("fail.max-listings", "&cYou have reached your max listings! ({0}/{1})"),
+    MAX_LISTING_PRICE("fail.listing-price.max", "&fPrice must be less than &a${0}"),
+    MIN_LISTING_PRICE("fail.listing-price.min", "&fPrice must be at least &a${0}"),
+
+    HELP_COMMAND_HEADER("help-command.header", "&#9555FF&lAuctionHouse &eHelp"),
+    HELP_COMMAND_FORMAT("help-command.format", "&b/{0} &8&l| &f{1}"),
+
     NOTIFICATION_NEW_SELL("notifications.new-sell", List.of(
             "&f----------------------------------------------",
             "&eYou have sold an item on the Auction House!",

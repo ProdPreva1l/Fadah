@@ -1,6 +1,5 @@
 package info.preva1l.fadah.guis;
 
-
 import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.guis.FastInv;

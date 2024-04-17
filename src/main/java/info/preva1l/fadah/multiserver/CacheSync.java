@@ -110,12 +110,10 @@ public class CacheSync extends JedisPubSub {
             @Override
             public void handleMessage(JSONObject obj) {
                 UUID listingUUID = UUID.fromString(obj.get("listing_uuid").toString());
-                Fadah.getConsole().info("Adding Listing " + listingUUID);
                 long delay = Config.STRICT_CHECKS.toBoolean() ? 40L : 20L;
 
                 TaskManager.Sync.runLater(Fadah.getINSTANCE(), ()->{
-                    Listing listing = Fadah.getINSTANCE().getDatabase().getListing(listingUUID);
-                    ListingCache.addListing(listing);
+                    Fadah.getINSTANCE().getDatabase().getListing(listingUUID).thenAccept(ListingCache::addListing);
                 }, delay);
             }
         },
@@ -123,7 +121,6 @@ public class CacheSync extends JedisPubSub {
             @Override
             public void handleMessage(JSONObject obj) {
                 UUID listingUUID = UUID.fromString(obj.get("listing_uuid").toString());
-                Fadah.getConsole().info("Removing Listing " + listingUUID);
 
                 Listing listing = ListingCache.getListing(listingUUID);
                 Fadah.getConsole().info(listing.id().toString());

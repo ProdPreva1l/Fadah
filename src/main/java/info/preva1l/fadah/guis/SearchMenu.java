@@ -1,5 +1,9 @@
 package info.preva1l.fadah.guis;
 
+import info.preva1l.fadah.records.Category;
+import info.preva1l.fadah.records.Listing;
+import info.preva1l.fadah.utils.filters.SortingDirection;
+import info.preva1l.fadah.utils.filters.SortingMethod;
 import info.preva1l.fadah.utils.guis.InventoryEventHandler;
 import info.preva1l.fadah.utils.guis.ItemBuilder;
 import info.preva1l.fadah.utils.guis.SearchInv;
@@ -8,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.AnvilInventory;
 import org.bukkit.inventory.InventoryView;
+import org.jetbrains.annotations.Nullable;
 
 public class SearchMenu implements Listener {
 

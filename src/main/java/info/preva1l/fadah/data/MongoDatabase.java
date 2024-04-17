@@ -33,23 +33,21 @@ public class MongoDatabase implements Database {
     private CacheHandler cacheHandler;
     @Getter private CollectionHelper collectionHelper;
     @Override
-    public CompletableFuture<Void> connect() {
-        return CompletableFuture.supplyAsync(()->{
-            try {
-                @NotNull String connectionURI = Config.DATABASE_URI.toString();
-                @NotNull String database = Config.DATABASE.toString();
-                Fadah.getConsole().info("Connecting to: " + connectionURI);
-                connectionHandler = new MongoConnectionHandler(connectionURI, database);
-                cacheHandler = new CacheHandler(connectionHandler);
-                collectionHelper = new CollectionHelper(connectionHandler.getDatabase(), cacheHandler);
-                setConnected(true);
-            } catch (Exception e) {
-                destroy();
-                throw new IllegalStateException("Failed to establish a connection to the MongoDB database. " +
-                        "Please check the supplied database credentials in the config file", e);
-            }
-            return null;
-        });
+    public void connect() {
+        try {
+            @NotNull String connectionURI = Config.DATABASE_URI.toString();
+            @NotNull String database = Config.DATABASE.toString();
+            Fadah.getConsole().info("Connecting to: " + connectionURI);
+            connectionHandler = new MongoConnectionHandler(connectionURI, database);
+            cacheHandler = new CacheHandler(connectionHandler);
+            collectionHelper = new CollectionHelper(connectionHandler.getDatabase(), cacheHandler);
+            setConnected(true);
+        } catch (Exception e) {
+            destroy();
+            throw new IllegalStateException("Failed to establish a connection to the MongoDB database. " +
+                    "Please check the supplied database credentials in the config file", e);
+        }
+        this.loadListings();
     }
 
     @Override
@@ -87,20 +85,22 @@ public class MongoDatabase implements Database {
     }
 
     @Override
-    public List<CollectableItem> getCollectionBox(UUID playerUUID) {
+    public CompletableFuture<List<CollectableItem>> getCollectionBox(UUID playerUUID) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return Collections.emptyList();
+            return CompletableFuture.supplyAsync(Collections::emptyList);
         }
-        List<CollectableItem> list = new ArrayList<>();
-        MongoCollection<Document> collection = collectionHelper.getCollection("collection_box");
-        final FindIterable<Document> documents = collection.find().filter(Filters.eq("playerUUID", playerUUID));
-        for (Document document : documents) {
-            long dateAdded = document.getLong("dateAdded");
-            ItemStack itemStack = ItemSerializer.deserialize(document.getString("itemStack"))[0];
-            list.add(new CollectableItem(itemStack, dateAdded));
-        }
-        return list;
+        return CompletableFuture.supplyAsync(()-> {
+            List<CollectableItem> list = new ArrayList<>();
+            MongoCollection<Document> collection = collectionHelper.getCollection("collection_box");
+            final FindIterable<Document> documents = collection.find().filter(Filters.eq("playerUUID", playerUUID));
+            for (Document document : documents) {
+                long dateAdded = document.getLong("dateAdded");
+                ItemStack itemStack = ItemSerializer.deserialize(document.getString("itemStack"))[0];
+                list.add(new CollectableItem(itemStack, dateAdded));
+            }
+            return list;
+        });
     }
 
     @Override
@@ -110,7 +110,7 @@ public class MongoDatabase implements Database {
             return;
         }
         CollectionBoxCache.purgeCollectionbox(playerUUID);
-        CollectionBoxCache.load(playerUUID, getCollectionBox(playerUUID));
+        getCollectionBox(playerUUID).thenAccept(box -> CollectionBoxCache.load(playerUUID, box));
     }
 
     @Override
@@ -139,20 +139,22 @@ public class MongoDatabase implements Database {
     }
 
     @Override
-    public List<CollectableItem> getExpiredItems(UUID playerUUID) {
+    public CompletableFuture<List<CollectableItem>> getExpiredItems(UUID playerUUID) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return Collections.emptyList();
+            return CompletableFuture.supplyAsync(Collections::emptyList);
         }
-        List<CollectableItem> list = new ArrayList<>();
-        MongoCollection<Document> collection = collectionHelper.getCollection("expired_items");
-        final FindIterable<Document> documents = collection.find().filter(Filters.eq("playerUUID", playerUUID));
-        for (Document document : documents) {
-            long dateAdded = document.getLong("dateAdded");
-            ItemStack itemStack = ItemSerializer.deserialize(document.getString("itemStack"))[0];
-            list.add(new CollectableItem(itemStack, dateAdded));
-        }
-        return list;
+        return CompletableFuture.supplyAsync(()-> {
+            List<CollectableItem> list = new ArrayList<>();
+            MongoCollection<Document> collection = collectionHelper.getCollection("expired_items");
+            final FindIterable<Document> documents = collection.find().filter(Filters.eq("playerUUID", playerUUID));
+            for (Document document : documents) {
+                long dateAdded = document.getLong("dateAdded");
+                ItemStack itemStack = ItemSerializer.deserialize(document.getString("itemStack"))[0];
+                list.add(new CollectableItem(itemStack, dateAdded));
+            }
+            return list;
+        });
     }
 
     @Override
@@ -162,7 +164,7 @@ public class MongoDatabase implements Database {
             return;
         }
         ExpiredListingsCache.purgeExpiredListings(playerUUID);
-        ExpiredListingsCache.load(playerUUID, getExpiredItems(playerUUID));
+        getExpiredItems(playerUUID).thenAccept(items-> ExpiredListingsCache.load(playerUUID, items));
     }
 
     @Override
@@ -201,42 +203,48 @@ public class MongoDatabase implements Database {
             return;
         }
         ListingCache.purgeListings();
-        for (UUID id : getListingIDs()) {
-            ListingCache.addListing(getListing(id));
-        }
+        getListingIDs().thenAccept(uuids -> {
+            for (UUID id : uuids) {
+                getListing(id).thenAccept(ListingCache::addListing);
+            }
+        });
     }
 
     @Override
-    public List<UUID> getListingIDs() {
+    public CompletableFuture<List<UUID>> getListingIDs() {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return Collections.emptyList();
+            return CompletableFuture.supplyAsync(Collections::emptyList);
         }
-        List<UUID> list = new ArrayList<>();
-        MongoCollection<Document> collection = collectionHelper.getCollection("listings");
-        for (Document doc : collection.find()) {
-            list.add(doc.get("uuid", UUID.class));
-        }
-        return list;
+        return CompletableFuture.supplyAsync(()->{
+            List<UUID> list = new ArrayList<>();
+            MongoCollection<Document> collection = collectionHelper.getCollection("listings");
+            for (Document doc : collection.find()) {
+                list.add(doc.get("uuid", UUID.class));
+            }
+            return list;
+        });
     }
 
 
     @Override
-    public Listing getListing(UUID id) {
+    public CompletableFuture<Listing> getListing(UUID id) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return null;
+            return CompletableFuture.supplyAsync(() -> null);
         }
-        MongoCollection<Document> collection = collectionHelper.getCollection("listings");
-        final Document listingDocument = collection.find().filter(Filters.eq("uuid", id)).first();
-        if (listingDocument == null) return null;
-        final UUID owner = listingDocument.get("ownerUUID", UUID.class);
-        final String ownerName = listingDocument.getString("ownerName");
-        final String category = listingDocument.getString("category");
-        final long creationDate = listingDocument.getLong("creationDate");
-        final long deletionDate = listingDocument.getLong("deletionDate");
-        final double price = listingDocument.getDouble("price");
-        final ItemStack itemStack = ItemSerializer.deserialize(listingDocument.getString("itemStack"))[0];
-        return new Listing(id, owner, ownerName, itemStack, category, price, creationDate, deletionDate);
+        return CompletableFuture.supplyAsync(() -> {
+            MongoCollection<Document> collection = collectionHelper.getCollection("listings");
+            final Document listingDocument = collection.find().filter(Filters.eq("uuid", id)).first();
+            if (listingDocument == null) return null;
+            final UUID owner = listingDocument.get("ownerUUID", UUID.class);
+            final String ownerName = listingDocument.getString("ownerName");
+            final String category = listingDocument.getString("category");
+            final long creationDate = listingDocument.getLong("creationDate");
+            final long deletionDate = listingDocument.getLong("deletionDate");
+            final double price = listingDocument.getDouble("price");
+            final ItemStack itemStack = ItemSerializer.deserialize(listingDocument.getString("itemStack"))[0];
+            return new Listing(id, owner, ownerName, itemStack, category, price, creationDate, deletionDate);
+        });
     }
 }
