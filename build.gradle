@@ -66,13 +66,6 @@ tasks.withType(JavaCompile).configureEach {
     }
 }
 
-processResources {
-    filesMatching(['**/*.json', '**/*.yml']) {
-        filter ReplaceTokens as Class, beginToken: '${', endToken: '}',
-                tokens: rootProject.ext.properties
-    }
-}
-
 shadowJar {
     relocate 'com.zaxxer', 'info.preva1l.libs'
 
@@ -96,6 +89,13 @@ def versionMetadata() {
 
     // Otherwise, get the last commit hash and if it's a clean head
     return '-' + grgit.head().abbreviatedId + (grgit.status().clean ? '' : '-indev')
+}
+
+processResources {
+    filesMatching(['**/*.json', '**/*.yml']) {
+        filter ReplaceTokens as Class, beginToken: '${', endToken: '}',
+                tokens: rootProject.ext.properties
+    }
 }
 
 test {
