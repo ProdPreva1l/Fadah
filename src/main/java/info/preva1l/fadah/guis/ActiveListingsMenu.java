@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class YourListingsMenu extends FastInv {
+public class ActiveListingsMenu extends FastInv {
     private static final int maxItemsPerPage = 21;
     private final Player player;
     private final int page;
@@ -31,7 +31,7 @@ public class YourListingsMenu extends FastInv {
     private final Map<Integer, Integer> listingSlot = new HashMap<>();
     private int index = 0;
 
-    public YourListingsMenu(Player player, int page) {
+    public ActiveListingsMenu(Player player, int page) {
         super(45, Menus.YOUR_LISTINGS_TITLE.toFormattedString());
         this.player = player;
         this.page = page;
@@ -97,7 +97,7 @@ public class YourListingsMenu extends FastInv {
         CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, player.getUniqueId());
 
         Fadah.getINSTANCE().getDatabase().addToExpiredItems(listing.owner(), collectableItem);
-        new YourListingsMenu(player, page).open(player);
+        new ActiveListingsMenu(player, page).open(player);
         TransactionLogger.listingRemoval(listing);
     }
 

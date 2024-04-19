@@ -189,16 +189,17 @@ public class MainMenu extends FastInv {
             if (category == cat) {
                 itemBuilder.enchant(Enchantment.DURABILITY);
             }
-            if (!selectorMappings.containsKey(i)) continue;
-            int slot = selectorMappings.get(i);
-            removeItem(slot);
-            setItem(slot, itemBuilder.build(), e -> {
-                if (category != cat) {
-                    new MainMenu(cat, player, 0, search, sortingMethod, sortingDirection).open(player);
-                    return;
-                }
-                new MainMenu(null, player, 0, search, sortingMethod, sortingDirection).open(player);
-            });
+            if (selectorMappings.containsKey(i)) {
+                int slot = selectorMappings.get(i);
+                removeItem(slot);
+                setItem(slot, itemBuilder.build(), e -> {
+                    if (category != cat) {
+                        new MainMenu(cat, player, 0, search, sortingMethod, sortingDirection).open(player);
+                        return;
+                    }
+                    new MainMenu(null, player, 0, search, sortingMethod, sortingDirection).open(player);
+                });
+            }
             i++;
         }
     }

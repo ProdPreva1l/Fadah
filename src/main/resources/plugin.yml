@@ -17,3 +17,15 @@ libraries:
 permissions:
   fadah.max-listings.<amount>:
     description: The amount of items a player can list at any one time.
+  fadah.use:
+    default: true
+  fadah.collection-box:
+    default: true
+  fadah.expired-items:
+    default: true
+  fadah.help:
+    default: true
+  fadah.profile:
+    default: true
+  fadah.active-listings:
+    default: true

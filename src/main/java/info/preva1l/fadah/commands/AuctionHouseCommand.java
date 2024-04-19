@@ -28,6 +28,7 @@ public class AuctionHouseCommand extends Command {
         subCommands.add(new ToggleSubCommand(plugin));
         subCommands.add(new ExpiredItemsSubCommand(plugin));
         subCommands.add(new HelpSubCommand(plugin));
+        subCommands.add(new ActiveListingsSubCommand(plugin));
     }
 
     @CommandArgs(name = "auctionhouse", aliases = {"ah", "auctions", "auction"}, permission = "fadah.use")

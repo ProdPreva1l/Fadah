@@ -92,9 +92,11 @@ def versionMetadata() {
 }
 
 processResources {
-    filesMatching(['**/*.json', '**/*.yml']) {
-        filter ReplaceTokens as Class, beginToken: '${', endToken: '}',
-                tokens: rootProject.ext.properties
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
     }
 }
 

@@ -1,7 +1,6 @@
 package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.config.Menus;
-import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.guis.FastInv;
 import info.preva1l.fadah.utils.guis.GuiButtonType;
 import info.preva1l.fadah.utils.guis.GuiHelper;
@@ -20,7 +19,7 @@ public class ProfileMenu extends FastInv {
                 .addLore(Menus.MAIN_PROFILE_DESCRIPTION.toLore()).build());
         setItem(22, new ItemBuilder(Menus.PROFILE_YOUR_LISTINGS_ICON.toMaterial())
                 .name(Menus.PROFILE_YOUR_LISTINGS_NAME.toFormattedString())
-                .addLore(Menus.PROFILE_YOUR_LISTINGS_LORE.toLore()).build(), e -> new YourListingsMenu(player, 0).open(player));
+                .addLore(Menus.PROFILE_YOUR_LISTINGS_LORE.toLore()).build(), e -> new ActiveListingsMenu(player, 0).open(player));
         setItem(23, new ItemBuilder(Menus.PROFILE_COLLECTION_BOX_ICON.toMaterial())
                 .name(Menus.PROFILE_COLLECTION_BOX_NAME.toFormattedString())
                 .addLore(Menus.PROFILE_COLLECTION_BOX_LORE.toLore()).build(), e -> new CollectionBoxMenu(player, 0).open(player));

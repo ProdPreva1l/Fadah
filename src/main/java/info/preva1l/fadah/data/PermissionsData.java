@@ -23,16 +23,18 @@ public class PermissionsData {
 
     public int valueFromPermission(PermissionType type, Player player) {
         int currentMax = 0;
+        boolean matched = false;
         for (PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
             if (!effectivePermission.getPermission().startsWith(type.permissionString)) continue;
             String numberStr = effectivePermission.getPermission().substring(type.permissionString.length());
             try {
-                if (currentMax < Integer.parseInt(numberStr)) currentMax = Integer.parseInt(numberStr);
-            } catch (NumberFormatException ignored) {
-                currentMax = Config.DEFAULT_MAX_LISTINGS.toInteger();
-            }
+                if (currentMax < Integer.parseInt(numberStr)) {
+                    currentMax = Integer.parseInt(numberStr);
+                    matched = true;
+                }
+            } catch (NumberFormatException ignored) {}
         }
-        return currentMax;
+        return matched ? currentMax : Config.DEFAULT_MAX_LISTINGS.toInteger();
     }
 
     @AllArgsConstructor
