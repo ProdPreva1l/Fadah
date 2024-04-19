@@ -21,6 +21,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
@@ -95,7 +96,7 @@ public class NewListingMenu extends FastInv {
 
     //TODO: Double check this works
     private void startListing(Instant deletionDate, double price) {
-        boolean isCustomItem = itemToSell.hasItemMeta() && itemToSell.getItemMeta().getPersistentDataContainer().has(Fadah.getCustomItemKey());
+        boolean isCustomItem = itemToSell.hasItemMeta() && itemToSell.getItemMeta().getPersistentDataContainer().has(Fadah.getCustomItemKey(), PersistentDataType.STRING);
         String category = CategoryCache.getCategoryForItem(itemToSell, isCustomItem);
 
         Listing listing = new Listing(UUID.randomUUID(), player.getUniqueId(), player.getName(),

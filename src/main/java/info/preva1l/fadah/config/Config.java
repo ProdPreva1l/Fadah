@@ -7,7 +7,6 @@ import info.preva1l.fadah.utils.BasicConfig;
 import info.preva1l.fadah.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.kyori.adventure.text.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,22 +83,6 @@ public enum Config {
             return StringUtils.formatPlaceholders(StringUtils.colorize(defaultValue.toString()), replacements);
         }
         return StringUtils.colorize(StringUtils.formatPlaceholders(str, replacements));
-    }
-
-    public Component toFormattedComponent() {
-        String str = Fadah.getINSTANCE().getConfigFile().getString(path);
-        if (str.equals(path)) {
-            return StringUtils.message(defaultValue.toString());
-        }
-        return StringUtils.message(str);
-    }
-
-    public Component toFormattedComponent(Object... replacements) {
-        String str = Fadah.getINSTANCE().getConfigFile().getString(path);
-        if (str.equals(path)) {
-            return StringUtils.message(defaultValue.toString(), replacements);
-        }
-        return StringUtils.message(str, replacements);
     }
 
     public List<String> toStringList() {

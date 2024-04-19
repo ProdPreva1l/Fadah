@@ -1,7 +1,7 @@
 name: Fadah
 version: '${version}'
 main: info.preva1l.fadah.Fadah
-api-version: '1.19'
+api-version: '1.16'
 depend: [Vault]
 authors: [Preva1l]
 description: Fadah (Finally a Decent Auction House) is the fast, modern and advanced auction house plugin that you have been looking for!

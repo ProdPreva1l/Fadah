@@ -16,7 +16,7 @@ public class SearchMenu implements Listener {
         if (view == null) return;
         InventoryEventHandler.inventoriesToHandle.add(new SearchInv(view, callback));
         ((AnvilInventory) view.getTopInventory()).setMaximumRepairCost(0);
-        ((AnvilInventory) view.getTopInventory()).setRepairCostAmount(0);
+        ((AnvilInventory) view.getTopInventory()).setRepairCost(0);
         ((AnvilInventory) view.getTopInventory()).setFirstItem(new ItemBuilder(Material.PAPER).name("Search Query...").build());
     }
 

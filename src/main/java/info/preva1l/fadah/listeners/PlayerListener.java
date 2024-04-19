@@ -24,7 +24,7 @@ public class PlayerListener implements Listener {
     public void joinListener(AsyncPlayerPreLoginEvent e) {
         if (!Fadah.getINSTANCE().getDatabase().isConnected()) {
             e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-            e.kickMessage(Lang.PREFIX.toFormattedComponent().append(Lang.DATABASE_CONNECTING.toFormattedComponent()));
+            e.setKickMessage(Lang.PREFIX.toFormattedString() + Lang.DATABASE_CONNECTING.toFormattedString());
             return;
         }
 

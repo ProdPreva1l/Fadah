@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'info.preva1l'
-version = "1.3${versionMetadata()}"
+version = "1.4${versionMetadata()}"
 
 ext {
     set 'version', version.toString()
@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'io.papermc.paper:paper-api:1.19-R0.1-SNAPSHOT'
+    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
 
     compileOnly 'redis.clients:jedis:5.1.0'
     compileOnly 'org.apache.commons:commons-pool2:2.12.0'
@@ -36,8 +36,11 @@ dependencies {
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 
+    compileOnly 'org.jetbrains:annotations:24.0.0'
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
+    annotationProcessor 'org.jetbrains:annotations:24.0.0'
+
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'
