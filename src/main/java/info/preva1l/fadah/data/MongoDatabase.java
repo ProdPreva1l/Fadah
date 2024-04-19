@@ -108,16 +108,6 @@ public class MongoDatabase implements Database {
     }
 
     @Override
-    public void loadCollectionBox(UUID playerUUID) {
-        if (!isConnected()) {
-            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
-        }
-        CollectionBoxCache.purgeCollectionbox(playerUUID);
-        getCollectionBox(playerUUID).thenAccept(box -> CollectionBoxCache.load(playerUUID, box));
-    }
-
-    @Override
     public void addToExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
@@ -159,16 +149,6 @@ public class MongoDatabase implements Database {
             }
             return list;
         });
-    }
-
-    @Override
-    public void loadExpiredItems(UUID playerUUID) {
-        if (!isConnected()) {
-            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
-        }
-        ExpiredListingsCache.purgeExpiredListings(playerUUID);
-        getExpiredItems(playerUUID).thenAccept(items -> ExpiredListingsCache.load(playerUUID, items));
     }
 
     @Override

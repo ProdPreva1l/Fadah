@@ -156,8 +156,11 @@ public class MainMenu extends FastInv {
                 CacheSync.send(listing.id(), true);
                 Fadah.getINSTANCE().getDatabase().removeListing(listing.id());
 
-                ExpiredListingsCache.addItem(player.getUniqueId(), new CollectableItem(listing.itemStack(), Instant.now().toEpochMilli()));
+                CollectableItem collectableItem = new CollectableItem(listing.itemStack(), Instant.now().toEpochMilli());
+                ExpiredListingsCache.addItem(player.getUniqueId(), collectableItem);
                 CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, player.getUniqueId());
+
+                Fadah.getINSTANCE().getDatabase().addToExpiredItems(listing.owner(), collectableItem);
                 new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player);
                 TransactionLogger.listingRemoval(listing);
                 return true;
@@ -249,12 +252,13 @@ public class MainMenu extends FastInv {
                 new SearchMenu(player, search -> new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player)));
 
         // Filter Direction Toggle
-        String l1 = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.ASCENDING ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toString() : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toString(),
-                (sortingMethod == SortingMethod.AGE ? SortingDirection.ASCENDING.getAgeName() : SortingDirection.ASCENDING.getFriendlyName()));
-        String l2 = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.DESCENDING ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toString() : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toString(),
-                (sortingMethod == SortingMethod.AGE ? SortingDirection.DESCENDING.getAgeName() : SortingDirection.DESCENDING.getFriendlyName()));
+        String asc = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.ASCENDING
+                ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toFormattedString() : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toFormattedString(), sortingMethod.getLang(SortingDirection.ASCENDING));
+        String desc = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.DESCENDING
+                ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toFormattedString() : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toFormattedString(), sortingMethod.getLang(SortingDirection.DESCENDING));
 
-        setItem(51, new ItemBuilder(Menus.MAIN_FILTER_DIRECTION_ICON.toMaterial()).name(Menus.MAIN_FILTER_DIRECTION_NAME.toFormattedString()).lore(Menus.MAIN_FILTER_DIRECTION_LORE.toLore(l1, l2)).build(), e ->
+        setItem(51, new ItemBuilder(Menus.MAIN_FILTER_DIRECTION_ICON.toMaterial())
+                .name(Menus.MAIN_FILTER_DIRECTION_NAME.toFormattedString()).lore(Menus.MAIN_FILTER_DIRECTION_LORE.toLore(asc, desc)).build(), e ->
                 new MainMenu(category, player, 0, search, sortingMethod,
                         (sortingDirection == SortingDirection.ASCENDING ? SortingDirection.DESCENDING : SortingDirection.ASCENDING)).open(player));
     }

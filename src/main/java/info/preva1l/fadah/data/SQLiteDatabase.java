@@ -110,8 +110,8 @@ public class SQLiteDatabase implements Database {
             throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
                     "and that your connecting user account has privileges to create tables.", e);
         }
-        this.loadListings();
         setConnected(true);
+        this.loadListings();
     }
 
     @Override
@@ -273,7 +273,7 @@ public class SQLiteDatabase implements Database {
                     return retrievedData;
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().severe("Failed to get items from expired items!");
+                Fadah.getConsole().log(Level.SEVERE, "Failed to get items from expired items!", e);
             }
             return retrievedData;
         });

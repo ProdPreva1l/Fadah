@@ -22,6 +22,11 @@ public enum SortingMethod {
             new AlphabeticalComparator(),
             new AlphabeticalComparator().reversed()
     ),
+    PRICE(
+            Lang.SORT_PRICE_NAME.toFormattedString(),
+            Comparator.comparingDouble(Listing::price).reversed(),
+            Comparator.comparingDouble(Listing::price)
+    )
     ;
 
     private final String friendlyName;
@@ -32,6 +37,14 @@ public enum SortingMethod {
         return switch (direction) {
             case ASCENDING -> normalSorter;
             case DESCENDING -> reversedSorter;
+        };
+    }
+
+    public String getLang(@NotNull SortingDirection direction) {
+        return switch (this) {
+            case AGE -> direction.getAgeName();
+            case ALPHABETICAL -> direction.getFriendlyName();
+            case PRICE -> direction.getPriceName();
         };
     }
 

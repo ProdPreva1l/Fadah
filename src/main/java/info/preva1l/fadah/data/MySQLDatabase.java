@@ -259,16 +259,6 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
-    public void loadExpiredItems(UUID playerUUID) {
-        if (!isConnected()) {
-            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
-        }
-        ExpiredListingsCache.purgeExpiredListings(playerUUID);
-        getExpiredItems(playerUUID).thenAccept(items -> ExpiredListingsCache.load(playerUUID, items));
-    }
-
-    @Override
     public void addListing(Listing listing) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");

@@ -92,8 +92,11 @@ public class YourListingsMenu extends FastInv {
         CacheSync.send(listing.id(), true);
         Fadah.getINSTANCE().getDatabase().removeListing(listing.id());
 
-        ExpiredListingsCache.addItem(player.getUniqueId(), new CollectableItem(listing.itemStack(), Instant.now().toEpochMilli()));
+        CollectableItem collectableItem = new CollectableItem(listing.itemStack(), Instant.now().toEpochMilli());
+        ExpiredListingsCache.addItem(player.getUniqueId(), collectableItem);
         CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, player.getUniqueId());
+
+        Fadah.getINSTANCE().getDatabase().addToExpiredItems(listing.owner(), collectableItem);
         new YourListingsMenu(player, page).open(player);
         TransactionLogger.listingRemoval(listing);
     }

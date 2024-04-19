@@ -26,13 +26,16 @@ sort:
   types:
     alphabetical: "Sort Alphabetically By Name"
     age: "Sort By Listing Age"
+    price: "Sort By Listing Price"
   direction:
     ascending:
       normal: "Ascending (A-Z)"
       age: "Newest First"
+      price: "Most Expensive First"
     descending:
       normal: "Descending (Z-A)"
       age: "Oldest First"
+      price: "Cheapest First"
 
 help-command:
   header: "&#9555FF&lAuctionHouse &eHelp"

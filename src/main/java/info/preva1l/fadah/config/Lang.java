@@ -62,10 +62,13 @@ public enum Lang {
 
     SORT_ASCENDING("sort.ascending.normal", "Ascending (A-Z)"),
     SORT_ASCENDING_AGE("sort.ascending.age", "Newest First"),
+    SORT_ASCENDING_PRICE("sort.ascending.price", "Most Expensive First"),
     SORT_DESCENDING("sort.descending.normal", "Descending (Z-A)"),
     SORT_DESCENDING_AGE("sort.descending.age", "Oldest First"),
+    SORT_DESCENDING_PRICE("sort.descending.price", "Cheapest First"),
     SORT_AGE_NAME("sort.type.age", "Sort By Listing Age"),
     SORT_ALPHABETICAL_NAME("sort.type.alphabetical", "Sort Alphabetically By Name"),
+    SORT_PRICE_NAME("sort.type.price", "Sort By Listing Price")
     ;
 
     private final String path;

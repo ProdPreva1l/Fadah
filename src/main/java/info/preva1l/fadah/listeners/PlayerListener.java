@@ -28,8 +28,7 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        Fadah.getINSTANCE().getDatabase().loadCollectionBox(e.getUniqueId());
-        Fadah.getINSTANCE().getDatabase().loadExpiredItems(e.getUniqueId());
+        Fadah.getINSTANCE().getDatabase().loadCollectionBox(e.getUniqueId()).thenAccept((v)->Fadah.getINSTANCE().getDatabase().loadExpiredItems(e.getUniqueId()));
     }
 
     @EventHandler
