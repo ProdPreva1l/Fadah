@@ -4,7 +4,6 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.commands.subcommands.*;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.guis.MainMenu;
-import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.commands.Command;
 import info.preva1l.fadah.utils.commands.CommandArgs;
 import info.preva1l.fadah.utils.commands.CommandArguments;
@@ -16,7 +15,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AuctionHouseCommand extends Command {
-    @Getter private static final List<SubCommand> subCommands = new ArrayList<>();
+    @Getter
+    private static final List<SubCommand> subCommands = new ArrayList<>();
+
     public AuctionHouseCommand(Fadah plugin) {
         super(plugin);
         subCommands.add(new DevSubCommand(plugin));

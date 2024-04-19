@@ -43,7 +43,7 @@ public class SellSubCommand extends SubCommand {
                 return;
             }
             int currentListings = PermissionsData.getCurrentListings(command.getPlayer());
-            int maxListings = PermissionsData.getMaxListings(command.getPlayer());
+            int maxListings = PermissionsData.valueFromPermission(PermissionsData.PermissionType.MAX_LISTINGS, command.getPlayer());
             if (currentListings >= maxListings) {
                 command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MAX_LISTINGS.toFormattedString(currentListings, maxListings)));
                 return;

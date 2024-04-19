@@ -28,10 +28,14 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public class MongoDatabase implements Database {
-    @Getter @Setter private boolean connected = false;
+    @Getter
+    @Setter
+    private boolean connected = false;
     private MongoConnectionHandler connectionHandler;
     private CacheHandler cacheHandler;
-    @Getter private CollectionHelper collectionHelper;
+    @Getter
+    private CollectionHelper collectionHelper;
+
     @Override
     public void connect() {
         try {
@@ -68,7 +72,7 @@ public class MongoDatabase implements Database {
         Document document = new Document("playerUUID", playerUUID)
                 .append("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))
                 .append("dateAdded", collectableItem.dateAdded());
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()->collectionHelper.insertDocument("collection_box", document));
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.insertDocument("collection_box", document));
     }
 
     @Override
@@ -81,7 +85,7 @@ public class MongoDatabase implements Database {
         final Document listingDocument = collection.find().filter(Filters.eq("playerUUID", playerUUID))
                 .filter(Filters.eq("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))).first();
         if (listingDocument == null) return;
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()->collectionHelper.deleteDocument("collection_box", listingDocument));
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.deleteDocument("collection_box", listingDocument));
     }
 
     @Override
@@ -90,7 +94,7 @@ public class MongoDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(Collections::emptyList);
         }
-        return CompletableFuture.supplyAsync(()-> {
+        return CompletableFuture.supplyAsync(() -> {
             List<CollectableItem> list = new ArrayList<>();
             MongoCollection<Document> collection = collectionHelper.getCollection("collection_box");
             final FindIterable<Document> documents = collection.find().filter(Filters.eq("playerUUID", playerUUID));
@@ -122,7 +126,7 @@ public class MongoDatabase implements Database {
         Document document = new Document("playerUUID", playerUUID)
                 .append("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))
                 .append("dateAdded", collectableItem.dateAdded());
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()->collectionHelper.insertDocument("expired_items", document));
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.insertDocument("expired_items", document));
     }
 
     @Override
@@ -135,7 +139,7 @@ public class MongoDatabase implements Database {
         final Document listingDocument = collection.find().filter(Filters.eq("playerUUID", playerUUID))
                 .filter(Filters.eq("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))).first();
         if (listingDocument == null) return;
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()->collectionHelper.deleteDocument("expired_items", listingDocument));
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.deleteDocument("expired_items", listingDocument));
     }
 
     @Override
@@ -144,7 +148,7 @@ public class MongoDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(Collections::emptyList);
         }
-        return CompletableFuture.supplyAsync(()-> {
+        return CompletableFuture.supplyAsync(() -> {
             List<CollectableItem> list = new ArrayList<>();
             MongoCollection<Document> collection = collectionHelper.getCollection("expired_items");
             final FindIterable<Document> documents = collection.find().filter(Filters.eq("playerUUID", playerUUID));
@@ -164,7 +168,7 @@ public class MongoDatabase implements Database {
             return;
         }
         ExpiredListingsCache.purgeExpiredListings(playerUUID);
-        getExpiredItems(playerUUID).thenAccept(items-> ExpiredListingsCache.load(playerUUID, items));
+        getExpiredItems(playerUUID).thenAccept(items -> ExpiredListingsCache.load(playerUUID, items));
     }
 
     @Override
@@ -181,7 +185,7 @@ public class MongoDatabase implements Database {
                 .append("deletionDate", listing.deletionDate())
                 .append("price", listing.price())
                 .append("itemStack", ItemSerializer.serialize(listing.itemStack()));
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()->collectionHelper.insertDocument("listings", document));
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.insertDocument("listings", document));
     }
 
     @Override
@@ -193,7 +197,7 @@ public class MongoDatabase implements Database {
         MongoCollection<Document> collection = collectionHelper.getCollection("listings");
         final Document listingDocument = collection.find().filter(Filters.eq("uuid", id)).first();
         if (listingDocument == null) return;
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()->collectionHelper.deleteDocument("listings", listingDocument));
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.deleteDocument("listings", listingDocument));
     }
 
     @Override
@@ -216,7 +220,7 @@ public class MongoDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(Collections::emptyList);
         }
-        return CompletableFuture.supplyAsync(()->{
+        return CompletableFuture.supplyAsync(() -> {
             List<UUID> list = new ArrayList<>();
             MongoCollection<Document> collection = collectionHelper.getCollection("listings");
             for (Document doc : collection.find()) {

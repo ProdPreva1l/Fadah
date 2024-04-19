@@ -6,11 +6,12 @@ import info.preva1l.fadah.records.Listing;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.List;
-
 
 @UtilityClass
 public class PermissionsData {
@@ -20,36 +21,23 @@ public class PermissionsData {
         return listings.size();
     }
 
-    public int getMaxListings(Player player) {
-        String perm = getPermission(PermissionType.MAX_LISTINGS, player);
-        if (perm == null) {
-            return Config.DEFAULT_MAX_LISTINGS.toInteger();
-        }
-        Config.DEFAULT_MAX_LISTINGS.toInteger();
-        int num;
-        try {
-            num = Integer.parseInt(perm);
-        } catch (NumberFormatException e) {
-            num = Config.DEFAULT_MAX_LISTINGS.toInteger();
-        }
-
-        return num;
-    }
-
-
-    private String getPermission(PermissionType type, Player player) {
+    public int valueFromPermission(PermissionType type, Player player) {
+        int currentMax = 0;
         for (PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
-            if (effectivePermission.getPermission().startsWith(type.permissionString)) {
-                return effectivePermission.getPermission();
+            if (!effectivePermission.getPermission().startsWith(type.permissionString)) continue;
+            String numberStr = effectivePermission.getPermission().substring(type.permissionString.length());
+            try {
+                if (currentMax < Integer.parseInt(numberStr)) currentMax = Integer.parseInt(numberStr);
+            } catch (NumberFormatException ignored) {
+                currentMax = Config.DEFAULT_MAX_LISTINGS.toInteger();
             }
         }
-        return null;
+        return currentMax;
     }
 
-    @Getter
     @AllArgsConstructor
-    private enum PermissionType {
-        MAX_LISTINGS("fadah.maxlistings"),
+    public enum PermissionType {
+        MAX_LISTINGS("fadah.max-listings."),
         ;
         private final String permissionString;
     }

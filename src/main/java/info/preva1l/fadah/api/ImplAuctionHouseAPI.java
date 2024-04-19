@@ -16,13 +16,13 @@ import java.util.UUID;
 
 public class ImplAuctionHouseAPI implements AuctionHouseAPI {
     @Override
-    public void setCustomItemNameSpacedKey(NamespacedKey key) {
-        Fadah.setCustomItemKey(key);
+    public NamespacedKey getCustomItemNameSpacedKey() {
+        return Fadah.getCustomItemKey();
     }
 
     @Override
-    public NamespacedKey getCustomItemNameSpacedKey() {
-        return Fadah.getCustomItemKey();
+    public void setCustomItemNameSpacedKey(NamespacedKey key) {
+        Fadah.setCustomItemKey(key);
     }
 
     @Override

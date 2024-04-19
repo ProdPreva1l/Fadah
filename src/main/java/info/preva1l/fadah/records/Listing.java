@@ -19,6 +19,7 @@ public record Listing(
     public boolean isOwner(@NotNull Player player) {
         return player.getUniqueId().equals(this.owner);
     }
+
     public boolean isOwner(@NotNull UUID uuid) {
         return this.owner.equals(uuid);
     }

@@ -25,7 +25,7 @@ public class ShulkerBoxPreviewMenu extends FastInv {
         super(45);
         if (listing.itemStack().getItemMeta() instanceof BlockStateMeta im) {
             if (im.getBlockState() instanceof ShulkerBox shulker) {
-                for (ItemStack itemStack : shulker.getInventory().getContents()) {
+                for (ItemStack itemStack : shulker.getInventory().getStorageContents()) {
                     if (itemStack == null) {
                         itemStack = new ItemStack(Material.AIR);
                     }
@@ -34,8 +34,7 @@ public class ShulkerBoxPreviewMenu extends FastInv {
             }
         }
 
-        setItem(40, GuiHelper.constructButton(GuiButtonType.CLOSE), e->new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player));
-        setItems(new int[]{36,37,38,39,41,42,43,44}, GuiHelper.constructButton(GuiButtonType.GENERIC, Material.BLACK_STAINED_GLASS_PANE,
-                StringUtils.colorize("&r "), Menus.BORDER_LORE.toLore()));
+        setItem(40, GuiHelper.constructButton(GuiButtonType.CLOSE), e -> new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player));
+        setItems(new int[]{36, 37, 38, 39, 41, 42, 43, 44}, GuiHelper.constructButton(GuiButtonType.BORDER));
     }
 }

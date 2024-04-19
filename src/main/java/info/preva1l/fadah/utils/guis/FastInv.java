@@ -5,16 +5,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -57,24 +53,6 @@ public class FastInv implements InventoryHolder {
         this(owner -> Bukkit.createInventory(owner, size, title));
     }
 
-    /**
-     * Create a new FastInv with a custom type.getCommand("skins")
-     *
-     * @param type The type of the inventory.
-     */
-    public FastInv(InventoryType type) {
-        this(owner -> Bukkit.createInventory(owner, type));
-    }
-
-    /**
-     * Create a new FastInv with a custom type and title.
-     *
-     * @param type  The type of the inventory.
-     * @param title The title of the inventory.
-     */
-    public FastInv(InventoryType type, String title) {
-        this(owner -> Bukkit.createInventory(owner, type, title));
-    }
 
     public FastInv(Function<InventoryHolder, Inventory> inventoryFunction) {
         Objects.requireNonNull(inventoryFunction, "inventoryFunction");
@@ -146,31 +124,6 @@ public class FastInv implements InventoryHolder {
     }
 
     /**
-     * Add an {@link ItemStack} to the inventory on a range of slots.
-     *
-     * @param slotFrom Starting slot to add the item in.
-     * @param slotTo   Ending slot to add the item in.
-     * @param item     The item to add.
-     */
-    public void setItems(int slotFrom, int slotTo, ItemStack item) {
-        setItems(slotFrom, slotTo, item, null);
-    }
-
-    /**
-     * Add an {@link ItemStack} to the inventory on a range of slots with a click handler.
-     *
-     * @param slotFrom Starting slot to put the item in.
-     * @param slotTo   Ending slot to put the item in.
-     * @param item     The item to add.
-     * @param handler  The click handler for the item
-     */
-    public void setItems(int slotFrom, int slotTo, ItemStack item, Consumer<InventoryClickEvent> handler) {
-        for (int i = slotFrom; i <= slotTo; i++) {
-            setItem(i, item, handler);
-        }
-    }
-
-    /**
      * Add an {@link ItemStack} to the inventory on multiple slots.
      *
      * @param slots The slots where to add the item
@@ -204,54 +157,6 @@ public class FastInv implements InventoryHolder {
     }
 
     /**
-     * Remove multiples {@link ItemStack} from the inventory.
-     *
-     * @param slots The slots where to remove the items
-     */
-    public void removeItems(int... slots) {
-        for (int slot : slots) {
-            removeItem(slot);
-        }
-    }
-
-    /**
-     * Add a close filter to prevent players from closing the inventory.
-     * To prevent a player from closing the inventory the predicate should return {@code true}.
-     *
-     * @param closeFilter The close filter
-     */
-    public void setCloseFilter(Predicate<Player> closeFilter) {
-        this.closeFilter = closeFilter;
-    }
-
-    /**
-     * Add a handler to handle inventory open.
-     *
-     * @param openHandler The handler to add.
-     */
-    public void addOpenHandler(Consumer<InventoryOpenEvent> openHandler) {
-        this.openHandlers.add(openHandler);
-    }
-
-    /**
-     * Add a handler to handle inventory close.
-     *
-     * @param closeHandler The handler to add
-     */
-    public void addCloseHandler(Consumer<InventoryCloseEvent> closeHandler) {
-        this.closeHandlers.add(closeHandler);
-    }
-
-    /**
-     * Add a handler to handle inventory click.
-     *
-     * @param clickHandler The handler to add.
-     */
-    public void addClickHandler(Consumer<InventoryClickEvent> clickHandler) {
-        this.clickHandlers.add(clickHandler);
-    }
-
-    /**
      * Open the inventory to a player.
      *
      * @param player The player to open the menu.
@@ -272,24 +177,12 @@ public class FastInv implements InventoryHolder {
     }
 
     /**
-     * Get corners of the inventory.
-     *
-     * @return inventory corners
-     */
-    public int[] getCorners() {
-        int size = this.inventory.getSize();
-        return IntStream.range(0, size).filter(i -> i < 2 || (i > 6 && i < 10)
-                || i == 17 || i == size - 18
-                || (i > size - 11 && i < size - 7) || i > size - 3).toArray();
-    }
-
-    /**
      * Get the Bukkit inventory.
      *
      * @return The Bukkit inventory.
      */
     @Override
-    public Inventory getInventory() {
+    public @NotNull Inventory getInventory() {
         return this.inventory;
     }
 

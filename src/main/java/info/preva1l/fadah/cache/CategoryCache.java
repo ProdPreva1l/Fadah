@@ -17,12 +17,15 @@ import java.util.Set;
 @UtilityClass
 public final class CategoryCache {
     private final List<Category> categories = new ArrayList<>();
+
     public void purgeCategories() {
         categories.clear();
     }
+
     public Category getCategory(String id) {
-        return categories.stream().filter(category->category.id().equals(id)).findFirst().orElse(null);
+        return categories.stream().filter(category -> category.id().equals(id)).findFirst().orElse(null);
     }
+
     public List<Category> getCategories() {
         return new ArrayList<>(categories);
     }
@@ -32,9 +35,11 @@ public final class CategoryCache {
         ctgs.sort(Comparator.comparingInt(Category::priority).reversed());
         for (Category category : ctgs) {
             if (isCustom && category.isCustomItems()) {
-                if (category.customItemIds().contains(itemStack.getItemMeta().getPersistentDataContainer().get(NamespacedKey.minecraft("custom_items"), PersistentDataType.STRING))) return category.id();
+                if (category.customItemIds().contains(itemStack.getItemMeta().getPersistentDataContainer().get(NamespacedKey.minecraft("custom_items"), PersistentDataType.STRING)))
+                    return category.id();
             }
-            if (category.materials() != null && category.materials().contains(itemStack.getType())) return category.id();
+            if (category.materials() != null && category.materials().contains(itemStack.getType()))
+                return category.id();
         }
         return null;
     }
@@ -49,12 +54,14 @@ public final class CategoryCache {
             List<String> materialsList = Fadah.getINSTANCE().getCategoriesFile().getStringList(key + ".materials");
             Set<Material> materials = null;
             if (!materialsList.isEmpty()) {
-                if (!materialsList.get(0).equals(key + ".materials")) materials = SetHelper.stringSetToMaterialSet(SetHelper.listToSet(materialsList));
+                if (!materialsList.get(0).equals(key + ".materials"))
+                    materials = SetHelper.stringSetToMaterialSet(SetHelper.listToSet(materialsList));
             }
 
             boolean isCustomItems = Fadah.getINSTANCE().getCategoriesFile().getBoolean(key + ".custom-items");
             List<String> customItemIDs = null;
-            if (isCustomItems) customItemIDs = Fadah.getINSTANCE().getCategoriesFile().getStringList(key + ".custom-item-ids");
+            if (isCustomItems)
+                customItemIDs = Fadah.getINSTANCE().getCategoriesFile().getStringList(key + ".custom-item-ids");
             categories.add(new Category(key, name, priority, (icon == null ? Material.GRASS_BLOCK : icon), description, materials, isCustomItems, SetHelper.listToSet(customItemIDs)));
         }
     }

@@ -9,8 +9,7 @@ public enum DatabaseType {
     MONGO("mongodb", "MongoDB"),
     MYSQL("mysql", "MySQL"),
     MARIADB("mariadb", "MariaDB"),
-    SQLITE("sqlite", "SQLite")
-    ;
+    SQLITE("sqlite", "SQLite");
     private final String id;
     private final String friendly_name;
 }

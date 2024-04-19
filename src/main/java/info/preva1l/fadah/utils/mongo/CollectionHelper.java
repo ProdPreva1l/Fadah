@@ -18,6 +18,7 @@ public class CollectionHelper {
         database.createCollection(collectionName);
         cacheHandler.updateCache(collectionName);
     }
+
     public MongoCollection<Document> getCollection(String collectionName) {
         if (cacheHandler.getCachedCollection(collectionName) == null) createCollection(collectionName);
         return cacheHandler.getCachedCollection(collectionName);

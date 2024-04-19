@@ -12,7 +12,10 @@ import org.bukkit.entity.Player;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import redis.clients.jedis.*;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisException;
 import redis.clients.jedis.util.Pool;
 
@@ -20,46 +23,6 @@ import java.util.UUID;
 
 public class CacheSync extends JedisPubSub {
     private static Pool<Jedis> jedisPool;
-    public void start() {
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
-            Fadah.getConsole().info("Connecting to Redis Pool...");
-            try {
-                final JedisPoolConfig config = new JedisPoolConfig();
-                config.setMaxIdle(0);
-                config.setTestOnBorrow(true);
-                config.setTestOnReturn(true);
-
-                jedisPool = new JedisPool(config, Config.REDIS_HOST.toString(), Config.REDIS_PORT.toInteger(), 0, Config.REDIS_PASSWORD.toString());
-                try (Jedis jedis = jedisPool.getResource()) {
-                    jedis.subscribe(this, Config.REDIS_CHANNEL.toString());
-                }
-            } catch (JedisException e) {
-                Fadah.getConsole().info("Redis Failed to Connect!");
-                throw new RuntimeException(e);
-            }
-            Fadah.getConsole().info("Redis Connected Successfully!");
-        });
-    }
-
-    public void destroy() {
-        jedisPool.destroy();
-        Fadah.getINSTANCE().setCacheSync(null);
-    }
-
-    @Override
-    public void onMessage(String channel, String message) {
-        if (!channel.equals(Config.REDIS_CHANNEL.toString())) return;
-
-        JSONObject obj;
-        try {
-            obj = (JSONObject) new JSONParser().parse(message);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
-        CacheType cacheType = CacheType.values()[Integer.parseInt(obj.getOrDefault("cache_type", 0).toString())];
-        cacheType.handleMessage(obj);
-    }
 
     public static void send(UUID listingUUID, boolean remove) {
         if (Fadah.getINSTANCE().getCacheSync() == null) return;
@@ -104,6 +67,47 @@ public class CacheSync extends JedisPubSub {
         });
     }
 
+    public void start() {
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+            Fadah.getConsole().info("Connecting to Redis Pool...");
+            try {
+                final JedisPoolConfig config = new JedisPoolConfig();
+                config.setMaxIdle(0);
+                config.setTestOnBorrow(true);
+                config.setTestOnReturn(true);
+
+                jedisPool = new JedisPool(config, Config.REDIS_HOST.toString(), Config.REDIS_PORT.toInteger(), 0, Config.REDIS_PASSWORD.toString());
+                try (Jedis jedis = jedisPool.getResource()) {
+                    jedis.subscribe(this, Config.REDIS_CHANNEL.toString());
+                }
+            } catch (JedisException e) {
+                Fadah.getConsole().info("Redis Failed to Connect!");
+                throw new RuntimeException(e);
+            }
+            Fadah.getConsole().info("Redis Connected Successfully!");
+        });
+    }
+
+    public void destroy() {
+        jedisPool.destroy();
+        Fadah.getINSTANCE().setCacheSync(null);
+    }
+
+    @Override
+    public void onMessage(String channel, String message) {
+        if (!channel.equals(Config.REDIS_CHANNEL.toString())) return;
+
+        JSONObject obj;
+        try {
+            obj = (JSONObject) new JSONParser().parse(message);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        CacheType cacheType = CacheType.values()[Integer.parseInt(obj.getOrDefault("cache_type", 0).toString())];
+        cacheType.handleMessage(obj);
+    }
+
     @AllArgsConstructor
     public enum CacheType {
         LISTINGS_ADD {
@@ -112,7 +116,7 @@ public class CacheSync extends JedisPubSub {
                 UUID listingUUID = UUID.fromString(obj.get("listing_uuid").toString());
                 long delay = Config.STRICT_CHECKS.toBoolean() ? 40L : 20L;
 
-                TaskManager.Sync.runLater(Fadah.getINSTANCE(), ()->{
+                TaskManager.Sync.runLater(Fadah.getINSTANCE(), () -> {
                     Fadah.getINSTANCE().getDatabase().getListing(listingUUID).thenAccept(ListingCache::addListing);
                 }, delay);
             }
@@ -152,8 +156,7 @@ public class CacheSync extends JedisPubSub {
 
                 player.sendMessage(StringUtils.colorize(obj.get("message").toString()));
             }
-        }
-        ;
+        };
 
         public abstract void handleMessage(JSONObject obj);
     }

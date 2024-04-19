@@ -26,16 +26,16 @@ public class ItemBuilder {
 
     private final ItemStack item;
 
-    public static ItemBuilder copyOf(ItemStack item) {
-        return new ItemBuilder(item.clone());
-    }
-
     public ItemBuilder(Material material) {
         this(new ItemStack(material));
     }
 
     public ItemBuilder(ItemStack item) {
         this.item = Objects.requireNonNull(item, "item");
+    }
+
+    public static ItemBuilder copyOf(ItemStack item) {
+        return new ItemBuilder(item.clone());
     }
 
     public ItemBuilder edit(Consumer<ItemStack> function) {

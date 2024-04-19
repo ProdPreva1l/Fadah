@@ -71,6 +71,21 @@ public enum Lang {
     private final String path;
     private final Object defaultValue;
 
+    public static void loadDefault() {
+        BasicConfig configFile = Fadah.getINSTANCE().getLangFile();
+
+        for (Lang config : Lang.values()) {
+            String path = config.getPath();
+            String str = configFile.getString(path);
+            if (str.equals(path)) {
+                configFile.getConfiguration().set(path, config.getDefaultValue());
+            }
+        }
+
+        configFile.save();
+        configFile.load();
+    }
+
     public String toString() {
         String str = Fadah.getINSTANCE().getLangFile().getString(path);
         if (str.equals(path)) {
@@ -139,7 +154,6 @@ public enum Lang {
         return ret;
     }
 
-
     public List<String> toLore() {
         List<String> str = Fadah.getINSTANCE().getLangFile().getStringList(path);
         if (str.isEmpty() || str.get(0).equals(path)) {
@@ -182,20 +196,5 @@ public enum Lang {
 
     public double toDouble() {
         return Double.parseDouble(toString());
-    }
-
-    public static void loadDefault() {
-        BasicConfig configFile = Fadah.getINSTANCE().getLangFile();
-
-        for (Lang config : Lang.values()) {
-            String path = config.getPath();
-            String str = configFile.getString(path);
-            if (str.equals(path)) {
-                configFile.getConfiguration().set(path, config.getDefaultValue());
-            }
-        }
-
-        configFile.save();
-        configFile.load();
     }
 }

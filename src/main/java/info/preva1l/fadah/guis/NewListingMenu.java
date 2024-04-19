@@ -15,6 +15,7 @@ import info.preva1l.fadah.utils.guis.FastInv;
 import info.preva1l.fadah.utils.guis.GuiButtonType;
 import info.preva1l.fadah.utils.guis.GuiHelper;
 import info.preva1l.fadah.utils.guis.ItemBuilder;
+import info.preva1l.fadah.utils.helpers.TransactionLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -31,6 +32,7 @@ public class NewListingMenu extends FastInv {
     private final ItemStack itemToSell;
     private Instant timeToDelete;
     private boolean listingStarted = false;
+
     public NewListingMenu(Player player, double price) {
         super(54, Menus.NEW_LISTING_TITLE.toFormattedString());
         this.player = player;
@@ -42,12 +44,11 @@ public class NewListingMenu extends FastInv {
 
         setClock();
 
-        setItem(30, new ItemBuilder(Material.EMERALD).name(Menus.NEW_LISTING_CREATE_NAME.toFormattedString())
+        setItem(30, new ItemBuilder(Menus.NEW_LISTING_CREATE_ICON.toMaterial()).name(Menus.NEW_LISTING_CREATE_NAME.toFormattedString())
                 .addLore(Menus.NEW_LISTING_CREATE_LORE.toLore(new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(price))).build(), e -> startListing(timeToDelete, price));
 
-        setItems(getBorders(),
-                GuiHelper.constructButton(GuiButtonType.GENERIC, Material.BLACK_STAINED_GLASS_PANE,
-                        StringUtils.colorize("&r "), Menus.BORDER_LORE.toLore()));
+        setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
+
         addNavigationButtons();
 
         setItem(22, itemToSell);
@@ -61,11 +62,12 @@ public class NewListingMenu extends FastInv {
 
     private void setClock() {
         removeItem(32);
-        setItem(32, new ItemBuilder(Material.CLOCK).name(Menus.NEW_LISTING_TIME_NAME.toFormattedString())
-                .addLore(Menus.NEW_LISTING_TIME_LORE.toLore(TimeUtil.formatTimeUntil(timeToDelete.toEpochMilli()))).build(), e->{
+        setItem(32, new ItemBuilder(Menus.NEW_LISTING_TIME_ICON.toMaterial()).name(Menus.NEW_LISTING_TIME_NAME.toFormattedString())
+                .addLore(Menus.NEW_LISTING_TIME_LORE.toLore(TimeUtil.formatTimeUntil(timeToDelete.toEpochMilli()))).build(), e -> {
             if (e.isRightClick()) {
                 if (e.isShiftClick()) {
-                    if (timeToDelete.minus(30, ChronoUnit.MINUTES).toEpochMilli() <= Instant.now().toEpochMilli()) return;
+                    if (timeToDelete.minus(30, ChronoUnit.MINUTES).toEpochMilli() <= Instant.now().toEpochMilli())
+                        return;
                     timeToDelete = timeToDelete.minus(30, ChronoUnit.MINUTES);
                     setClock();
                     return;
@@ -77,12 +79,14 @@ public class NewListingMenu extends FastInv {
 
             if (e.isLeftClick()) {
                 if (e.isShiftClick()) {
-                    if (timeToDelete.plus(30, ChronoUnit.MINUTES).toEpochMilli() > Instant.now().plus(10, ChronoUnit.DAYS).toEpochMilli()) return;
+                    if (timeToDelete.plus(30, ChronoUnit.MINUTES).toEpochMilli() > Instant.now().plus(10, ChronoUnit.DAYS).toEpochMilli())
+                        return;
                     timeToDelete = timeToDelete.plus(30, ChronoUnit.MINUTES);
                     setClock();
                     return;
                 }
-                if (timeToDelete.plus(1, ChronoUnit.HOURS).toEpochMilli() > Instant.now().plus(10, ChronoUnit.DAYS).toEpochMilli()) return;
+                if (timeToDelete.plus(1, ChronoUnit.HOURS).toEpochMilli() > Instant.now().plus(10, ChronoUnit.DAYS).toEpochMilli())
+                    return;
                 timeToDelete = timeToDelete.plus(1, ChronoUnit.HOURS);
                 setClock();
             }
@@ -110,15 +114,13 @@ public class NewListingMenu extends FastInv {
 
         String itemname = listing.itemStack().getItemMeta().getDisplayName().isBlank() ? listing.itemStack().getType().name() : listing.itemStack().getItemMeta().getDisplayName();
         String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemname,
-                new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.price()), TimeUtil.formatTimeUntil(listing.deletionDate()), PermissionsData.getCurrentListings(player), PermissionsData.getMaxListings(player)));
+                new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.price()), TimeUtil.formatTimeUntil(listing.deletionDate()), PermissionsData.getCurrentListings(player), PermissionsData.valueFromPermission(PermissionsData.PermissionType.MAX_LISTINGS, player)));
         player.sendMessage(message);
 
-        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[NEW LISTING] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
-                Bukkit.getOfflinePlayer(listing.owner()).getName(), Bukkit.getOfflinePlayer(listing.owner()).getUniqueId().toString(),
-                listing.price(), listing.itemStack().toString()));
+        TransactionLogger.listingCreated(listing);
     }
 
     private void addNavigationButtons() {
-        setItem(49, GuiHelper.constructButton(GuiButtonType.CLOSE), e-> e.getWhoClicked().closeInventory());
+        setItem(49, GuiHelper.constructButton(GuiButtonType.CLOSE), e -> e.getWhoClicked().closeInventory());
     }
 }

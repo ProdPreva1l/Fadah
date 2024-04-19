@@ -3,7 +3,6 @@ package info.preva1l.fadah.data;
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
@@ -91,7 +90,7 @@ public class MySQLDatabase implements Database {
                         "and that your connecting user account has privileges to create tables.", e);
             }
         } catch (SQLException | IOException e) {
-           destroy();
+            destroy();
             throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
                     "Please check the supplied database credentials in the config file", e);
         }
@@ -162,7 +161,7 @@ public class MySQLDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(Collections::emptyList);
         }
-        return CompletableFuture.supplyAsync(()-> {
+        return CompletableFuture.supplyAsync(() -> {
             final List<CollectableItem> retrievedData = Lists.newArrayList();
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
@@ -236,7 +235,7 @@ public class MySQLDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(Collections::emptyList);
         }
-        return CompletableFuture.supplyAsync(()-> {
+        return CompletableFuture.supplyAsync(() -> {
             final List<CollectableItem> retrievedData = Lists.newArrayList();
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
@@ -266,7 +265,7 @@ public class MySQLDatabase implements Database {
             return;
         }
         ExpiredListingsCache.purgeExpiredListings(playerUUID);
-        getExpiredItems(playerUUID).thenAccept(items-> ExpiredListingsCache.load(playerUUID, items));
+        getExpiredItems(playerUUID).thenAccept(items -> ExpiredListingsCache.load(playerUUID, items));
     }
 
     @Override

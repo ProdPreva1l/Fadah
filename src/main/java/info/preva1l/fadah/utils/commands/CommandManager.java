@@ -10,12 +10,11 @@ import java.util.List;
 public class CommandManager {
 
     private final Fadah plugin;
+    private final List<Command> loadedCommands = new ArrayList<>();
 
     public CommandManager(Fadah plugin) {
         this.plugin = plugin;
     }
-
-    private final List<Command> loadedCommands = new ArrayList<>();
 
     public void registerCommand(Command base, Command.CommandExecutor command) {
         plugin.getServer().getCommandMap();

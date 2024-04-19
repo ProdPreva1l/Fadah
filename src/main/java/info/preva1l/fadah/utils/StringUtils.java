@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 public class StringUtils {
     /**
      * Colorize a list. (Useful for lore)
+     *
      * @param list List typeof String
      * @return Colorized List typeof String
      */
@@ -28,6 +29,7 @@ public class StringUtils {
 
     /**
      * Colorize  a string.
+     *
      * @param str String with color codes or hex codes.
      * @return Colorized String
      */
@@ -36,22 +38,23 @@ public class StringUtils {
         Pattern unicode = Pattern.compile("\\\\u\\+[a-fA-F0-9]{4}");
         Matcher match = unicode.matcher(str);
         while (match.find()) {
-            String code = str.substring(match.start(),match.end());
-            str = str.replace(code,Character.toString((char) Integer.parseInt(code.replace("\\u+",""),16)));
+            String code = str.substring(match.start(), match.end());
+            str = str.replace(code, Character.toString((char) Integer.parseInt(code.replace("\\u+", ""), 16)));
             match = unicode.matcher(str);
         }
         Pattern pattern = Pattern.compile("&#[a-fA-F0-9]{6}");
         match = pattern.matcher(str);
         while (match.find()) {
-            String color = str.substring(match.start(),match.end());
-            str = str.replace(color, ChatColor.of(color.replace("&","")) + "");
+            String color = str.substring(match.start(), match.end());
+            str = str.replace(color, ChatColor.of(color.replace("&", "")) + "");
             match = pattern.matcher(str);
         }
-        return ChatColor.translateAlternateColorCodes('&',str);
+        return ChatColor.translateAlternateColorCodes('&', str);
     }
 
     /**
      * Strip color codes from a string. (Doesn't remove hex codes)
+     *
      * @param str String with color codes.
      * @return String without color codes.
      */
@@ -61,6 +64,7 @@ public class StringUtils {
 
     /**
      * Capitalizes the first letter in a string.
+     *
      * @param str String
      * @return Capitalized String
      */
@@ -73,6 +77,7 @@ public class StringUtils {
 
     /**
      * Converts legacy colour codes to MiniMessage
+     *
      * @param message message with legacy codes
      * @return string with mini message formatting (not colorized)
      */
@@ -106,7 +111,7 @@ public class StringUtils {
         Matcher match = pattern.matcher(message);
         String code = message;
         while (match.find()) {
-            code = message.substring(match.start(),match.end());
+            code = message.substring(match.start(), match.end());
             code = code.replace("&", "<");
             code = code + ">";
         }
@@ -121,8 +126,9 @@ public class StringUtils {
 
     /**
      * Formats a string into a component.
+     *
      * @param message string with mini message formatted colours and or placeholders
-     * @param args arguments for {@link StringUtils#formatPlaceholders(String, Object...)}
+     * @param args    arguments for {@link StringUtils#formatPlaceholders(String, Object...)}
      * @return formatted component
      */
     public static Component message(String message, Object... args) {
@@ -135,8 +141,9 @@ public class StringUtils {
 
     /**
      * Formats Strings with placeholders
+     *
      * @param message message with placeholders: {index}
-     * @param args things to replace with
+     * @param args    things to replace with
      * @return formatted string
      */
     public static String formatPlaceholders(String message, Object... args) {
@@ -152,8 +159,9 @@ public class StringUtils {
 
     /**
      * If only Java had fucking extension methods I wouldn't need this class...
+     *
      * @param haystack The string to compare
-     * @param needles The strings to check if they match the haystack, while ignoring case.
+     * @param needles  The strings to check if they match the haystack, while ignoring case.
      * @return true if one of the needles matches, false otherwise.
      */
     public static boolean equalsIgnoreCaseAny(String haystack, String... needles) {
@@ -172,6 +180,7 @@ public class StringUtils {
 
     /**
      * Converts a Throwable to a string
+     *
      * @param throwable just an exception
      * @return string Formatted for a discord webhook
      */

@@ -22,8 +22,9 @@ public class CollectionBoxMenu extends FastInv {
     private final Player player;
     private final int page;
     private final List<CollectableItem> collectionBox;
-    private int index = 0;
     private final Map<Integer, Integer> listingSlot = new HashMap<>();
+    private int index = 0;
+
     public CollectionBoxMenu(Player player, int page) {
         super(45, Menus.COLLECTION_BOX_TITLE.toFormattedString());
         this.player = player;
@@ -32,9 +33,7 @@ public class CollectionBoxMenu extends FastInv {
 
         fillMappings();
 
-        setItems(getBorders(),
-                GuiHelper.constructButton(GuiButtonType.GENERIC, Material.BLACK_STAINED_GLASS_PANE,
-                        StringUtils.colorize("&r "), Menus.BORDER_LORE.toLore()));
+        setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
 
         addNavigationButtons();
         populateCollectableItems();
@@ -51,7 +50,7 @@ public class CollectionBoxMenu extends FastInv {
 
     private void populateCollectableItems() {
         if (collectionBox == null || collectionBox.isEmpty()) {
-            setItem(22, new ItemBuilder(Material.BARRIER).name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
+            setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial()).name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
             return;
         }
         for (int i = 0; i <= maxItemsPerPage; i++) {
@@ -61,7 +60,7 @@ public class CollectionBoxMenu extends FastInv {
 
             removeItem(listingSlot.get(i));
             setItem(listingSlot.get(i), new ItemBuilder(collectableItem.itemStack().clone())
-                    .lore(Menus.COLLECTION_BOX_LORE.toLore(TimeUtil.formatTimeSince(collectableItem.dateAdded()))).build(), e->{
+                    .lore(Menus.COLLECTION_BOX_LORE.toLore(TimeUtil.formatTimeSince(collectableItem.dateAdded()))).build(), e -> {
                 int slot = player.getInventory().firstEmpty();
                 if (slot >= 36) {
                     player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
@@ -77,7 +76,7 @@ public class CollectionBoxMenu extends FastInv {
 
     private void addPaginationControls() {
         if (page > 0) {
-            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e->new CollectionBoxMenu(player, page - 1).open(player));
+            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> new CollectionBoxMenu(player, page - 1).open(player));
         }
         if (collectionBox != null && collectionBox.size() >= index + 1) {
             setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> new CollectionBoxMenu(player, page + 1).open(player));
@@ -85,7 +84,7 @@ public class CollectionBoxMenu extends FastInv {
     }
 
     private void addNavigationButtons() {
-        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK),e->new ProfileMenu(player).open(player));
+        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(player).open(player));
     }
 
     private void fillMappings() {

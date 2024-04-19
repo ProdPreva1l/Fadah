@@ -14,48 +14,46 @@ import info.preva1l.fadah.listeners.PlayerListener;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.Listing;
-import info.preva1l.fadah.utils.BasicConfig;
-import info.preva1l.fadah.utils.StringUtils;
-import info.preva1l.fadah.utils.TaskManager;
-import info.preva1l.fadah.utils.TransactionLogFormatter;
+import info.preva1l.fadah.utils.*;
 import info.preva1l.fadah.utils.commands.CommandManager;
 import info.preva1l.fadah.utils.guis.FastInvManager;
+import info.preva1l.fadah.utils.helpers.TransactionLogger;
 import lombok.Getter;
 import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.time.Instant;
 import java.util.logging.FileHandler;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import java.util.logging.SimpleFormatter;
 
 //TODO: Add listing tax
 public final class Fadah extends JavaPlugin {
+    private static final int METRICS_ID = 21651;
+
     @Getter private static Fadah INSTANCE;
     @Getter private static AuctionHouseAPI API;
-    @Getter @Setter private CacheSync cacheSync;
+    @Getter @Setter private static NamespacedKey customItemKey;
+
+    @Getter private static Logger console;
+    @Getter private final Logger transactionLogger = Logger.getLogger("AuctionHouse-Transactions");
 
     @Getter private BasicConfig configFile;
     @Getter private BasicConfig categoriesFile;
     @Getter private BasicConfig langFile;
     @Getter private BasicConfig menusFile;
 
-    @Getter private final Logger transactionLogger = Logger.getLogger("AuctionHouse-Transactions");
-    @Getter private static Logger console;
-
+    @Getter @Setter private CacheSync cacheSync;
     @Getter private Database database;
     @Getter private CommandManager commandManager;
     @Getter private Economy economy;
-
-    @Getter @Setter private static NamespacedKey customItemKey;
+    private Metrics metrics;
 
     @Override
     public void onEnable() {
@@ -92,14 +90,22 @@ public final class Fadah extends JavaPlugin {
         customItemKey = NamespacedKey.minecraft("auctionhouse");
 
         initLogger();
+        setupMetrics();
+
 
         API = new ImplAuctionHouseAPI();
+
+        Bukkit.getConsoleSender().sendMessage(StringUtils.colorize("&2&l------------------------------"));
+        Bukkit.getConsoleSender().sendMessage(StringUtils.colorize("&a Finally a Decent Auction House"));
+        Bukkit.getConsoleSender().sendMessage(StringUtils.colorize("&a   has successfully started!"));
+        Bukkit.getConsoleSender().sendMessage(StringUtils.colorize("&2&l------------------------------"));
     }
 
     @Override
     public void onDisable() {
         if (database != null) database.destroy();
         if (cacheSync != null) cacheSync.destroy();
+        if (metrics != null) metrics.shutdown();
     }
 
     private Runnable listingExpiryTask() {
@@ -113,9 +119,7 @@ public final class Fadah extends JavaPlugin {
                     ExpiredListingsCache.addItem(listing.owner(), item);
                     getINSTANCE().getDatabase().addToExpiredItems(listing.owner(), item);
 
-                    Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING EXPIRED] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
-                            Bukkit.getOfflinePlayer(listing.owner()).getName(), Bukkit.getOfflinePlayer(listing.owner()).getUniqueId().toString(),
-                            listing.price(), listing.itemStack().toString()));
+                    TransactionLogger.listingExpired(listing);
                 }
             }
         };
@@ -164,6 +168,12 @@ public final class Fadah extends JavaPlugin {
         database.connect();
 
         CategoryCache.loadCategories();
+    }
+
+    private void setupMetrics() {
+        metrics = new Metrics(this, METRICS_ID);
+
+        metrics.addCustomChart(new Metrics.SingleLineChart("items_listed", () -> ListingCache.getListings().size()));
     }
 
     private void initLogger() {

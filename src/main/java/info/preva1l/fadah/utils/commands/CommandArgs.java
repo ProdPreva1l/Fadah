@@ -9,8 +9,12 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CommandArgs {
     String name();
+
     String permission() default "";
+
     String[] aliases() default {};
+
     boolean inGameOnly() default true;
+
     boolean async() default false;
 }

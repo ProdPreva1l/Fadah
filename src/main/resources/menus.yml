@@ -14,6 +14,7 @@ main:
       buy: "&aClick to buy now!"
       too-expensive: "&cYou cannot afford this item!"
       own-listing: "&cYou cannot buy your own listing! &8(Shift Click to Cancel)"
+      is-shulker: "&fRight Click to Preview!"
   profile-button:
     name: "&e&lYour Profile"
     lore:
@@ -23,10 +24,12 @@ main:
       - "&fHere you will find items from the auction house relating to you"
   filter:
     search:
+      icon: "OAK_SIGN"
       name: "&3&lSearch"
       lore:
         - "&fClick to search for an item name/type!"
     change-type:
+      icon: "PUFFERFISH"
       name: "&eListing Filter"
       lore:
         - "&7Left Click to cycle up"
@@ -37,6 +40,7 @@ main:
         - "&f{2}"
         - "&8-------------------------"
     change-direction:
+      icon: "CLOCK"
       name: "&eFilter Direction"
       lore:
         - "&7Click To Toggle"
@@ -52,11 +56,13 @@ main:
 new-listing:
   title: "&9&lAuction House &8> &3New Listing"
   create:
+    icon: "EMERALD"
     name: "&aClick to create listing!"
     lore:
       - "&cClicking this button will immediately post"
       - "&cyour item on the auction house for &a${0}"
   time:
+    icon: "CLOCK"
     name: "&aTime for listing to be active"
     lore:
       - "&fCurrent: &6{0}"
@@ -67,6 +73,37 @@ new-listing:
 
 confirm:
   title: "&9&lAuction House &8> &aConfirm Purchase"
+  confirm:
+    icon: "LIME_CONCRETE"
+    name: "&a&lCONFIRM"
+    lore:
+      - "&7Click to confirm"
+  cancel:
+    icon: "RED_CONCRETE"
+    name: "&c&lCANCEL"
+    lore:
+      - "&7Click to cancel"
+
+profile:
+  title: "&9&lAuction House &8> &bYour Profile"
+  your-listings:
+    icon: "EMERALD"
+    name: "&1Your Listings"
+    lore:
+      - "&fClick to view & manage"
+      - "&fyour active listings!"
+  collection-box:
+    icon: "CHEST_MINECART"
+    name: "&eCollection Box"
+    lore:
+      - "&fClick to view & claim"
+      - "&fyour purchases!"
+  expired-items:
+    icon: "ENDER_CHEST"
+    name: "&cExpired Listings"
+    lore:
+      - "&fClick to view & claim"
+      - "&fyour expired listings!"
 
 collection-box:
   title: "&9&lAuction House &8> &eCollection Box"
@@ -87,42 +124,44 @@ expired-listings:
     - "&8&n---------------------------"
 
 no-items-found:
+  icon: "BARRIER"
   name: "&c&lNo items found!"
   lore: []
 
 all:
   close:
+    icon: "BARRIER"
     name: "&c&l✗ Close"
     lore:
       - "&7Click to close the menu"
   back:
+    icon: "FEATHER"
     name: "&cGo Back"
     lore:
       - "&7Click to go back"
   previous_page:
+    icon: "ARROW"
     name: "&c&lPrevious Page"
     lore:
       - "&7Click to go to the previous page"
   next_page:
+    icon: "ARROW"
     name: "&a&lNext Page"
     lore:
       - "&7Click to go to the next page"
   scroll_next:
+    icon: "ARROW"
     name: "&a&lScroll Categories Down"
     lore:
       - "&7Click to move the categories down"
   scroll_previous:
+    icon: "ARROW"
     name: "&a&lScroll Categories Up"
     lore:
       - "&7Click to move the categories up"
-  confirm:
-    name: "&a&lCONFIRM"
-    lore:
-      - "&7Click to confirm"
-  cancel:
-    name: "&c&lCANCEL"
-    lore:
-      - "&7Click to cancel"
 
-menu-border-lore:
-  - "&8play.dxtrus.net"
+menu-border:
+  icon: "BLACK_STAINED_GLASS_PANE"
+  name: "&r "
+  lore:
+    - "&8play.dxtrus.net"

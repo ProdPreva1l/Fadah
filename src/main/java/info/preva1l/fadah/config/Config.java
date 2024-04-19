@@ -36,6 +36,21 @@ public enum Config {
     private final String path;
     private final Object defaultValue;
 
+    public static void loadDefault() {
+        BasicConfig configFile = Fadah.getINSTANCE().getConfigFile();
+
+        for (Config config : Config.values()) {
+            String path = config.getPath();
+            String str = configFile.getString(path);
+            if (str.equals(path)) {
+                configFile.getConfiguration().set(path, config.getDefaultValue());
+            }
+        }
+
+        configFile.save();
+        configFile.load();
+    }
+
     public String toString() {
         String str = Fadah.getINSTANCE().getConfigFile().getString(path);
         if (str.equals(path)) {
@@ -140,20 +155,5 @@ public enum Config {
 
     public double toDouble() {
         return Double.parseDouble(toString());
-    }
-
-    public static void loadDefault() {
-        BasicConfig configFile = Fadah.getINSTANCE().getConfigFile();
-
-        for (Config config : Config.values()) {
-            String path = config.getPath();
-            String str = configFile.getString(path);
-            if (str.equals(path)) {
-                configFile.getConfiguration().set(path, config.getDefaultValue());
-            }
-        }
-
-        configFile.save();
-        configFile.load();
     }
 }

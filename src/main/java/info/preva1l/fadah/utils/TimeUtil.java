@@ -27,6 +27,7 @@ public class TimeUtil {
             return String.format("%ds", seconds);
         }
     }
+
     public static String formatTimeUntil(long deletionDate) {
         Instant now = Instant.now();
         Instant deletionInstant = Instant.ofEpochMilli(deletionDate);

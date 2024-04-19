@@ -17,8 +17,8 @@ import java.util.List;
 @Getter
 public abstract class SubCommand {
 
-    public Fadah plugin;
     private final SubCommandArgs assigned;
+    public Fadah plugin;
     private SubCommandArguments executeArguments;
     private boolean senderHasPermission = false;
 

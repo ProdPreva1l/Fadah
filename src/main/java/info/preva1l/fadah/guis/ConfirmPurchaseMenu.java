@@ -16,9 +16,13 @@ import info.preva1l.fadah.utils.filters.SortingMethod;
 import info.preva1l.fadah.utils.guis.FastInv;
 import info.preva1l.fadah.utils.guis.GuiButtonType;
 import info.preva1l.fadah.utils.guis.GuiHelper;
+import info.preva1l.fadah.utils.helpers.TransactionLogger;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
@@ -33,17 +37,16 @@ public class ConfirmPurchaseMenu extends FastInv {
                                @Nullable SortingDirection sortingDirection) {
         super(54, Menus.CONFIRM_TITLE.toFormattedString());
 
-        setItems(getBorders(),
-                GuiHelper.constructButton(GuiButtonType.GENERIC, Material.BLACK_STAINED_GLASS_PANE,
-                        StringUtils.colorize("&r "), Menus.BORDER_LORE.toLore()));
+        setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
 
-
-        setItem(30, GuiHelper.constructButton(GuiButtonType.CONFIRM), e->{
+        setItem(30, GuiHelper.constructButton(GuiButtonType.CONFIRM), e -> {
             player.closeInventory();
 
             // Money Transfer
-            Fadah.getINSTANCE().getEconomy().withdrawPlayer(player, listing.price());
-            Fadah.getINSTANCE().getEconomy().depositPlayer(Bukkit.getOfflinePlayer(listing.owner()), listing.price());
+            Economy eco = Fadah.getINSTANCE().getEconomy();
+            double price = listing.price();
+            eco.withdrawPlayer(player, price);
+            eco.depositPlayer(Bukkit.getOfflinePlayer(listing.owner()), price);
 
             // Remove Listing
             if (Fadah.getINSTANCE().getCacheSync() == null) {
@@ -53,7 +56,8 @@ public class ConfirmPurchaseMenu extends FastInv {
             Fadah.getINSTANCE().getDatabase().removeListing(listing.id());
 
             // Add to collection box
-            CollectableItem collectableItem = new CollectableItem(listing.itemStack().clone(), Instant.now().toEpochMilli());
+            ItemStack itemStack = listing.itemStack().clone();
+            CollectableItem collectableItem = new CollectableItem(itemStack, Instant.now().toEpochMilli());
             Fadah.getINSTANCE().getDatabase().addToCollectionBox(player.getUniqueId(), collectableItem);
             CollectionBoxCache.addItem(player.getUniqueId(), collectableItem);
 
@@ -65,7 +69,8 @@ public class ConfirmPurchaseMenu extends FastInv {
             player.sendMessage(String.join("\n", Lang.NOTIFICATION_NEW_ITEM.toLore()));
 
             String itemname = listing.itemStack().getItemMeta().getDisplayName().isBlank() ? listing.itemStack().getType().name() : listing.itemStack().getItemMeta().getDisplayName();
-            String message = String.join("\n", Lang.NOTIFICATION_NEW_SELL.toLore(itemname, new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.price())));
+            String formattedPrice = new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(price);
+            String message = String.join("\n", Lang.NOTIFICATION_NEW_SELL.toLore(itemname, formattedPrice));
 
             Player seller = Bukkit.getPlayer(listing.owner());
             if (seller != null) {
@@ -74,13 +79,10 @@ public class ConfirmPurchaseMenu extends FastInv {
                 CacheSync.send(listing.owner(), message);
             }
 
-            Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING SOLD] Seller: {0} ({1}), Buyer: {2} ({3}), Price: {4}, ItemStack: {5}",
-                    Bukkit.getOfflinePlayer(listing.owner()).getName(), Bukkit.getOfflinePlayer(listing.owner()).getUniqueId().toString(),
-                    player.getName(), player.getUniqueId().toString(),
-                    listing.price(), listing.itemStack().toString()));
+            TransactionLogger.listingSold(listing, player);
         });
 
-        setItem(32, GuiHelper.constructButton(GuiButtonType.CANCEL), e->{
+        setItem(32, GuiHelper.constructButton(GuiButtonType.CANCEL), e -> {
             new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player);
         });
 

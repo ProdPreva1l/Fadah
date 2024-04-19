@@ -26,16 +26,20 @@ import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
 public class SQLiteDatabase implements Database {
-    @Getter @Setter private boolean connected = false;
     private static final String DATABASE_FILE_NAME = "FadahData.db";
+    @Getter
+    @Setter
+    private boolean connected = false;
     private File databaseFile;
     private Connection connection;
+
     @SuppressWarnings("SameParameterValue")
     @NotNull
     private String[] getSchemaStatements(@NotNull String schemaFileName) throws IOException {
         return new String(Objects.requireNonNull(Fadah.getINSTANCE().getResource(schemaFileName))
                 .readAllBytes(), StandardCharsets.UTF_8).split(";");
     }
+
     private Connection getConnection() throws SQLException {
         if (connection == null) {
             setConnection();
@@ -44,6 +48,7 @@ public class SQLiteDatabase implements Database {
         }
         return connection;
     }
+
     private void setConnection() {
         try {
             if (databaseFile.createNewFile()) {
@@ -59,7 +64,7 @@ public class SQLiteDatabase implements Database {
 
             connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getAbsolutePath(), config.toProperties());
         } catch (IOException e) {
-            Fadah.getConsole().log(Level.SEVERE,"An exception occurred creating the database file", e);
+            Fadah.getConsole().log(Level.SEVERE, "An exception occurred creating the database file", e);
         } catch (SQLException e) {
             Fadah.getConsole().log(Level.SEVERE, "An SQL exception occurred initializing the SQLite database", e);
         } catch (ClassNotFoundException e) {
@@ -95,7 +100,6 @@ public class SQLiteDatabase implements Database {
                 for (String tableCreationStatement : databaseSchema) {
                     statement.execute(tableCreationStatement);
                 }
-                setConnected(true);
             } catch (SQLException e) {
                 destroy();
                 throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
@@ -107,6 +111,7 @@ public class SQLiteDatabase implements Database {
                     "and that your connecting user account has privileges to create tables.", e);
         }
         this.loadListings();
+        setConnected(true);
     }
 
     @Override
@@ -129,7 +134,7 @@ public class SQLiteDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `collection_box`
@@ -152,12 +157,12 @@ public class SQLiteDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                    DELETE FROM `collection_box`
-                    WHERE `playerUUID`=? AND `itemStack`=?
-                    AND ROWID = (SELECT ROWID FROM `collection_box` WHERE `playerUUID`=? AND `itemStack`=? LIMIT 1);""")) {
+                        DELETE FROM `collection_box`
+                        WHERE `playerUUID`=? AND `itemStack`=?
+                        AND ROWID = (SELECT ROWID FROM `collection_box` WHERE `playerUUID`=? AND `itemStack`=? LIMIT 1);""")) {
                     statement.setString(1,
                             playerUUID.toString());
                     statement.setString(2, ItemSerializer.
@@ -177,7 +182,7 @@ public class SQLiteDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(Collections::emptyList);
         }
-        return CompletableFuture.supplyAsync(()-> {
+        return CompletableFuture.supplyAsync(() -> {
             final List<CollectableItem> retrievedData = Lists.newArrayList();
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
@@ -206,7 +211,7 @@ public class SQLiteDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `expired_items`
@@ -229,12 +234,12 @@ public class SQLiteDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                    DELETE FROM `expired_items`
-                    WHERE `playerUUID`=? AND `itemStack`=?
-                    AND ROWID = ( SELECT ROWID FROM `expired_items` WHERE `playerUUID`=? AND `itemStack`=? LIMIT 1);""")) {
+                        DELETE FROM `expired_items`
+                        WHERE `playerUUID`=? AND `itemStack`=?
+                        AND ROWID = ( SELECT ROWID FROM `expired_items` WHERE `playerUUID`=? AND `itemStack`=? LIMIT 1);""")) {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
                     statement.executeUpdate();
@@ -251,7 +256,7 @@ public class SQLiteDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(Collections::emptyList);
         }
-        return CompletableFuture.supplyAsync(()-> {
+        return CompletableFuture.supplyAsync(() -> {
             final List<CollectableItem> retrievedData = Lists.newArrayList();
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
@@ -280,7 +285,7 @@ public class SQLiteDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `listings`
@@ -309,13 +314,13 @@ public class SQLiteDatabase implements Database {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return;
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), ()-> {
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                    DELETE FROM `listings`
-                    WHERE ROWID =
-                    (SELECT ROWID FROM `listings` WHERE uuid = ? LIMIT 1)
-                    """)) {
+                        DELETE FROM `listings`
+                        WHERE ROWID =
+                        (SELECT ROWID FROM `listings` WHERE uuid = ? LIMIT 1)
+                        """)) {
                     statement.setString(1, id.toString());
                     statement.executeUpdate();
                 }
@@ -324,6 +329,7 @@ public class SQLiteDatabase implements Database {
             }
         });
     }
+
     @Override
     public CompletableFuture<List<UUID>> getListingIDs() {
         if (!isConnected()) {

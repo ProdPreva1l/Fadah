@@ -26,7 +26,8 @@ public final class FastInvManager {
 
     private static final AtomicBoolean REGISTERED = new AtomicBoolean(false);
 
-    @Getter @Setter
+    @Getter
+    @Setter
     private static HashMap<Player, LinkedList<FastInv>> playerInvStackMap = new HashMap<>();
 
     private FastInvManager() {
@@ -37,7 +38,7 @@ public final class FastInvManager {
      * Register listeners for FastInv.
      *
      * @param plugin plugin to register
-     * @throws NullPointerException if plugin is null
+     * @throws NullPointerException  if plugin is null
      * @throws IllegalStateException if FastInv is already registered
      */
     public static void register(Plugin plugin) {
@@ -49,6 +50,7 @@ public final class FastInvManager {
 
         Bukkit.getPluginManager().registerEvents(new InventoryListener(plugin), plugin);
     }
+
     /**
      * Close all open FastInv inventories.
      */
@@ -57,15 +59,17 @@ public final class FastInvManager {
                 .filter(p -> p.getOpenInventory().getTopInventory().getHolder() instanceof FastInv)
                 .forEach(Player::closeInventory);
     }
+
     public static final class InventoryListener implements Listener {
         private final Plugin plugin;
+
         public InventoryListener(Plugin plugin) {
             this.plugin = plugin;
         }
+
         @EventHandler
         public void onInventoryClick(InventoryClickEvent e) {
-            if (e.getInventory().getHolder() instanceof FastInv && e.getClickedInventory() != null) {
-                FastInv inv = (FastInv) e.getInventory().getHolder();
+            if (e.getInventory().getHolder() instanceof FastInv inv && e.getClickedInventory() != null) {
 
                 boolean wasCancelled = e.isCancelled();
                 e.setCancelled(true);
@@ -78,6 +82,7 @@ public final class FastInvManager {
                 }
             }
         }
+
         @EventHandler
         public void onInventoryOpen(InventoryOpenEvent e) {
             if (e.getInventory().getHolder() instanceof FastInv inv) {
@@ -88,6 +93,7 @@ public final class FastInvManager {
                 inv.handleOpen(e);
             }
         }
+
         @EventHandler
         public void onInventoryClose(InventoryCloseEvent e) {
             if (e.getInventory().getHolder() instanceof FastInv inv) {
@@ -99,6 +105,7 @@ public final class FastInvManager {
                 }
             }
         }
+
         @EventHandler
         public void onPluginDisable(PluginDisableEvent e) {
             if (e.getPlugin() == this.plugin) {
