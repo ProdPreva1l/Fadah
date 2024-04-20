@@ -10,6 +10,7 @@ import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -19,17 +20,19 @@ import java.util.Map;
 
 public class ExpiredListingsMenu extends FastInv {
     private static final int maxItemsPerPage = 21;
-    private final Player player;
+    private final Player viewer;
+    private final OfflinePlayer owner;
     private final int page;
     private final List<CollectableItem> expiredItems;
     private final Map<Integer, Integer> listingSlot = new HashMap<>();
     private int index = 0;
 
-    public ExpiredListingsMenu(Player player, int page) {
-        super(45, Menus.EXPIRED_LISTINGS_TITLE.toFormattedString());
-        this.player = player;
+    public ExpiredListingsMenu(Player viewer, OfflinePlayer owner, int page) {
+        super(45, Menus.EXPIRED_LISTINGS_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? "Your" : owner.getName()+"'s"));
+        this.viewer = viewer;
+        this.owner = owner;
         this.page = page;
-        this.expiredItems = ExpiredListingsCache.getExpiredListings(player.getUniqueId());
+        this.expiredItems = ExpiredListingsCache.getExpiredListings(owner.getUniqueId());
 
         fillMappings();
 
@@ -63,30 +66,30 @@ public class ExpiredListingsMenu extends FastInv {
 
             removeItem(listingSlot.get(i));
             setItem(listingSlot.get(i), itemStack.build(), e -> {
-                int slot = player.getInventory().firstEmpty();
+                int slot = viewer.getInventory().firstEmpty();
                 if (slot >= 36) {
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
+                    viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
                     return;
                 }
-                ExpiredListingsCache.removeItem(player.getUniqueId(), collectableItem);
-                Fadah.getINSTANCE().getDatabase().removeFromExpiredItems(player.getUniqueId(), collectableItem);
-                player.getInventory().setItem(slot, collectableItem.itemStack());
-                new ExpiredListingsMenu(player, 0).open(player);
+                ExpiredListingsCache.removeItem(owner.getUniqueId(), collectableItem);
+                Fadah.getINSTANCE().getDatabase().removeFromExpiredItems(owner.getUniqueId(), collectableItem);
+                viewer.getInventory().setItem(slot, collectableItem.itemStack());
+                new ExpiredListingsMenu(viewer, owner, 0).open(viewer);
             });
         }
     }
 
     private void addPaginationControls() {
         if (page > 0) {
-            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> new ExpiredListingsMenu(player, page - 1).open(player));
+            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> new ExpiredListingsMenu(viewer, owner, page - 1).open(viewer));
         }
         if (expiredItems != null && expiredItems.size() >= index + 1) {
-            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> new ExpiredListingsMenu(player, page + 1).open(player));
+            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> new ExpiredListingsMenu(viewer, owner, page + 1).open(viewer));
         }
     }
 
     private void addNavigationButtons() {
-        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(player).open(player));
+        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
     }
 
     private void fillMappings() {

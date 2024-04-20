@@ -29,3 +29,9 @@ permissions:
     default: true
   fadah.active-listings:
     default: true
+  fadah.manage.*:
+    children:
+      - fadah.manage.profile
+      - fadah.manage.active-listings
+      - fadah.manage.expired-items
+      - fadah.manage.collection-box

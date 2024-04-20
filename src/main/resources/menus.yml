@@ -16,12 +16,12 @@ main:
       own-listing: "&cYou cannot buy your own listing! &8(Shift Click to Cancel)"
       is-shulker: "&fRight Click to Preview!"
   profile-button:
-    name: "&e&lYour Profile"
+    name: "&e&l{0} Profile"  #{0} = "Your" or the players name if in management mode
     lore:
       - "&fClick to view your profile!"
     description:
-      - "&fThis is your profile!"
-      - "&fHere you will find items from the auction house relating to you"
+      - "&fThis is {0} profile!" #{0} = "Your" or the players name if in management mode
+      - "&fHere you will find items from the auction house relating to {0}" #{0} = "you" or the players name if in management mode
   filter:
     search:
       icon: "OAK_SIGN"
@@ -84,29 +84,32 @@ confirm:
     lore:
       - "&7Click to cancel"
 
+
+#{0} = "Your" or the players name if in management mode
 profile:
-  title: "&9&lAuction House &8> &bYour Profile"
+  title: "&9&lAuction House &8> &b{0} Profile"
   your-listings:
     icon: "EMERALD"
-    name: "&1Your Listings"
+    name: "&1{0} Listings"
     lore:
       - "&fClick to view & manage"
-      - "&fyour active listings!"
+      - "&f{0} active listings!"
   collection-box:
     icon: "CHEST_MINECART"
-    name: "&eCollection Box"
+    name: "&e{0} Collection Box"
     lore:
       - "&fClick to view & claim"
-      - "&fyour purchases!"
+      - "&f{0} purchases!"
   expired-items:
     icon: "ENDER_CHEST"
-    name: "&cExpired Listings"
+    name: "&c{0} Expired Listings"
     lore:
       - "&fClick to view & claim"
-      - "&fyour expired listings!"
+      - "&f{0} expired listings!"
 
+#{0} = "Your" or the players name if in management mode
 collection-box:
-  title: "&9&lAuction House &8> &eCollection Box"
+  title: "&9&lAuction House &8> &e{0} Collection Box"
   collectable-lore:
     - "&8&n---------------------------"
     - "&fAdded: &e{0} &fago"
@@ -114,13 +117,28 @@ collection-box:
     - "&eClick To Claim!"
     - "&8&n---------------------------"
 
+#{0} = "Your" or the players name if in management mode
 expired-listings:
-  title: "&9&lAuction House &8> &cExpired Listings"
+  title: "&9&lAuction House &8> &c{0} Expired Listings"
   collectable-lore:
     - "&8&n---------------------------"
     - "&fAdded: &e{0} &fago"
     - "&r "
     - "&eClick To Re-Claim!"
+    - "&8&n---------------------------"
+
+#{0} = "Your" or the players name if in management mode
+active-listings:
+  title: "&9&lAuction House &8> &1{0} Listings"
+  lore:
+    - "&8&n---------------------------"
+    - "&fCategory: &e{0}"
+    - "&r "
+    - "&fPrice: &6${1}"
+    - "&r "
+    - "&fExpires In: &e{2}"
+    - "&r "
+    - "&eClick To Cancel This Listing!"
     - "&8&n---------------------------"
 
 no-items-found:

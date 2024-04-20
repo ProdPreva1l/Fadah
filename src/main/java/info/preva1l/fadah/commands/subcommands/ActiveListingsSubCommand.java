@@ -1,11 +1,16 @@
 package info.preva1l.fadah.commands.subcommands;
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.cache.CollectionBoxCache;
+import info.preva1l.fadah.cache.ExpiredListingsCache;
+import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.guis.ActiveListingsMenu;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
 import info.preva1l.fadah.utils.commands.SubCommandArguments;
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class ActiveListingsSubCommand extends SubCommand {
@@ -20,6 +25,16 @@ public class ActiveListingsSubCommand extends SubCommand {
             return;
         }
         assert command.getPlayer() != null;
-        new ActiveListingsMenu(command.getPlayer(), 0).open(command.getPlayer());
+        OfflinePlayer owner = command.getPlayer();
+        if (command.args().length >= 1 && command.sender().hasPermission("fadah.manage.listings")) {
+            owner = Bukkit.getOfflinePlayer(command.args()[0]);
+        }
+        if (!ListingCache.playerHasListings(owner.getUniqueId())
+                && !ExpiredListingsCache.playerHasExpiredListings(owner.getUniqueId())
+                && !CollectionBoxCache.playerHasCollectableItems(owner.getUniqueId())) {
+            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));
+            return;
+        }
+        new ActiveListingsMenu(command.getPlayer(), owner, 0).open(command.getPlayer());
     }
 }

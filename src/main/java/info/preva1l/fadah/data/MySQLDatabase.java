@@ -139,14 +139,12 @@ public class MySQLDatabase implements Database {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `collection_box`
-                        WHERE `playerUUID`=? AND `itemStack`=?
+                        WHERE `playerUUID`=? AND `itemStack`=? AND `dateAdded` =?
                         LIMIT 1;"""
                 )) {
-                    statement.setString(1,
-                            playerUUID.toString());
-                    statement.setString(2, ItemSerializer.
-                            serialize(collectableItem
-                                    .itemStack()));
+                    statement.setString(1, playerUUID.toString());
+                    statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
+                    statement.setLong(3, collectableItem.dateAdded());
                     statement.executeUpdate();
                 }
             } catch (SQLException e) {
@@ -217,10 +215,11 @@ public class MySQLDatabase implements Database {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `expired_items`
-                        WHERE `playerUUID`=? AND `itemStack`=?
+                        WHERE `playerUUID`=? AND `itemStack`=? AND `dateAdded` =?
                         LIMIT 1;""")) {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
+                    statement.setLong(3, collectableItem.dateAdded());
                     statement.executeUpdate();
                 }
             } catch (SQLException e) {

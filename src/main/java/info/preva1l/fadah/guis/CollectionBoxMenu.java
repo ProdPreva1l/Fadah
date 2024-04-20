@@ -10,6 +10,7 @@ import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -19,17 +20,19 @@ import java.util.Map;
 
 public class CollectionBoxMenu extends FastInv {
     private static final int maxItemsPerPage = 21;
-    private final Player player;
+    private final Player viewer;
+    private final OfflinePlayer owner;
     private final int page;
     private final List<CollectableItem> collectionBox;
     private final Map<Integer, Integer> listingSlot = new HashMap<>();
     private int index = 0;
 
-    public CollectionBoxMenu(Player player, int page) {
-        super(45, Menus.COLLECTION_BOX_TITLE.toFormattedString());
-        this.player = player;
+    public CollectionBoxMenu(Player viewer, OfflinePlayer owner, int page) {
+        super(45, Menus.COLLECTION_BOX_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? "Your" : owner.getName()+"'s"));
+        this.viewer = viewer;
+        this.owner = owner;
         this.page = page;
-        this.collectionBox = CollectionBoxCache.getCollectionBox(player.getUniqueId());
+        this.collectionBox = CollectionBoxCache.getCollectionBox(owner.getUniqueId());
 
         fillMappings();
 
@@ -61,30 +64,30 @@ public class CollectionBoxMenu extends FastInv {
             removeItem(listingSlot.get(i));
             setItem(listingSlot.get(i), new ItemBuilder(collectableItem.itemStack().clone())
                     .lore(Menus.COLLECTION_BOX_LORE.toLore(TimeUtil.formatTimeSince(collectableItem.dateAdded()))).build(), e -> {
-                int slot = player.getInventory().firstEmpty();
+                int slot = viewer.getInventory().firstEmpty();
                 if (slot >= 36) {
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
+                    viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
                     return;
                 }
-                CollectionBoxCache.removeItem(player.getUniqueId(), collectableItem);
-                Fadah.getINSTANCE().getDatabase().removeFromCollectionBox(player.getUniqueId(), collectableItem);
-                player.getInventory().setItem(slot, collectableItem.itemStack());
-                new CollectionBoxMenu(player, 0).open(player);
+                CollectionBoxCache.removeItem(owner.getUniqueId(), collectableItem);
+                Fadah.getINSTANCE().getDatabase().removeFromCollectionBox(owner.getUniqueId(), collectableItem);
+                viewer.getInventory().setItem(slot, collectableItem.itemStack());
+                new CollectionBoxMenu(viewer, owner, 0).open(viewer);
             });
         }
     }
 
     private void addPaginationControls() {
         if (page > 0) {
-            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> new CollectionBoxMenu(player, page - 1).open(player));
+            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> new CollectionBoxMenu(viewer, owner, page - 1).open(viewer));
         }
         if (collectionBox != null && collectionBox.size() >= index + 1) {
-            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> new CollectionBoxMenu(player, page + 1).open(player));
+            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> new CollectionBoxMenu(viewer, owner, page + 1).open(viewer));
         }
     }
 
     private void addNavigationButtons() {
-        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(player).open(player));
+        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
     }
 
     private void fillMappings() {

@@ -89,22 +89,22 @@ public enum Menus {
     PROFILE_YOUR_LISTINGS_NAME("profile.your-listings.name", "&1Your listings"),
     PROFILE_YOUR_LISTINGS_LORE("profile.your-listings.lore", List.of(
             "&fClick to view & manage",
-            "&fyour active listings!"
+            "&f{0} active listings!"
     )),
     PROFILE_COLLECTION_BOX_ICON("profile.collection-box.icon", "CHEST_MINECART"),
-    PROFILE_COLLECTION_BOX_NAME("profile.collection-box.name", "&eCollection Box"),
+    PROFILE_COLLECTION_BOX_NAME("profile.collection-box.name", "&e{0} Collection Box"),
     PROFILE_COLLECTION_BOX_LORE("profile.collection-box.lore", List.of(
             "&fClick to view & claim",
-            "&fyour purchases!"
+            "&f{0} purchases!"
     )),
-    PROFILE_EXPIRED_LISTINGS_ICON("profile.expired-listings.icon", "ENDER_CHEST"),
-    PROFILE_EXPIRED_LISTINGS_NAME("profile.expired-listings.name", "&cExpired Listings"),
-    PROFILE_EXPIRED_LISTINGS_LORE("profile.expired-listings.lore", List.of(
+    PROFILE_EXPIRED_LISTINGS_ICON("profile.expired-items.icon", "ENDER_CHEST"),
+    PROFILE_EXPIRED_LISTINGS_NAME("profile.expired-items.name", "&c{0} Expired Listings"),
+    PROFILE_EXPIRED_LISTINGS_LORE("profile.expired-items.lore", List.of(
             "&fClick to view & claim",
-            "&fyour expired listings!"
+            "&f{0} expired listings!"
     )),
 
-    COLLECTION_BOX_TITLE("collection-box.title", "&9&lAuction House &8> &eCollection Box"),
+    COLLECTION_BOX_TITLE("collection-box.title", "&9&lAuction House &8> &e{0} Collection Box"),
     COLLECTION_BOX_LORE("collection-box.collectable-lore", List.of(
             "&8&n---------------------------",
             "&fAdded: &e{0} &fago",
@@ -113,7 +113,7 @@ public enum Menus {
             "&8&n---------------------------"
     )),
 
-    EXPIRED_LISTINGS_TITLE("expired-listings.title", "&9&lAuction House &8> &cExpired Listings"),
+    EXPIRED_LISTINGS_TITLE("expired-listings.title", "&9&lAuction House &8> &c{0} Expired Listings"),
     EXPIRED_LISTINGS_LORE("expired-listings.collectable-lore", List.of(
             "&8&n---------------------------",
             "&fAdded: &e{0} &fago",
@@ -122,14 +122,15 @@ public enum Menus {
             "&8&n---------------------------"
     )),
 
-    YOUR_LISTINGS_TITLE("your-listings.title", "&9&lAuction House &8> &1Your Listings"),
-    YOUR_LISTINGS_LORE("your-listings.title", List.of(
+    ACTIVE_LISTINGS_TITLE("active-listings.title", "&9&lAuction House &8> &1{0} Listings"),
+    ACTIVE_LISTINGS_LORE("active-listings.title", List.of(
             "&8&n---------------------------",
             "&fCategory: &e{0}",
             "&r ",
             "&fPrice: &6${1}",
             "&r ",
             "&fExpires In: &e{2}",
+            "&r ",
             "&eClick To Cancel This Listing!",
             "&8&n---------------------------"
     )),

@@ -161,13 +161,10 @@ public class SQLiteDatabase implements Database {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `collection_box`
-                        WHERE `playerUUID`=? AND `itemStack`=?
-                        AND ROWID = (SELECT ROWID FROM `collection_box` WHERE `playerUUID`=? AND `itemStack`=? LIMIT 1);""")) {
-                    statement.setString(1,
-                            playerUUID.toString());
-                    statement.setString(2, ItemSerializer.
-                            serialize(collectableItem
-                                    .itemStack()));
+                        WHERE `playerUUID`=? AND `itemStack`=? AND `dateAdded` =?;""")) {
+                    statement.setString(1, playerUUID.toString());
+                    statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
+                    statement.setLong(3, collectableItem.dateAdded());
                     statement.executeUpdate();
                 }
             } catch (SQLException e) {
@@ -238,10 +235,10 @@ public class SQLiteDatabase implements Database {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `expired_items`
-                        WHERE `playerUUID`=? AND `itemStack`=?
-                        AND ROWID = ( SELECT ROWID FROM `expired_items` WHERE `playerUUID`=? AND `itemStack`=? LIMIT 1);""")) {
+                        WHERE `playerUUID`=? AND `itemStack`=? AND `dateAdded` =?;""")) {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
+                    statement.setLong(3, collectableItem.dateAdded());
                     statement.executeUpdate();
                 }
             } catch (SQLException e) {

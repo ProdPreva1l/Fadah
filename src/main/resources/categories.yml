@@ -57,7 +57,7 @@ building-blocks:
   priority: 2
   icon: "BRICKS"
   description:
-    - "&fBlocks used to make <yellow>beautiful <white>buildings!"
+    - "&fBlocks used to make &ebeautiful &fbuildings!"
   materials:
     - "COARSE_DIRT"
     - "*_TERRACOTTA"

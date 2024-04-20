@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @UtilityClass
 public final class ListingCache {
@@ -29,5 +30,9 @@ public final class ListingCache {
 
     public List<Listing> getListings() {
         return new ArrayList<>(listings);
+    }
+
+    public boolean playerHasListings(UUID uuid) {
+        return !listings.stream().filter(listing -> listing.isOwner(uuid)).toList().isEmpty();
     }
 }

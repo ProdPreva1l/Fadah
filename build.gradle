@@ -1,5 +1,3 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 plugins {
     id 'java'
     id 'org.ajoberstar.grgit' version '5.2.2'
@@ -7,7 +5,7 @@ plugins {
 }
 
 group = 'info.preva1l'
-version = "1.4${versionMetadata()}"
+version = "1.5${versionMetadata()}"
 
 ext {
     set 'version', version.toString()

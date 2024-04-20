@@ -16,6 +16,25 @@ public interface Database {
 
     void destroy();
 
+    default CompletableFuture<Boolean> loadPlayerData(UUID playerUUID) {
+        if (!isConnected()) {
+            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
+            return CompletableFuture.supplyAsync(()->null);
+        }
+        return CompletableFuture.supplyAsync(()->{
+            try {
+                CollectionBoxCache.purgeCollectionbox(playerUUID);
+                ExpiredListingsCache.purgeExpiredListings(playerUUID);
+                getCollectionBox(playerUUID).thenAccept(box -> CollectionBoxCache.load(playerUUID, box)).thenAccept((v) -> {
+                    getExpiredItems(playerUUID).thenAccept(items -> ExpiredListingsCache.load(playerUUID, items));
+                });
+            } catch (Exception e){
+                return false;
+            }
+            return true;
+        });
+    }
+
     void addToCollectionBox(UUID playerUUID, CollectableItem collectableItem);
 
     void removeFromCollectionBox(UUID playerUUID, CollectableItem collectableItem);

@@ -14,6 +14,7 @@ import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import info.preva1l.fadah.utils.helpers.TransactionLogger;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.scheduler.BukkitTask;
@@ -25,18 +26,20 @@ import java.util.Map;
 
 public class ActiveListingsMenu extends FastInv {
     private static final int maxItemsPerPage = 21;
-    private final Player player;
+    private final Player viewer;
+    private final OfflinePlayer owner;
     private final int page;
     private final List<Listing> listings;
     private final Map<Integer, Integer> listingSlot = new HashMap<>();
     private int index = 0;
 
-    public ActiveListingsMenu(Player player, int page) {
-        super(45, Menus.YOUR_LISTINGS_TITLE.toFormattedString());
-        this.player = player;
+    public ActiveListingsMenu(Player viewer, OfflinePlayer owner, int page) {
+        super(45, Menus.ACTIVE_LISTINGS_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? "Your" : owner.getName()+"'s"));
+        this.viewer = viewer;
+        this.owner = owner;
         this.page = page;
         this.listings = ListingCache.getListings();
-        listings.removeIf(listing -> !listing.isOwner(player.getUniqueId()));
+        listings.removeIf(listing -> !listing.isOwner(owner.getUniqueId()));
 
         fillMappings();
 
@@ -66,15 +69,10 @@ public class ActiveListingsMenu extends FastInv {
             Listing listing = listings.get(index);
 
             ItemBuilder itemStack = new ItemBuilder(listing.itemStack().clone())
-                    .addLore(Menus.YOUR_LISTINGS_LORE.toLore(listing.categoryID(), listing.price(), TimeUtil.formatTimeUntil(listing.deletionDate())));
+                    .addLore(Menus.ACTIVE_LISTINGS_LORE.toLore(listing.categoryID(), listing.price(), TimeUtil.formatTimeUntil(listing.deletionDate())));
 
             removeItem(listingSlot.get(i));
             setItem(listingSlot.get(i), itemStack.build(), e -> {
-                int slot = player.getInventory().firstEmpty();
-                if (slot >= 36) {
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
-                    return;
-                }
                 handleListingCancellation(listing, e);
             });
         }
@@ -82,10 +80,10 @@ public class ActiveListingsMenu extends FastInv {
 
     private void handleListingCancellation(Listing listing,  InventoryClickEvent e) {
         if (ListingCache.getListing(listing.id()) == null || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(listing.id()) == null)) {
-            player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+            viewer.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
             return;
         }
-        player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString()));
+        viewer.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString()));
         if (Fadah.getINSTANCE().getCacheSync() == null) {
             ListingCache.removeListing(listing);
         }
@@ -93,25 +91,25 @@ public class ActiveListingsMenu extends FastInv {
         Fadah.getINSTANCE().getDatabase().removeListing(listing.id());
 
         CollectableItem collectableItem = new CollectableItem(listing.itemStack(), Instant.now().toEpochMilli());
-        ExpiredListingsCache.addItem(player.getUniqueId(), collectableItem);
-        CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, player.getUniqueId());
+        ExpiredListingsCache.addItem(owner.getUniqueId(), collectableItem);
+        CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, owner.getUniqueId());
 
         Fadah.getINSTANCE().getDatabase().addToExpiredItems(listing.owner(), collectableItem);
-        new ActiveListingsMenu(player, page).open(player);
+        new ActiveListingsMenu(viewer, owner, page).open(viewer);
         TransactionLogger.listingRemoval(listing);
     }
 
     private void addPaginationControls() {
         if (page > 0) {
-            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> new ExpiredListingsMenu(player, page - 1).open(player));
+            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> new ActiveListingsMenu(viewer, owner,page - 1).open(viewer));
         }
         if (listings != null && listings.size() >= index + 1) {
-            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> new ExpiredListingsMenu(player, page + 1).open(player));
+            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> new ActiveListingsMenu(viewer, owner,page + 1).open(viewer));
         }
     }
 
     private void addNavigationButtons() {
-        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(player).open(player));
+        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
     }
 
     private void fillMappings() {

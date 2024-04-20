@@ -56,6 +56,7 @@ errors:
   inventory-full: "&cYou don't have any free room in your inventory!"
   does-not-exist: "&cThis listing is no longer for sale!"
   must-be-player: "&cOnly players can run this command!"
+  player-not-found: "&c{0} has not joined before!"
   no-permission: "&cYou do not have permission to execute this command!"
   database-connecting: "&cDatabase not connected! Please Wait"
   bad-usage: "&cUsage: /{0}"

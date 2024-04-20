@@ -187,7 +187,8 @@ public class MainMenu extends FastInv {
                     .addLore(StringUtils.colorizeList(cat.description()))
                     .flags(ItemFlag.HIDE_ENCHANTS);
             if (category == cat) {
-                itemBuilder.enchant(Enchantment.DURABILITY);
+                itemBuilder.name(StringUtils.colorize(cat.name() + "&r " + Lang.CATEGORY_SELECTED.toString()))
+                        .enchant(Enchantment.DURABILITY);
             }
             if (selectorMappings.containsKey(i)) {
                 int slot = selectorMappings.get(i);
@@ -225,10 +226,8 @@ public class MainMenu extends FastInv {
             populateCategories();
         });
 
-        setItem(53, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).name(Menus.MAIN_PROFILE_NAME.toFormattedString())
-                .addLore(Menus.MAIN_PROFILE_LORE.toLore()).build(), e -> {
-            new ProfileMenu(player).open(player);
-        });
+        setItem(53, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).name(Menus.MAIN_PROFILE_NAME.toFormattedString("Your"))
+                .addLore(Menus.MAIN_PROFILE_LORE.toLore()).build(), e -> new ProfileMenu(player, player).open(player));
 
     }
 

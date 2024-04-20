@@ -20,6 +20,7 @@ public enum Lang {
     INVENTORY_FULL("errors.inventory-full", "&cYou don't have any free room in your inventory!"),
     DOES_NOT_EXIST("errors.does-not-exist", "&cThis listing is no longer for sale!"),
     MUST_BE_PLAYER("errors.must-be-player", "&cOnly players can run this command!"),
+    PLAYER_NOT_FOUND("errors.player-not-found", "&c{0} has not joined before!"),
     NO_PERMISSION("errors.no-permission", "&cYou do not have permission to execute this command!"),
     DATABASE_CONNECTING("errors.database-connecting", "&cDatabase not connected! Please Wait"),
     BAD_USAGE("errors.bad-usage", "&cUsage: /{0}"),
@@ -58,6 +59,8 @@ public enum Lang {
             "&f             /ah redeem!",
             "&f------------------------------------------"
     )),
+
+    CATEGORY_SELECTED("category-selected", "&e&lSELECTED"),
 
     SORT_ASCENDING("sort.ascending.normal", "Ascending (A-Z)"),
     SORT_ASCENDING_AGE("sort.ascending.age", "Newest First"),

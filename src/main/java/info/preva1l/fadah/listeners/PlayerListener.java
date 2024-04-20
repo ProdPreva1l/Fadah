@@ -6,6 +6,7 @@ import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.utils.TaskManager;
+import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.guis.InventoryEventHandler;
 import info.preva1l.fadah.utils.guis.SearchInv;
 import org.bukkit.event.EventHandler;
@@ -28,7 +29,12 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        Fadah.getINSTANCE().getDatabase().loadCollectionBox(e.getUniqueId()).thenAccept((v)->Fadah.getINSTANCE().getDatabase().loadExpiredItems(e.getUniqueId()));
+        Fadah.getINSTANCE().getDatabase().loadPlayerData(e.getUniqueId()).thenAccept((success) -> {
+            if (!success) {
+                e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+                e.setKickMessage(Lang.PREFIX.toFormattedString() + Lang.DATABASE_CONNECTING.toFormattedString());
+            }
+        });
     }
 
     @EventHandler

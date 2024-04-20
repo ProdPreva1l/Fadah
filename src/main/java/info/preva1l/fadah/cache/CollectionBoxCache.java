@@ -1,5 +1,6 @@
 package info.preva1l.fadah.cache;
 
+import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.records.CollectableItem;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.Nullable;
@@ -45,5 +46,12 @@ public class CollectionBoxCache {
         List<CollectableItem> list = collectionbox.get(playerUUID);
         list.sort(Comparator.comparingLong(CollectableItem::dateAdded).reversed());
         return list;
+    }
+
+    public boolean playerHasCollectableItems(UUID uuid) {
+        return !Fadah.getINSTANCE().getDatabase().getCollectionBox(uuid).join().isEmpty();
+    }
+    public boolean playerHasCachedCollectableItems(UUID uuid) {
+        return !collectionbox.containsKey(uuid);
     }
 }
