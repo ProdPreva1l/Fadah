@@ -1,76 +1,86 @@
 tools:
-  name: "&aTools"
+  name: '&aTools'
   priority: 2
-  icon: "DIAMOND_PICKAXE"
+  icon: DIAMOND_PICKAXE
   description:
-    - "&fPickaxes, Axes, Hoes, etc"
+    - '&fPickaxes, Axes, Hoes, etc'
   materials:
-    - "*_AXE"
-    - "*_PICKAXE"
-    - "*_HOE"
-    - "*_SHOVEL"
+    - '*_AXE'
+    - '*_PICKAXE'
+    - '*_HOE'
+    - '*_SHOVEL'
   custom-items: false
   custom-item-ids: []
 
 combat:
-  name: "&cCombat"
+  name: '&cCombat'
   priority: 2
-  icon: "DIAMOND_SWORD"
+  icon: DIAMOND_SWORD
   description:
-    - "&fSwords, Armour and Bows"
+    - '&fSwords, Armour and Bows'
   materials:
-    - "*_SWORD"
-    - "*_BOOTS"
-    - "*_LEGGINGS"
-    - "*_CHESTPLATE"
-    - "*_HELMET"
-    - "BOW"
+    - '*_SWORD'
+    - '*_BOOTS'
+    - '*_LEGGINGS'
+    - '*_CHESTPLATE'
+    - '*_HELMET'
+    - BOW
   custom-items: false
   custom-item-ids: []
 
 spawners-and-eggs:
-  name: "&dSpawners and Mob Eggs"
+  name: '&5Spawners and Mob Eggs'
   priority: 2
-  icon: "CHICKEN_SPAWN_EGG"
+  icon: CHICKEN_SPAWN_EGG
   description:
-    - "&fAll Mob Spawners and Mob Spawn Eggs"
+    - '&fAll Mob Spawners and Mob Spawn Eggs'
   materials:
-    - "SPAWNER"
-    - "*_SPAWN_EGG"
+    - SPAWNER
+    - '*_SPAWN_EGG'
   custom-items: false
   custom-item-ids: []
 
-custom-enchants:
-  name: "&5Custom Enchants"
-  priority: 3
-  icon: "ENCHANTED_BOOK"
-  description:
-    - "&fCustom Enchants/Runes"
-  materials: []
-  custom-items: true
-  custom-item-ids:
-    - "runes_*"
-    - "runes_super-jump"
-
 building-blocks:
-  name: "&fBuilding Blocks"
+  name: '&dBuilding Blocks'
   priority: 2
-  icon: "BRICKS"
+  icon: BRICKS
   description:
-    - "&fBlocks used to make &ebeautiful &fbuildings!"
+    - '&fBlocks used to make &ebeautiful &fbuildings!'
   materials:
-    - "COARSE_DIRT"
-    - "*_TERRACOTTA"
+    - 'COARSE_DIRT'
+    - 'TERRACOTTA'
+    - '*_WOOL'
+    - '*_TERRACOTTA'
+    - '*_CONCRETE'
+    - '*_CONCRETE_POWDER'
+    - 'GLASS'
+    - '*_GLASS'
+    - '*_GLASS_PANE'
+  custom-items: false
+  custom-item-ids: []
+
+redstone:
+  name: '&cRedstone'
+  priority: 3
+  icon: REPEATER
+  description:
+    - '&fRedstone components.'
+  materials:
+    - 'REDSTONE'
+    - 'REPEATER'
+    - 'COMPARATOR'
+    - '*_REDSTONE'
+    - 'REDSTONE_*'
   custom-items: false
   custom-item-ids: []
 
 misc:
-  name: "&fMisc"
+  name: '&eMisc'
   priority: 1
-  icon: "LEATHER"
+  icon: LEATHER
   description:
-    - "&fItems that don't fit under any other category."
+    - '&fItems that don''t fit under any other category.'
   materials:
-    - "*" # * = all items
+    - '*'
   custom-items: false
   custom-item-ids: []

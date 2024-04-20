@@ -84,4 +84,16 @@ public class StringUtils {
         }
         return message;
     }
+
+    /**
+     * Capitalizes the first letter in a string.
+     * @param str String
+     * @return Capitalized String
+     */
+    public static String capitalize(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
 }

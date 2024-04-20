@@ -28,7 +28,7 @@ public class ExpiredListingsMenu extends FastInv {
     private int index = 0;
 
     public ExpiredListingsMenu(Player viewer, OfflinePlayer owner, int page) {
-        super(45, Menus.EXPIRED_LISTINGS_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? "Your" : owner.getName()+"'s"));
+        super(45, Menus.EXPIRED_LISTINGS_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s"));
         this.viewer = viewer;
         this.owner = owner;
         this.page = page;

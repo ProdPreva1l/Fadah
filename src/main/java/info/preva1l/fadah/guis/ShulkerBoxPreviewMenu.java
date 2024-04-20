@@ -1,14 +1,13 @@
 package info.preva1l.fadah.guis;
 
-import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
-import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.filters.SortingDirection;
 import info.preva1l.fadah.utils.filters.SortingMethod;
 import info.preva1l.fadah.utils.guis.FastInv;
 import info.preva1l.fadah.utils.guis.GuiButtonType;
 import info.preva1l.fadah.utils.guis.GuiHelper;
+import info.preva1l.fadah.utils.guis.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
@@ -22,19 +21,20 @@ public class ShulkerBoxPreviewMenu extends FastInv {
                                  @Nullable String search,
                                  @Nullable SortingMethod sortingMethod,
                                  @Nullable SortingDirection sortingDirection) {
-        super(45);
+        super(36, listing.itemStack().getItemMeta().getDisplayName().isBlank() ? listing.itemStack().getI18NDisplayName() : listing.itemStack().getItemMeta().getDisplayName());
         if (listing.itemStack().getItemMeta() instanceof BlockStateMeta im) {
             if (im.getBlockState() instanceof ShulkerBox shulker) {
-                for (ItemStack itemStack : shulker.getInventory().getStorageContents()) {
+                for (int i = 0; i < shulker.getInventory().getSize(); i++) {
+                    ItemStack itemStack = shulker.getInventory().getItem(i);
                     if (itemStack == null) {
-                        itemStack = new ItemStack(Material.AIR);
+                        itemStack = new ItemBuilder(Material.AIR).name("&r ").build();
                     }
-                    addItem(itemStack);
+                    setItem(i, itemStack);
                 }
             }
         }
 
-        setItem(40, GuiHelper.constructButton(GuiButtonType.CLOSE), e -> new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player));
-        setItems(new int[]{36, 37, 38, 39, 41, 42, 43, 44}, GuiHelper.constructButton(GuiButtonType.BORDER));
+        setItem(31, GuiHelper.constructButton(GuiButtonType.CLOSE), e -> new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player));
+        setItems(new int[]{27, 28, 29, 30, 32, 33, 34, 35}, GuiHelper.constructButton(GuiButtonType.BORDER));
     }
 }

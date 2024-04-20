@@ -31,7 +31,7 @@ public enum Menus {
     MAIN_LISTING_FOOTER_SHULKER("main.listing.lore-footer.is-shulker", "&fRight Click to Preview!"),
     MAIN_PROFILE_NAME("main.profile-button.name", "&e&lYour Profile"),
     MAIN_PROFILE_LORE("main.profile-button.lore", Collections.singletonList("&fClick to view your profile!")),
-    MAIN_PROFILE_DESCRIPTION("main.profile-button.description", List.of("&fThis is your profile!", "&fHere you will find items from the auction house relating to you.")),
+    MAIN_PROFILE_DESCRIPTION("main.profile-button.description", List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {1}.")),
     MAIN_SEARCH_ICON("main.filter.search.icon", "OAK_SIGN"),
     MAIN_SEARCH_NAME("main.filter.search.name", "&3&lSearch"),
     MAIN_SEARCH_LORE("main.filter.search.lore", Collections.singletonList("&fClick to search for an item name/type!")),

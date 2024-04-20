@@ -70,7 +70,10 @@ public enum Lang {
     SORT_DESCENDING_PRICE("sort.descending.price", "Cheapest First"),
     SORT_AGE_NAME("sort.type.age", "Sort By Listing Age"),
     SORT_ALPHABETICAL_NAME("sort.type.alphabetical", "Sort Alphabetically By Name"),
-    SORT_PRICE_NAME("sort.type.price", "Sort By Listing Price")
+    SORT_PRICE_NAME("sort.type.price", "Sort By Listing Price"),
+
+    WORD_YOU("words.you", "you"),
+    WORD_YOUR("words.your", "your"),
     ;
 
     private final String path;
@@ -173,6 +176,10 @@ public enum Lang {
             ret.add(StringUtils.formatPlaceholders(line, replacements));
         }
         return StringUtils.colorizeList(ret);
+    }
+
+    public String toCapital() {
+        return StringUtils.capitalize(toString());
     }
 
     public boolean toBoolean() {

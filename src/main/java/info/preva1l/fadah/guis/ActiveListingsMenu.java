@@ -34,7 +34,7 @@ public class ActiveListingsMenu extends FastInv {
     private int index = 0;
 
     public ActiveListingsMenu(Player viewer, OfflinePlayer owner, int page) {
-        super(45, Menus.ACTIVE_LISTINGS_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? "Your" : owner.getName()+"'s"));
+        super(45, Menus.ACTIVE_LISTINGS_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s"));
         this.viewer = viewer;
         this.owner = owner;
         this.page = page;
