@@ -22,6 +22,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
@@ -29,10 +30,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MainMenu extends FastInv {
     private static final int maxItemsPerPage = 24;
@@ -162,7 +160,7 @@ public class MainMenu extends FastInv {
 
                 Fadah.getINSTANCE().getDatabase().addToExpiredItems(listing.owner(), collectableItem);
                 new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player);
-                TransactionLogger.listingRemoval(listing);
+                TransactionLogger.listingRemoval(listing, false);
                 return true;
             }
             player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.OWN_LISTING.toFormattedString()));
@@ -249,7 +247,7 @@ public class MainMenu extends FastInv {
         // Search
         setItem(49, new ItemBuilder(Menus.MAIN_SEARCH_ICON.toMaterial()).name(Menus.MAIN_SEARCH_NAME.toFormattedString())
                 .lore(Menus.MAIN_SEARCH_LORE.toLore()).build(), e ->
-                new SearchMenu(player, search -> new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player)));
+                new SearchMenu(player, Menus.MAIN_SEARCH_PLACEHOLDER.toString(), search -> new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player)));
 
         // Filter Direction Toggle
         String asc = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.ASCENDING

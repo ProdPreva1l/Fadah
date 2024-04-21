@@ -3,6 +3,7 @@ package info.preva1l.fadah.commands.subcommands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
@@ -16,6 +17,10 @@ public class ReloadSubCommand extends SubCommand {
 
     @SubCommandArgs(name = "reload", aliases = {"rl"}, permission = "fadah.reload", description = "Reloads the plugin!")
     public void execute(@NotNull SubCommandArguments command) {
+        if (Fadah.getINSTANCE().getCacheSync() != null) {
+            CacheSync.send(CacheSync.CacheType.RELOAD);
+            return;
+        }
         Fadah.getINSTANCE().getConfigFile().load();
         Fadah.getINSTANCE().getLangFile().load();
         Fadah.getINSTANCE().getMenusFile().load();

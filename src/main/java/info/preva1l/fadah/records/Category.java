@@ -14,6 +14,10 @@ public record Category(
         @NotNull List<String> description,
         Set<Material> materials,
         boolean isCustomItems,
+        CustomItemMode customItemMode,
         Set<String> customItemIds
 ) {
+    public enum CustomItemMode {
+        API, ECO_ITEMS
+    }
 }

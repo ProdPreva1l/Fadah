@@ -11,13 +11,13 @@ import org.bukkit.inventory.InventoryView;
 
 public class SearchMenu implements Listener {
 
-    public SearchMenu(Player player, SearchCallback callback) {
+    public SearchMenu(Player player, String placeholder, SearchCallback callback) {
         InventoryView view = player.openAnvil(null, true);
         if (view == null) return;
         InventoryEventHandler.inventoriesToHandle.add(new SearchInv(view, callback));
         ((AnvilInventory) view.getTopInventory()).setMaximumRepairCost(0);
         ((AnvilInventory) view.getTopInventory()).setRepairCost(0);
-        ((AnvilInventory) view.getTopInventory()).setFirstItem(new ItemBuilder(Material.PAPER).name("Search Query...").build());
+        ((AnvilInventory) view.getTopInventory()).setFirstItem(new ItemBuilder(Material.PAPER).name(placeholder).build());
     }
 
     @FunctionalInterface

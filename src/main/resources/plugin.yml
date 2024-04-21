@@ -3,6 +3,7 @@ version: '${version}'
 main: info.preva1l.fadah.Fadah
 api-version: '1.16'
 depend: [Vault]
+softdepend: [EcoItems]
 authors: [Preva1l]
 description: Fadah (Finally a Decent Auction House) is the fast, modern and advanced auction house plugin that you have been looking for!
 website: https://discord.gg/4KcF7S94HF

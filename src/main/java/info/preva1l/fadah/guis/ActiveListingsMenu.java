@@ -96,7 +96,7 @@ public class ActiveListingsMenu extends FastInv {
 
         Fadah.getINSTANCE().getDatabase().addToExpiredItems(listing.owner(), collectableItem);
         new ActiveListingsMenu(viewer, owner, page).open(viewer);
-        TransactionLogger.listingRemoval(listing);
+        TransactionLogger.listingRemoval(listing, viewer.getUniqueId() != owner.getUniqueId());
     }
 
     private void addPaginationControls() {

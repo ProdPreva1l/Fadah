@@ -96,8 +96,7 @@ public class NewListingMenu extends FastInv {
 
     //TODO: Double check this works
     private void startListing(Instant deletionDate, double price) {
-        boolean isCustomItem = itemToSell.hasItemMeta() && itemToSell.getItemMeta().getPersistentDataContainer().has(Fadah.getCustomItemKey(), PersistentDataType.STRING);
-        String category = CategoryCache.getCategoryForItem(itemToSell, isCustomItem);
+        String category = CategoryCache.getCategoryForItem(itemToSell);
 
         Listing listing = new Listing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
                 itemToSell, category, price, Instant.now().toEpochMilli(), deletionDate.toEpochMilli());

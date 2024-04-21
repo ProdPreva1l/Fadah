@@ -32,3 +32,15 @@ CREATE TABLE IF NOT EXISTS listings (
     itemStack TEXT NOT NULL
 ) CHARACTER SET utf8
     COLLATE utf8_unicode_ci;
+
+-- Define the historic items table
+CREATE TABLE IF NOT EXISTS history (
+   id INT AUTO_INCREMENT PRIMARY KEY,
+   playerUUID VARCHAR(36) NOT NULL,
+   loggedAction INT NOT NULL,
+   loggedDate BIGINT NOT NULL,
+   itemStack VARCHAR(255) NOT NULL,
+   price DOUBLE NULLABLE,
+   purchaserUUID VARCHAR(36) NULLABLE
+) CHARACTER SET utf8
+    COLLATE utf8_unicode_ci;

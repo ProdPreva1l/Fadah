@@ -1,63 +1,94 @@
-prefix: "&#9555FF&lDXTRUS&r "
+prefix: '&#9555FF&lDXTRUS&r '
+
+category-selected: '&e&lSELECTED'
 
 notifications:
+  cancelled: '&cListing Cancelled!'
   listed:
-    - "&f------------------------------------------------"
-    - "&eYou have a successfully listed an item for sale!"
-    - "&fItem: &e{0}"
-    - "&fPrice: &a${1}"
-    - "&fExpires in: &6{2}"
-    - "&fActive Listings: &d{3}&f/&5{4}"
-    - "&f------------------------------------------------"
-  cancelled: "&cListing Cancelled!"
+    - '&f------------------------------------------------'
+    - '&eYou have a successfully listed an item for sale!'
+    - '&fItem: &e{0}'
+    - '&fPrice: &a${1}'
+    - '&fExpires in: &6{2}'
+    - '&fActive Listings: &d{3}&f/&5{4}'
+    - '&f------------------------------------------------'
   new-sell:
-    - "&f----------------------------------------------"
-    - "&eYou have sold an item on the Auction House!"
-    - "&fItem: &e{0}"
-    - "&fMoney Made: &a${1}"
-    - "&f----------------------------------------------"
+    - '&f----------------------------------------------'
+    - '&eYou have sold an item on the Auction House!'
+    - '&fItem: &e{0}'
+    - '&fMoney Made: &a${1}'
+    - '&f----------------------------------------------'
   new-item:
-    - "&f------------------------------------------"
-    - "&eYou have a new item in your collection box!"
-    - "&f             /ah redeem!"
-    - "&f------------------------------------------"
+    - '&f------------------------------------------'
+    - '&eYou have a new item in your collection box!'
+    - '&f             /ah redeem!'
+    - '&f------------------------------------------'
 
 sort:
   types:
-    alphabetical: "Sort Alphabetically By Name"
-    age: "Sort By Listing Age"
-    price: "Sort By Listing Price"
+    alphabetical: Sort Alphabetically By Name
+    age: Sort By Listing Age
+    price: Sort By Listing Price
   direction:
     ascending:
-      normal: "Ascending (A-Z)"
-      age: "Newest First"
-      price: "Most Expensive First"
+      normal: Ascending (A-Z)
+      age: Newest First
+      price: Most Expensive First
     descending:
-      normal: "Descending (Z-A)"
-      age: "Oldest First"
-      price: "Cheapest First"
+      normal: Descending (Z-A)
+      age: Oldest First
+      price: Cheapest First
+  ascending:
+    normal: Ascending (A-Z)
+    age: Newest First
+    price: Most Expensive First
+  descending:
+    normal: Descending (Z-A)
+    age: Oldest First
+    price: Cheapest First
+  type:
+    age: Sort By Listing Age
+    alphabetical: Sort Alphabetically By Name
+    price: Sort By Listing Price
+
+logging-actions:
+  listing-start: Listing Started
+  listing-purchased: Listing Purchased
+  listing-sold: Listing Sold
+  listing-cancelled: Listing Cancelled
+  listing-expired: Listing Expired
+  listing-expired-admin: Listing Cancelled by Admins
+  expired-item-claimed: Expired Listing Claimed
+  expired-item-claimed-admin: Expired Listing Claimed by Admins
+  collection-box-claimed: Collection Box Item Claimed
+  collection-box-claimed-admin: Collection Box Item Claimed by Admins
+  listing-cancelled-admin: Listing Cancelled by Admins
 
 help-command:
-  header: "&#9555FF&lAuctionHouse &eHelp"
-  format: "&b/{0} &8&l| &f{1}"
+  header: '&#9555FF&lAuctionHouse &eHelp'
+  format: '&b/{0} &8&l| &f{1}'
 
 fail:
-  disabled: "&cThe Auction House is currently disabled!"
-  max-listings: "&cYou have reached your max listings! &7({0}/{1})"
-  must-be-number: "&cThe price must be a number!"
-  must-hold-item: "&fYou must have an item in your hand to sell!"
+  disabled: '&cThe Auction House is currently disabled!'
+  max-listings: '&cYou have reached your max listings! &7({0}/{1})'
+  must-be-number: '&cThe price must be a number!'
+  must-hold-item: '&fYou must have an item in your hand to sell!'
   listing-price:
-    max: "&fPrice must be less than &a${0}"
-    min: "&fPrice must be at least &a${0}"
+    max: '&fPrice must be less than &a${0}'
+    min: '&fPrice must be at least &a${0}'
 
 errors:
-  own-listing: "&cYou cannot buy your own listing!"
-  too-expensive: "&cYou cannot afford this item!"
-  inventory-full: "&cYou don't have any free room in your inventory!"
-  does-not-exist: "&cThis listing is no longer for sale!"
-  must-be-player: "&cOnly players can run this command!"
-  player-not-found: "&c{0} has not joined before!"
-  no-permission: "&cYou do not have permission to execute this command!"
-  database-connecting: "&cDatabase not connected! Please Wait"
-  bad-usage: "&cUsage: /{0}"
-  no-command: "&cThis command does not exist!"
+  own-listing: '&cYou cannot buy your own listing!'
+  too-expensive: '&cYou cannot afford this item!'
+  inventory-full: '&cYou don''t have any free room in your inventory!'
+  does-not-exist: '&cThis listing is no longer for sale!'
+  must-be-player: '&cOnly players can run this command!'
+  player-not-found: '&c{0} has not joined before!'
+  no-permission: '&cYou do not have permission to execute this command!'
+  database-connecting: '&cDatabase not connected! Please Wait'
+  bad-usage: '&cUsage: /{0}'
+  no-command: '&cThis command does not exist!'
+
+words:
+  you: you
+  your: your

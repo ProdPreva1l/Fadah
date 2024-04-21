@@ -2,6 +2,7 @@ package info.preva1l.fadah.commands.subcommands;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
@@ -15,6 +16,10 @@ public class ToggleSubCommand extends SubCommand {
 
     @SubCommandArgs(name = "toggle", inGameOnly = false, permission = "fadah.toggle-status", description = "Toggles the auction house on or off.")
     public void execute(@NotNull SubCommandArguments command) {
+        if (Fadah.getINSTANCE().getCacheSync() != null) {
+            CacheSync.send(CacheSync.CacheType.TOGGLE);
+            return;
+        }
         boolean enabled = Fadah.getINSTANCE().getConfigFile().getBoolean("enabled");
         Fadah.getINSTANCE().getConfigFile().getConfiguration().set("enabled", !enabled);
 

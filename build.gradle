@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'info.preva1l'
-version = "1.5${versionMetadata()}"
+version = "1.6${versionMetadata()}"
 
 ext {
     set 'version', version.toString()
@@ -14,6 +14,7 @@ ext {
 repositories {
     mavenLocal()
     mavenCentral()
+    maven { url "https://repo.auxilor.io/repository/maven-public/" }
     maven { url 'https://oss.sonatype.org/content/groups/public/' }
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
     maven { url 'https://jitpack.io' }
@@ -25,20 +26,22 @@ dependencies {
     compileOnly 'redis.clients:jedis:5.1.0'
     compileOnly 'org.apache.commons:commons-pool2:2.12.0'
 
-    compileOnly 'org.mongodb:mongodb-driver-sync:5.0.0'
-
     implementation 'com.zaxxer:HikariCP:5.1.0'
     compileOnly 'org.xerial:sqlite-jdbc:3.45.2.0'
     compileOnly 'com.mysql:mysql-connector-j:8.3.0'
     compileOnly 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
+    compileOnly 'org.mongodb:mongodb-driver-sync:5.0.0'
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+
+    compileOnly 'com.willfp:libreforge:4.58.1'
+    compileOnly 'com.willfp:eco:6.56.0'
+    compileOnly 'com.willfp:EcoItems:5.43.1'
 
     compileOnly 'org.jetbrains:annotations:24.0.0'
     compileOnly 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.projectlombok:lombok:1.18.32'
     annotationProcessor 'org.jetbrains:annotations:24.0.0'
-
 
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.2'

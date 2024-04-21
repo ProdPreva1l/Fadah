@@ -3,6 +3,7 @@ package info.preva1l.fadah.commands.subcommands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
+import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.guis.ProfileMenu;
@@ -28,12 +29,9 @@ public class ProfileSubCommand extends SubCommand {
         OfflinePlayer owner = command.getPlayer();
         if (command.args().length >= 1 && command.sender().hasPermission("fadah.manage.profiles")) {
             owner = Bukkit.getOfflinePlayer(command.args()[0]);
-            Fadah.getINSTANCE().getDatabase().loadExpiredItems(owner.getUniqueId());
-            Fadah.getINSTANCE().getDatabase().loadCollectionBox(owner.getUniqueId());
+            Fadah.getINSTANCE().getDatabase().loadPlayerData(owner.getUniqueId());
         }
-        if (!ListingCache.playerHasListings(owner.getUniqueId())
-                && !ExpiredListingsCache.playerHasCachedExpiredListings(owner.getUniqueId())
-                && !CollectionBoxCache.playerHasCachedCollectableItems(owner.getUniqueId())) {
+        if (owner.getUniqueId() != command.getPlayer().getUniqueId() && !HistoricItemsCache.playerExists(owner.getUniqueId())) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));
             return;
         }

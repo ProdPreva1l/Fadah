@@ -33,6 +33,7 @@ public enum Menus {
     MAIN_PROFILE_LORE("main.profile-button.lore", Collections.singletonList("&fClick to view your profile!")),
     MAIN_PROFILE_DESCRIPTION("main.profile-button.description", List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {1}.")),
     MAIN_SEARCH_ICON("main.filter.search.icon", "OAK_SIGN"),
+    MAIN_SEARCH_PLACEHOLDER("main.filter.search.placeholder", "Search Query..."),
     MAIN_SEARCH_NAME("main.filter.search.name", "&3&lSearch"),
     MAIN_SEARCH_LORE("main.filter.search.lore", Collections.singletonList("&fClick to search for an item name/type!")),
     MAIN_FILTER_TYPE_ICON("main.filter.change-type.icon", "PUFFERFISH"),
@@ -62,12 +63,12 @@ public enum Menus {
     SEARCH_TITLE("search.title", "&9&lAuction House &8> &fSearch"),
     NEW_LISTING_TITLE("new-listing.title", "&9&lAuction House &8> &3New Listing"),
     NEW_LISTING_CREATE_ICON("new-listing.create.icon", "EMERALD"),
-    NEW_LISTING_CREATE_NAME("new-listing.create.title", "&aClick to create listing!"),
+    NEW_LISTING_CREATE_NAME("new-listing.create.name", "&aClick to create listing!"),
     NEW_LISTING_CREATE_LORE("new-listing.create.lore", List.of(
             "&cClicking this button will immediately post",
             "&cyour item on the auction house for &a${0}")),
     NEW_LISTING_TIME_ICON("new-listing.time.icon", "CLOCK"),
-    NEW_LISTING_TIME_NAME("new-listing.time.title", "&aTime for listing to be active"),
+    NEW_LISTING_TIME_NAME("new-listing.time.name", "&aTime for listing to be active"),
     NEW_LISTING_TIME_LORE("new-listing.time.lore", List.of(
             "&fCurrent: &6{0}",
             "&7Left Click to Add 1 Hour",
@@ -75,6 +76,8 @@ public enum Menus {
             "&7Shift Left Click to Add 30 Minutes",
             "&7Shift Right Click to Remove 30 Minutes"
     )),
+
+
 
     CONFIRM_TITLE("confirm.title", "&9&lAuction House &8> &aConfirm Purchase"),
     CONFIRM_BUTTON_ICON("confirm.confirm.icon", "LIME_CONCRETE"),
@@ -104,6 +107,14 @@ public enum Menus {
             "&f{0} expired listings!"
     )),
 
+    PROFILE_HISTORIC_ITEMS_ICON("profile.historic-items.icon", "WRITABLE_BOOK"),
+    PROFILE_HISTORIC_ITEMS_NAME("profile.historic-items.name", "&c{0} History"),
+    PROFILE_HISTORIC_ITEMS_LORE("profile.historic-items.lore", List.of(
+            "&fClick to view",
+            "&f{0} history!"
+    )),
+
+
     COLLECTION_BOX_TITLE("collection-box.title", "&9&lAuction House &8> &e{0} Collection Box"),
     COLLECTION_BOX_LORE("collection-box.collectable-lore", List.of(
             "&8&n---------------------------",
@@ -121,6 +132,50 @@ public enum Menus {
             "&eClick To Re-Claim!",
             "&8&n---------------------------"
     )),
+
+    HISTORIC_ITEMS_TITLE("historic-items.title", "&9&lAuction House &8> &c{0} History"),
+    HISTORIC_ITEMS_LORE("historic-items.lore", List.of(
+            "&8&n---------------------------",
+            "&fAction: &e{0}",
+            "&r ",
+            "&fDate: &e{1}",
+            "&8&n---------------------------"
+    )),
+    HISTORIC_ITEMS_WITH_PRICE_LORE("historic-items.lore-with-price", List.of(
+            "&8&n---------------------------",
+            "&fAction: &e{0}",
+            "&r ",
+            "&fPrice: &6${1}",
+            "&r ",
+            "&fDate: &e{2}",
+            "&8&n---------------------------"
+    )),
+    HISTORIC_ITEMS_WITH_BUYER_LORE("historic-items.lore-with-buyer", List.of(
+            "&8&n---------------------------",
+            "&fAction: &e{0}",
+            "&r ",
+            "&fBuyer: &3{1}",
+            "&r",
+            "&fPrice: &6${2}",
+            "&r ",
+            "&fDate: &e{3}",
+            "&8&n---------------------------"
+    )),
+    HISTORIC_ITEMS_WITH_SELLER_LORE("historic-items.lore-with-seller", List.of(
+            "&8&n---------------------------",
+            "&fAction: &e{0}",
+            "&r ",
+            "&fSeller: &3{1}",
+            "&r",
+            "&fPrice: &6${2}",
+            "&r ",
+            "&fDate: &e{3}",
+            "&8&n---------------------------"
+    )),
+    HISTORY_SEARCH_ICON("historic-items.search.icon", "OAK_SIGN"),
+    HISTORY_SEARCH_PLACEHOLDER("historic-items.search.placeholder", "Ex: 21/04/2024 22:26"),
+    HISTORY_SEARCH_NAME("historic-items.search.name", "&eSearch Date"),
+    HISTORY_SEARCH_LORE("historic-items.search.lore", Collections.singletonList("&fClick to search for a logs date & time!")),
 
     ACTIVE_LISTINGS_TITLE("active-listings.title", "&9&lAuction House &8> &1{0} Listings"),
     ACTIVE_LISTINGS_LORE("active-listings.title", List.of(
@@ -145,7 +200,7 @@ public enum Menus {
     PREVIOUS_BUTTON_ICON("all.previous_page.icon", "ARROW"),
     PREVIOUS_BUTTON_NAME("all.previous_page.name", "&c&lPrevious Page"),
     PREVIOUS_BUTTON_LORE("all.previous_page.lore", Collections.singletonList("&7Click to go to the previous page")),
-    NEXT_BUTTON_ICON("all.next_page.name", "ARROW"),
+    NEXT_BUTTON_ICON("all.next_page.icon", "ARROW"),
     NEXT_BUTTON_NAME("all.next_page.name", "&a&lNext Page"),
     NEXT_BUTTON_LORE("all.next_page.lore", Collections.singletonList("&7Click to go to the next page")),
     SCROLL_NEXT_BUTTON_ICON("all.scroll_next.icon", "ARROW"),

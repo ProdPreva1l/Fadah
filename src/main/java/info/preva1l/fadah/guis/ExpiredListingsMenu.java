@@ -2,9 +2,11 @@ package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
+import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.records.CollectableItem;
+import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
@@ -14,6 +16,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -75,6 +78,14 @@ public class ExpiredListingsMenu extends FastInv {
                 Fadah.getINSTANCE().getDatabase().removeFromExpiredItems(owner.getUniqueId(), collectableItem);
                 viewer.getInventory().setItem(slot, collectableItem.itemStack());
                 new ExpiredListingsMenu(viewer, owner, 0).open(viewer);
+
+                // In game logs
+                boolean isAdmin = viewer.getUniqueId() != owner.getUniqueId();
+                HistoricItem historicItem = new HistoricItem(owner.getUniqueId(), Instant.now().toEpochMilli(),
+                        isAdmin ? HistoricItem.LoggedAction.EXPIRED_ITEM_ADMIN_CLAIM : HistoricItem.LoggedAction.EXPIRED_ITEM_CLAIM,
+                        collectableItem.itemStack(), null, null);
+                HistoricItemsCache.addLog(owner.getUniqueId(), historicItem);
+                Fadah.getINSTANCE().getDatabase().addToHistory(owner.getUniqueId(), historicItem);
             });
         }
     }

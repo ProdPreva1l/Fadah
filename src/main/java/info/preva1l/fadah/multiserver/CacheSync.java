@@ -1,8 +1,10 @@
 package info.preva1l.fadah.multiserver;
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TaskManager;
@@ -19,6 +21,7 @@ import redis.clients.jedis.JedisPubSub;
 import redis.clients.jedis.exceptions.JedisException;
 import redis.clients.jedis.util.Pool;
 
+import java.security.InvalidParameterException;
 import java.util.UUID;
 
 public class CacheSync extends JedisPubSub {
@@ -65,6 +68,21 @@ public class CacheSync extends JedisPubSub {
                 jedis.publish(Config.REDIS_CHANNEL.toString(), obj.toJSONString());
             }
         });
+    }
+
+    public static void send(CacheType cacheType) {
+        switch (cacheType) {
+            case RELOAD, TOGGLE -> {
+                JSONObject obj = new JSONObject();
+                obj.put("cache_type", cacheType.ordinal());
+                TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+                    try (Jedis jedis = jedisPool.getResource()) {
+                        jedis.publish(Config.REDIS_CHANNEL.toString(), obj.toJSONString());
+                    }
+                });
+            }
+            default -> throw new InvalidParameterException("Incorrect details provided!");
+        }
     }
 
     public void start() {
@@ -155,6 +173,41 @@ public class CacheSync extends JedisPubSub {
                 if (player == null) return;
 
                 player.sendMessage(StringUtils.colorize(obj.get("message").toString()));
+            }
+        },
+        RELOAD {
+            @Override
+            public void handleMessage(JSONObject obj) {
+                Fadah.getINSTANCE().getConfigFile().load();
+                Fadah.getINSTANCE().getLangFile().load();
+                Fadah.getINSTANCE().getMenusFile().load();
+                Fadah.getINSTANCE().getCategoriesFile().load();
+                CategoryCache.purgeCategories();
+                CategoryCache.loadCategories();
+                Fadah.getINSTANCE().getDatabase().loadListings();
+                Bukkit.getConsoleSender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + "&aConfig reloaded from remote server!"));
+            }
+        },
+        TOGGLE {
+            @Override
+            public void handleMessage(JSONObject obj) {
+                boolean enabled = Fadah.getINSTANCE().getConfigFile().getBoolean("enabled");
+                Fadah.getINSTANCE().getConfigFile().getConfiguration().set("enabled", !enabled);
+
+                String message = Lang.PREFIX.toFormattedString() + StringUtils.colorize("&fAuction House has been ");
+                message += (enabled ? StringUtils.colorize("&c&lDisabled") : StringUtils.colorize("&a&lEnabled"));
+                message += StringUtils.colorize(" &ffrom remote server!");
+                Fadah.getINSTANCE().getConfigFile().save();
+
+                Bukkit.getConsoleSender().sendMessage(message);
+            }
+        },
+        HISTORY {
+            @Override
+            public void handleMessage(JSONObject obj) {
+                UUID playerUUID = UUID.fromString(obj.get("player_uuid").toString());
+
+                Fadah.getINSTANCE().getDatabase().loadHistory(playerUUID);
             }
         };
 

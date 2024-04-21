@@ -21,9 +21,13 @@ public enum Config {
 
     STRICT_CHECKS("strict-checks", false),
 
-    DATABASE_TYPE("database.type", "MONGO"),
-    DATABASE_URI("database.uri", "mongodb://username:password@127.0.0.1:27017/admin?retryWrites=true&readPreference=nearest"),
-    DATABASE("database.database", "SMP"),
+    HOOK_ECO_ITEMS("hooks.eco-items", false),
+
+    LOG_TO_FILE("log-to-file", true),
+
+    DATABASE_TYPE("database.type", "SQLITE"),
+    DATABASE_URI("database.uri", "jdbc:mysql://username:password@127.0.0.1:3306/Fadah"),
+    DATABASE("database.database", "Fadah"),
 
     REDIS_ENABLED("redis.enabled", false),
     REDIS_HOST("redis.host", "127.0.0.1"),

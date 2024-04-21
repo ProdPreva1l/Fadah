@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.records.CollectableItem;
+import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.ItemSerializer;
 import info.preva1l.fadah.utils.TaskManager;
@@ -381,6 +382,72 @@ public class SQLiteDatabase implements Database {
                 Fadah.getConsole().severe("Failed to get items from expired items!");
             }
             return null;
+        });
+    }
+
+    @Override
+    public void addToHistory(UUID playerUUID, HistoricItem historicItem) {
+        if (!isConnected()) {
+            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
+            return;
+        }
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+            try (Connection connection = getConnection()) {
+                try (PreparedStatement statement = connection.prepareStatement("""
+                        INSERT INTO `history`
+                        (`playerUUID`, `itemStack`, `loggedDate`, `loggedAction`, `price`, `purchaserUUID`)
+                        VALUES (?,?,?,?,?,?);""")) {
+                    statement.setString(1, playerUUID.toString());
+                    statement.setString(2, ItemSerializer.serialize(historicItem.itemStack()));
+                    statement.setLong(3, historicItem.loggedDate());
+                    statement.setInt(4, historicItem.action().ordinal());
+                    if (historicItem.price() != null) {
+                        statement.setDouble(5, historicItem.price());
+                    } else {
+                        statement.setNull(5, Types.DOUBLE);
+                    }
+                    if (historicItem.purchaserUUID() != null) {
+                        statement.setString(6, historicItem.purchaserUUID().toString());
+                    } else {
+                        statement.setNull(6, Types.VARCHAR);
+                    }
+                    statement.executeUpdate();
+                }
+            } catch (SQLException e) {
+                Fadah.getConsole().severe("Failed to add item to expired items!");
+            }
+        });
+    }
+
+    @Override
+    public CompletableFuture<List<HistoricItem>> getHistory(UUID playerUUID) {
+        if (!isConnected()) {
+            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
+            return CompletableFuture.supplyAsync(Collections::emptyList);
+        }
+        return CompletableFuture.supplyAsync(() -> {
+            final List<HistoricItem> retrievedData = Lists.newArrayList();
+            try (Connection connection = getConnection()) {
+                try (PreparedStatement statement = connection.prepareStatement("""
+                        SELECT `itemStack`, `loggedDate`, `loggedAction`, `price`, `purchaserUUID`
+                        FROM `history`
+                        WHERE `playerUUID`=?;""")) {
+                    statement.setString(1, playerUUID.toString());
+                    final ResultSet resultSet = statement.executeQuery();
+                    while (resultSet.next()) {
+                        final long loggedDate = resultSet.getLong("loggedDate");
+                        final double price = resultSet.getDouble("price");
+                        final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
+                        final HistoricItem.LoggedAction loggedAction = HistoricItem.LoggedAction.values()[resultSet.getInt("loggedAction")];
+                        final UUID purchaserUUID = resultSet.getString("purchaserUUID") == null ? null : UUID.fromString(resultSet.getString("purchaserUUID"));
+                        retrievedData.add(new HistoricItem(playerUUID, loggedDate, loggedAction, itemStack, price, purchaserUUID));
+                    }
+                    return retrievedData;
+                }
+            } catch (SQLException e) {
+                Fadah.getConsole().log(Level.SEVERE, "Failed to get items from expired items!", e);
+            }
+            return retrievedData;
         });
     }
 }

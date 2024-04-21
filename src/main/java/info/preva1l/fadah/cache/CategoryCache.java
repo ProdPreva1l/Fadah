@@ -1,6 +1,9 @@
 package info.preva1l.fadah.cache;
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.hooks.HookManager;
+import info.preva1l.fadah.hooks.impl.EcoItemsHook;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.utils.SetHelper;
 import lombok.experimental.UtilityClass;
@@ -30,13 +33,15 @@ public final class CategoryCache {
         return new ArrayList<>(categories);
     }
 
-    public String getCategoryForItem(ItemStack itemStack, boolean isCustom) {
+    public String getCategoryForItem(ItemStack itemStack) {
         List<Category> ctgs = getCategories();
         ctgs.sort(Comparator.comparingInt(Category::priority).reversed());
         for (Category category : ctgs) {
-            if (isCustom && category.isCustomItems()) {
-                if (category.customItemIds().contains(itemStack.getItemMeta().getPersistentDataContainer().get(NamespacedKey.minecraft("custom_items"), PersistentDataType.STRING)))
-                    return category.id();
+            if (category.isCustomItems()) {
+                if (Config.HOOK_ECO_ITEMS.toBoolean() && HookManager.getHook(EcoItemsHook.class).isPresent()) {
+                    EcoItemsHook ecoItemsHook = (EcoItemsHook) HookManager.getHook(EcoItemsHook.class).get();
+                    if (ecoItemsHook.isEcoItem(itemStack)) return category.id();
+                }
             }
             if (category.materials() != null && category.materials().contains(itemStack.getType()))
                 return category.id();
@@ -59,10 +64,22 @@ public final class CategoryCache {
             }
 
             boolean isCustomItems = Fadah.getINSTANCE().getCategoriesFile().getBoolean(key + ".custom-items");
+            Category.CustomItemMode customItemMode = Category.CustomItemMode.API;
+            String cim = Fadah.getINSTANCE().getCategoriesFile().getString(key + ".custom-item-mode").toUpperCase();
+            try {
+                customItemMode = Category.CustomItemMode.valueOf(cim);
+            } catch (EnumConstantNotPresentException | IllegalArgumentException ignored) {
+                Fadah.getConsole().severe("-----------------------------");
+                Fadah.getConsole().severe("Config Incorrect!");
+                Fadah.getConsole().severe("Custom Item Mode: " + cim);
+                Fadah.getConsole().severe("Does Not Exist!");
+                Fadah.getConsole().severe("Defaulting to API");
+                Fadah.getConsole().severe("-----------------------------");
+            }
             List<String> customItemIDs = null;
             if (isCustomItems)
                 customItemIDs = Fadah.getINSTANCE().getCategoriesFile().getStringList(key + ".custom-item-ids");
-            categories.add(new Category(key, name, priority, (icon == null ? Material.GRASS_BLOCK : icon), description, materials, isCustomItems, SetHelper.listToSet(customItemIDs)));
+            categories.add(new Category(key, name, priority, (icon == null ? Material.GRASS_BLOCK : icon), description, materials, isCustomItems, customItemMode, SetHelper.listToSet(customItemIDs)));
         }
     }
 }

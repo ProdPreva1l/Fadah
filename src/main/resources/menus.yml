@@ -1,185 +1,237 @@
 main:
-  title: "&9&lAuction House"
+  title: '&9&lAuction House'
   listing:
     lore-body:
-      - "&8&n---------------------------"
-      - "&fSeller: &e{0}"
-      - "&fCategory: &e{1}"
-      - "&r "
-      - "&fBuy Now: &6${2}"
-      - "&r "
-      - "&fExpires In: &e{3}"
-      - "&8&n---------------------------"
+      - '&8&n---------------------------'
+      - '&fSeller: &e{0}'
+      - '&fCategory: &e{1}'
+      - '&r '
+      - '&fBuy Now: &6${2}'
+      - '&r '
+      - '&fExpires In: &e{3}'
+      - '&8&n---------------------------'
     lore-footer:
-      buy: "&aClick to buy now!"
-      too-expensive: "&cYou cannot afford this item!"
-      own-listing: "&cYou cannot buy your own listing! &8(Shift Click to Cancel)"
-      is-shulker: "&fRight Click to Preview!"
+      buy: '&aClick to buy now!'
+      too-expensive: '&cYou cannot afford this item!'
+      own-listing: '&cYou cannot buy your own listing! &8(Shift Click to Cancel)'
+      is-shulker: '&fRight Click to Preview!'
   profile-button:
-    name: "&e&l{0} Profile"  #{0} = "Your" or the players name if in management mode
+    name: '&e&l{0} Profile' # {0} = "Your" or the players name if in management mode
     lore:
-      - "&fClick to view your profile!"
+      - '&fClick to view your profile!'
     description:
-      - "&fThis is {0} profile!" #{0} = "Your" or the players name if in management mode
-      - "&fHere you will find items from the auction house relating to {0}" #{0} = "you" or the players name if in management mode
+      - '&fThis is {0} profile!'
+      - '&fHere you will find items from the auction house relating to {0}'
   filter:
     search:
-      icon: "OAK_SIGN"
-      name: "&3&lSearch"
+      icon: OAK_SIGN
+      placeholder: 'Search Query...'
+      name: '&3&lSearch'
       lore:
-        - "&fClick to search for an item name/type!"
+        - '&fClick to search for an item name/type!'
     change-type:
-      icon: "PUFFERFISH"
-      name: "&eListing Filter"
+      icon: PUFFERFISH
+      name: '&eListing Filter'
       lore:
-        - "&7Left Click to cycle up"
-        - "&7Right Click to cycle down"
-        - "&8-------------------------"
-        - "&f{0}"
-        - "&8> &e{1}"
-        - "&f{2}"
-        - "&8-------------------------"
+        - '&7Left Click to cycle up'
+        - '&7Right Click to cycle down'
+        - '&8-------------------------'
+        - '&f{0}'
+        - '&8> &e{1}'
+        - '&f{2}'
+        - '&8-------------------------'
     change-direction:
-      icon: "CLOCK"
-      name: "&eFilter Direction"
+      icon: CLOCK
+      name: '&eFilter Direction'
       lore:
-        - "&7Click To Toggle"
-        - "&8-------------------------"
-        - "{0}"
-        - "{1}"
-        - "&8-------------------------"
+        - '&7Click To Toggle'
+        - '&8-------------------------'
+        - '{0}'
+        - '{1}'
+        - '&8-------------------------'
       options:
-        selected: "&8> &e{0}"
-        not-selected: "&f{0}"
-
+        selected: '&8> &e{0}'
+        not-selected: '&f{0}'
 
 new-listing:
-  title: "&9&lAuction House &8> &3New Listing"
+  title: '&9&lAuction House &8> &3New Listing'
   create:
-    icon: "EMERALD"
-    name: "&aClick to create listing!"
+    icon: EMERALD
+    name: '&aClick to create listing!'
     lore:
-      - "&cClicking this button will immediately post"
-      - "&cyour item on the auction house for &a${0}"
+      - '&cClicking this button will immediately post'
+      - '&cyour item on the auction house for &a${0}'
   time:
-    icon: "CLOCK"
-    name: "&aTime for listing to be active"
+    icon: CLOCK
+    name: '&aTime for listing to be active'
     lore:
-      - "&fCurrent: &6{0}"
-      - "&7Left Click to Add 1 Hour"
-      - "&7Right Click to Remove 1 Hour"
-      - "&7Shift Left Click to Add 30 Minutes"
-      - "&7Shift Right Click to Remove 30 Minutes"
+      - '&fCurrent: &6{0}'
+      - '&7Left Click to Add 1 Hour'
+      - '&7Right Click to Remove 1 Hour'
+      - '&7Shift Left Click to Add 30 Minutes'
+      - '&7Shift Right Click to Remove 30 Minutes'
 
 confirm:
-  title: "&9&lAuction House &8> &aConfirm Purchase"
+  title: '&9&lAuction House &8> &aConfirm Purchase'
   confirm:
-    icon: "LIME_CONCRETE"
-    name: "&a&lCONFIRM"
+    icon: LIME_CONCRETE
+    name: '&a&lCONFIRM'
     lore:
-      - "&7Click to confirm"
+      - '&7Click to confirm'
   cancel:
-    icon: "RED_CONCRETE"
-    name: "&c&lCANCEL"
+    icon: RED_CONCRETE
+    name: '&c&lCANCEL'
     lore:
-      - "&7Click to cancel"
+      - '&7Click to cancel'
 
+search:
+  title: '&9&lAuction House &8> &fSearch'
 
-#{0} = "Your" or the players name if in management mode
+# {0} = "Your" or the players name if in management mode
 profile:
-  title: "&9&lAuction House &8> &b{0} Profile"
+  title: '&9&lAuction House &8> &b{0} Profile'
   your-listings:
-    icon: "EMERALD"
-    name: "&1{0} Listings"
+    icon: EMERALD
+    name: '&1{0} Listings'
     lore:
-      - "&fClick to view & manage"
-      - "&f{0} active listings!"
+      - '&fClick to view & manage'
+      - '&f{0} active listings!'
   collection-box:
-    icon: "CHEST_MINECART"
-    name: "&e{0} Collection Box"
+    icon: CHEST_MINECART
+    name: '&e{0} Collection Box'
     lore:
-      - "&fClick to view & claim"
-      - "&f{0} purchases!"
+      - '&fClick to view & claim'
+      - '&f{0} purchases!'
   expired-items:
-    icon: "ENDER_CHEST"
-    name: "&c{0} Expired Listings"
+    icon: ENDER_CHEST
+    name: '&c{0} Expired Listings'
     lore:
-      - "&fClick to view & claim"
-      - "&f{0} expired listings!"
+      - '&fClick to view & claim'
+      - '&f{0} expired listings!'
+  historic-items:
+    icon: WRITABLE_BOOK
+    name: '&c{0} History'
+    lore:
+      - '&fClick to view'
+      - '&f{0} history!'
 
-#{0} = "Your" or the players name if in management mode
+# {0} = "Your" or the players name if in management mode
 collection-box:
-  title: "&9&lAuction House &8> &e{0} Collection Box"
+  title: '&9&lAuction House &8> &e{0} Collection Box'
   collectable-lore:
-    - "&8&n---------------------------"
-    - "&fAdded: &e{0} &fago"
-    - "&r "
-    - "&eClick To Claim!"
-    - "&8&n---------------------------"
+    - '&8&n---------------------------'
+    - '&fAdded: &e{0} &fago'
+    - '&r '
+    - '&eClick To Claim!'
+    - '&8&n---------------------------'
 
-#{0} = "Your" or the players name if in management mode
+# {0} = "Your" or the players name if in management mode
 expired-listings:
-  title: "&9&lAuction House &8> &c{0} Expired Listings"
+  title: '&9&lAuction House &8> &c{0} Expired Listings'
   collectable-lore:
-    - "&8&n---------------------------"
-    - "&fAdded: &e{0} &fago"
-    - "&r "
-    - "&eClick To Re-Claim!"
-    - "&8&n---------------------------"
+    - '&8&n---------------------------'
+    - '&fAdded: &e{0} &fago'
+    - '&r '
+    - '&eClick To Re-Claim!'
+    - '&8&n---------------------------'
 
-#{0} = "Your" or the players name if in management mode
+# {0} = "Your" or the players name if in management mode
 active-listings:
-  title: "&9&lAuction House &8> &1{0} Listings"
+  title: '&9&lAuction House &8> &1{0} Listings'
   lore:
-    - "&8&n---------------------------"
-    - "&fCategory: &e{0}"
-    - "&r "
-    - "&fPrice: &6${1}"
-    - "&r "
-    - "&fExpires In: &e{2}"
-    - "&r "
-    - "&eClick To Cancel This Listing!"
-    - "&8&n---------------------------"
+    - '&8&n---------------------------'
+    - '&fCategory: &e{0}'
+    - '&r '
+    - '&fPrice: &6${1}'
+    - '&r '
+    - '&fExpires In: &e{2}'
+    - '&r '
+    - '&eClick To Cancel This Listing!'
+    - '&8&n---------------------------'
+
+# {0} = "Your" or the players name if in management mode
+historic-items:
+  title: '&9&lAuction House &8> &c{0} History'
+  lore:
+    - '&8&n---------------------------'
+    - '&fAction: &e{0}'
+    - '&r '
+    - '&fDate: &e{1}'
+    - '&8&n---------------------------'
+  lore-with-price:
+    - '&8&n---------------------------'
+    - '&fAction: &e{0}'
+    - '&r '
+    - '&fPrice: &6${1}'
+    - '&r '
+    - '&fDate: &e{2}'
+    - '&8&n---------------------------'
+  lore-with-buyer:
+    - '&8&n---------------------------'
+    - '&fAction: &e{0}'
+    - '&r '
+    - '&fBuyer: &3{1}'
+    - '&r'
+    - '&fPrice: &6${2}'
+    - '&r '
+    - '&fDate: &e{3}'
+    - '&8&n---------------------------'
+  lore-with-seller:
+    - '&8&n---------------------------'
+    - '&fAction: &e{0}'
+    - '&r '
+    - '&fSeller: &3{1}'
+    - '&r'
+    - '&fPrice: &6${2}'
+    - '&r '
+    - '&fDate: &e{3}'
+    - '&8&n---------------------------'
+  search:
+    icon: OAK_SIGN
+    placeholder: 'Ex: 21/04/2024 22:26'
+    name: '&eSearch Date'
+    lore:
+      - '&fClick to search for a logs date & time!'
 
 no-items-found:
-  icon: "BARRIER"
-  name: "&c&lNo items found!"
+  icon: BARRIER
+  name: '&c&lNo items found!'
   lore: []
 
 all:
   close:
-    icon: "BARRIER"
-    name: "&c&l✗ Close"
+    icon: BARRIER
+    name: '&c&l✗ Close'
     lore:
-      - "&7Click to close the menu"
+      - '&7Click to close the menu'
   back:
-    icon: "FEATHER"
-    name: "&cGo Back"
+    icon: FEATHER
+    name: '&cGo Back'
     lore:
-      - "&7Click to go back"
+      - '&7Click to go back'
   previous_page:
-    icon: "ARROW"
-    name: "&c&lPrevious Page"
+    icon: ARROW
+    name: '&c&lPrevious Page'
     lore:
-      - "&7Click to go to the previous page"
+      - '&7Click to go to the previous page'
   next_page:
-    icon: "ARROW"
-    name: "&a&lNext Page"
+    icon: ARROW
+    name: '&a&lNext Page'
     lore:
-      - "&7Click to go to the next page"
+      - '&7Click to go to the next page'
   scroll_next:
-    icon: "ARROW"
-    name: "&a&lScroll Categories Down"
+    icon: ARROW
+    name: '&a&lScroll Categories Down'
     lore:
-      - "&7Click to move the categories down"
+      - '&7Click to move the categories down'
   scroll_previous:
-    icon: "ARROW"
-    name: "&a&lScroll Categories Up"
+    icon: ARROW
+    name: '&a&lScroll Categories Up'
     lore:
-      - "&7Click to move the categories up"
+      - '&7Click to move the categories up'
 
 menu-border:
-  icon: "BLACK_STAINED_GLASS_PANE"
-  name: "&r "
+  icon: BLACK_STAINED_GLASS_PANE
+  name: '&r '
   lore:
-    - "&8play.dxtrus.net"
+    - '&8play.dxtrus.net'

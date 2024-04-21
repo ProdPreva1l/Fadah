@@ -10,6 +10,7 @@ tools:
     - '*_HOE'
     - '*_SHOVEL'
   custom-items: false
+  custom-item-mode: "API"
   custom-item-ids: []
 
 combat:
@@ -26,6 +27,7 @@ combat:
     - '*_HELMET'
     - BOW
   custom-items: false
+  custom-item-mode: "API"
   custom-item-ids: []
 
 spawners-and-eggs:
@@ -38,6 +40,7 @@ spawners-and-eggs:
     - SPAWNER
     - '*_SPAWN_EGG'
   custom-items: false
+  custom-item-mode: "API"
   custom-item-ids: []
 
 building-blocks:
@@ -57,6 +60,7 @@ building-blocks:
     - '*_GLASS'
     - '*_GLASS_PANE'
   custom-items: false
+  custom-item-mode: "API"
   custom-item-ids: []
 
 redstone:
@@ -72,7 +76,20 @@ redstone:
     - '*_REDSTONE'
     - 'REDSTONE_*'
   custom-items: false
+  custom-item-mode: "ECO_ITEMS"
   custom-item-ids: []
+
+eco-items:
+  name: '&fEco Items Example'
+  priority: 3
+  icon: BLUE_DYE
+  description:
+    - '&fAn example usage for the ecoitems hook'
+  materials: []
+  custom-items: true
+  custom-item-mode: "ECO_ITEMS"
+  custom-item-ids:
+    - 'your_custom_item'
 
 misc:
   name: '&eMisc'
@@ -83,4 +100,5 @@ misc:
   materials:
     - '*'
   custom-items: false
+  custom-item-mode: "API"
   custom-item-ids: []

@@ -26,3 +26,14 @@ CREATE TABLE IF NOT EXISTS listings (
     price REAL NOT NULL,
     itemStack TEXT NOT NULL
 );
+
+-- Define the historic items table
+CREATE TABLE IF NOT EXISTS history (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    playerUUID TEXT NOT NULL,
+    loggedAction INTEGER NOT NULL,
+    loggedDate INTEGER NOT NULL,
+    itemStack TEXT NOT NULL,
+    price REAL NULLABLE,
+    purchaserUUID TEXT NULLABLE
+);

@@ -1,14 +1,8 @@
 package info.preva1l.fadah.commands.subcommands;
 
-
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.cache.CollectionBoxCache;
-import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
-import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.guis.ActiveListingsMenu;
-import info.preva1l.fadah.guis.CollectionBoxMenu;
 import info.preva1l.fadah.guis.ExpiredListingsMenu;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
@@ -17,12 +11,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
-public class ExpiredItemsSubCommand extends SubCommand {
-    public ExpiredItemsSubCommand(Fadah plugin) {
+public class HistorySubCommand extends SubCommand {
+    public HistorySubCommand(Fadah plugin) {
         super(plugin);
     }
 
-    @SubCommandArgs(name = "expired-items", aliases = {"expireditems", "expired"}, permission = "fadah.expired-items", description = "View your Expired Items!")
+    @SubCommandArgs(name = "history", aliases = {"expireditems", "expired"}, permission = "fadah.expired-items", description = "View your Expired Items!")
     public void execute(@NotNull SubCommandArguments command) {
         if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
@@ -30,7 +24,7 @@ public class ExpiredItemsSubCommand extends SubCommand {
         }
         assert command.getPlayer() != null;
         OfflinePlayer owner = command.getPlayer();
-        if (command.args().length >= 1 && command.sender().hasPermission("fadah.manage.expired-items")) {
+        if (command.args().length >= 1 && command.sender().hasPermission("fadah.manage.history")) {
             owner = Bukkit.getOfflinePlayer(command.args()[0]);
             Fadah.getINSTANCE().getDatabase().loadExpiredItems(owner.getUniqueId());
         }

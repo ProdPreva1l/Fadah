@@ -72,6 +72,17 @@ public enum Lang {
     SORT_ALPHABETICAL_NAME("sort.type.alphabetical", "Sort Alphabetically By Name"),
     SORT_PRICE_NAME("sort.type.price", "Sort By Listing Price"),
 
+    ACTIONS_LISTING_START("logging-actions.listing-start", "Listing Started"),
+    ACTIONS_LISTING_PURCHASED("logging-actions.listing-purchased", "Listing Purchased"),
+    ACTIONS_LISTING_SOLD("logging-actions.listing-sold", "Listing Sold"),
+    ACTIONS_LISTING_CANCEL("logging-actions.listing-cancelled", "Listing Cancelled"),
+    ACTIONS_LISTING_EXPIRE("logging-actions.listing-expired", "Listing Expired"),
+    ACTIONS_LISTING_ADMIN_CANCEL("logging-actions.listing-cancelled-admin", "Listing Cancelled by Admins"),
+    ACTIONS_EXPIRED_ITEM_CLAIM("logging-actions.expired-item-claimed", "Expired Listing Claimed"),
+    ACTIONS_EXPIRED_ITEM_ADMIN_CLAIM("logging-actions.expired-item-claimed-admin", "Expired Listing Claimed by Admins"),
+    ACTIONS_COLLECTION_BOX_CLAIM("logging-actions.collection-box-claimed", "Collection Box Item Claimed"),
+    ACTIONS_COLLECTION_BOX_ADMIN_CLAIM("logging-actions.collection-box-claimed-admin", "Collection Box Item Claimed by Admins"),
+
     WORD_YOU("words.you", "you"),
     WORD_YOUR("words.your", "your"),
     ;

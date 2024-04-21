@@ -2,12 +2,17 @@ package info.preva1l.fadah.utils;
 
 import lombok.experimental.UtilityClass;
 
+import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 
 @UtilityClass
 public class TimeUtil {
-    public static String formatTimeSince(long added) {
+    public String formatTimeSince(long added) {
         Instant now = Instant.now();
         Instant deletionInstant = Instant.ofEpochMilli(added);
         Duration durationSinceDeletion = Duration.between(deletionInstant, now);
@@ -28,7 +33,7 @@ public class TimeUtil {
         }
     }
 
-    public static String formatTimeUntil(long deletionDate) {
+    public String formatTimeUntil(long deletionDate) {
         Instant now = Instant.now();
         Instant deletionInstant = Instant.ofEpochMilli(deletionDate);
         Duration durationUntilDeletion = Duration.between(now, deletionInstant);
@@ -47,5 +52,10 @@ public class TimeUtil {
         } else {
             return String.format("%ds", seconds);
         }
+    }
+
+    public String formatTimeToVisualDate(long date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm").withZone(ZoneId.systemDefault());
+        return formatter.format(Instant.ofEpochMilli(date));
     }
 }

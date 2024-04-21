@@ -4,11 +4,17 @@ enabled: true
 listing-price:
   min: 1
   max: 1000000000
+
 default-max-listings: 3
 decimal-format: "#,###.00"
 
 # Enable this if you are experiencing dupes (usually when there is a moderate delay with redis)
 strict-checks: false
+
+hooks:
+  eco-items: false
+
+log-to-file: true
 
 database:
   # Supported: SQLITE, MYSQL, MARIADB, MONGO

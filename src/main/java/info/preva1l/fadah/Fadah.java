@@ -23,7 +23,6 @@ import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -89,9 +88,10 @@ public final class Fadah extends JavaPlugin {
 
         customItemKey = NamespacedKey.minecraft("auctionhouse");
 
+        loadHooks();
+
         initLogger();
         setupMetrics();
-
 
         API = new ImplAuctionHouseAPI();
 
@@ -170,6 +170,12 @@ public final class Fadah extends JavaPlugin {
         CategoryCache.loadCategories();
     }
 
+    private void loadHooks() {
+//        if (Config.HOOK_ECO_ITEMS.toBoolean()) {
+//            HookManager.registerHook(new EcoItemsHook());
+//        }
+    }
+
     private void setupMetrics() {
         metrics = new Metrics(this, METRICS_ID);
 
@@ -177,6 +183,9 @@ public final class Fadah extends JavaPlugin {
     }
 
     private void initLogger() {
+        if (!Config.LOG_TO_FILE.toBoolean()) {
+            return;
+        }
         try {
             File logsFolder = new File(this.getDataFolder(), "logs");
             if (!logsFolder.exists()) {
