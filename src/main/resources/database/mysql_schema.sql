@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS history (
    loggedAction INT NOT NULL,
    loggedDate BIGINT NOT NULL,
    itemStack VARCHAR(255) NOT NULL,
-   price DOUBLE NULLABLE,
-   purchaserUUID VARCHAR(36) NULLABLE
+   price DOUBLE NULL,
+   purchaserUUID VARCHAR(36) NULL
 ) CHARACTER SET utf8
     COLLATE utf8_unicode_ci;
