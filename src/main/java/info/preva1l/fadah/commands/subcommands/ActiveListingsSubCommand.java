@@ -30,7 +30,7 @@ public class ActiveListingsSubCommand extends SubCommand {
         if (command.args().length >= 1 && command.sender().hasPermission("fadah.manage.listings")) {
             owner = Bukkit.getOfflinePlayer(command.args()[0]);
         }
-        if (!HistoricItemsCache.playerExists(owner.getUniqueId())) {
+        if (owner.getUniqueId() != command.getPlayer().getUniqueId() && !HistoricItemsCache.playerExists(owner.getUniqueId())) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));
             return;
         }

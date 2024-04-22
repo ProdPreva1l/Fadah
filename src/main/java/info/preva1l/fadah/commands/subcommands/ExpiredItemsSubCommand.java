@@ -34,7 +34,7 @@ public class ExpiredItemsSubCommand extends SubCommand {
             owner = Bukkit.getOfflinePlayer(command.args()[0]);
             Fadah.getINSTANCE().getDatabase().loadExpiredItems(owner.getUniqueId());
         }
-        if (!HistoricItemsCache.playerExists(owner.getUniqueId())) {
+        if (owner.getUniqueId() != command.getPlayer().getUniqueId() && !HistoricItemsCache.playerExists(owner.getUniqueId())) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));
             return;
         }
