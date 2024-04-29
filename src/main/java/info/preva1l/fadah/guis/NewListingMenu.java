@@ -9,19 +9,16 @@ import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.Listing;
-import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.FastInv;
 import info.preva1l.fadah.utils.guis.GuiButtonType;
 import info.preva1l.fadah.utils.guis.GuiHelper;
 import info.preva1l.fadah.utils.guis.ItemBuilder;
 import info.preva1l.fadah.utils.helpers.TransactionLogger;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
@@ -46,6 +43,7 @@ public class NewListingMenu extends FastInv {
         setClock();
 
         setItem(30, new ItemBuilder(Menus.NEW_LISTING_CREATE_ICON.toMaterial()).name(Menus.NEW_LISTING_CREATE_NAME.toFormattedString())
+                .modelData(Menus.NEW_LISTING_CREATE_MODEL_DATA.toInteger())
                 .addLore(Menus.NEW_LISTING_CREATE_LORE.toLore(new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(price))).build(), e -> startListing(timeToDelete, price));
 
         setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
@@ -94,7 +92,7 @@ public class NewListingMenu extends FastInv {
         });
     }
 
-    //TODO: Double check this works
+    @SuppressWarnings("deprecation")
     private void startListing(Instant deletionDate, double price) {
         String category = CategoryCache.getCategoryForItem(itemToSell);
 

@@ -16,7 +16,6 @@ import info.preva1l.fadah.utils.helpers.TransactionLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Instant;
@@ -60,7 +59,8 @@ public class ActiveListingsMenu extends FastInv {
 
     private void populateCollectableItems() {
         if (listings == null || listings.isEmpty()) {
-            setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial()).name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
+            setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
+                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
             return;
         }
         for (int i = 0; i <= maxItemsPerPage; i++) {
@@ -72,13 +72,11 @@ public class ActiveListingsMenu extends FastInv {
                     .addLore(Menus.ACTIVE_LISTINGS_LORE.toLore(listing.categoryID(), listing.price(), TimeUtil.formatTimeUntil(listing.deletionDate())));
 
             removeItem(listingSlot.get(i));
-            setItem(listingSlot.get(i), itemStack.build(), e -> {
-                handleListingCancellation(listing, e);
-            });
+            setItem(listingSlot.get(i), itemStack.build(), e -> handleListingCancellation(listing));
         }
     }
 
-    private void handleListingCancellation(Listing listing,  InventoryClickEvent e) {
+    private void handleListingCancellation(Listing listing) {
         if (ListingCache.getListing(listing.id()) == null || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(listing.id()) == null)) {
             viewer.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
             return;

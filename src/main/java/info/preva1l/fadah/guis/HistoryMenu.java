@@ -1,18 +1,18 @@
 package info.preva1l.fadah.guis;
 
-import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.utils.TimeUtil;
-import info.preva1l.fadah.utils.guis.*;
+import info.preva1l.fadah.utils.guis.FastInv;
+import info.preva1l.fadah.utils.guis.GuiButtonType;
+import info.preva1l.fadah.utils.guis.GuiHelper;
+import info.preva1l.fadah.utils.guis.ItemBuilder;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
@@ -53,7 +53,8 @@ public class HistoryMenu extends FastInv {
 
     private void populateHistory() {
         if (historicItems == null || historicItems.isEmpty()) {
-            setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial()).name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
+            setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
+                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
             return;
         }
         for (int i = 0; i <= maxItemsPerPage; i++) {
@@ -98,6 +99,7 @@ public class HistoryMenu extends FastInv {
             setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> new HistoryMenu(viewer, owner, page + 1, dateSearch).open(viewer));
         }
         setItem(40, new ItemBuilder(Menus.HISTORY_SEARCH_ICON.toMaterial()).name(Menus.HISTORY_SEARCH_NAME.toFormattedString())
+                .modelData(Menus.HISTORY_SEARCH_MODEL_DATA.toInteger())
                 .lore(Menus.HISTORY_SEARCH_LORE.toLore()).build(), e ->
                 new SearchMenu(viewer, Menus.HISTORY_SEARCH_PLACEHOLDER.toString(), search -> new HistoryMenu(viewer, owner, page, search).open(viewer)));
 
