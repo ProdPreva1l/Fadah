@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 @AllArgsConstructor
+@SuppressWarnings("unchecked")
 public enum Menus {
     MAIN_TITLE("main.title", "&9&lAuction House"),
     MAIN_LISTING_LORE("main.listing.lore-body", List.of(
@@ -33,10 +34,12 @@ public enum Menus {
     MAIN_PROFILE_LORE("main.profile-button.lore", Collections.singletonList("&fClick to view your profile!")),
     MAIN_PROFILE_DESCRIPTION("main.profile-button.description", List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {1}.")),
     MAIN_SEARCH_ICON("main.filter.search.icon", "OAK_SIGN"),
+    MAIN_SEARCH_MODEL_DATA("main.filter.search.model_data", 0),
     MAIN_SEARCH_PLACEHOLDER("main.filter.search.placeholder", "Search Query..."),
     MAIN_SEARCH_NAME("main.filter.search.name", "&3&lSearch"),
     MAIN_SEARCH_LORE("main.filter.search.lore", Collections.singletonList("&fClick to search for an item name/type!")),
     MAIN_FILTER_TYPE_ICON("main.filter.change-type.icon", "PUFFERFISH"),
+    MAIN_FILTER_TYPE_MODEL_DATA("main.filter.change-type.model_data", 0),
     MAIN_FILTER_TYPE_NAME("main.filter.change-type.name", "&eListing Filter"),
     MAIN_FILTER_TYPE_LORE("main.filter.change-type.lore", List.of(
             "&7Left Click to cycle up",
@@ -49,6 +52,7 @@ public enum Menus {
     )),
 
     MAIN_FILTER_DIRECTION_ICON("main.filter.change-direction.icon", "CLOCK"),
+    MAIN_FILTER_DIRECTION_MODEL_DATA("main.filter.change-direction.model_data", 0),
     MAIN_FILTER_DIRECTION_NAME("main.filter.change-direction.name", "&eFilter Direction"),
     MAIN_FILTER_DIRECTION_LORE("main.filter.change-direction.lore", List.of(
             "&7Click To Toggle",
@@ -63,6 +67,7 @@ public enum Menus {
     SEARCH_TITLE("search.title", "&9&lAuction House &8> &fSearch"),
     NEW_LISTING_TITLE("new-listing.title", "&9&lAuction House &8> &3New Listing"),
     NEW_LISTING_CREATE_ICON("new-listing.create.icon", "EMERALD"),
+    NEW_LISTING_CREATE_MODEL_DATA("new-listing.create.model_data", 0),
     NEW_LISTING_CREATE_NAME("new-listing.create.name", "&aClick to create listing!"),
     NEW_LISTING_CREATE_LORE("new-listing.create.lore", List.of(
             "&cClicking this button will immediately post",
@@ -81,26 +86,31 @@ public enum Menus {
 
     CONFIRM_TITLE("confirm.title", "&9&lAuction House &8> &aConfirm Purchase"),
     CONFIRM_BUTTON_ICON("confirm.confirm.icon", "LIME_CONCRETE"),
+    CONFIRM_BUTTON_MODEL_DATA("confirm.confirm.model_data",  0),
     CONFIRM_BUTTON_NAME("confirm.confirm.name", "&a&lCONFIRM"),
     CONFIRM_BUTTON_LORE("confirm.confirm.lore", Collections.singletonList("&7Click to confirm")),
     CANCEL_BUTTON_ICON("confirm.cancel.icon", "RED_CONCRETE"),
+    CANCEL_BUTTON_MODEL_DATA("confirm.cancel.model_data", 0),
     CANCEL_BUTTON_NAME("confirm.cancel.name", "&c&lCANCEL"),
     CANCEL_BUTTON_LORE("confirm.cancel.lore", Collections.singletonList("&7Click to cancel")),
 
     PROFILE_TITLE("profile.title", "&9&lAuction House &8> &bYour Profile"),
     PROFILE_YOUR_LISTINGS_ICON("profile.your-listings.icon", "EMERALD"),
+    PROFILE_YOUR_LISTINGS_MODEL_DATA("profile.your-listings.model_data", 0),
     PROFILE_YOUR_LISTINGS_NAME("profile.your-listings.name", "&1Your listings"),
     PROFILE_YOUR_LISTINGS_LORE("profile.your-listings.lore", List.of(
             "&fClick to view & manage",
             "&f{0} active listings!"
     )),
     PROFILE_COLLECTION_BOX_ICON("profile.collection-box.icon", "CHEST_MINECART"),
+    PROFILE_COLLECTION_BOX_MODEL_DATA("profile.collection-box.model_data", 0),
     PROFILE_COLLECTION_BOX_NAME("profile.collection-box.name", "&e{0} Collection Box"),
     PROFILE_COLLECTION_BOX_LORE("profile.collection-box.lore", List.of(
             "&fClick to view & claim",
             "&f{0} purchases!"
     )),
     PROFILE_EXPIRED_LISTINGS_ICON("profile.expired-items.icon", "ENDER_CHEST"),
+    PROFILE_EXPIRED_LISTINGS_MODEL_DATA("profile.expired-items.model_data", 0),
     PROFILE_EXPIRED_LISTINGS_NAME("profile.expired-items.name", "&c{0} Expired Listings"),
     PROFILE_EXPIRED_LISTINGS_LORE("profile.expired-items.lore", List.of(
             "&fClick to view & claim",
@@ -108,6 +118,7 @@ public enum Menus {
     )),
 
     PROFILE_HISTORIC_ITEMS_ICON("profile.historic-items.icon", "WRITABLE_BOOK"),
+    PROFILE_HISTORIC_ITEMS_MODEL_DATA("profile.historic-items.model_data", 0),
     PROFILE_HISTORIC_ITEMS_NAME("profile.historic-items.name", "&c{0} History"),
     PROFILE_HISTORIC_ITEMS_LORE("profile.historic-items.lore", List.of(
             "&fClick to view",
@@ -173,6 +184,7 @@ public enum Menus {
             "&8&n---------------------------"
     )),
     HISTORY_SEARCH_ICON("historic-items.search.icon", "OAK_SIGN"),
+    HISTORY_SEARCH_MODEL_DATA("historic-items.search.model_data", 0),
     HISTORY_SEARCH_PLACEHOLDER("historic-items.search.placeholder", "Ex: 21/04/2024 22:26"),
     HISTORY_SEARCH_NAME("historic-items.search.name", "&eSearch Date"),
     HISTORY_SEARCH_LORE("historic-items.search.lore", Collections.singletonList("&fClick to search for a logs date & time!")),
@@ -191,28 +203,36 @@ public enum Menus {
     )),
 
     NO_ITEM_FOUND_ICON("no-items-found.icon", "BARRIER"),
+    NO_ITEM_FOUND_MODEL_DATA("no-items-found.model_data", 0),
     NO_ITEM_FOUND_NAME("no-items-found.name", "&c&lNo items found!"),
     NO_ITEM_FOUND_LORE("no-items-found.lore", Collections.emptyList()),
 
     BACK_BUTTON_ICON("all.back.icon", "FEATHER"),
+    BACK_BUTTON_MODEL_DATA("all.back.model_data", 0),
     BACK_BUTTON_NAME("all.back.name", "&cGo Back"),
     BACK_BUTTON_LORE("all.back.lore", Collections.singletonList("&7Click to go back")),
     PREVIOUS_BUTTON_ICON("all.previous_page.icon", "ARROW"),
+    PREVIOUS_BUTTON_MODEL_DATA("all.previous_page.model_data", 0),
     PREVIOUS_BUTTON_NAME("all.previous_page.name", "&c&lPrevious Page"),
     PREVIOUS_BUTTON_LORE("all.previous_page.lore", Collections.singletonList("&7Click to go to the previous page")),
     NEXT_BUTTON_ICON("all.next_page.icon", "ARROW"),
+    NEXT_BUTTON_MODEL_DATA("all.next_page.model_data", 0),
     NEXT_BUTTON_NAME("all.next_page.name", "&a&lNext Page"),
     NEXT_BUTTON_LORE("all.next_page.lore", Collections.singletonList("&7Click to go to the next page")),
     SCROLL_NEXT_BUTTON_ICON("all.scroll_next.icon", "ARROW"),
+    SCROLL_NEXT_BUTTON_MODEL_DATA("all.scroll_next.model_data", 0),
     SCROLL_NEXT_BUTTON_NAME("all.scroll_next.name", "&a&lScroll Categories Down"),
     SCROLL_NEXT_BUTTON_LORE("all.scroll_next.lore", Collections.singletonList("&7Click to move the categories down")),
     SCROLL_PREVIOUS_BUTTON_ICON("all.scroll_previous.icon", "ARROW"),
+    SCROLL_PREVIOUS_BUTTON_MODEL_DATA("all.scroll_previous.model_data", 0),
     SCROLL_PREVIOUS_BUTTON_NAME("all.scroll_previous.name", "&a&lScroll Categories Up"),
     SCROLL_PREVIOUS_BUTTON_LORE("all.scroll_previous.lore", Collections.singletonList("&7Click to move the categories up")),
     CLOSE_BUTTON_ICON("all.close.icon", "BARRIER"),
+    CLOSE_BUTTON_MODEL_DATA("all.close.model_data", 0),
     CLOSE_BUTTON_NAME("all.close.name", "&c&l✗ Close"),
     CLOSE_BUTTON_LORE("all.close.lore", Collections.singletonList("&7Click to close the menu")),
     BORDER_ICON("menu-border.icon", "BLACK_STAINED_GLASS_PANE"),
+    BORDER_MODEL_DATA("menu-border.model_data", 0),
     BORDER_NAME("menu-border.name", "&r "),
     BORDER_LORE("menu-border.lore", Collections.singletonList("&8play.dxtrus.net")),
     ;
@@ -260,17 +280,6 @@ public enum Menus {
         return StringUtils.colorize(StringUtils.formatPlaceholders(str, replacements));
     }
 
-    public List<String> toStringList() {
-        List<String> str = Fadah.getINSTANCE().getMenusFile().getStringList(path);
-        if (str.isEmpty() || str.get(0).equals(path)) {
-            return (List<String>) defaultValue;
-        }
-        if (str.get(0).equals("null")) {
-            return ImmutableList.of();
-        }
-        return str;
-    }
-
     public List<String> toLore() {
         List<String> str = Fadah.getINSTANCE().getMenusFile().getStringList(path);
         if (str.isEmpty() || str.get(0).equals(path)) {
@@ -303,16 +312,8 @@ public enum Menus {
         return StringUtils.colorizeList(ret);
     }
 
-    public boolean toBoolean() {
-        return Boolean.parseBoolean(toString());
-    }
-
     public int toInteger() {
         return Integer.parseInt(toString());
-    }
-
-    public double toDouble() {
-        return Double.parseDouble(toString());
     }
 
     public Material toMaterial() {
@@ -323,7 +324,7 @@ public enum Menus {
             material = Material.APPLE;
             Fadah.getConsole().severe("-----------------------------");
             Fadah.getConsole().severe("Config Incorrect!");
-            Fadah.getConsole().severe("Material: " + toString());
+            Fadah.getConsole().severe("Material: " + toFormattedString());
             Fadah.getConsole().severe("Does Not Exist!");
             Fadah.getConsole().severe("Defaulting to APPLE");
             Fadah.getConsole().severe("-----------------------------");

@@ -6,7 +6,6 @@ import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.utils.TaskManager;
-import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.guis.InventoryEventHandler;
 import info.preva1l.fadah.utils.guis.SearchInv;
 import org.bukkit.event.EventHandler;
@@ -22,6 +21,7 @@ import java.util.List;
 
 public class PlayerListener implements Listener {
     @EventHandler
+    @SuppressWarnings("deprecation")
     public void joinListener(AsyncPlayerPreLoginEvent e) {
         if (!Fadah.getINSTANCE().getDatabase().isConnected()) {
             e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);

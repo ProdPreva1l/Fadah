@@ -23,6 +23,7 @@ public class ProfileMenu extends FastInv {
 
         setItem(22, new ItemBuilder(Menus.PROFILE_YOUR_LISTINGS_ICON.toMaterial())
                 .name(Menus.PROFILE_YOUR_LISTINGS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s"))
+                .modelData(Menus.PROFILE_YOUR_LISTINGS_MODEL_DATA.toInteger())
                 .addLore(Menus.PROFILE_YOUR_LISTINGS_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
             if (viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.active-listings")) {
                 new ActiveListingsMenu(viewer, owner, 0).open(viewer);
@@ -32,6 +33,7 @@ public class ProfileMenu extends FastInv {
         });
         setItem(23, new ItemBuilder(Menus.PROFILE_COLLECTION_BOX_ICON.toMaterial())
                 .name(Menus.PROFILE_COLLECTION_BOX_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s"))
+                .modelData(Menus.PROFILE_COLLECTION_BOX_MODEL_DATA.toInteger())
                 .addLore(Menus.PROFILE_COLLECTION_BOX_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
             if (viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.collection-box")) {
                 new CollectionBoxMenu(viewer, owner, 0).open(viewer);
@@ -41,6 +43,7 @@ public class ProfileMenu extends FastInv {
         });
         setItem(24, new ItemBuilder(Menus.PROFILE_EXPIRED_LISTINGS_ICON.toMaterial())
                 .name(Menus.PROFILE_EXPIRED_LISTINGS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s"))
+                .modelData(Menus.PROFILE_EXPIRED_LISTINGS_MODEL_DATA.toInteger())
                 .addLore(Menus.PROFILE_EXPIRED_LISTINGS_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
             if (viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.expired-listings")) {
                 new ExpiredListingsMenu(viewer, owner, 0).open(viewer);
@@ -51,6 +54,7 @@ public class ProfileMenu extends FastInv {
 
         setItem(31, new ItemBuilder(Menus.PROFILE_HISTORIC_ITEMS_ICON.toMaterial())
                 .name(Menus.PROFILE_HISTORIC_ITEMS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s"))
+                .modelData(Menus.PROFILE_HISTORIC_ITEMS_MODEL_DATA.toInteger())
                 .addLore(Menus.PROFILE_HISTORIC_ITEMS_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
             if (viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.history")) {
                 new HistoryMenu(viewer, owner, 0, null).open(viewer);

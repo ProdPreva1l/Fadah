@@ -22,7 +22,6 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
@@ -30,7 +29,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class MainMenu extends FastInv {
     private static final int maxItemsPerPage = 24;
@@ -95,7 +97,8 @@ public class MainMenu extends FastInv {
 
     private void populateListings() {
         if (listings == null || listings.isEmpty()) {
-            setItems(new int[]{22, 23, 31, 32}, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial()).name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
+            setItems(new int[]{22, 23, 31, 32}, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
+                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
             return;
         }
         for (int i = 0; i <= maxItemsPerPage; i++) {
@@ -185,7 +188,7 @@ public class MainMenu extends FastInv {
                     .addLore(StringUtils.colorizeList(cat.description()))
                     .flags(ItemFlag.HIDE_ENCHANTS);
             if (category == cat) {
-                itemBuilder.name(StringUtils.colorize(cat.name() + "&r " + Lang.CATEGORY_SELECTED.toString()))
+                itemBuilder.name(StringUtils.colorize(cat.name() + "&r " + Lang.CATEGORY_SELECTED.toFormattedString()))
                         .enchant(Enchantment.DURABILITY);
             }
             if (selectorMappings.containsKey(i)) {
@@ -231,9 +234,12 @@ public class MainMenu extends FastInv {
 
     private void addFilterButtons() {
         // Filter Type Cycle
+        SortingMethod prev = sortingMethod.previous();
+        SortingMethod next = sortingMethod.next();
         setItem(47, new ItemBuilder(Menus.MAIN_FILTER_TYPE_ICON.toMaterial()).name(Menus.MAIN_FILTER_TYPE_NAME.toFormattedString())
-                .addLore(Menus.MAIN_FILTER_TYPE_LORE.toLore((sortingMethod.previous() == null ? "None" : sortingMethod.previous().getFriendlyName()),
-                        sortingMethod.getFriendlyName(), (sortingMethod.next() == null ? "None" : sortingMethod.next().getFriendlyName()))).build(), e -> {
+                .modelData(Menus.MAIN_FILTER_TYPE_MODEL_DATA.toInteger())
+                .addLore(Menus.MAIN_FILTER_TYPE_LORE.toLore((prev == null ? "None" : prev.getFriendlyName()),
+                        sortingMethod.getFriendlyName(), (next == null ? "None" : next.getFriendlyName()))).build(), e -> {
             if (e.isLeftClick()) {
                 if (sortingMethod.previous() == null) return;
                 new MainMenu(category, player, 0, search, sortingMethod.previous(), sortingDirection).open(player);
@@ -246,6 +252,7 @@ public class MainMenu extends FastInv {
 
         // Search
         setItem(49, new ItemBuilder(Menus.MAIN_SEARCH_ICON.toMaterial()).name(Menus.MAIN_SEARCH_NAME.toFormattedString())
+                .modelData(Menus.MAIN_SEARCH_MODEL_DATA.toInteger())
                 .lore(Menus.MAIN_SEARCH_LORE.toLore()).build(), e ->
                 new SearchMenu(player, Menus.MAIN_SEARCH_PLACEHOLDER.toString(), search -> new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player)));
 
@@ -256,7 +263,8 @@ public class MainMenu extends FastInv {
                 ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toFormattedString() : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toFormattedString(), sortingMethod.getLang(SortingDirection.DESCENDING));
 
         setItem(51, new ItemBuilder(Menus.MAIN_FILTER_DIRECTION_ICON.toMaterial())
-                .name(Menus.MAIN_FILTER_DIRECTION_NAME.toFormattedString()).lore(Menus.MAIN_FILTER_DIRECTION_LORE.toLore(asc, desc)).build(), e ->
+                .name(Menus.MAIN_FILTER_DIRECTION_NAME.toFormattedString())
+                .modelData(Menus.MAIN_FILTER_DIRECTION_MODEL_DATA.toInteger()).lore(Menus.MAIN_FILTER_DIRECTION_LORE.toLore(asc, desc)).build(), e ->
                 new MainMenu(category, player, 0, search, sortingMethod,
                         (sortingDirection == SortingDirection.ASCENDING ? SortingDirection.DESCENDING : SortingDirection.ASCENDING)).open(player));
     }
@@ -288,6 +296,7 @@ public class MainMenu extends FastInv {
         return false;
     }
 
+    @SuppressWarnings("deprecation")
     private boolean checkForStringInItem(String toCheck, ItemStack item) {
         if (item.hasItemMeta()) {
             return item.getItemMeta().getDisplayName().toUpperCase().contains(toCheck.toUpperCase()) || (item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains(toCheck.toUpperCase()));

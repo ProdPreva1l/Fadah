@@ -22,6 +22,7 @@ import java.util.function.Consumer;
  * @author MrMicky
  * @author Preva1l
  */
+@SuppressWarnings({"unused", "deprecation"})
 public class ItemBuilder {
 
     private final ItemStack item;
@@ -66,7 +67,7 @@ public class ItemBuilder {
         return edit(item -> item.setType(material));
     }
 
-    public ItemBuilder data(int data) {
+    public ItemBuilder durability(int data) {
         return durability((short) data);
     }
 
@@ -79,12 +80,12 @@ public class ItemBuilder {
         return edit(item -> item.setAmount(amount));
     }
 
-    public ItemBuilder enchant(Enchantment enchantment) {
-        return enchant(enchantment, 1);
+    public void enchant(Enchantment enchantment) {
+        enchant(enchantment, 1);
     }
 
-    public ItemBuilder enchant(Enchantment enchantment, int level) {
-        return meta(meta -> meta.addEnchant(enchantment, level, true));
+    public void enchant(Enchantment enchantment, int level) {
+        meta(meta -> meta.addEnchant(enchantment, level, true));
     }
 
     public ItemBuilder removeEnchant(Enchantment enchantment) {
@@ -111,8 +112,8 @@ public class ItemBuilder {
         return meta(meta -> meta.setLore(lore));
     }
 
-    public ItemBuilder addLore(String line) {
-        return meta(meta -> {
+    public void addLore(String line) {
+        meta(meta -> {
             List<String> lore = meta.getLore();
 
             if (lore == null) {
@@ -173,14 +174,10 @@ public class ItemBuilder {
         skullMeta.setOwningPlayer(player);
         skull.setItemMeta(skullMeta);
 
-        return edit(item -> {
-            item.setItemMeta(skullMeta);
-        });
+        return edit(item -> item.setItemMeta(skullMeta));
     }
 
     public ItemBuilder modelData(int modelData) {
-        return meta(meta -> {
-            meta.setCustomModelData(modelData);
-        });
+        return meta(meta -> meta.setCustomModelData(modelData));
     }
 }

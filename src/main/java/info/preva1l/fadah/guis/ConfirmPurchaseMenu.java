@@ -10,7 +10,6 @@ import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.Listing;
-import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.filters.SortingDirection;
 import info.preva1l.fadah.utils.filters.SortingMethod;
 import info.preva1l.fadah.utils.guis.FastInv;
@@ -19,8 +18,6 @@ import info.preva1l.fadah.utils.guis.GuiHelper;
 import info.preva1l.fadah.utils.helpers.TransactionLogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -30,6 +27,7 @@ import java.time.Instant;
 
 public class ConfirmPurchaseMenu extends FastInv {
 
+    @SuppressWarnings("deprecation")
     public ConfirmPurchaseMenu(Listing listing, Player player,
                                @Nullable Category category, int page,
                                @Nullable String search,
@@ -39,6 +37,8 @@ public class ConfirmPurchaseMenu extends FastInv {
 
         setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
 
+        // Note to any developers seeing this:
+        // please clean this up, im too lazy and its a heated mess
         setItem(30, GuiHelper.constructButton(GuiButtonType.CONFIRM), e -> {
             player.closeInventory();
 
@@ -82,9 +82,8 @@ public class ConfirmPurchaseMenu extends FastInv {
             TransactionLogger.listingSold(listing, player);
         });
 
-        setItem(32, GuiHelper.constructButton(GuiButtonType.CANCEL), e -> {
-            new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player);
-        });
+        setItem(32, GuiHelper.constructButton(GuiButtonType.CANCEL), e ->
+                new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player));
 
         setItem(22, listing.itemStack().clone());
     }

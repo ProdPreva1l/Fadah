@@ -8,9 +8,7 @@ import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.utils.SetHelper;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -54,6 +52,7 @@ public final class CategoryCache {
             String name = Fadah.getINSTANCE().getCategoriesFile().getString(key + ".name");
             Material icon = Material.getMaterial(Fadah.getINSTANCE().getCategoriesFile().getString(key + ".icon"));
             int priority = Fadah.getINSTANCE().getCategoriesFile().getInt(key + ".priority");
+            int modelData = Fadah.getINSTANCE().getCategoriesFile().getInt(key + ".icon_model_data");
 
             List<String> description = Fadah.getINSTANCE().getCategoriesFile().getStringList(key + ".description");
             List<String> materialsList = Fadah.getINSTANCE().getCategoriesFile().getStringList(key + ".materials");
@@ -79,7 +78,7 @@ public final class CategoryCache {
             List<String> customItemIDs = null;
             if (isCustomItems)
                 customItemIDs = Fadah.getINSTANCE().getCategoriesFile().getStringList(key + ".custom-item-ids");
-            categories.add(new Category(key, name, priority, (icon == null ? Material.GRASS_BLOCK : icon), description, materials, isCustomItems, customItemMode, SetHelper.listToSet(customItemIDs)));
+            categories.add(new Category(key, name, priority, modelData, (icon == null ? Material.GRASS_BLOCK : icon), description, materials, isCustomItems, customItemMode, SetHelper.listToSet(customItemIDs)));
         }
     }
 }
