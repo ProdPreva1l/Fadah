@@ -1,6 +1,7 @@
 package info.preva1l.fadah.utils.commands;
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.utils.CommandMapUtil;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -17,8 +18,8 @@ public class CommandManager {
     }
 
     public void registerCommand(Command base, Command.CommandExecutor command) {
-        plugin.getServer().getCommandMap();
-        plugin.getServer().getCommandMap().register(plugin.getDescription().getName().toLowerCase(), command);
+        CommandMapUtil.getCommandMap(plugin.getServer());
+        CommandMapUtil.getCommandMap(plugin.getServer()).register(plugin.getDescription().getName().toLowerCase(), command);
         loadedCommands.add(base);
     }
 
@@ -27,8 +28,8 @@ public class CommandManager {
 
         command.getAliases().addAll(aliases);
 
-        plugin.getServer().getCommandMap();
-        plugin.getServer().getCommandMap().register(plugin.getDescription().getName().toLowerCase(), command);
+        CommandMapUtil.getCommandMap(plugin.getServer());
+        CommandMapUtil.getCommandMap(plugin.getServer()).register(plugin.getDescription().getName().toLowerCase(), command);
 
         loadedCommands.removeIf(loaded -> loaded.getAssigned().name().equalsIgnoreCase(base.getAssigned().name()));
         loadedCommands.add(base);
