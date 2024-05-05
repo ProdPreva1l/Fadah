@@ -96,6 +96,11 @@ public class NewListingMenu extends FastInv {
     private void startListing(Instant deletionDate, double price) {
         String category = CategoryCache.getCategoryForItem(itemToSell);
 
+        if (category == null) {
+            player.sendMessage(Lang.CANT_SELL.toFormattedString());
+            return;
+        }
+
         Listing listing = new Listing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
                 itemToSell, category, price, Instant.now().toEpochMilli(), deletionDate.toEpochMilli());
 

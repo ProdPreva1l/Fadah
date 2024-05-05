@@ -9,6 +9,7 @@ import info.preva1l.fadah.utils.SetHelper;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -31,6 +32,7 @@ public final class CategoryCache {
         return new ArrayList<>(categories);
     }
 
+    @Nullable
     public String getCategoryForItem(ItemStack itemStack) {
         List<Category> ctgs = getCategories();
         ctgs.sort(Comparator.comparingInt(Category::priority).reversed());
