@@ -11,7 +11,7 @@ public record Listing(
         @NotNull UUID owner,
         @NotNull String ownerName,
         @NotNull ItemStack itemStack,
-        String categoryID,
+        @NotNull String categoryID,
         double price,
         long creationDate,
         long deletionDate

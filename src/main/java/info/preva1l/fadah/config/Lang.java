@@ -25,6 +25,7 @@ public enum Lang {
     DATABASE_CONNECTING("errors.database-connecting", "&cDatabase not connected! Please Wait"),
     BAD_USAGE("errors.bad-usage", "&cUsage: /{0}"),
     NO_COMMAND("errors.no-command", "&cThis command does not exist!"),
+    CANT_SELL("errors.cant-sell", "&cYou cannot sell this item!"),
 
     AUCTION_DISABLED("fail.disabled", "&cThe Auction House is currently disabled!"),
     MAX_LISTINGS("fail.max-listings", "&cYou have reached your max listings! ({0}/{1})"),

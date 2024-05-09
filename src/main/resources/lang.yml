@@ -88,6 +88,7 @@ errors:
   database-connecting: '&cDatabase not connected! Please Wait'
   bad-usage: '&cUsage: /{0}'
   no-command: '&cThis command does not exist!'
+  cant-sell: '&cYou cannot sell this item!'
 
 words:
   you: you
