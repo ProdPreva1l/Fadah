@@ -1,4 +1,3 @@
--- Define the collection_box table
 CREATE TABLE IF NOT EXISTS collection_box (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     playerUUID TEXT NOT NULL,
@@ -6,7 +5,6 @@ CREATE TABLE IF NOT EXISTS collection_box (
     dateAdded INTEGER NOT NULL
 );
 
--- Define the expired_items table
 CREATE TABLE IF NOT EXISTS expired_items (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     playerUUID TEXT NOT NULL,
@@ -14,7 +12,6 @@ CREATE TABLE IF NOT EXISTS expired_items (
     dateAdded INTEGER NOT NULL
 );
 
--- Define the listings table
 CREATE TABLE IF NOT EXISTS listings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     uuid TEXT NOT NULL,
@@ -27,7 +24,6 @@ CREATE TABLE IF NOT EXISTS listings (
     itemStack TEXT NOT NULL
 );
 
--- Define the historic items table
 CREATE TABLE IF NOT EXISTS history (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     playerUUID TEXT NOT NULL,

@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'info.preva1l'
-version = "1.6.3${versionMetadata()}"
+version = "1.6.4${versionMetadata()}"
 
 ext {
     set 'version', version.toString()
@@ -18,6 +18,7 @@ repositories {
     maven { url 'https://oss.sonatype.org/content/groups/public/' }
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
     maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.codemc.io/repository/maven-snapshots/' }
 }
 
 dependencies {
@@ -32,6 +33,7 @@ dependencies {
     compileOnly 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
     compileOnly 'org.mongodb:mongodb-driver-sync:5.0.0'
 
+    implementation 'net.wesjd:anvilgui:1.9.3-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
 
     compileOnly 'com.willfp:libreforge:4.58.1'
@@ -71,10 +73,10 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 shadowJar {
-    relocate 'com.zaxxer', 'info.preva1l.libs'
+    relocate 'com.zaxxer', 'info.preva1l.fadah.libs'
+    relocate 'net.wesjd', 'info.preva1l.fadah.libs'
 
     archiveClassifier.set('')
-    minimize()
 }
 
 logger.lifecycle("Building Fadah ${version}")

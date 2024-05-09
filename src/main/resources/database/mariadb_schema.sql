@@ -1,7 +1,5 @@
-# Set the storage engine
 SET DEFAULT_STORAGE_ENGINE = INNODB;
 
-# Enable foreign key constraints
 SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE IF NOT EXISTS collection_box (
@@ -33,7 +31,6 @@ CREATE TABLE IF NOT EXISTS listings (
 ) CHARACTER SET utf8
     COLLATE utf8_unicode_ci;
 
--- Define the historic items table
 CREATE TABLE IF NOT EXISTS history (
     id INT AUTO_INCREMENT PRIMARY KEY,
     playerUUID VARCHAR(36) NOT NULL,

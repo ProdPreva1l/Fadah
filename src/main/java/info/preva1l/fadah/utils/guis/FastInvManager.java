@@ -1,7 +1,5 @@
 package info.preva1l.fadah.utils.guis;
 
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -12,8 +10,6 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -25,10 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public final class FastInvManager {
 
     private static final AtomicBoolean REGISTERED = new AtomicBoolean(false);
-
-    @Getter
-    @Setter
-    private static HashMap<Player, LinkedList<FastInv>> playerInvStackMap = new HashMap<>();
 
     private FastInvManager() {
         throw new UnsupportedOperationException();
@@ -86,10 +78,6 @@ public final class FastInvManager {
         @EventHandler
         public void onInventoryOpen(InventoryOpenEvent e) {
             if (e.getInventory().getHolder() instanceof FastInv inv) {
-                LinkedList<FastInv> list = playerInvStackMap.getOrDefault(((Player) e.getPlayer()), new LinkedList<>());
-                list.addFirst(inv);
-                playerInvStackMap.put(((Player) e.getPlayer()), list);
-
                 inv.handleOpen(e);
             }
         }
@@ -97,9 +85,6 @@ public final class FastInvManager {
         @EventHandler
         public void onInventoryClose(InventoryCloseEvent e) {
             if (e.getInventory().getHolder() instanceof FastInv inv) {
-                LinkedList<FastInv> list = playerInvStackMap.getOrDefault(((Player) e.getPlayer()), new LinkedList<>());
-                list.removeFirst();
-
                 if (inv.handleClose(e)) {
                     Bukkit.getScheduler().runTask(this.plugin, () -> inv.open((Player) e.getPlayer()));
                 }
