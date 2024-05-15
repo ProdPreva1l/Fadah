@@ -8,6 +8,7 @@ import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.records.Listing;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.UUID;
@@ -101,7 +102,7 @@ public interface Database {
 
     CompletableFuture<List<UUID>> getListingIDs();
 
-    CompletableFuture<Listing> getListing(UUID id);
+    CompletableFuture<@Nullable Listing> getListing(UUID id);
 
     void addToHistory(UUID playerUUID, HistoricItem historicItem);
 
