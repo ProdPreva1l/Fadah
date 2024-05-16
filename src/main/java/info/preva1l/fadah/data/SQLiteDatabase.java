@@ -28,9 +28,7 @@ import java.util.logging.Level;
 
 public class SQLiteDatabase implements Database {
     private static final String DATABASE_FILE_NAME = "FadahData.db";
-    @Getter
-    @Setter
-    private boolean connected = false;
+    @Getter @Setter private boolean connected = false;
     private File databaseFile;
     private Connection connection;
 

@@ -68,7 +68,8 @@ public class ConfirmPurchaseMenu extends FastInv {
             // Notify Both Players
             player.sendMessage(String.join("\n", Lang.NOTIFICATION_NEW_ITEM.toLore()));
 
-            String itemname = listing.itemStack().getItemMeta().getDisplayName().isBlank() ? listing.itemStack().getType().name() : listing.itemStack().getItemMeta().getDisplayName();
+            String itemname = listing.itemStack().getItemMeta().getDisplayName().isBlank() ?
+                    listing.itemStack().getType().name() : listing.itemStack().getItemMeta().getDisplayName();
             String formattedPrice = new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(price);
             String message = String.join("\n", Lang.NOTIFICATION_NEW_SELL.toLore(itemname, formattedPrice));
 

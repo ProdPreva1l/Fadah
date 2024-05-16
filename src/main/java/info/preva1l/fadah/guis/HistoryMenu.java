@@ -31,7 +31,9 @@ public class HistoryMenu extends FastInv {
     private int index = 0;
 
     public HistoryMenu(Player viewer, OfflinePlayer owner, int page, @Nullable String dateSearch) {
-        super(45, Menus.HISTORIC_ITEMS_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s"));
+        super(45, Menus.HISTORIC_ITEMS_TITLE.toFormattedString(
+                viewer.getUniqueId() == owner.getUniqueId() ?
+                        Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"));
         this.viewer = viewer;
         this.owner = owner;
         this.page = page;
@@ -54,7 +56,9 @@ public class HistoryMenu extends FastInv {
     private void populateHistory() {
         if (historicItems == null || historicItems.isEmpty()) {
             setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
-                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
+                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(
+                            Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build()
+            );
             return;
         }
         for (int i = 0; i <= maxItemsPerPage; i++) {

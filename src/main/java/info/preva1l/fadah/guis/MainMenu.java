@@ -40,7 +40,7 @@ public class MainMenu extends FastInv {
     private final Player player;
     private final int page;
     private final List<Listing> listings;
-    private final Map<Integer, Integer> listingSlot = new HashMap<>();
+    private List<Integer> listingSlot;
     // Filters
     private final String search;
     private final SortingMethod sortingMethod;
@@ -227,7 +227,8 @@ public class MainMenu extends FastInv {
             populateCategories();
         });
 
-        setItem(53, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player).name(Menus.MAIN_PROFILE_NAME.toFormattedString("Your"))
+        setItem(53, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player)
+                .name(Menus.MAIN_PROFILE_NAME.toFormattedString(Lang.WORD_YOUR.toString()))
                 .addLore(Menus.MAIN_PROFILE_LORE.toLore()).build(), e -> new ProfileMenu(player, player).open(player));
 
     }
@@ -236,13 +237,16 @@ public class MainMenu extends FastInv {
         // Filter Type Cycle
         SortingMethod prev = sortingMethod.previous();
         SortingMethod next = sortingMethod.next();
-        setItem(47, new ItemBuilder(Menus.MAIN_FILTER_TYPE_ICON.toMaterial()).name(Menus.MAIN_FILTER_TYPE_NAME.toFormattedString())
+        setItem(47, new ItemBuilder(Menus.MAIN_FILTER_TYPE_ICON.toMaterial())
+                .name(Menus.MAIN_FILTER_TYPE_NAME.toFormattedString())
                 .modelData(Menus.MAIN_FILTER_TYPE_MODEL_DATA.toInteger())
                 .addLore(Menus.MAIN_FILTER_TYPE_LORE.toLore((prev == null ? "None" : prev.getFriendlyName()),
-                        sortingMethod.getFriendlyName(), (next == null ? "None" : next.getFriendlyName()))).build(), e -> {
+                        sortingMethod.getFriendlyName(), (next == null ? "None" : next.getFriendlyName())))
+                .build(), e -> {
             if (e.isLeftClick()) {
                 if (sortingMethod.previous() == null) return;
-                new MainMenu(category, player, 0, search, sortingMethod.previous(), sortingDirection).open(player);
+                new MainMenu(category, player, 0, search, sortingMethod.previous(), sortingDirection)
+                        .open(player);
             }
             if (e.isRightClick()) {
                 if (sortingMethod.next() == null) return;
@@ -251,22 +255,31 @@ public class MainMenu extends FastInv {
         });
 
         // Search
-        setItem(49, new ItemBuilder(Menus.MAIN_SEARCH_ICON.toMaterial()).name(Menus.MAIN_SEARCH_NAME.toFormattedString())
+        setItem(49, new ItemBuilder(Menus.MAIN_SEARCH_ICON.toMaterial())
+                .name(Menus.MAIN_SEARCH_NAME.toFormattedString())
                 .modelData(Menus.MAIN_SEARCH_MODEL_DATA.toInteger())
                 .lore(Menus.MAIN_SEARCH_LORE.toLore()).build(), e ->
-                new SearchMenu(player, Menus.MAIN_SEARCH_PLACEHOLDER.toString(), search -> new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player)));
+                new SearchMenu(player, Menus.MAIN_SEARCH_PLACEHOLDER.toString(), search ->
+                        new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player)));
 
         // Filter Direction Toggle
         String asc = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.ASCENDING
-                ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toFormattedString() : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toFormattedString(), sortingMethod.getLang(SortingDirection.ASCENDING));
+                ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toFormattedString()
+                : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toFormattedString(),
+                sortingMethod.getLang(SortingDirection.ASCENDING));
         String desc = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.DESCENDING
-                ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toFormattedString() : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toFormattedString(), sortingMethod.getLang(SortingDirection.DESCENDING));
+                ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toFormattedString()
+                : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toFormattedString(),
+                sortingMethod.getLang(SortingDirection.DESCENDING));
 
         setItem(51, new ItemBuilder(Menus.MAIN_FILTER_DIRECTION_ICON.toMaterial())
                 .name(Menus.MAIN_FILTER_DIRECTION_NAME.toFormattedString())
-                .modelData(Menus.MAIN_FILTER_DIRECTION_MODEL_DATA.toInteger()).lore(Menus.MAIN_FILTER_DIRECTION_LORE.toLore(asc, desc)).build(), e ->
+                .modelData(Menus.MAIN_FILTER_DIRECTION_MODEL_DATA.toInteger())
+                .lore(Menus.MAIN_FILTER_DIRECTION_LORE.toLore(asc, desc)).build(), e ->
                 new MainMenu(category, player, 0, search, sortingMethod,
-                        (sortingDirection == SortingDirection.ASCENDING ? SortingDirection.DESCENDING : SortingDirection.ASCENDING)).open(player));
+                        (sortingDirection == SortingDirection.ASCENDING
+                                ? SortingDirection.DESCENDING
+                                : SortingDirection.ASCENDING)).open(player));
     }
 
     private void shiftMappingsUP() {
@@ -299,7 +312,9 @@ public class MainMenu extends FastInv {
     @SuppressWarnings("deprecation")
     private boolean checkForStringInItem(String toCheck, ItemStack item) {
         if (item.hasItemMeta()) {
-            return item.getItemMeta().getDisplayName().toUpperCase().contains(toCheck.toUpperCase()) || (item.getItemMeta().getLore() != null && item.getItemMeta().getLore().contains(toCheck.toUpperCase()));
+            return item.getItemMeta().getDisplayName().toUpperCase().contains(toCheck.toUpperCase())
+                    || (item.getItemMeta().getLore() != null
+                    && item.getItemMeta().getLore().contains(toCheck.toUpperCase()));
         }
         return false;
     }
@@ -310,29 +325,10 @@ public class MainMenu extends FastInv {
         selectorMappings.put(2, 27);
         selectorMappings.put(3, 36);
 
-        listingSlot.put(0, 11);
-        listingSlot.put(1, 12);
-        listingSlot.put(2, 13);
-        listingSlot.put(3, 14);
-        listingSlot.put(4, 15);
-        listingSlot.put(5, 16);
-        listingSlot.put(6, 20);
-        listingSlot.put(7, 21);
-        listingSlot.put(8, 22);
-        listingSlot.put(9, 23);
-        listingSlot.put(10, 24);
-        listingSlot.put(11, 25);
-        listingSlot.put(12, 29);
-        listingSlot.put(13, 30);
-        listingSlot.put(14, 31);
-        listingSlot.put(15, 32);
-        listingSlot.put(16, 33);
-        listingSlot.put(17, 34);
-        listingSlot.put(18, 38);
-        listingSlot.put(19, 39);
-        listingSlot.put(20, 40);
-        listingSlot.put(21, 41);
-        listingSlot.put(22, 42);
-        listingSlot.put(23, 43);
+        listingSlot = List.of(
+                11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+                21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+                31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+                41, 42, 43);
     }
 }

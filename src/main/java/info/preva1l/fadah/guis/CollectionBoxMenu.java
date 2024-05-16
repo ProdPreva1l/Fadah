@@ -29,7 +29,9 @@ public class CollectionBoxMenu extends FastInv {
     private int index = 0;
 
     public CollectionBoxMenu(Player viewer, OfflinePlayer owner, int page) {
-        super(45, Menus.COLLECTION_BOX_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s"));
+        super(45, Menus.COLLECTION_BOX_TITLE.toFormattedString(
+                viewer.getUniqueId() == owner.getUniqueId() ?
+                        Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"));
         this.viewer = viewer;
         this.owner = owner;
         this.page = page;
@@ -43,7 +45,8 @@ public class CollectionBoxMenu extends FastInv {
         populateCollectableItems();
         addPaginationControls();
 
-        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(), this::refreshMenu, 20L, 20L);
+        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(),
+                this::refreshMenu, 20L, 20L);
         InventoryEventHandler.tasksToQuit.put(getInventory(), task);
     }
 
@@ -55,7 +58,9 @@ public class CollectionBoxMenu extends FastInv {
     private void populateCollectableItems() {
         if (collectionBox == null || collectionBox.isEmpty()) {
             setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
-                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
+                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(
+                            Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build()
+            );
             return;
         }
         for (int i = 0; i <= maxItemsPerPage; i++) {
@@ -65,7 +70,8 @@ public class CollectionBoxMenu extends FastInv {
 
             removeItem(listingSlot.get(i));
             setItem(listingSlot.get(i), new ItemBuilder(collectableItem.itemStack().clone())
-                    .lore(Menus.COLLECTION_BOX_LORE.toLore(TimeUtil.formatTimeSince(collectableItem.dateAdded()))).build(), e -> {
+                    .lore(Menus.COLLECTION_BOX_LORE.toLore(TimeUtil.formatTimeSince(collectableItem.dateAdded()))
+                    ).build(), e -> {
                 int slot = viewer.getInventory().firstEmpty();
                 if (slot >= 36) {
                     viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
@@ -81,7 +87,8 @@ public class CollectionBoxMenu extends FastInv {
                 // In game logs
                 boolean isAdmin = viewer.getUniqueId() != owner.getUniqueId();
                 HistoricItem historicItem = new HistoricItem(owner.getUniqueId(), Instant.now().toEpochMilli(),
-                        isAdmin ? HistoricItem.LoggedAction.COLLECTION_BOX_ADMIN_CLAIM : HistoricItem.LoggedAction.COLLECTION_BOX_CLAIM,
+                        isAdmin ? HistoricItem.LoggedAction.COLLECTION_BOX_ADMIN_CLAIM
+                                : HistoricItem.LoggedAction.COLLECTION_BOX_CLAIM,
                         collectableItem.itemStack(), null, null);
                 HistoricItemsCache.addLog(owner.getUniqueId(), historicItem);
                 Fadah.getINSTANCE().getDatabase().addToHistory(owner.getUniqueId(), historicItem);
@@ -91,15 +98,18 @@ public class CollectionBoxMenu extends FastInv {
 
     private void addPaginationControls() {
         if (page > 0) {
-            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> new CollectionBoxMenu(viewer, owner, page - 1).open(viewer));
+            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e ->
+                    new CollectionBoxMenu(viewer, owner, page - 1).open(viewer));
         }
         if (collectionBox != null && collectionBox.size() >= index + 1) {
-            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> new CollectionBoxMenu(viewer, owner, page + 1).open(viewer));
+            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e ->
+                    new CollectionBoxMenu(viewer, owner, page + 1).open(viewer));
         }
     }
 
     private void addNavigationButtons() {
-        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
+        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e ->
+                new ProfileMenu(viewer, owner).open(viewer));
     }
 
     private void fillMappings() {

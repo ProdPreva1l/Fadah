@@ -57,7 +57,7 @@ public class MySQLDatabase implements Database {
         dataSource.setMaxLifetime(1800000);
         dataSource.setKeepaliveTime(0);
         dataSource.setConnectionTimeout(5000);
-        dataSource.setPoolName("FahabHikarPool");
+        dataSource.setPoolName("FadahHikariPool");
 
         final Properties properties = new Properties();
         properties.putAll(

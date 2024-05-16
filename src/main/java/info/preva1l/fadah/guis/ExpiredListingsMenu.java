@@ -29,7 +29,9 @@ public class ExpiredListingsMenu extends FastInv {
     private int index = 0;
 
     public ExpiredListingsMenu(Player viewer, OfflinePlayer owner, int page) {
-        super(45, Menus.EXPIRED_LISTINGS_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s"));
+        super(45, Menus.EXPIRED_LISTINGS_TITLE.toFormattedString(
+                viewer.getUniqueId() == owner.getUniqueId() ?
+                        Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"));
         this.viewer = viewer;
         this.owner = owner;
         this.page = page;
@@ -43,7 +45,8 @@ public class ExpiredListingsMenu extends FastInv {
         populateCollectableItems();
         addPaginationControls();
 
-        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(), this::refreshMenu, 20L, 20L);
+        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(),
+                this::refreshMenu, 20L, 20L);
         InventoryEventHandler.tasksToQuit.put(getInventory(), task);
     }
 
@@ -55,7 +58,9 @@ public class ExpiredListingsMenu extends FastInv {
     private void populateCollectableItems() {
         if (expiredItems == null || expiredItems.isEmpty()) {
             setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
-                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
+                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(
+                            Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build()
+            );
             return;
         }
         for (int i = 0; i <= maxItemsPerPage; i++) {
@@ -91,15 +96,18 @@ public class ExpiredListingsMenu extends FastInv {
 
     private void addPaginationControls() {
         if (page > 0) {
-            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> new ExpiredListingsMenu(viewer, owner, page - 1).open(viewer));
+            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e ->
+                    new ExpiredListingsMenu(viewer, owner, page - 1).open(viewer));
         }
         if (expiredItems != null && expiredItems.size() >= index + 1) {
-            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> new ExpiredListingsMenu(viewer, owner, page + 1).open(viewer));
+            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e ->
+                    new ExpiredListingsMenu(viewer, owner, page + 1).open(viewer));
         }
     }
 
     private void addNavigationButtons() {
-        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
+        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e ->
+                new ProfileMenu(viewer, owner).open(viewer));
     }
 
     private void fillMappings() {

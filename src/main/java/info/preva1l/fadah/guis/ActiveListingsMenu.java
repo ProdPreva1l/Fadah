@@ -33,7 +33,9 @@ public class ActiveListingsMenu extends FastInv {
     private int index = 0;
 
     public ActiveListingsMenu(Player viewer, OfflinePlayer owner, int page) {
-        super(45, Menus.ACTIVE_LISTINGS_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s"));
+        super(45, Menus.ACTIVE_LISTINGS_TITLE.toFormattedString(
+                viewer.getUniqueId() == owner.getUniqueId() ?
+                        Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"));
         this.viewer = viewer;
         this.owner = owner;
         this.page = page;
@@ -48,7 +50,8 @@ public class ActiveListingsMenu extends FastInv {
         populateCollectableItems();
         addPaginationControls();
 
-        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(), this::refreshMenu, 20L, 20L);
+        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(),
+                this::refreshMenu, 20L, 20L);
         InventoryEventHandler.tasksToQuit.put(getInventory(), task);
     }
 
@@ -60,7 +63,9 @@ public class ActiveListingsMenu extends FastInv {
     private void populateCollectableItems() {
         if (listings == null || listings.isEmpty()) {
             setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
-                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
+                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(
+                            Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build()
+            );
             return;
         }
         for (int i = 0; i <= maxItemsPerPage; i++) {
@@ -69,7 +74,8 @@ public class ActiveListingsMenu extends FastInv {
             Listing listing = listings.get(index);
 
             ItemBuilder itemStack = new ItemBuilder(listing.itemStack().clone())
-                    .addLore(Menus.ACTIVE_LISTINGS_LORE.toLore(listing.categoryID(), listing.price(), TimeUtil.formatTimeUntil(listing.deletionDate())));
+                    .addLore(Menus.ACTIVE_LISTINGS_LORE.toLore(listing.categoryID(), listing.price(),
+                            TimeUtil.formatTimeUntil(listing.deletionDate())));
 
             removeItem(listingSlot.get(i));
             setItem(listingSlot.get(i), itemStack.build(), e -> handleListingCancellation(listing));
@@ -77,11 +83,14 @@ public class ActiveListingsMenu extends FastInv {
     }
 
     private void handleListingCancellation(Listing listing) {
-        if (ListingCache.getListing(listing.id()) == null || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(listing.id()) == null)) {
-            viewer.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+        if (ListingCache.getListing(listing.id()) == null || (Config.STRICT_CHECKS.toBoolean()
+                && Fadah.getINSTANCE().getDatabase().getListing(listing.id()) == null)) {
+            viewer.sendMessage(StringUtils.colorize(
+                    Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
             return;
         }
-        viewer.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString()));
+        viewer.sendMessage(StringUtils.colorize(
+                Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString()));
         if (Fadah.getINSTANCE().getCacheSync() == null) {
             ListingCache.removeListing(listing);
         }
@@ -99,15 +108,18 @@ public class ActiveListingsMenu extends FastInv {
 
     private void addPaginationControls() {
         if (page > 0) {
-            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> new ActiveListingsMenu(viewer, owner,page - 1).open(viewer));
+            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e ->
+                    new ActiveListingsMenu(viewer, owner,page - 1).open(viewer));
         }
         if (listings != null && listings.size() >= index + 1) {
-            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> new ActiveListingsMenu(viewer, owner,page + 1).open(viewer));
+            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e ->
+                    new ActiveListingsMenu(viewer, owner,page + 1).open(viewer));
         }
     }
 
     private void addNavigationButtons() {
-        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
+        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e ->
+                new ProfileMenu(viewer, owner).open(viewer));
     }
 
     private void fillMappings() {
