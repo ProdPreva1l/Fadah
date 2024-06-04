@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ShulkerBoxPreviewMenu extends FastInv {
     public ShulkerBoxPreviewMenu(Listing listing, Player player,
-                                 @Nullable Category category, int page,
+                                 @Nullable Category category,
                                  @Nullable String search,
                                  @Nullable SortingMethod sortingMethod,
                                  @Nullable SortingDirection sortingDirection) {
@@ -36,7 +36,7 @@ public class ShulkerBoxPreviewMenu extends FastInv {
         }
 
         setItem(31, GuiHelper.constructButton(GuiButtonType.CLOSE), e ->
-                new MainMenu(category, player, page, search, sortingMethod, sortingDirection).open(player));
+                new MainMenu(category, player, search, sortingMethod, sortingDirection).open(player));
         setItems(new int[]{27, 28, 29, 30, 32, 33, 34, 35}, GuiHelper.constructButton(GuiButtonType.BORDER));
     }
 }

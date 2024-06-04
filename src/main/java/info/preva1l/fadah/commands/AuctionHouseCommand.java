@@ -43,7 +43,7 @@ public class AuctionHouseCommand extends Command {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
             return;
         }
-        new MainMenu(null, command.getPlayer(), 0, null, null, null).open(command.getPlayer());
+        new MainMenu(null, command.getPlayer(), null, null, null).open(command.getPlayer());
     }
 
     @Override

@@ -63,6 +63,6 @@ public class ProfileMenu extends FastInv {
             }
         });
 
-        setItem(45, GuiHelper.constructButton(GuiButtonType.BACK), e -> new MainMenu(null, viewer, 0, null, null, null).open(viewer));
+        setItem(45, GuiHelper.constructButton(GuiButtonType.BACK), e -> new MainMenu(null, viewer, null, null, null).open(viewer));
     }
 }
