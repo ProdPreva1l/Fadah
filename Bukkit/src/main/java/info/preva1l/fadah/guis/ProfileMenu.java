@@ -12,10 +12,20 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 public class ProfileMenu extends FastInv {
+    private final Player viewer;
+    private final OfflinePlayer owner;
+
     public ProfileMenu(@NotNull Player viewer, @NotNull OfflinePlayer owner) {
         super(54, Menus.PROFILE_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"));
-        setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
+        this.viewer = viewer;
+        this.owner = owner;
 
+        setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
+        setItem(45, GuiHelper.constructButton(GuiButtonType.BACK), e -> new MainMenu(null, viewer, null, null, null).open(viewer));
+        fillItems();
+    }
+
+    private void fillItems() {
         setItem(20, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(owner)
                 .name(Menus.MAIN_PROFILE_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
                 .addLore(Menus.MAIN_PROFILE_DESCRIPTION.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName(),
@@ -31,6 +41,7 @@ public class ProfileMenu extends FastInv {
                 new ActiveListingsMenu(viewer, owner, 0).open(viewer);
             }
         });
+        
         setItem(23, new ItemBuilder(Menus.PROFILE_COLLECTION_BOX_ICON.toMaterial())
                 .name(Menus.PROFILE_COLLECTION_BOX_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
                 .modelData(Menus.PROFILE_COLLECTION_BOX_MODEL_DATA.toInteger())
@@ -41,6 +52,7 @@ public class ProfileMenu extends FastInv {
                 new CollectionBoxMenu(viewer, owner, 0).open(viewer);
             }
         });
+
         setItem(24, new ItemBuilder(Menus.PROFILE_EXPIRED_LISTINGS_ICON.toMaterial())
                 .name(Menus.PROFILE_EXPIRED_LISTINGS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
                 .modelData(Menus.PROFILE_EXPIRED_LISTINGS_MODEL_DATA.toInteger())
@@ -62,7 +74,5 @@ public class ProfileMenu extends FastInv {
                 new HistoryMenu(viewer, owner, 0, null).open(viewer);
             }
         });
-
-        setItem(45, GuiHelper.constructButton(GuiButtonType.BACK), e -> new MainMenu(null, viewer, null, null, null).open(viewer));
     }
 }

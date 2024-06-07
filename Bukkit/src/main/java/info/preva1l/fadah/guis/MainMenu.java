@@ -22,12 +22,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class MainMenu extends PaginatedFastInv implements ScrollBar {
+public class MainMenu extends ScrollBarFastInv {
     private Category category;
     private final List<Listing> listings;
 
@@ -93,17 +90,6 @@ public class MainMenu extends PaginatedFastInv implements ScrollBar {
         return false;
     }
 
-    // When making the gui layout editor use this method to change where the scrollbar slots are
-    @Override
-    public Map<Integer, Integer> scrollbarSlots() {
-        Map<Integer, Integer> temp = new HashMap<>();
-        temp.put(0, 9);
-        temp.put(1, 18);
-        temp.put(2, 27);
-        temp.put(3, 36);
-        return temp;
-    }
-
     @Override
     public void fillScrollbarItems() {
         for (Category cat : CategoryCache.getCategories()) {
@@ -119,7 +105,8 @@ public class MainMenu extends PaginatedFastInv implements ScrollBar {
             addScrollbarItem(new PaginatedItem(itemBuilder.build(), e -> {
                 if (category != cat) {
                     this.category = cat;
-                    populateScrollbar();
+                    updatePagination();
+                    updateScrollbar();
                 }
             }));
         }
@@ -245,17 +232,9 @@ public class MainMenu extends PaginatedFastInv implements ScrollBar {
     }
     //</editor-fold>
 
-
-    //<editor-fold desc="Jank">
     @Override
     protected void paginationEmpty() {
         setItems(new int[]{22, 23, 31, 32}, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
                 .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
     }
-
-    @Override
-    public List<PaginatedItem> scrollbarItems() {
-        return new ArrayList<>();
-    }
-    //</editor-fold>
 }

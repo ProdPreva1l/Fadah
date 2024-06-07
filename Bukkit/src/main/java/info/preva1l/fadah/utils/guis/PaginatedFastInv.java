@@ -72,6 +72,12 @@ public abstract class PaginatedFastInv extends FastInv {
         }
     }
 
+    protected void updatePagination() {
+        paginatedItems.clear();
+        fillPaginationItems();
+        populatePage();
+    }
+
     protected abstract void paginationEmpty();
 
     protected abstract void fillPaginationItems();
