@@ -1,0 +1,37 @@
+repositories {
+    maven { url "https://repo.auxilor.io/repository/maven-public/" }
+    maven { url 'https://oss.sonatype.org/content/groups/public/' }
+    maven { url 'https://repo.papermc.io/repository/maven-public/' }
+    maven { url 'https://jitpack.io' }
+    maven { url 'https://repo.codemc.io/repository/maven-snapshots/' }
+}
+
+dependencies {
+    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+
+    implementation project(":API")
+
+    compileOnly 'redis.clients:jedis:5.1.0'
+    compileOnly 'org.apache.commons:commons-pool2:2.12.0'
+
+    implementation 'com.zaxxer:HikariCP:5.1.0'
+    compileOnly 'org.xerial:sqlite-jdbc:3.45.2.0'
+    compileOnly 'com.mysql:mysql-connector-j:8.3.0'
+    compileOnly 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
+    compileOnly 'org.mongodb:mongodb-driver-sync:5.0.0'
+
+    implementation 'net.wesjd:anvilgui:1.9.3-SNAPSHOT'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+
+    compileOnly 'com.willfp:libreforge:4.58.1'
+    compileOnly 'com.willfp:eco:6.56.0'
+    compileOnly 'com.willfp:EcoItems:5.43.1'
+}
+
+shadowJar {
+    relocate 'com.zaxxer', 'info.preva1l.fadah.libs'
+    relocate 'net.wesjd', 'info.preva1l.fadah.libs'
+
+    archiveClassifier.set('')
+    minimize()
+}
