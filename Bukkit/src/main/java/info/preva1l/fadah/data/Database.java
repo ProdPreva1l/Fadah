@@ -15,7 +15,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 public interface Database {
-    void connect();
+    CompletableFuture<Void> connect();
 
     void destroy();
 
@@ -45,66 +45,60 @@ public interface Database {
         });
     }
 
-    void addToCollectionBox(UUID playerUUID, CollectableItem collectableItem);
+    CompletableFuture<Void> addToCollectionBox(UUID playerUUID, CollectableItem collectableItem);
 
-    void removeFromCollectionBox(UUID playerUUID, CollectableItem collectableItem);
+    CompletableFuture<Void> removeFromCollectionBox(UUID playerUUID, CollectableItem collectableItem);
 
     CompletableFuture<List<CollectableItem>> getCollectionBox(UUID playerUUID);
 
-    default void loadCollectionBox(UUID playerUUID) {
+    default CompletableFuture<Void> loadCollectionBox(UUID playerUUID) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            CompletableFuture.supplyAsync(() -> null);
-            return;
+            return CompletableFuture.supplyAsync(() -> null);
         }
-        CompletableFuture.supplyAsync(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             CollectionBoxCache.purgeCollectionbox(playerUUID);
             getCollectionBox(playerUUID).thenAccept(box -> CollectionBoxCache.load(playerUUID, box));
             return null;
         });
     }
 
-    void addToExpiredItems(UUID playerUUID, CollectableItem collectableItem);
+    CompletableFuture<Void> addToExpiredItems(UUID playerUUID, CollectableItem collectableItem);
 
-    void removeFromExpiredItems(UUID playerUUID, CollectableItem collectableItem);
+    CompletableFuture<Void> removeFromExpiredItems(UUID playerUUID, CollectableItem collectableItem);
 
     CompletableFuture<List<CollectableItem>> getExpiredItems(UUID playerUUID);
 
-    default void loadExpiredItems(UUID playerUUID) {
+    default CompletableFuture<Void> loadExpiredItems(UUID playerUUID) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            CompletableFuture.supplyAsync(() -> null);
-            return;
+            return CompletableFuture.supplyAsync(() -> null);
         }
-        CompletableFuture.supplyAsync(() -> {
+        return CompletableFuture.supplyAsync(() -> {
             ExpiredListingsCache.purgeExpiredListings(playerUUID);
             getExpiredItems(playerUUID).thenAccept(items -> ExpiredListingsCache.load(playerUUID, items));
             return null;
         });
     }
 
-    void addListing(Listing listing);
+    CompletableFuture<Void> addListing(Listing listing);
 
-    void removeListing(UUID id);
+    CompletableFuture<Void> removeListing(UUID id);
 
-    default void loadListings() {
+    default CompletableFuture<Void> loadListings() {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
         ListingCache.purgeListings();
-        getListingIDs().thenAccept(uuids -> {
-            for (UUID id : uuids) {
-                getListing(id).thenAccept(ListingCache::addListing);
-            }
-        });
+        return getListings().thenAccept(listings -> listings.forEach(ListingCache::addListing));
     }
 
-    CompletableFuture<List<UUID>> getListingIDs();
+    CompletableFuture<List<Listing>> getListings();
 
     CompletableFuture<@Nullable Listing> getListing(UUID id);
 
-    void addToHistory(UUID playerUUID, HistoricItem historicItem);
+    CompletableFuture<Void> addToHistory(UUID playerUUID, HistoricItem historicItem);
 
     CompletableFuture<List<HistoricItem>> getHistory(UUID playerUUID);
 

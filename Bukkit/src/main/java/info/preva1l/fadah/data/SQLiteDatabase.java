@@ -8,7 +8,6 @@ import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.ItemSerializer;
-import info.preva1l.fadah.utils.TaskManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
@@ -35,12 +34,12 @@ public class SQLiteDatabase implements Database {
 
     @SuppressWarnings("SameParameterValue")
     @NotNull
-    private String[] getSchemaStatements(@NotNull String schemaFileName) throws IOException {
+    private synchronized String[] getSchemaStatements(@NotNull String schemaFileName) throws IOException {
         return new String(Objects.requireNonNull(Fadah.getINSTANCE().getResource(schemaFileName))
                 .readAllBytes(), StandardCharsets.UTF_8).split(";");
     }
 
-    private Connection getConnection() throws SQLException {
+    private synchronized Connection getConnection() throws SQLException {
         if (connection == null) {
             setConnection();
         } else if (connection.isClosed()) {
@@ -49,7 +48,7 @@ public class SQLiteDatabase implements Database {
         return connection;
     }
 
-    private void setConnection() {
+    private synchronized void setConnection() {
         try {
             if (databaseFile.createNewFile()) {
                 Fadah.getConsole().info("Created the SQLite database file");
@@ -73,7 +72,7 @@ public class SQLiteDatabase implements Database {
         }
     }
 
-    private void backupFlatFile(@NotNull File file) {
+    private synchronized void backupFlatFile(@NotNull File file) {
         if (!file.exists()) {
             return;
         }
@@ -89,34 +88,37 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public void connect() {
-        databaseFile = new File(Fadah.getINSTANCE().getDataFolder(), DATABASE_FILE_NAME);
+    public synchronized CompletableFuture<Void> connect() {
+        return CompletableFuture.supplyAsync(() -> {
+            databaseFile = new File(Fadah.getINSTANCE().getDataFolder(), DATABASE_FILE_NAME);
 
-        this.setConnection();
-        this.backupFlatFile(databaseFile);
+            this.setConnection();
+            this.backupFlatFile(databaseFile);
 
-        try {
-            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
-            try (Statement statement = connection.createStatement()) {
-                for (String tableCreationStatement : databaseSchema) {
-                    statement.execute(tableCreationStatement);
+            try {
+                final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
+                try (Statement statement = connection.createStatement()) {
+                    for (String tableCreationStatement : databaseSchema) {
+                        statement.execute(tableCreationStatement);
+                    }
+                } catch (SQLException e) {
+                    destroy();
+                    throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
+                            "and that your connecting user account has privileges to create tables.", e);
                 }
-            } catch (SQLException e) {
+            } catch (IOException e) {
                 destroy();
                 throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
                         "and that your connecting user account has privileges to create tables.", e);
             }
-        } catch (IOException e) {
-            destroy();
-            throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
-                    "and that your connecting user account has privileges to create tables.", e);
-        }
-        setConnected(true);
-        this.loadListings();
+            setConnected(true);
+            this.loadListings();
+            return null;
+        });
     }
 
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
         try {
             if (connection != null) {
                 if (!connection.isClosed()) {
@@ -130,12 +132,12 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public void addToCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
+    public synchronized CompletableFuture<Void> addToCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `collection_box`
@@ -144,22 +146,23 @@ public class SQLiteDatabase implements Database {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
                     statement.setLong(3, collectableItem.dateAdded());
-                    statement.executeUpdate();
+                    statement.execute();
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to collection box!");
                 throw new RuntimeException(e);
             }
+            return null;
         });
     }
 
     @Override
-    public void removeFromCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
+    public synchronized CompletableFuture<Void> removeFromCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `collection_box`
@@ -167,17 +170,18 @@ public class SQLiteDatabase implements Database {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
                     statement.setLong(3, collectableItem.dateAdded());
-                    statement.executeUpdate();
+                    statement.execute();
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to remove item from collection box!");
                 throw new RuntimeException(e);
             }
+            return null;
         });
     }
 
     @Override
-    public CompletableFuture<List<CollectableItem>> getCollectionBox(UUID playerUUID) {
+    public synchronized CompletableFuture<List<CollectableItem>> getCollectionBox(UUID playerUUID) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(Collections::emptyList);
@@ -206,12 +210,12 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public void addToExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
+    public synchronized CompletableFuture<Void> addToExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `expired_items`
@@ -220,22 +224,23 @@ public class SQLiteDatabase implements Database {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
                     statement.setLong(3, collectableItem.dateAdded());
-                    statement.executeUpdate();
+                    statement.execute();
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to expired items!");
                 throw new RuntimeException(e);
             }
+            return null;
         });
     }
 
     @Override
-    public void removeFromExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
+    public synchronized CompletableFuture<Void> removeFromExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(() -> null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `expired_items`
@@ -243,17 +248,18 @@ public class SQLiteDatabase implements Database {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
                     statement.setLong(3, collectableItem.dateAdded());
-                    statement.executeUpdate();
+                    statement.execute();
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to remove item from expired items!");
                 throw new RuntimeException(e);
             }
+            return null;
         });
     }
 
     @Override
-    public CompletableFuture<List<CollectableItem>> getExpiredItems(UUID playerUUID) {
+    public synchronized CompletableFuture<List<CollectableItem>> getExpiredItems(UUID playerUUID) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(Collections::emptyList);
@@ -282,12 +288,12 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public void addListing(Listing listing) {
+    public synchronized CompletableFuture<Void> addListing(Listing listing) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `listings`
@@ -301,53 +307,61 @@ public class SQLiteDatabase implements Database {
                     statement.setLong(6, listing.getDeletionDate());
                     statement.setDouble(7, listing.getPrice());
                     statement.setString(8, ItemSerializer.serialize(listing.getItemStack()));
-                    statement.executeUpdate();
+                    statement.execute();
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to listings!");
                 throw new RuntimeException(e);
             }
+            return null;
         });
     }
 
     @Override
-    public void removeListing(UUID id) {
+    public synchronized CompletableFuture<Void> removeListing(UUID id) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `listings`
-                        WHERE ROWID =
-                        (SELECT ROWID FROM `listings` WHERE uuid = ? LIMIT 1)
-                        """)) {
+                        WHERE uuid = ?;""")) {
                     statement.setString(1, id.toString());
-                    statement.executeUpdate();
+                    statement.execute();
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to remove item from listings!");
                 throw new RuntimeException(e);
             }
+            return null;
         });
     }
 
     @Override
-    public CompletableFuture<List<UUID>> getListingIDs() {
+    public synchronized CompletableFuture<List<Listing>> getListings() {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(() -> null);
         }
         return CompletableFuture.supplyAsync(() -> {
-            final List<UUID> retrievedData = Lists.newArrayList();
+            final List<Listing> retrievedData = Lists.newArrayList();
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT `uuid`
+                        SELECT  `uuid`, `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `itemStack`
                         FROM `listings`;""")) {
                     final ResultSet resultSet = statement.executeQuery();
                     while (resultSet.next()) {
-                        retrievedData.add(UUID.fromString(resultSet.getString("uuid")));
+                        final UUID id = UUID.fromString(resultSet.getString("uuid"));
+                        final UUID ownerUUID = UUID.fromString(resultSet.getString("ownerUUID"));
+                        final String ownerName = resultSet.getString("ownerName");
+                        final String categoryID = resultSet.getString("category");
+                        final long creationDate = resultSet.getLong("creationDate");
+                        final long deletionDate = resultSet.getLong("deletionDate");
+                        final double price = resultSet.getDouble("price");
+                        final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
+                        retrievedData.add(new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, creationDate, deletionDate));
                     }
                     return retrievedData;
                 }
@@ -359,7 +373,7 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public CompletableFuture<Listing> getListing(UUID id) {
+    public synchronized CompletableFuture<Listing> getListing(UUID id) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(() -> null);
@@ -391,12 +405,12 @@ public class SQLiteDatabase implements Database {
     }
 
     @Override
-    public void addToHistory(UUID playerUUID, HistoricItem historicItem) {
+    public synchronized CompletableFuture<Void> addToHistory(UUID playerUUID, HistoricItem historicItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `history`
@@ -416,17 +430,18 @@ public class SQLiteDatabase implements Database {
                     } else {
                         statement.setNull(6, Types.VARCHAR);
                     }
-                    statement.executeUpdate();
+                    statement.execute();
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to history!");
                 throw new RuntimeException(e);
             }
+            return null;
         });
     }
 
     @Override
-    public CompletableFuture<List<HistoricItem>> getHistory(UUID playerUUID) {
+    public synchronized CompletableFuture<List<HistoricItem>> getHistory(UUID playerUUID) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(Collections::emptyList);

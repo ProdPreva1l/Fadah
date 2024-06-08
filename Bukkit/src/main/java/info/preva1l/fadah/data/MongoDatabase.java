@@ -10,7 +10,6 @@ import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.ItemSerializer;
-import info.preva1l.fadah.utils.TaskManager;
 import info.preva1l.fadah.utils.mongo.CacheHandler;
 import info.preva1l.fadah.utils.mongo.CollectionHelper;
 import info.preva1l.fadah.utils.mongo.MongoConnectionHandler;
@@ -36,21 +35,24 @@ public class MongoDatabase implements Database {
     private CollectionHelper collectionHelper;
 
     @Override
-    public void connect() {
-        try {
-            @NotNull String connectionURI = Config.DATABASE_URI.toString();
-            @NotNull String database = Config.DATABASE.toString();
-            Fadah.getConsole().info("Connecting to: " + connectionURI);
-            connectionHandler = new MongoConnectionHandler(connectionURI, database);
-            cacheHandler = new CacheHandler(connectionHandler);
-            collectionHelper = new CollectionHelper(connectionHandler.getDatabase(), cacheHandler);
-            setConnected(true);
-        } catch (Exception e) {
-            destroy();
-            throw new IllegalStateException("Failed to establish a connection to the MongoDB database. " +
-                    "Please check the supplied database credentials in the config file", e);
-        }
-        this.loadListings();
+    public CompletableFuture<Void> connect() {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                @NotNull String connectionURI = Config.DATABASE_URI.toString();
+                @NotNull String database = Config.DATABASE.toString();
+                Fadah.getConsole().info("Connecting to: " + connectionURI);
+                connectionHandler = new MongoConnectionHandler(connectionURI, database);
+                cacheHandler = new CacheHandler(connectionHandler);
+                collectionHelper = new CollectionHelper(connectionHandler.getDatabase(), cacheHandler);
+                setConnected(true);
+            } catch (Exception e) {
+                destroy();
+                throw new IllegalStateException("Failed to establish a connection to the MongoDB database. " +
+                        "Please check the supplied database credentials in the config file", e);
+            }
+            this.loadListings();
+            return null;
+        });
     }
 
     @Override
@@ -63,28 +65,34 @@ public class MongoDatabase implements Database {
     }
 
     @Override
-    public void addToCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
+    public CompletableFuture<Void> addToCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        Document document = new Document("playerUUID", playerUUID)
-                .append("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))
-                .append("dateAdded", collectableItem.dateAdded());
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.insertDocument("collection_box", document));
+        return CompletableFuture.supplyAsync(() -> {
+            Document document = new Document("playerUUID", playerUUID)
+                    .append("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))
+                    .append("dateAdded", collectableItem.dateAdded());
+            collectionHelper.insertDocument("collection_box", document);
+            return null;
+        });
     }
 
     @Override
-    public void removeFromCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
+    public CompletableFuture<Void> removeFromCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        MongoCollection<Document> collection = collectionHelper.getCollection("collection_box");
-        final Document listingDocument = collection.find().filter(Filters.eq("playerUUID", playerUUID))
-                .filter(Filters.eq("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))).first();
-        if (listingDocument == null) return;
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.deleteDocument("collection_box", listingDocument));
+        return CompletableFuture.supplyAsync(() -> {
+            MongoCollection<Document> collection = collectionHelper.getCollection("collection_box");
+            final Document listingDocument = collection.find().filter(Filters.eq("playerUUID", playerUUID))
+                    .filter(Filters.eq("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))).first();
+            if (listingDocument == null) return null;
+            collectionHelper.deleteDocument("collection_box", listingDocument);
+            return null;
+        });
     }
 
     @Override
@@ -107,28 +115,34 @@ public class MongoDatabase implements Database {
     }
 
     @Override
-    public void addToExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
+    public CompletableFuture<Void> addToExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        Document document = new Document("playerUUID", playerUUID)
-                .append("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))
-                .append("dateAdded", collectableItem.dateAdded());
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.insertDocument("expired_items", document));
+        return CompletableFuture.supplyAsync(() -> {
+            Document document = new Document("playerUUID", playerUUID)
+                    .append("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))
+                    .append("dateAdded", collectableItem.dateAdded());
+            collectionHelper.insertDocument("expired_items", document);
+            return null;
+        });
     }
 
     @Override
-    public void removeFromExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
+    public CompletableFuture<Void> removeFromExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        MongoCollection<Document> collection = collectionHelper.getCollection("expired_items");
-        final Document listingDocument = collection.find().filter(Filters.eq("playerUUID", playerUUID))
-                .filter(Filters.eq("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))).first();
-        if (listingDocument == null) return;
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.deleteDocument("expired_items", listingDocument));
+        return CompletableFuture.supplyAsync(() -> {
+            MongoCollection<Document> collection = collectionHelper.getCollection("expired_items");
+            final Document listingDocument = collection.find().filter(Filters.eq("playerUUID", playerUUID))
+                    .filter(Filters.eq("itemStack", ItemSerializer.serialize(collectableItem.itemStack()))).first();
+            if (listingDocument == null) return null;
+            collectionHelper.deleteDocument("expired_items", listingDocument);
+            return null;
+        });
     }
 
     @Override
@@ -151,45 +165,59 @@ public class MongoDatabase implements Database {
     }
 
     @Override
-    public void addListing(Listing listing) {
+    public CompletableFuture<Void> addListing(Listing listing) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        Document document = new Document("uuid", listing.getId())
-                .append("ownerUUID", listing.getOwner())
-                .append("ownerName", listing.getOwnerName())
-                .append("category", listing.getCategoryID())
-                .append("creationDate", listing.getCreationDate())
-                .append("deletionDate", listing.getDeletionDate())
-                .append("price", listing.getPrice())
-                .append("itemStack", ItemSerializer.serialize(listing.getItemStack()));
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.insertDocument("listings", document));
+        return CompletableFuture.supplyAsync(() -> {
+            Document document = new Document("uuid", listing.getId())
+                    .append("ownerUUID", listing.getOwner())
+                    .append("ownerName", listing.getOwnerName())
+                    .append("category", listing.getCategoryID())
+                    .append("creationDate", listing.getCreationDate())
+                    .append("deletionDate", listing.getDeletionDate())
+                    .append("price", listing.getPrice())
+                    .append("itemStack", ItemSerializer.serialize(listing.getItemStack()));
+            collectionHelper.insertDocument("listings", document);
+            return null;
+        });
     }
 
     @Override
-    public void removeListing(UUID id) {
+    public CompletableFuture<Void> removeListing(UUID id) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(() -> null);
         }
-        MongoCollection<Document> collection = collectionHelper.getCollection("listings");
-        final Document listingDocument = collection.find().filter(Filters.eq("uuid", id)).first();
-        if (listingDocument == null) return;
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.deleteDocument("listings", listingDocument));
+        return CompletableFuture.supplyAsync(() -> {
+            MongoCollection<Document> collection = collectionHelper.getCollection("listings");
+            final Document listingDocument = collection.find().filter(Filters.eq("uuid", id)).first();
+            if (listingDocument == null) return null;
+            collectionHelper.deleteDocument("listings", listingDocument);
+            return null;
+        });
     }
 
     @Override
-    public CompletableFuture<List<UUID>> getListingIDs() {
+    public CompletableFuture<List<Listing>> getListings() {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(Collections::emptyList);
         }
         return CompletableFuture.supplyAsync(() -> {
-            List<UUID> list = new ArrayList<>();
+            List<Listing> list = new ArrayList<>();
             MongoCollection<Document> collection = collectionHelper.getCollection("listings");
             for (Document doc : collection.find()) {
-                list.add(doc.get("uuid", UUID.class));
+                final UUID id = doc.get("uuid", UUID.class);
+                final UUID owner = doc.get("ownerUUID", UUID.class);
+                final String ownerName = doc.getString("ownerName");
+                final String category = doc.getString("category");
+                final long creationDate = doc.getLong("creationDate");
+                final long deletionDate = doc.getLong("deletionDate");
+                final double price = doc.getDouble("price");
+                final ItemStack itemStack = ItemSerializer.deserialize(doc.getString("itemStack"))[0];
+                list.add(new BukkitListing(id, owner, ownerName, itemStack, category, price, creationDate, deletionDate));
             }
             return list;
         });
@@ -218,18 +246,21 @@ public class MongoDatabase implements Database {
     }
 
     @Override
-    public void addToHistory(UUID playerUUID, HistoricItem historicItem) {
+    public CompletableFuture<Void> addToHistory(UUID playerUUID, HistoricItem historicItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        Document document = new Document("playerUUID", playerUUID)
-                .append("itemStack", ItemSerializer.serialize(historicItem.itemStack()))
-                .append("loggedDate", historicItem.loggedDate())
-                .append("loggedAction", historicItem.action().ordinal())
-                .append("price", historicItem.price())
-                .append("purchaserUUID", historicItem.purchaserUUID());
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> collectionHelper.insertDocument("history", document));
+        return CompletableFuture.supplyAsync(() -> {
+            Document document = new Document("playerUUID", playerUUID)
+                    .append("itemStack", ItemSerializer.serialize(historicItem.itemStack()))
+                    .append("loggedDate", historicItem.loggedDate())
+                    .append("loggedAction", historicItem.action().ordinal())
+                    .append("price", historicItem.price())
+                    .append("purchaserUUID", historicItem.purchaserUUID());
+            collectionHelper.insertDocument("history", document);
+            return null;
+        });
     }
 
     @Override

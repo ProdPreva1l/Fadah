@@ -9,7 +9,6 @@ import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.ItemSerializer;
-import info.preva1l.fadah.utils.TaskManager;
 import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
@@ -48,56 +47,59 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
-    public void connect() {
-        dataSource = new HikariDataSource();
-        dataSource.setDriverClassName(driverClass);
-        dataSource.setJdbcUrl(Config.DATABASE_URI.toString());
+    public CompletableFuture<Void> connect() {
+        return CompletableFuture.supplyAsync(() -> {
+            dataSource = new HikariDataSource();
+            dataSource.setDriverClassName(driverClass);
+            dataSource.setJdbcUrl(Config.DATABASE_URI.toString());
 
-        dataSource.setMaximumPoolSize(10);
-        dataSource.setMinimumIdle(10);
-        dataSource.setMaxLifetime(1800000);
-        dataSource.setKeepaliveTime(0);
-        dataSource.setConnectionTimeout(5000);
-        dataSource.setPoolName("FadahHikariPool");
+            dataSource.setMaximumPoolSize(10);
+            dataSource.setMinimumIdle(10);
+            dataSource.setMaxLifetime(1800000);
+            dataSource.setKeepaliveTime(0);
+            dataSource.setConnectionTimeout(5000);
+            dataSource.setPoolName("FadahHikariPool");
 
-        final Properties properties = new Properties();
-        properties.putAll(
-                Map.of("cachePrepStmts", "true",
-                        "prepStmtCacheSize", "250",
-                        "prepStmtCacheSqlLimit", "2048",
-                        "useServerPrepStmts", "true",
-                        "useLocalSessionState", "true",
-                        "useLocalTransactionState", "true"
-                ));
-        properties.putAll(
-                Map.of(
-                        "rewriteBatchedStatements", "true",
-                        "cacheResultSetMetadata", "true",
-                        "cacheServerConfiguration", "true",
-                        "elideSetAutoCommits", "true",
-                        "maintainTimeStats", "false")
-        );
-        dataSource.setDataSourceProperties(properties);
+            final Properties properties = new Properties();
+            properties.putAll(
+                    Map.of("cachePrepStmts", "true",
+                            "prepStmtCacheSize", "250",
+                            "prepStmtCacheSqlLimit", "2048",
+                            "useServerPrepStmts", "true",
+                            "useLocalSessionState", "true",
+                            "useLocalTransactionState", "true"
+                    ));
+            properties.putAll(
+                    Map.of(
+                            "rewriteBatchedStatements", "true",
+                            "cacheResultSetMetadata", "true",
+                            "cacheServerConfiguration", "true",
+                            "elideSetAutoCommits", "true",
+                            "maintainTimeStats", "false")
+            );
+            dataSource.setDataSourceProperties(properties);
 
-        try (Connection connection = dataSource.getConnection()) {
-            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
-            try (Statement statement = connection.createStatement()) {
-                for (String tableCreationStatement : databaseSchema) {
-                    statement.execute(tableCreationStatement);
+            try (Connection connection = dataSource.getConnection()) {
+                final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
+                try (Statement statement = connection.createStatement()) {
+                    for (String tableCreationStatement : databaseSchema) {
+                        statement.execute(tableCreationStatement);
+                    }
+                    setConnected(true);
+                } catch (SQLException e) {
+                    destroy();
+                    throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
+                            "and that your connecting user account has privileges to create tables.", e);
                 }
-                setConnected(true);
-            } catch (SQLException e) {
+            } catch (SQLException | IOException e) {
                 destroy();
-                throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
-                        "and that your connecting user account has privileges to create tables.", e);
+                throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
+                        "Please check the supplied database credentials in the config file", e);
             }
-        } catch (SQLException | IOException e) {
-            destroy();
-            throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
-                    "Please check the supplied database credentials in the config file", e);
-        }
 
-        this.loadListings();
+            this.loadListings();
+            return null;
+        });
     }
 
     @Override
@@ -109,12 +111,12 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
-    public void addToCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
+    public CompletableFuture<Void> addToCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `collection_box`
@@ -128,16 +130,17 @@ public class MySQLDatabase implements Database {
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to collection box!");
             }
+            return null;
         });
     }
 
     @Override
-    public void removeFromCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
+    public CompletableFuture<Void> removeFromCollectionBox(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `collection_box`
@@ -152,6 +155,7 @@ public class MySQLDatabase implements Database {
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to remove item from collection box!");
             }
+            return null;
         });
     }
 
@@ -185,12 +189,12 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
-    public void addToExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
+    public CompletableFuture<Void> addToExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `expired_items`
@@ -204,16 +208,17 @@ public class MySQLDatabase implements Database {
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to expired items!");
             }
+            return null;
         });
     }
 
     @Override
-    public void removeFromExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
+    public CompletableFuture<Void> removeFromExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `expired_items`
@@ -227,6 +232,7 @@ public class MySQLDatabase implements Database {
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to remove item from expired items!");
             }
+            return null;
         });
     }
 
@@ -260,12 +266,12 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
-    public void addListing(Listing listing) {
+    public CompletableFuture<Void> addListing(Listing listing) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `listings`
@@ -284,16 +290,17 @@ public class MySQLDatabase implements Database {
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to listings!");
             }
+            return null;
         });
     }
 
     @Override
-    public void removeListing(UUID id) {
+    public CompletableFuture<Void> removeListing(UUID id) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `listings`
@@ -305,24 +312,33 @@ public class MySQLDatabase implements Database {
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to remove item from listings!");
             }
+            return null;
         });
     }
 
     @Override
-    public CompletableFuture<List<UUID>> getListingIDs() {
+    public CompletableFuture<List<Listing>> getListings() {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
             return CompletableFuture.supplyAsync(() -> null);
         }
         return CompletableFuture.supplyAsync(() -> {
-            final List<UUID> retrievedData = Lists.newArrayList();
+            final List<Listing> retrievedData = Lists.newArrayList();
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         SELECT `uuid`
                         FROM `listings`;""")) {
                     final ResultSet resultSet = statement.executeQuery();
                     while (resultSet.next()) {
-                        retrievedData.add(UUID.fromString(resultSet.getString("uuid")));
+                        final UUID id = UUID.fromString(resultSet.getString("uuid"));
+                        final UUID ownerUUID = UUID.fromString(resultSet.getString("ownerUUID"));
+                        final String ownerName = resultSet.getString("ownerName");
+                        final String categoryID = resultSet.getString("category");
+                        final long creationDate = resultSet.getLong("creationDate");
+                        final long deletionDate = resultSet.getLong("deletionDate");
+                        final double price = resultSet.getDouble("price");
+                        final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
+                        retrievedData.add(new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, creationDate, deletionDate));
                     }
                     return retrievedData;
                 }
@@ -367,12 +383,12 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
-    public void addToHistory(UUID playerUUID, HistoricItem historicItem) {
+    public CompletableFuture<Void> addToHistory(UUID playerUUID, HistoricItem historicItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return;
+            return CompletableFuture.supplyAsync(()->null);
         }
-        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+        return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `history`
@@ -397,6 +413,7 @@ public class MySQLDatabase implements Database {
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to expired items!");
             }
+            return null;
         });
     }
 
