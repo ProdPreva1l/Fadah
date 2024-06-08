@@ -1,23 +1,26 @@
 package info.preva1l.fadah.utils;
 
+import lombok.experimental.UtilityClass;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
  * Easy creation of Bukkit Tasks
  */
 @SuppressWarnings("unused")
+@UtilityClass
 public class TaskManager {
     /**
      * Synchronous Tasks
      */
-    public static class Sync {
+    @UtilityClass
+    public class Sync {
         /**
          * Run a synchronous task once. Helpful when needing to run some sync code in an async loop
          *
          * @param plugin   The current plugin typeof JavaPlugin. (Not Commons)
          * @param runnable The runnable, lambda supported yeh
          */
-        public static void run(JavaPlugin plugin, Runnable runnable) {
+        public void run(JavaPlugin plugin, Runnable runnable) {
             plugin.getServer().getScheduler().runTask(plugin, runnable);
         }
 
@@ -28,7 +31,7 @@ public class TaskManager {
          * @param runnable The runnable, lambda supported yeh
          * @param interval Time between each run
          */
-        public static void runTask(JavaPlugin plugin, Runnable runnable, long interval) {
+        public void runTask(JavaPlugin plugin, Runnable runnable, long interval) {
             plugin.getServer().getScheduler().runTaskTimer(plugin, runnable, 0L, interval);
         }
 
@@ -39,7 +42,7 @@ public class TaskManager {
          * @param runnable The runnable, lambda supported yeh
          * @param delay    Time before running.
          */
-        public static void runLater(JavaPlugin plugin, Runnable runnable, long delay) {
+        public void runLater(JavaPlugin plugin, Runnable runnable, long delay) {
             plugin.getServer().getScheduler().runTaskLater(plugin, runnable, delay);
         }
     }
@@ -47,7 +50,8 @@ public class TaskManager {
     /**
      * Asynchronous tasks
      */
-    public static class Async {
+    @UtilityClass
+    public class Async {
         /**
          * Run an asynchronous task once. Helpful when needing to run some sync code in an async loop
          *
@@ -65,7 +69,7 @@ public class TaskManager {
          * @param runnable The runnable, lambda supported yeh
          * @param interval Time between each run
          */
-        public static void runTask(JavaPlugin plugin, Runnable runnable, long interval) {
+        public void runTask(JavaPlugin plugin, Runnable runnable, long interval) {
             plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0L, interval);
         }
 
@@ -76,7 +80,7 @@ public class TaskManager {
          * @param runnable The runnable, lambda supported yeh
          * @param delay    Time before running.
          */
-        public static void runLater(JavaPlugin plugin, Runnable runnable, long delay) {
+        public void runLater(JavaPlugin plugin, Runnable runnable, long delay) {
             plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, runnable, delay);
         }
     }

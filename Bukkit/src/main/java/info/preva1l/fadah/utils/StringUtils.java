@@ -1,5 +1,6 @@
 package info.preva1l.fadah.utils;
 
+import lombok.experimental.UtilityClass;
 import net.md_5.bungee.api.ChatColor;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.regex.Pattern;
 /**
  * String Formatting Helper.
  */
+@UtilityClass
 public class StringUtils {
     /**
      * Colorize a list. (Useful for lore)
@@ -17,7 +19,7 @@ public class StringUtils {
      * @param list List typeof String
      * @return Colorized List typeof String
      */
-    public static List<String> colorizeList(List<String> list) {
+    public List<String> colorizeList(List<String> list) {
         if (list == null) return null;
         if (list.isEmpty()) return null;
         List<String> ret = new ArrayList<>();
@@ -25,14 +27,14 @@ public class StringUtils {
         return ret;
     }
 
-    private static final Pattern HEX_PATTERN = Pattern.compile("&#(\\w{5}[0-9a-fA-F])");
+    private final Pattern HEX_PATTERN = Pattern.compile("&#(\\w{5}[0-9a-fA-F])");
 
     /**
      * Colorize  a string.
      * @param text String with color codes or hex codes.
      * @return Colorized String
      */
-    public static String colorize(String text) {
+    public String colorize(String text) {
         Matcher matcher = HEX_PATTERN.matcher(text);
         StringBuilder buffer = new StringBuilder();
 
@@ -49,7 +51,7 @@ public class StringUtils {
      * @param str String with color codes.
      * @return String without color codes.
      */
-    public static String removeColorCodes(String str) {
+    public String removeColorCodes(String str) {
         return str.replaceAll("&(?! ).", "");
     }
 
@@ -60,7 +62,7 @@ public class StringUtils {
      * @param args    arguments for {@link StringUtils#formatPlaceholders(String, Object...)}
      * @return formatted component
      */
-    public static String message(String message, Object... args) {
+    public String message(String message, Object... args) {
         message = formatPlaceholders(message, args);
 
         return colorize(message);
@@ -73,7 +75,7 @@ public class StringUtils {
      * @param args    things to replace with
      * @return formatted string
      */
-    public static String formatPlaceholders(String message, Object... args) {
+    public String formatPlaceholders(String message, Object... args) {
         for (int i = 0; i < args.length; i++) {
             if (!message.contains("{" + i + "}")) {
                 continue;
@@ -89,7 +91,7 @@ public class StringUtils {
      * @param str String
      * @return Capitalized String
      */
-    public static String capitalize(String str) {
+    public String capitalize(String str) {
         if (str == null || str.isEmpty()) {
             return str;
         }
