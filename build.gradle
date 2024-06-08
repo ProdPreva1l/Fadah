@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'info.preva1l'
-version = "1.6.5${versionMetadata()}"
+version = "1.7.0${versionMetadata()}"
 
 ext {
     set 'version', version.toString()
