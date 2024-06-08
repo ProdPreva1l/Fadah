@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     id 'java'
     id 'org.ajoberstar.grgit' version '5.2.2'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'io.github.goooler.shadow' version '8.1.7'
 }
 
 group = 'info.preva1l'
@@ -14,7 +14,7 @@ ext {
 }
 
 allprojects {
-    apply plugin: 'com.github.johnrengelman.shadow'
+    apply plugin: 'io.github.goooler.shadow'
     apply plugin: 'maven-publish'
     apply plugin: 'java'
 
@@ -91,7 +91,7 @@ subprojects {
     shadowJar {
         destinationDirectory.set(file("$rootDir/target"))
         archiveClassifier.set('')
-        minimize()
+        //minimize()
     }
 
     jar.dependsOn shadowJar

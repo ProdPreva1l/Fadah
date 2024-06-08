@@ -63,6 +63,7 @@ public class SQLiteDatabase implements Database {
             config.setSynchronous(SQLiteConfig.SynchronousMode.FULL);
 
             connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getAbsolutePath(), config.toProperties());
+            config.apply(connection);
         } catch (IOException e) {
             Fadah.getConsole().log(Level.SEVERE, "An exception occurred creating the database file", e);
         } catch (SQLException e) {
@@ -147,6 +148,7 @@ public class SQLiteDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to collection box!");
+                throw new RuntimeException(e);
             }
         });
     }
@@ -169,6 +171,7 @@ public class SQLiteDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to remove item from collection box!");
+                throw new RuntimeException(e);
             }
         });
     }
@@ -197,8 +200,8 @@ public class SQLiteDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to get items from collection box!");
+                throw new RuntimeException(e);
             }
-            return retrievedData;
         });
     }
 
@@ -221,6 +224,7 @@ public class SQLiteDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to expired items!");
+                throw new RuntimeException(e);
             }
         });
     }
@@ -243,6 +247,7 @@ public class SQLiteDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to remove item from expired items!");
+                throw new RuntimeException(e);
             }
         });
     }
@@ -271,8 +276,8 @@ public class SQLiteDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().log(Level.SEVERE, "Failed to get items from expired items!", e);
+                throw new RuntimeException(e);
             }
-            return retrievedData;
         });
     }
 
@@ -323,6 +328,7 @@ public class SQLiteDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to remove item from listings!");
+                throw new RuntimeException(e);
             }
         });
     }
@@ -347,8 +353,8 @@ public class SQLiteDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to get items from listings!");
+                throw new RuntimeException(e);
             }
-            return retrievedData;
         });
     }
 
@@ -378,7 +384,7 @@ public class SQLiteDatabase implements Database {
                     }
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().severe("Failed to get items from expired items!");
+                Fadah.getConsole().log(Level.SEVERE, "Failed to get listing!", e);
             }
             return null;
         });
@@ -413,7 +419,8 @@ public class SQLiteDatabase implements Database {
                     statement.executeUpdate();
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().severe("Failed to add item to expired items!");
+                Fadah.getConsole().severe("Failed to add item to history!");
+                throw new RuntimeException(e);
             }
         });
     }
@@ -444,9 +451,9 @@ public class SQLiteDatabase implements Database {
                     return retrievedData;
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().log(Level.SEVERE, "Failed to get items from expired items!", e);
+                Fadah.getConsole().log(Level.SEVERE, "Failed to get items from history!", e);
+                throw new RuntimeException(e);
             }
-            return retrievedData;
         });
     }
 }

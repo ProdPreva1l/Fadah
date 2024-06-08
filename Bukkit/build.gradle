@@ -3,7 +3,7 @@ repositories {
     maven { url 'https://oss.sonatype.org/content/groups/public/' }
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
     maven { url 'https://jitpack.io' }
-    maven { url 'https://repo.codemc.io/repository/maven-snapshots/' }
+    maven { url 'https://repo.spaceio.xyz/repository/maven-public' }
 }
 
 dependencies {
@@ -17,7 +17,9 @@ dependencies {
     implementation 'com.zaxxer:HikariCP:5.1.0'
     compileOnly 'org.xerial:sqlite-jdbc:3.45.2.0'
     compileOnly 'com.mysql:mysql-connector-j:8.3.0'
-    compileOnly 'org.mariadb.jdbc:mariadb-java-client:3.3.3'
+    compileOnly('org.mariadb.jdbc:mariadb-java-client:3.3.3') {
+        exclude group: '*', module: '*'
+    }
     compileOnly 'org.mongodb:mongodb-driver-sync:5.0.0'
 
     implementation 'net.wesjd:anvilgui:1.9.5-SNAPSHOT'
@@ -33,5 +35,5 @@ shadowJar {
     relocate 'net.wesjd', 'info.preva1l.fadah.libs'
 
     archiveClassifier.set('')
-    minimize()
+    //minimize()
 }

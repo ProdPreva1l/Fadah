@@ -23,6 +23,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class MainMenu extends ScrollBarFastInv {
     private Category category;
@@ -105,9 +106,12 @@ public class MainMenu extends ScrollBarFastInv {
             addScrollbarItem(new PaginatedItem(itemBuilder.build(), e -> {
                 if (category != cat) {
                     this.category = cat;
-                    updatePagination();
-                    updateScrollbar();
+                } else {
+                    this.category = null;
                 }
+
+                updatePagination();
+                updateScrollbar();
             }));
         }
     }
@@ -152,7 +156,6 @@ public class MainMenu extends ScrollBarFastInv {
         }
     }
 
-    //<editor-fold desc="Navigation">
     private void addPaginationControls() {
         if (page > 0) {
             setItem(48, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> previousPage());
@@ -163,12 +166,16 @@ public class MainMenu extends ScrollBarFastInv {
         }
     }
 
-    private void addNavigationButtons() {
+    @Override
+    protected void addNavigationButtons() {
+        removeItem(0);
+        removeItem(45);
+        removeItem(53);
         setItem(0, GuiHelper.constructButton(GuiButtonType.SCROLL_PREVIOUS), e -> scrollUp());
         setItem(45, GuiHelper.constructButton(GuiButtonType.SCROLL_NEXT), e -> scrollDown());
 
         setItem(53, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player)
-                .name(Menus.MAIN_PROFILE_NAME.toFormattedString(Lang.WORD_YOUR.toString()))
+                .name(Menus.MAIN_PROFILE_NAME.toFormattedString(Lang.WORD_YOUR.toString().toUpperCase(Locale.ENGLISH)))
                 .addLore(Menus.MAIN_PROFILE_LORE.toLore()).build(), e -> new ProfileMenu(player, player).open(player));
 
     }
@@ -181,8 +188,8 @@ public class MainMenu extends ScrollBarFastInv {
         setItem(47, new ItemBuilder(Menus.MAIN_FILTER_TYPE_ICON.toMaterial())
                 .name(Menus.MAIN_FILTER_TYPE_NAME.toFormattedString())
                 .modelData(Menus.MAIN_FILTER_TYPE_MODEL_DATA.toInteger())
-                .addLore(Menus.MAIN_FILTER_TYPE_LORE.toLore((prev == null ? "None" : prev.getFriendlyName()),
-                        sortingMethod.getFriendlyName(), (next == null ? "None" : next.getFriendlyName())))
+                .addLore(Menus.MAIN_FILTER_TYPE_LORE.toLore((prev == null ? Lang.WORD_NONE.toString() : prev.getFriendlyName()),
+                        sortingMethod.getFriendlyName(), (next == null ? Lang.WORD_NONE.toString() : next.getFriendlyName())))
                 .build(), e -> {
             if (e.isLeftClick()) {
                 if (sortingMethod.previous() == null) return;
@@ -230,7 +237,27 @@ public class MainMenu extends ScrollBarFastInv {
                 }
         );
     }
-    //</editor-fold>
+
+    @Override
+    protected void updatePagination() {
+        this.listings.clear();
+        this.listings.addAll(ListingCache.getListings());
+
+        listings.sort(this.sortingMethod.getSorter(this.sortingDirection));
+
+        if (category != null) {
+            listings.removeIf(listing -> !listing.getCategoryID().equals(category.id()));
+        }
+
+        if (search != null) {
+            listings.removeIf(listing -> !(listing.getItemStack().getType().name().toUpperCase().contains(search.toUpperCase())
+                    || listing.getItemStack().getType().name().toUpperCase().contains(search.replace(" ", "_").toUpperCase()))
+                    && !checkForStringInItem(search.toUpperCase(), listing.getItemStack())
+                    && !checkForEnchantmentOnBook(search.toUpperCase(), listing.getItemStack()));
+        }
+
+        super.updatePagination();
+    }
 
     @Override
     protected void paginationEmpty() {

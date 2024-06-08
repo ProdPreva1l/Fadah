@@ -22,9 +22,9 @@ public abstract class PaginatedFastInv extends FastInv {
         super(size, title);
         this.player = player;
         this.paginationMappings = List.of(
-                11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-                21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-                31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+                11, 12, 13, 14, 15, 16, 20,
+                21, 22, 23, 24, 25, 29, 30,
+                31, 32, 33, 34, 38, 39, 40,
                 41, 42, 43);
 
         BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(), this::populatePage, 20L, 20L);
@@ -56,19 +56,23 @@ public abstract class PaginatedFastInv extends FastInv {
         populatePage();
     }
 
+    // I will refactor this later if need be but for now it is fine
     protected void populatePage() {
         int maxItemsPerPage = paginationMappings.size();
-        if (paginatedItems == null || paginatedItems.isEmpty()) {
-            paginationEmpty();
-            return;
-        }
-        for (int i = 0; i <= maxItemsPerPage; i++) {
+        boolean empty = paginatedItems == null || paginatedItems.isEmpty();
+        for (int i = 0; i < maxItemsPerPage; i++) {
+            removeItem(paginationMappings.get(i));
+
+            if (empty) continue;
+
             index = maxItemsPerPage * page + i;
-            if (index >= paginatedItems.size() || i == maxItemsPerPage) break;
+            if (index >= paginatedItems.size()) continue;
             PaginatedItem item = paginatedItems.get(index);
 
-            removeItem(paginationMappings.get(i));
             setItem(paginationMappings.get(i), item.itemStack(), item.eventConsumer());
+        }
+        if (empty) {
+            paginationEmpty();
         }
     }
 
@@ -76,11 +80,14 @@ public abstract class PaginatedFastInv extends FastInv {
         paginatedItems.clear();
         fillPaginationItems();
         populatePage();
+        addNavigationButtons();
     }
 
     protected abstract void paginationEmpty();
 
     protected abstract void fillPaginationItems();
+
+    protected abstract void addNavigationButtons();
 
     protected void addPaginationItem(PaginatedItem item) {
         paginatedItems.add(item);

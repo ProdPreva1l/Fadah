@@ -11,5 +11,5 @@ public enum DatabaseType {
     MARIADB("mariadb", "MariaDB"),
     SQLITE("sqlite", "SQLite");
     private final String id;
-    private final String friendly_name;
+    private final String friendlyName;
 }

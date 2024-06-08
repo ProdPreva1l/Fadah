@@ -13,6 +13,10 @@ public class HookManager {
         registeredHooks.add(hook);
     }
 
+    public int hookCount() {
+        return registeredHooks.size();
+    }
+
     /**
      * Get a hook
      * @param hook the class of the hook

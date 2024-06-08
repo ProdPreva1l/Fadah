@@ -39,7 +39,6 @@ public final class Fadah extends JavaPlugin {
     private static final int METRICS_ID = 21651;
 
     @Getter private static Fadah INSTANCE;
-    @Getter private static AuctionHouseAPI API;
     @Getter @Setter private static NamespacedKey customItemKey;
 
     @Getter private static Logger console;
@@ -70,6 +69,8 @@ public final class Fadah extends JavaPlugin {
             getConsole().severe("------------------------------------------");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
+        } else {
+            getConsole().info("Vault Hooked!");
         }
         loadFiles();
         loadDataAndPopulateCaches();
@@ -98,7 +99,9 @@ public final class Fadah extends JavaPlugin {
         initLogger();
         setupMetrics();
 
-        API = new BukkitAuctionHouseAPI();
+        getConsole().info("Enabling the API...");
+        AuctionHouseAPI.setInstance(new BukkitAuctionHouseAPI());
+        getConsole().info("API Enabled!");
 
         Bukkit.getConsoleSender().sendMessage(StringUtils.colorize("&2&l------------------------------"));
         Bukkit.getConsoleSender().sendMessage(StringUtils.colorize("&a Finally a Decent Auction House"));
@@ -131,11 +134,14 @@ public final class Fadah extends JavaPlugin {
     }
 
     private void loadCommands() {
+        getConsole().info("Loading commands...");
         this.commandManager = new CommandManager(this);
         new AuctionHouseCommand(this);
+        getConsole().info("Commands Loaded!");
     }
 
     private void loadFiles() {
+        getConsole().info("Loading Configuration Files...");
         configFile = new BasicConfig(this, "config.yml");
         categoriesFile = new BasicConfig(this, "categories.yml");
         langFile = new BasicConfig(this, "lang.yml");
@@ -147,9 +153,11 @@ public final class Fadah extends JavaPlugin {
 
         categoriesFile.save();
         categoriesFile.load();
+        getConsole().info("Configuration Files Loaded!");
     }
 
     private boolean hookIntoVault() {
+        getConsole().info("Hooking into Vault...");
         if (INSTANCE.getServer().getPluginManager().getPlugin("Vault") == null) {
             getConsole().info("Vault not installed");
             return false;
@@ -161,10 +169,14 @@ public final class Fadah extends JavaPlugin {
             return false;
         }
         economy = rsp.getProvider();
+
         return economy != null;
     }
 
     private void loadDataAndPopulateCaches() {
+        getConsole().info("Connecting to Database and populating caches...");
+        getConsole().info("DB Type: %s".formatted(Config.DATABASE_TYPE.toDBTypeEnum().getFriendlyName()));
+
         database = switch (Config.DATABASE_TYPE.toDBTypeEnum()) {
             case MONGO -> new MongoDatabase();
             case MYSQL, MARIADB -> new MySQLDatabase();
@@ -173,21 +185,32 @@ public final class Fadah extends JavaPlugin {
         database.connect();
 
         CategoryCache.loadCategories();
+
+        getConsole().info("Connected to Database and populated caches!");
     }
 
     private void loadHooks() {
+        getConsole().info("Configuring Hooks...");
+
         if (Config.HOOK_ECO_ITEMS.toBoolean()) {
             new EcoItemsHook();
         }
+
+        getConsole().info("Hooked into %s plugins!".formatted(getHookManager().hookCount()));
     }
 
     private void setupMetrics() {
-        metrics = new Metrics(this, METRICS_ID);
+        getConsole().info("Starting Metrics...");
 
+        metrics = new Metrics(this, METRICS_ID);
         metrics.addCustomChart(new Metrics.SingleLineChart("items_listed", () -> ListingCache.getListings().size()));
+
+        getConsole().info("Metrics Logging Started!");
     }
 
     private void initLogger() {
+        getConsole().info("Initialising transaction logger...");
+
         if (!Config.LOG_TO_FILE.toBoolean()) {
             return;
         }
@@ -216,5 +239,7 @@ public final class Fadah extends JavaPlugin {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        getConsole().info("Logger Started!");
     }
 }

@@ -57,7 +57,7 @@ public abstract class ScrollBarFastInv extends PaginatedFastInv {
         }
     }
 
-    protected void scrollUp() {
+    protected synchronized void scrollDown() {
         if (scrollbarSlots.containsKey(CategoryCache.getCategories().size() - 1)) return;
         Map<Integer, Integer> newMappings = new HashMap<>();
         for (Map.Entry<Integer, Integer> entry : scrollbarSlots.entrySet()) {
@@ -68,7 +68,7 @@ public abstract class ScrollBarFastInv extends PaginatedFastInv {
         updateScrollbar();
     }
 
-    protected void scrollDown() {
+    protected synchronized void scrollUp() {
         if (scrollbarSlots.containsKey(0)) return;
         Map<Integer, Integer> newMappings = new HashMap<>();
         for (Map.Entry<Integer, Integer> entry : scrollbarSlots.entrySet()) {
