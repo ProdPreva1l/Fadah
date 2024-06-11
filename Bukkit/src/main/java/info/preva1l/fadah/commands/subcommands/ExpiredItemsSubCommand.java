@@ -2,6 +2,7 @@ package info.preva1l.fadah.commands.subcommands;
 
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.guis.ExpiredListingsMenu;
@@ -27,7 +28,9 @@ public class ExpiredItemsSubCommand extends SubCommand {
         OfflinePlayer owner = command.getPlayer();
         if (command.args().length >= 1 && command.sender().hasPermission("fadah.manage.expired-items")) {
             owner = Bukkit.getOfflinePlayer(command.args()[0]);
-            Fadah.getINSTANCE().getDatabase().loadExpiredItems(owner.getUniqueId());
+            final OfflinePlayer finalOwner = owner;
+            Fadah.getINSTANCE().getDatabase().getExpiredItems(owner.getUniqueId())
+                    .thenAccept(items -> ExpiredListingsCache.update(finalOwner.getUniqueId(), items));
         }
         if (owner.getUniqueId() != command.getPlayer().getUniqueId() && !HistoricItemsCache.playerExists(owner.getUniqueId())) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));

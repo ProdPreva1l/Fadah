@@ -1,8 +1,7 @@
 package info.preva1l.fadah.multiserver;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.cache.CategoryCache;
-import info.preva1l.fadah.cache.ListingCache;
+import info.preva1l.fadah.cache.*;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.Listing;
@@ -155,7 +154,8 @@ public class CacheSync extends JedisPubSub {
             public void handleMessage(JSONObject obj) {
                 UUID playerUUID = UUID.fromString(obj.get("player_uuid").toString());
 
-                Fadah.getINSTANCE().getDatabase().loadCollectionBox(playerUUID);
+                Fadah.getINSTANCE().getDatabase().getCollectionBox(playerUUID)
+                        .thenAccept(items -> CollectionBoxCache.update(playerUUID, items));
             }
         },
         EXPIRED_LISTINGS {
@@ -163,7 +163,8 @@ public class CacheSync extends JedisPubSub {
             public void handleMessage(JSONObject obj) {
                 UUID playerUUID = UUID.fromString(obj.get("player_uuid").toString());
 
-                Fadah.getINSTANCE().getDatabase().loadExpiredItems(playerUUID);
+                Fadah.getINSTANCE().getDatabase().getExpiredItems(playerUUID)
+                        .thenAccept(items -> ExpiredListingsCache.update(playerUUID, items));
             }
         },
         NOTIFICATIONS {
@@ -183,8 +184,7 @@ public class CacheSync extends JedisPubSub {
                 Fadah.getINSTANCE().getLangFile().load();
                 Fadah.getINSTANCE().getMenusFile().load();
                 Fadah.getINSTANCE().getCategoriesFile().load();
-                CategoryCache.purgeCategories();
-                CategoryCache.loadCategories();
+                CategoryCache.update();
                 Fadah.getINSTANCE().getDatabase().loadListings();
                 Bukkit.getConsoleSender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + "&aConfig reloaded from remote server!"));
             }
@@ -208,7 +208,8 @@ public class CacheSync extends JedisPubSub {
             public void handleMessage(JSONObject obj) {
                 UUID playerUUID = UUID.fromString(obj.get("player_uuid").toString());
 
-                Fadah.getINSTANCE().getDatabase().loadHistory(playerUUID);
+                Fadah.getINSTANCE().getDatabase().getHistory(playerUUID)
+                        .thenAccept(items -> HistoricItemsCache.update(playerUUID, items));
             }
         };
 

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainMenu extends ScrollBarFastInv {
@@ -37,7 +38,7 @@ public class MainMenu extends ScrollBarFastInv {
                     @Nullable SortingMethod sortingMethod, @Nullable SortingDirection sortingDirection) {
         super(54, Menus.MAIN_TITLE.toFormattedString(), player, LayoutManager.MenuType.MAIN);
         this.category = category;
-        this.listings = ListingCache.getListings();
+        this.listings = new ArrayList<>(ListingCache.getListings().values());
 
         this.search = search;
         this.sortingMethod = (sortingMethod == null ? SortingMethod.AGE : sortingMethod);
@@ -239,7 +240,7 @@ public class MainMenu extends ScrollBarFastInv {
     @Override
     protected void updatePagination() {
         this.listings.clear();
-        this.listings.addAll(ListingCache.getListings());
+        this.listings.addAll(ListingCache.getListings().values());
 
         listings.sort(this.sortingMethod.getSorter(this.sortingDirection));
 

@@ -10,17 +10,14 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @UtilityClass
 public final class CategoryCache {
-    private final List<Category> categories = new ArrayList<>();
+    private List<Category> categories = new ArrayList<>();
 
-    public void purgeCategories() {
-        categories.clear();
+    public void update() {
+        categories = fillListWithCategories();
     }
 
     public Category getCategory(String id) {
@@ -28,14 +25,12 @@ public final class CategoryCache {
     }
 
     public List<Category> getCategories() {
-        return new ArrayList<>(categories);
+        return Collections.unmodifiableList(categories);
     }
 
     @Nullable
     public String getCategoryForItem(ItemStack itemStack) {
-        List<Category> ctgs = getCategories();
-        ctgs.sort(Comparator.comparingInt(Category::priority).reversed());
-        for (Category category : ctgs) {
+        for (Category category : getCategories()) {
             if (category.isCustomItems()) {
                 if (Config.HOOK_ECO_ITEMS.toBoolean() && Fadah.getINSTANCE().getHookManager().getHook(EcoItemsHook.class).isPresent()) {
                     EcoItemsHook ecoItemsHook = (EcoItemsHook) Fadah.getINSTANCE().getHookManager().getHook(EcoItemsHook.class).get();
@@ -49,6 +44,11 @@ public final class CategoryCache {
     }
 
     public void loadCategories() {
+        categories = fillListWithCategories();
+    }
+
+    public List<Category> fillListWithCategories() {
+        List<Category> list = new ArrayList<>();
         for (String key : Fadah.getINSTANCE().getCategoriesFile().getConfiguration().getKeys(false)) {
             String name = Fadah.getINSTANCE().getCategoriesFile().getString(key + ".name");
             Material icon = Material.getMaterial(Fadah.getINSTANCE().getCategoriesFile().getString(key + ".icon"));
@@ -79,7 +79,9 @@ public final class CategoryCache {
             List<String> customItemIDs = null;
             if (isCustomItems)
                 customItemIDs = Fadah.getINSTANCE().getCategoriesFile().getStringList(key + ".custom-item-ids");
-            categories.add(new Category(key, name, priority, modelData, (icon == null ? Material.GRASS_BLOCK : icon), description, materials, isCustomItems, customItemMode, SetHelper.listToSet(customItemIDs)));
+            list.add(new Category(key, name, priority, modelData, (icon == null ? Material.GRASS_BLOCK : icon), description, materials, isCustomItems, customItemMode, SetHelper.listToSet(customItemIDs)));
         }
+        list.sort(Comparator.comparingInt(Category::priority).reversed());
+        return list;
     }
 }

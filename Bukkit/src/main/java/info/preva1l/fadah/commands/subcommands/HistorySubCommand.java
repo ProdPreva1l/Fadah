@@ -12,6 +12,9 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class HistorySubCommand extends SubCommand {
+
+    private OfflinePlayer owner;
+
     public HistorySubCommand(Fadah plugin) {
         super(plugin);
     }
@@ -26,7 +29,9 @@ public class HistorySubCommand extends SubCommand {
         OfflinePlayer owner = command.getPlayer();
         if (command.args().length >= 1 && command.sender().hasPermission("fadah.manage.history")) {
             owner = Bukkit.getOfflinePlayer(command.args()[0]);
-            Fadah.getINSTANCE().getDatabase().loadExpiredItems(owner.getUniqueId());
+            final OfflinePlayer finalOwner = owner;
+            Fadah.getINSTANCE().getDatabase().getHistory(owner.getUniqueId())
+                    .thenAccept(history -> HistoricItemsCache.update(finalOwner.getUniqueId(), history));
         }
         if (owner.getUniqueId() != command.getPlayer().getUniqueId() && !HistoricItemsCache.playerExists(owner.getUniqueId())) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));

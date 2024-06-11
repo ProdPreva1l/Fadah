@@ -27,6 +27,7 @@ public class BukkitListing extends Listing {
         super(id, owner, ownerName, itemStack, categoryID, price, creationDate, deletionDate);
     }
 
+    @Override
     public void purchase(@NotNull Player buyer) {
         // Money Transfer
         Economy eco = Fadah.getINSTANCE().getEconomy();

@@ -19,30 +19,19 @@ public interface Database {
 
     void destroy();
 
-    default CompletableFuture<Boolean> loadPlayerData(UUID playerUUID) {
+    default boolean loadPlayerData(UUID playerUUID) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return CompletableFuture.supplyAsync(()->null);
+            return false;
         }
-        return CompletableFuture.supplyAsync(()->{
-            try {
-                CollectionBoxCache.purgeCollectionbox(playerUUID);
-                ExpiredListingsCache.purgeExpiredListings(playerUUID);
-                HistoricItemsCache.purgeHistory(playerUUID);
-                getCollectionBox(playerUUID).thenAccept(box ->
-                                CollectionBoxCache.load(playerUUID, box))
-                        .thenAccept((v) ->
-                                getExpiredItems(playerUUID).thenAccept(items ->
-                                                ExpiredListingsCache.load(playerUUID, items))
-                                .thenAccept((a) ->
-                                getHistory(playerUUID).thenAccept(history ->
-                                        HistoricItemsCache.load(playerUUID, history))));
-
-            } catch (Exception e){
-                return false;
-            }
-            return true;
-        });
+        try {
+            getExpiredItems(playerUUID).thenAccept(items -> ExpiredListingsCache.update(playerUUID, items));
+            getHistory(playerUUID).thenAccept(items -> HistoricItemsCache.update(playerUUID, items));
+            getCollectionBox(playerUUID).thenAccept(items -> CollectionBoxCache.update(playerUUID, items));
+        } catch (Exception e){
+            return false;
+        }
+        return true;
     }
 
     CompletableFuture<Void> addToCollectionBox(UUID playerUUID, CollectableItem collectableItem);
@@ -51,35 +40,11 @@ public interface Database {
 
     CompletableFuture<List<CollectableItem>> getCollectionBox(UUID playerUUID);
 
-    default CompletableFuture<Void> loadCollectionBox(UUID playerUUID) {
-        if (!isConnected()) {
-            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return CompletableFuture.supplyAsync(() -> null);
-        }
-        return CompletableFuture.supplyAsync(() -> {
-            CollectionBoxCache.purgeCollectionbox(playerUUID);
-            getCollectionBox(playerUUID).thenAccept(box -> CollectionBoxCache.load(playerUUID, box));
-            return null;
-        });
-    }
-
     CompletableFuture<Void> addToExpiredItems(UUID playerUUID, CollectableItem collectableItem);
 
     CompletableFuture<Void> removeFromExpiredItems(UUID playerUUID, CollectableItem collectableItem);
 
     CompletableFuture<List<CollectableItem>> getExpiredItems(UUID playerUUID);
-
-    default CompletableFuture<Void> loadExpiredItems(UUID playerUUID) {
-        if (!isConnected()) {
-            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return CompletableFuture.supplyAsync(() -> null);
-        }
-        return CompletableFuture.supplyAsync(() -> {
-            ExpiredListingsCache.purgeExpiredListings(playerUUID);
-            getExpiredItems(playerUUID).thenAccept(items -> ExpiredListingsCache.load(playerUUID, items));
-            return null;
-        });
-    }
 
     CompletableFuture<Void> addListing(Listing listing);
 
@@ -101,18 +66,6 @@ public interface Database {
     CompletableFuture<Void> addToHistory(UUID playerUUID, HistoricItem historicItem);
 
     CompletableFuture<List<HistoricItem>> getHistory(UUID playerUUID);
-
-    default CompletableFuture<Void> loadHistory(UUID playerUUID) {
-        if (!isConnected()) {
-            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return CompletableFuture.supplyAsync(()->null);
-        }
-        return CompletableFuture.supplyAsync(()-> {
-            HistoricItemsCache.purgeHistory(playerUUID);
-            getHistory(playerUUID).thenAccept(items -> HistoricItemsCache.load(playerUUID, items));
-            return null;
-        });
-    }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     boolean isConnected();

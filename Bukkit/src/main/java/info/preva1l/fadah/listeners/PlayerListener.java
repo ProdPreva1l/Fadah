@@ -4,6 +4,7 @@ package info.preva1l.fadah.listeners;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
+import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.utils.guis.InventoryEventHandler;
 import org.bukkit.event.EventHandler;
@@ -23,18 +24,17 @@ public class PlayerListener implements Listener {
             return;
         }
 
-        Fadah.getINSTANCE().getDatabase().loadPlayerData(e.getUniqueId()).thenAccept((success) -> {
-            if (!success) {
-                e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-                e.setKickMessage(Lang.PREFIX.toFormattedString() + Lang.DATABASE_CONNECTING.toFormattedString());
-            }
-        });
+        if (!Fadah.getINSTANCE().getDatabase().loadPlayerData(e.getUniqueId())) {
+            e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
+            e.setKickMessage(Lang.PREFIX.toFormattedString() + Lang.DATABASE_CONNECTING.toFormattedString());
+        }
     }
 
     @EventHandler
     public void leaveListener(PlayerQuitEvent e) {
-        CollectionBoxCache.purgeCollectionbox(e.getPlayer().getUniqueId());
-        ExpiredListingsCache.purgeExpiredListings(e.getPlayer().getUniqueId());
+        CollectionBoxCache.invalidate(e.getPlayer().getUniqueId());
+        ExpiredListingsCache.invalidate(e.getPlayer().getUniqueId());
+        HistoricItemsCache.invalidate(e.getPlayer().getUniqueId());
     }
 
 

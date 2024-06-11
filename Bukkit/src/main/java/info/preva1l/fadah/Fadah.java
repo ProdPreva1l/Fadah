@@ -32,6 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
@@ -128,7 +129,8 @@ public final class Fadah extends JavaPlugin {
 
     private Runnable listingExpiryTask() {
         return () -> {
-            for (Listing listing : ListingCache.getListings()) {
+            for (UUID key : ListingCache.getListings().keySet()) {
+                Listing listing = ListingCache.getListing(key);
                 if (Instant.now().toEpochMilli() >= listing.getDeletionDate()) {
                     ListingCache.removeListing(listing);
                     getINSTANCE().getDatabase().removeListing(listing.getId());

@@ -5,43 +5,47 @@ import info.preva1l.fadah.records.HistoricItem;
 import lombok.experimental.UtilityClass;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @UtilityClass
 public class HistoricItemsCache {
-    private final HashMap<UUID, List<HistoricItem>> historicItems = new HashMap<>();
+    private final Map<UUID, List<HistoricItem>> historicItems = new ConcurrentHashMap<>();
 
     public void addLog(UUID playerUUID, HistoricItem item) {
-        List<HistoricItem> list = historicItems.get(playerUUID);
-        if (list == null) {
-            list = new ArrayList<>();
-        }
-        list.add(item);
-        historicItems.remove(playerUUID);
+        historicItems.compute(playerUUID, (uuid, items) -> {
+            if (items == null) {
+                items = new ArrayList<>();
+            }
+            items.add(item);
+
+            items.sort(Comparator.comparingLong(HistoricItem::loggedDate).reversed());
+            return items;
+        });
+    }
+
+    public void update(UUID playerUUID, List<HistoricItem> list) {
+        list.sort(Comparator.comparingLong(HistoricItem::loggedDate).reversed());
         historicItems.put(playerUUID, list);
     }
 
-    public void purgeHistory(UUID playerUUID) {
+    public void invalidate(UUID playerUUID) {
         historicItems.remove(playerUUID);
-    }
-
-    public void load(UUID playerUUID, List<HistoricItem> list) {
-        historicItems.put(playerUUID, list);
     }
 
     public List<HistoricItem> getHistory(UUID playerUUID) {
-        if (historicItems.get(playerUUID) == null || historicItems.get(playerUUID).isEmpty()) {
-            return new ArrayList<>();
+        if (historicItems.get(playerUUID) == null) {
+            return List.of();
         }
-        List<HistoricItem> list = historicItems.get(playerUUID);
-        list.sort(Comparator.comparingLong(HistoricItem::loggedDate).reversed());
-        return new ArrayList<>(list);
+        List<HistoricItem> ret = new ArrayList<>();
+        historicItems.computeIfPresent(playerUUID, (uuid, items) -> {
+            ret.addAll(items);
+            return items;
+        });
+        return ret;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean playerExists(UUID uuid) {
         return !Fadah.getINSTANCE().getDatabase().getHistory(uuid).join().isEmpty();
-    }
-    public boolean playerExistsInCache(UUID uuid) {
-        return !historicItems.containsKey(uuid);
     }
 }

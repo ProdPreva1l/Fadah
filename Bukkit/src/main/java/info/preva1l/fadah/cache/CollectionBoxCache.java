@@ -2,7 +2,6 @@ package info.preva1l.fadah.cache;
 
 import info.preva1l.fadah.records.CollectableItem;
 import lombok.experimental.UtilityClass;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
@@ -11,39 +10,42 @@ public class CollectionBoxCache {
     private final HashMap<UUID, List<CollectableItem>> collectionbox = new HashMap<>();
 
     public void addItem(UUID playerUUID, CollectableItem item) {
-        List<CollectableItem> list = collectionbox.get(playerUUID);
-        if (list == null) {
-            list = new ArrayList<>();
-        }
-        list.add(item);
-        collectionbox.remove(playerUUID);
-        collectionbox.put(playerUUID, list);
+        collectionbox.compute(playerUUID, (uuid, items) -> {
+            if (items == null) {
+                items = new ArrayList<>();
+            }
+            items.add(item);
+
+            items.sort(Comparator.comparingLong(CollectableItem::dateAdded).reversed());
+            return items;
+        });
     }
 
     public void removeItem(UUID playerUUID, CollectableItem item) {
-        List<CollectableItem> list = collectionbox.get(playerUUID);
-        list.remove(item);
-        collectionbox.remove(playerUUID);
+        collectionbox.computeIfPresent(playerUUID, (uuid, items) -> {
+            items.remove(item);
+            return items;
+        });
+    }
+
+    public void update(UUID playerUUID, List<CollectableItem> list) {
+        list.sort(Comparator.comparingLong(CollectableItem::dateAdded).reversed());
         collectionbox.put(playerUUID, list);
     }
 
-    public void purgeCollectionbox(UUID playerUUID) {
+    public void invalidate(UUID playerUUID) {
         collectionbox.remove(playerUUID);
-    }
-
-    public void load(UUID playerUUID, @Nullable List<CollectableItem> list) {
-        if (list == null) {
-            list = Collections.emptyList();
-        }
-        collectionbox.put(playerUUID, list);
     }
 
     public List<CollectableItem> getCollectionBox(UUID playerUUID) {
-        if (collectionbox.get(playerUUID) == null || collectionbox.get(playerUUID).isEmpty()) {
-            return new ArrayList<>();
+        if (collectionbox.get(playerUUID) == null) {
+            return List.of();
         }
-        List<CollectableItem> list = collectionbox.get(playerUUID);
-        list.sort(Comparator.comparingLong(CollectableItem::dateAdded).reversed());
-        return list;
+        List<CollectableItem> ret = new ArrayList<>();
+        collectionbox.computeIfPresent(playerUUID, (uuid, items) -> {
+            ret.addAll(items);
+            return items;
+        });
+        return ret;
     }
 }

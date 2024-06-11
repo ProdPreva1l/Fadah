@@ -5,34 +5,35 @@ import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @UtilityClass
 public final class ListingCache {
-    private final List<@NotNull Listing> listings = new ArrayList<>();
+    private final Map<UUID, @NotNull Listing> listings = new ConcurrentHashMap<>();
 
-    public void addListing(@Nullable Listing listing) {
-        if (listing == null) {
+    public void addListing(@Nullable Listing newListing) {
+        if (newListing == null) {
             return;
         }
-        listings.add(listing);
+        listings.put(newListing.getId(), newListing);
     }
 
     public void removeListing(@NotNull Listing listing) {
-        listings.remove(listing);
+        listings.remove(listing.getId());
     }
 
     public Listing getListing(@NotNull UUID id) {
-        return listings.stream().filter(listing -> listing.getId() == id).findFirst().orElse(null);
+        return listings.get(id);
     }
 
     public void purgeListings() {
         listings.clear();
     }
 
-    public List<Listing> getListings() {
-        return new ArrayList<>(listings);
+    public Map<UUID, Listing> getListings() {
+        return new HashMap<>(listings);
     }
 }

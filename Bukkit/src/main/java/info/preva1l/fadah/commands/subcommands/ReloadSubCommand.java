@@ -25,8 +25,7 @@ public class ReloadSubCommand extends SubCommand {
         Fadah.getINSTANCE().getLangFile().load();
         Fadah.getINSTANCE().getMenusFile().load();
         Fadah.getINSTANCE().getCategoriesFile().load();
-        CategoryCache.purgeCategories();
-        CategoryCache.loadCategories();
+        CategoryCache.update();
         Fadah.getINSTANCE().getDatabase().loadListings();
         command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + "&aConfig reloaded!"));
     }
