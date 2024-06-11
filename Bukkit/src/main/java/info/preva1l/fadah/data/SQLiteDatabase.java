@@ -1,6 +1,8 @@
 package info.preva1l.fadah.data;
 
 import com.google.common.collect.Lists;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.api.BukkitListing;
 import info.preva1l.fadah.config.Config;
@@ -12,7 +14,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.sqlite.SQLiteConfig;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class SQLiteDatabase implements Database {
     private static final String DATABASE_FILE_NAME = "FadahData.db";
     @Getter @Setter private boolean connected = false;
     private File databaseFile;
-    private Connection connection;
+    private HikariDataSource hikariDataSource;
 
     @SuppressWarnings("SameParameterValue")
     @NotNull
@@ -40,12 +41,7 @@ public class SQLiteDatabase implements Database {
     }
 
     private synchronized Connection getConnection() throws SQLException {
-        if (connection == null) {
-            setConnection();
-        } else if (connection.isClosed()) {
-            setConnection();
-        }
-        return connection;
+        return hikariDataSource.getConnection();
     }
 
     private synchronized void setConnection() {
@@ -56,17 +52,18 @@ public class SQLiteDatabase implements Database {
 
             Class.forName("org.sqlite.JDBC");
 
-            SQLiteConfig config = new SQLiteConfig();
-            config.enforceForeignKeys(true);
-            config.setEncoding(SQLiteConfig.Encoding.UTF8);
-            config.setSynchronous(SQLiteConfig.SynchronousMode.FULL);
+            HikariConfig config = new HikariConfig();
+            config.setPoolName("FadahHikariPool");
+            config.setDriverClassName("org.sqlite.JDBC");
+            config.setJdbcUrl("jdbc:sqlite:" + databaseFile.getAbsolutePath());
+            config.setConnectionTestQuery("SELECT 1");
+            config.setMaxLifetime(60000);
+            config.setIdleTimeout(45000);
+            config.setMaximumPoolSize(50);
+            hikariDataSource = new HikariDataSource(config);
 
-            connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getAbsolutePath(), config.toProperties());
-            config.apply(connection);
         } catch (IOException e) {
             Fadah.getConsole().log(Level.SEVERE, "An exception occurred creating the database file", e);
-        } catch (SQLException e) {
-            Fadah.getConsole().log(Level.SEVERE, "An SQL exception occurred initializing the SQLite database", e);
         } catch (ClassNotFoundException e) {
             Fadah.getConsole().log(Level.SEVERE, "Failed to load the necessary SQLite driver", e);
         }
@@ -97,7 +94,7 @@ public class SQLiteDatabase implements Database {
 
             try {
                 final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
-                try (Statement statement = connection.createStatement()) {
+                try (Statement statement = getConnection().createStatement()) {
                     for (String tableCreationStatement : databaseSchema) {
                         statement.execute(tableCreationStatement);
                     }
@@ -120,9 +117,9 @@ public class SQLiteDatabase implements Database {
     @Override
     public synchronized void destroy() {
         try {
-            if (connection != null) {
-                if (!connection.isClosed()) {
-                    connection.close();
+            if (getConnection() != null) {
+                if (!getConnection().isClosed()) {
+                    getConnection().close();
                 }
             }
         } catch (SQLException e) {
@@ -227,8 +224,7 @@ public class SQLiteDatabase implements Database {
                     statement.execute();
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().severe("Failed to add item to expired items!");
-                throw new RuntimeException(e);
+                Fadah.getConsole().log(Level.SEVERE, "Failed to add item to expired items!", e);
             }
             return null;
         });
@@ -251,8 +247,7 @@ public class SQLiteDatabase implements Database {
                     statement.execute();
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().severe("Failed to remove item from expired items!");
-                throw new RuntimeException(e);
+                Fadah.getConsole().log(Level.SEVERE, "Failed to remove item from expired items!", e);
             }
             return null;
         });
@@ -282,8 +277,8 @@ public class SQLiteDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().log(Level.SEVERE, "Failed to get items from expired items!", e);
-                throw new RuntimeException(e);
             }
+            return null;
         });
     }
 
@@ -310,8 +305,7 @@ public class SQLiteDatabase implements Database {
                     statement.execute();
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().severe("Failed to add item to listings!");
-                throw new RuntimeException(e);
+                Fadah.getConsole().log(Level.SEVERE, "Failed to add item to listings!", e);
             }
             return null;
         });
@@ -332,8 +326,7 @@ public class SQLiteDatabase implements Database {
                     statement.execute();
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().severe("Failed to remove item from listings!");
-                throw new RuntimeException(e);
+                Fadah.getConsole().log(Level.SEVERE, "Failed to remove item from listings!", e);
             }
             return null;
         });
@@ -366,9 +359,9 @@ public class SQLiteDatabase implements Database {
                     return retrievedData;
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().severe("Failed to get items from listings!");
-                throw new RuntimeException(e);
+                Fadah.getConsole().log(Level.SEVERE, "Failed to get items from listings!", e);
             }
+            return null;
         });
     }
 
@@ -433,8 +426,7 @@ public class SQLiteDatabase implements Database {
                     statement.execute();
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().severe("Failed to add item to history!");
-                throw new RuntimeException(e);
+                Fadah.getConsole().log(Level.SEVERE, "Failed to add item to history!", e);
             }
             return null;
         });
@@ -467,8 +459,8 @@ public class SQLiteDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().log(Level.SEVERE, "Failed to get items from history!", e);
-                throw new RuntimeException(e);
             }
+            return null;
         });
     }
 }

@@ -1,0 +1,41 @@
+close:
+  icon: BARRIER
+  model_data: 0
+  name: '&c&l✗ Close'
+  lore:
+    - '&7Click to close the menu'
+
+back:
+  icon: FEATHER
+  model_data: 0
+  name: '&cGo Back'
+  lore:
+    - '&7Click to go back'
+
+previous_page:
+  icon: ARROW
+  model_data: 0
+  name: '&c&lPrevious Page'
+  lore:
+    - '&7Click to go to the previous page'
+
+next_page:
+  icon: ARROW
+  model_data: 0
+  name: '&a&lNext Page'
+  lore:
+    - '&7Click to go to the next page'
+
+scroll_next:
+  icon: ARROW
+  model_data: 0
+  name: '&a&lScroll Categories Down'
+  lore:
+    - '&7Click to move the categories down'
+
+scroll_previous:
+  icon: ARROW
+  model_data: 0
+  name: '&a&lScroll Categories Up'
+  lore:
+    - '&7Click to move the categories up'

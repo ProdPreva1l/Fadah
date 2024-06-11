@@ -1,0 +1,47 @@
+title: '&9&lAuction House &8> &c{0} History' # {0} = "Your" or the players name if in management mode, {1} = the players username
+
+lang:
+  lore:
+    - '&8&n---------------------------'
+    - '&fAction: &e{0}'
+    - '&r '
+    - '&fDate: &e{1}'
+    - '&8&n---------------------------'
+  lore-with-price:
+    - '&8&n---------------------------'
+    - '&fAction: &e{0}'
+    - '&r '
+    - '&fPrice: &6${1}'
+    - '&r '
+    - '&fDate: &e{2}'
+    - '&8&n---------------------------'
+  lore-with-buyer:
+    - '&8&n---------------------------'
+    - '&fAction: &e{0}'
+    - '&r '
+    - '&fBuyer: &3{1}'
+    - '&r'
+    - '&fPrice: &6${2}'
+    - '&r '
+    - '&fDate: &e{3}'
+    - '&8&n---------------------------'
+  lore-with-seller:
+    - '&8&n---------------------------'
+    - '&fAction: &e{0}'
+    - '&r '
+    - '&fSeller: &3{1}'
+    - '&r'
+    - '&fPrice: &6${2}'
+    - '&r '
+    - '&fDate: &e{3}'
+    - '&8&n---------------------------'
+  search:
+    icon: OAK_SIGN
+    model_data: 0
+    placeholder: 'Ex: 21/04/2024 22:26'
+    name: '&eSearch Date'
+    lore:
+      - '&fClick to search for a logs date & time!'
+
+layout:
+  '0': "FILLER"

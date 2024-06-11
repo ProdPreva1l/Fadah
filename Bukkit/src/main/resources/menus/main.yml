@@ -1,0 +1,62 @@
+title: '&9&lAuction House'
+
+lang:
+  listing:
+    lore-body:
+      - '&8&n---------------------------'
+      - '&fSeller: &e{0}'
+      - '&fCategory: &e{1}'
+      - '&r '
+      - '&fBuy Now: &6${2}'
+      - '&r '
+      - '&fExpires In: &e{3}'
+      - '&8&n---------------------------'
+    lore-footer:
+      buy: '&aClick to buy now!'
+      too-expensive: '&cYou cannot afford this item!'
+      own-listing: '&cYou cannot buy your own listing! &8(Shift Click to Cancel)'
+      is-shulker: '&fRight Click to Preview!'
+  # {0} = "Your" or the players name if in management mode, {1} = the players username
+  profile-button:
+    name: '&e&l{0} Profile'
+    lore:
+      - '&fClick to view your profile!'
+    description:
+      - '&fThis is {0} profile!'
+      - '&fHere you will find items from the auction house relating to {0}'
+  filter:
+    search:
+      icon: OAK_SIGN
+      model_data: 0
+      placeholder: 'Search Query...'
+      name: '&3&lSearch'
+      lore:
+        - '&fClick to search for an item name/type!'
+    change-type:
+      icon: PUFFERFISH
+      model_data: 0
+      name: '&eListing Filter'
+      lore:
+        - '&7Left Click to cycle up'
+        - '&7Right Click to cycle down'
+        - '&8-------------------------'
+        - '&f{0}'
+        - '&8> &e{1}'
+        - '&f{2}'
+        - '&8-------------------------'
+    change-direction:
+      icon: CLOCK
+      model_data: 0
+      name: '&eFilter Direction'
+      lore:
+        - '&7Click To Toggle'
+        - '&8-------------------------'
+        - '{0}'
+        - '{1}'
+        - '&8-------------------------'
+      options:
+        selected: '&8> &e{0}'
+        not-selected: '&f{0}'
+
+layout:
+  '0': "PAGINATION_CONTROL_ONE"

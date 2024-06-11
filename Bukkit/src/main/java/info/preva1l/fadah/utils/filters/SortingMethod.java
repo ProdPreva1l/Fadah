@@ -26,8 +26,7 @@ public enum SortingMethod {
             Lang.SORT_PRICE_NAME.toFormattedString(),
             Comparator.comparingDouble(Listing::getPrice).reversed(),
             Comparator.comparingDouble(Listing::getPrice)
-    )
-    ;
+    );
 
     private final String friendlyName;
     private final Comparator<Listing> normalSorter;

@@ -11,10 +11,7 @@ import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.TimeUtil;
-import info.preva1l.fadah.utils.guis.FastInv;
-import info.preva1l.fadah.utils.guis.GuiButtonType;
-import info.preva1l.fadah.utils.guis.GuiHelper;
-import info.preva1l.fadah.utils.guis.ItemBuilder;
+import info.preva1l.fadah.utils.guis.*;
 import info.preva1l.fadah.utils.helpers.TransactionLogger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -33,24 +30,20 @@ public class NewListingMenu extends FastInv {
     private boolean listingStarted = false;
 
     public NewListingMenu(Player player, double price) {
-        super(54, Menus.NEW_LISTING_TITLE.toFormattedString());
+        super(54, Menus.NEW_LISTING_TITLE.toFormattedString(), LayoutManager.MenuType.NEW_LISTING);
         this.player = player;
         this.itemToSell = player.getInventory().getItemInMainHand().clone();
-
         player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+        this.timeToDelete = Instant.now().plus(6, ChronoUnit.HOURS);
 
-        timeToDelete = Instant.now().plus(6, ChronoUnit.HOURS);
-
-        setClock();
+        setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
 
         setItem(30, new ItemBuilder(Menus.NEW_LISTING_CREATE_ICON.toMaterial()).name(Menus.NEW_LISTING_CREATE_NAME.toFormattedString())
                 .modelData(Menus.NEW_LISTING_CREATE_MODEL_DATA.toInteger())
                 .addLore(Menus.NEW_LISTING_CREATE_LORE.toLore(new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(price))).build(), e -> startListing(timeToDelete, price));
-
-        setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
+        setClock();
 
         addNavigationButtons();
-
         setItem(22, itemToSell);
     }
 

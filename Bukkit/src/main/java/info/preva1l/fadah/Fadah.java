@@ -19,6 +19,7 @@ import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.*;
 import info.preva1l.fadah.utils.commands.CommandManager;
 import info.preva1l.fadah.utils.guis.FastInvManager;
+import info.preva1l.fadah.utils.guis.LayoutManager;
 import info.preva1l.fadah.utils.helpers.TransactionLogger;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,7 +35,10 @@ import java.time.Instant;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
-//TODO: Add listing tax
+// TODO Listing Tax
+// TODO Biddable Auctions
+// TODO Custom Inventory Layouts (In progress)
+
 public final class Fadah extends JavaPlugin {
     private static final int METRICS_ID = 21651;
 
@@ -49,11 +53,15 @@ public final class Fadah extends JavaPlugin {
     @Getter private BasicConfig langFile;
     @Getter private BasicConfig menusFile;
 
+    @Getter private BasicConfig miscMenuFile;
+    @Getter private BasicConfig buttonsFile;
+
     @Getter @Setter private CacheSync cacheSync;
     @Getter private Database database;
     @Getter private CommandManager commandManager;
     @Getter private Economy economy;
     @Getter private HookManager hookManager;
+    @Getter private LayoutManager layoutManager;
 
     private Metrics metrics;
 
@@ -72,6 +80,8 @@ public final class Fadah extends JavaPlugin {
         } else {
             getConsole().info("Vault Hooked!");
         }
+
+        loadMenus();
         loadFiles();
         loadDataAndPopulateCaches();
         loadCommands();
@@ -154,6 +164,22 @@ public final class Fadah extends JavaPlugin {
         categoriesFile.save();
         categoriesFile.load();
         getConsole().info("Configuration Files Loaded!");
+    }
+
+    private void loadMenus() {
+        layoutManager = new LayoutManager();
+
+        buttonsFile = new BasicConfig(this, "menus/buttons.yml");
+        miscMenuFile = new BasicConfig(this, "menus/misc.yml");
+
+        layoutManager.loadLayout(new BasicConfig(this, "menus/main.yml"));
+        layoutManager.loadLayout(new BasicConfig(this, "menus/new-listing.yml"));
+        layoutManager.loadLayout(new BasicConfig(this, "menus/expired-listings.yml"));
+        layoutManager.loadLayout(new BasicConfig(this, "menus/active-listings.yml"));
+        layoutManager.loadLayout(new BasicConfig(this, "menus/historic-items.yml"));
+        layoutManager.loadLayout(new BasicConfig(this, "menus/confirm.yml"));
+        layoutManager.loadLayout(new BasicConfig(this, "menus/collection-box.yml"));
+        layoutManager.loadLayout(new BasicConfig(this, "menus/profile.yml"));
     }
 
     private boolean hookIntoVault() {

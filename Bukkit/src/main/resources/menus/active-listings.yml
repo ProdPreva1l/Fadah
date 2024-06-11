@@ -1,0 +1,16 @@
+title: '&9&lAuction House &8> &1{0} Listings' # {0} = "Your" or the players name if in management mode, {1} = the players username
+
+lang:
+  lore:
+    - '&8&n---------------------------'
+    - '&fCategory: &e{0}'
+    - '&r '
+    - '&fPrice: &6${1}'
+    - '&r '
+    - '&fExpires In: &e{2}'
+    - '&r '
+    - '&eClick To Cancel This Listing!'
+    - '&8&n---------------------------'
+
+layout:
+  '0': "FILLER"

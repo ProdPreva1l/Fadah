@@ -189,8 +189,8 @@ public enum Menus {
     HISTORY_SEARCH_NAME("historic-items.search.name", "&eSearch Date"),
     HISTORY_SEARCH_LORE("historic-items.search.lore", Collections.singletonList("&fClick to search for a logs date & time!")),
 
-    ACTIVE_LISTINGS_TITLE("active-listings.title", "&9&lAuction House &8> &1{0} Listings"),
-    ACTIVE_LISTINGS_LORE("active-listings.title", List.of(
+    ACTIVE_LISTINGS_TITLE("active-listings.yml.title", "&9&lAuction House &8> &1{0} Listings"),
+    ACTIVE_LISTINGS_LORE("active-listings.yml.title", List.of(
             "&8&n---------------------------",
             "&fCategory: &e{0}",
             "&r ",

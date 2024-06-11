@@ -13,16 +13,16 @@ public abstract class ScrollBarFastInv extends PaginatedFastInv {
     private final Map<Integer, Integer> scrollbarSlots = new HashMap<>();
     private final List<PaginatedItem> scrollbarItems = new ArrayList<>();
 
-    protected ScrollBarFastInv(int size, @NotNull String title, @NotNull Player player) {
-        super(size, title, player);
+    protected ScrollBarFastInv(int size, @NotNull String title, @NotNull Player player, LayoutManager.MenuType menuType) {
+        super(size, title, player, menuType);
         scrollbarSlots.put(0, 9);
         scrollbarSlots.put(1, 18);
         scrollbarSlots.put(2, 27);
         scrollbarSlots.put(3, 36);
     }
 
-    protected ScrollBarFastInv(int size, @NotNull String title, @NotNull Player player, List<Integer> scrollbarSlots) {
-        super(size, title, player);
+    protected ScrollBarFastInv(int size, @NotNull String title, @NotNull Player player, LayoutManager.MenuType menuType, List<Integer> scrollbarSlots) {
+        super(size, title, player, menuType);
         int i = 0;
         for (Integer num : scrollbarSlots) {
             this.scrollbarSlots.put(i, num);

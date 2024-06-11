@@ -32,6 +32,7 @@ public class FastInv implements InventoryHolder {
     private final List<Consumer<InventoryClickEvent>> clickHandlers = new ArrayList<>();
 
     private final Inventory inventory;
+    private final LayoutManager.MenuType menuType;
 
     private Predicate<Player> closeFilter;
 
@@ -40,8 +41,8 @@ public class FastInv implements InventoryHolder {
      *
      * @param size The size of the inventory.
      */
-    public FastInv(int size) {
-        this(owner -> Bukkit.createInventory(owner, size));
+    public FastInv(int size, LayoutManager.MenuType menuType) {
+        this(owner -> Bukkit.createInventory(owner, size), menuType);
     }
 
     /**
@@ -50,12 +51,12 @@ public class FastInv implements InventoryHolder {
      * @param size  The size of the inventory.
      * @param title The title (name) of the inventory.
      */
-    public FastInv(int size, String title) {
-        this(owner -> Bukkit.createInventory(owner, size, title));
+    public FastInv(int size, String title, LayoutManager.MenuType menuType) {
+        this(owner -> Bukkit.createInventory(owner, size, title), menuType);
     }
 
 
-    public FastInv(Function<InventoryHolder, Inventory> inventoryFunction) {
+    public FastInv(Function<InventoryHolder, Inventory> inventoryFunction, LayoutManager.MenuType menuType) {
         Objects.requireNonNull(inventoryFunction, "inventoryFunction");
         Inventory inv = inventoryFunction.apply(this);
 
@@ -64,6 +65,7 @@ public class FastInv implements InventoryHolder {
         }
 
         this.inventory = inv;
+        this.menuType = menuType;
     }
 
     protected void onOpen(InventoryOpenEvent event) {
@@ -211,5 +213,9 @@ public class FastInv implements InventoryHolder {
         if (clickConsumer != null) {
             clickConsumer.accept(e);
         }
+    }
+
+    public @NotNull LayoutManager.MenuType getMenuType() {
+        return menuType;
     }
 }

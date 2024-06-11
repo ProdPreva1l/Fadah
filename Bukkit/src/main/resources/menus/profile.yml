@@ -1,0 +1,35 @@
+title: '&9&lAuction House &8> &b{0} Profile' # {0} = "Your" or the players name if in management mode, {1} = the players username
+
+
+lang:
+  your-listings:
+    icon: EMERALD
+    model_data: 0
+    name: '&1{0} Listings'
+    lore:
+      - '&fClick to view & manage'
+      - '&f{0} active listings!'
+  collection-box:
+    icon: CHEST_MINECART
+    model_data: 0
+    name: '&e{0} Collection Box'
+    lore:
+      - '&fClick to view & claim'
+      - '&f{0} purchases!'
+  expired-items:
+    icon: ENDER_CHEST
+    model_data: 0
+    name: '&c{0} Expired Listings'
+    lore:
+      - '&fClick to view & claim'
+      - '&f{0} expired listings!'
+  historic-items:
+    icon: WRITABLE_BOOK
+    model_data: 0
+    name: '&c{0} History'
+    lore:
+      - '&fClick to view'
+      - '&f{0} history!'
+
+layout:
+  '0': "FILLER"

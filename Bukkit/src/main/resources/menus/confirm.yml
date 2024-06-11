@@ -1,0 +1,18 @@
+title: '&9&lAuction House &8> &aConfirm Purchase'
+
+lang:
+  confirm:
+    icon: LIME_CONCRETE
+    model_data: 0
+    name: '&a&lCONFIRM'
+    lore:
+      - '&7Click to confirm'
+  cancel:
+    icon: RED_CONCRETE
+    model_data: 0
+    name: '&c&lCANCEL'
+    lore:
+      - '&7Click to cancel'
+
+layout:
+  '0': "CONFIRM"

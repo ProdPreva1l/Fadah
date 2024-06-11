@@ -23,7 +23,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.Locale;
 
 public class MainMenu extends ScrollBarFastInv {
     private Category category;
@@ -36,7 +35,7 @@ public class MainMenu extends ScrollBarFastInv {
 
     public MainMenu(@Nullable Category category, @NotNull Player player, @Nullable String search,
                     @Nullable SortingMethod sortingMethod, @Nullable SortingDirection sortingDirection) {
-        super(54, Menus.MAIN_TITLE.toFormattedString(), player);
+        super(54, Menus.MAIN_TITLE.toFormattedString(), player, LayoutManager.MenuType.MAIN);
         this.category = category;
         this.listings = ListingCache.getListings();
 
@@ -156,7 +155,10 @@ public class MainMenu extends ScrollBarFastInv {
         }
     }
 
-    private void addPaginationControls() {
+    @Override
+    protected void addPaginationControls() {
+        setItem(48, GuiHelper.constructButton(GuiButtonType.BORDER));
+        setItem(50, GuiHelper.constructButton(GuiButtonType.BORDER));
         if (page > 0) {
             setItem(48, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> previousPage());
         }
@@ -166,16 +168,12 @@ public class MainMenu extends ScrollBarFastInv {
         }
     }
 
-    @Override
-    protected void addNavigationButtons() {
-        removeItem(0);
-        removeItem(45);
-        removeItem(53);
+    private void addNavigationButtons() {
         setItem(0, GuiHelper.constructButton(GuiButtonType.SCROLL_PREVIOUS), e -> scrollUp());
         setItem(45, GuiHelper.constructButton(GuiButtonType.SCROLL_NEXT), e -> scrollDown());
 
         setItem(53, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player)
-                .name(Menus.MAIN_PROFILE_NAME.toFormattedString(Lang.WORD_YOUR.toString().toUpperCase(Locale.ENGLISH)))
+                .name(Menus.MAIN_PROFILE_NAME.toFormattedString(StringUtils.capitalize(Lang.WORD_YOUR.toString())))
                 .addLore(Menus.MAIN_PROFILE_LORE.toLore()).build(), e -> new ProfileMenu(player, player).open(player));
 
     }
@@ -194,13 +192,13 @@ public class MainMenu extends ScrollBarFastInv {
             if (e.isLeftClick()) {
                 if (sortingMethod.previous() == null) return;
                 this.sortingMethod = sortingMethod.previous();
-                populatePage();
+                updatePagination();
                 addFilterButtons();
             }
             if (e.isRightClick()) {
                 if (sortingMethod.next() == null) return;
                 this.sortingMethod = sortingMethod.next();
-                populatePage();
+                updatePagination();
                 addFilterButtons();
             }
         });
@@ -232,7 +230,7 @@ public class MainMenu extends ScrollBarFastInv {
                     this.sortingDirection = sortingDirection == SortingDirection.ASCENDING
                             ? SortingDirection.DESCENDING
                             : SortingDirection.ASCENDING;
-                    populatePage();
+                    updatePagination();
                     addFilterButtons();
                 }
         );

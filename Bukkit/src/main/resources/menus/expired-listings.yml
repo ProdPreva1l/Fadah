@@ -1,0 +1,12 @@
+title: '&9&lAuction House &8> &c{0} Expired Listings' # {0} = "Your" or the players name if in management mode, {1} = the players username
+
+lang:
+  lore:
+    - '&8&n---------------------------'
+    - '&fAdded: &e{0} &fago'
+    - '&r '
+    - '&eClick To Re-Claim!'
+    - '&8&n---------------------------'
+
+layout:
+  '0': "FILLER"

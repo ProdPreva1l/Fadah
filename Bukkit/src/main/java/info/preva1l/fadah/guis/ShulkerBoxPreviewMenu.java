@@ -4,10 +4,7 @@ import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.filters.SortingDirection;
 import info.preva1l.fadah.utils.filters.SortingMethod;
-import info.preva1l.fadah.utils.guis.FastInv;
-import info.preva1l.fadah.utils.guis.GuiButtonType;
-import info.preva1l.fadah.utils.guis.GuiHelper;
-import info.preva1l.fadah.utils.guis.ItemBuilder;
+import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Material;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
@@ -21,8 +18,9 @@ public class ShulkerBoxPreviewMenu extends FastInv {
                                  @Nullable String search,
                                  @Nullable SortingMethod sortingMethod,
                                  @Nullable SortingDirection sortingDirection) {
-        super(36, listing.getItemStack().getItemMeta().getDisplayName().isBlank() ?
-                listing.getItemStack().getI18NDisplayName() : listing.getItemStack().getItemMeta().getDisplayName());
+        super(36, listing.getItemStack().getItemMeta().getDisplayName().isBlank()
+                ? listing.getItemStack().getI18NDisplayName()
+                : listing.getItemStack().getItemMeta().getDisplayName(), LayoutManager.MenuType.SHULKER_PREVIEW);
         if (listing.getItemStack().getItemMeta() instanceof BlockStateMeta im) {
             if (im.getBlockState() instanceof ShulkerBox shulker) {
                 for (int i = 0; i < shulker.getInventory().getSize(); i++) {

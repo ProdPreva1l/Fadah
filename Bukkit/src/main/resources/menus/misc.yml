@@ -1,0 +1,14 @@
+filler:
+  icon: BLACK_STAINED_GLASS_PANE
+  model_data: 0
+  name: '&r '
+  lore:
+    - '&8I <3 Fadah'
+
+no-items-found:
+  icon: BARRIER
+  model_data: 0
+  name: '&c&lNo items found!'
+  lore: []
+
+search-title: '&9&lAuction House &8> &fSearch'

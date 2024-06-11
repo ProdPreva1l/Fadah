@@ -21,7 +21,8 @@ public class BasicConfig {
 
     public BasicConfig(JavaPlugin plugin, String fileName) {
         this.plugin = plugin;
-        this.fileName = fileName;
+        String[] temp = fileName.split("/");
+        this.fileName = temp[temp.length - 1];
         this.file = new File(plugin.getDataFolder(), fileName);
         if (!this.file.exists()) {
             plugin.saveResource(fileName, false);

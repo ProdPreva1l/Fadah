@@ -18,8 +18,8 @@ public abstract class PaginatedFastInv extends FastInv {
     private final List<Integer> paginationMappings;
     private final List<PaginatedItem> paginatedItems = new ArrayList<>();
 
-    protected PaginatedFastInv(int size, @NotNull String title, @NotNull Player player) {
-        super(size, title);
+    protected PaginatedFastInv(int size, @NotNull String title, @NotNull Player player, LayoutManager.MenuType menuType) {
+        super(size, title, menuType);
         this.player = player;
         this.paginationMappings = List.of(
                 11, 12, 13, 14, 15, 16, 20,
@@ -31,8 +31,8 @@ public abstract class PaginatedFastInv extends FastInv {
         InventoryEventHandler.tasksToQuit.put(getInventory(), task);
     }
 
-    protected PaginatedFastInv(int size, @NotNull String title, @NotNull Player player, @NotNull List<Integer> paginationMappings) {
-        super(size, title);
+    protected PaginatedFastInv(int size, @NotNull String title, @NotNull Player player, LayoutManager.MenuType menuType, @NotNull List<Integer> paginationMappings) {
+        super(size, title, menuType);
         this.player = player;
         this.paginationMappings = paginationMappings;
 
@@ -46,6 +46,7 @@ public abstract class PaginatedFastInv extends FastInv {
         }
         page++;
         populatePage();
+        addPaginationControls();
     }
 
     protected void previousPage() {
@@ -54,6 +55,7 @@ public abstract class PaginatedFastInv extends FastInv {
         }
         page--;
         populatePage();
+        addPaginationControls();
     }
 
     // I will refactor this later if need be but for now it is fine
@@ -80,14 +82,14 @@ public abstract class PaginatedFastInv extends FastInv {
         paginatedItems.clear();
         fillPaginationItems();
         populatePage();
-        addNavigationButtons();
+        addPaginationControls();
     }
 
     protected abstract void paginationEmpty();
 
     protected abstract void fillPaginationItems();
 
-    protected abstract void addNavigationButtons();
+    protected abstract void addPaginationControls();
 
     protected void addPaginationItem(PaginatedItem item) {
         paginatedItems.add(item);

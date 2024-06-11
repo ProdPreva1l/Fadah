@@ -32,6 +32,6 @@ public class CollectionBoxSubCommand extends SubCommand {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));
             return;
         }
-        new CollectionBoxMenu(command.getPlayer(), owner, 0).open(command.getPlayer());
+        new CollectionBoxMenu(command.getPlayer(), owner).open(command.getPlayer());
     }
 }

@@ -9,70 +9,50 @@ import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Instant;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-public class ExpiredListingsMenu extends FastInv {
-    private static final int maxItemsPerPage = 21;
+public class ExpiredListingsMenu extends PaginatedFastInv {
     private final Player viewer;
     private final OfflinePlayer owner;
-    private final int page;
     private final List<CollectableItem> expiredItems;
-    private final Map<Integer, Integer> listingSlot = new HashMap<>();
-    private int index = 0;
 
     public ExpiredListingsMenu(Player viewer, OfflinePlayer owner, int page) {
-        super(45, Menus.EXPIRED_LISTINGS_TITLE.toFormattedString(
-                viewer.getUniqueId() == owner.getUniqueId() ?
-                        Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"));
+        super(45, Menus.EXPIRED_LISTINGS_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId()
+                        ? Lang.WORD_YOUR.toCapital()
+                : owner.getName()+"'s", owner.getName()+"'s"), viewer, LayoutManager.MenuType.EXPIRED_LISTINGS,
+                List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34));
         this.viewer = viewer;
         this.owner = owner;
         this.page = page;
         this.expiredItems = ExpiredListingsCache.getExpiredListings(owner.getUniqueId());
 
-        fillMappings();
-
         setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
 
         addNavigationButtons();
-        populateCollectableItems();
-        addPaginationControls();
-
-        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(),
-                this::refreshMenu, 20L, 20L);
-        InventoryEventHandler.tasksToQuit.put(getInventory(), task);
-    }
-
-    private void refreshMenu() {
-        populateCollectableItems();
+        fillPaginationItems();
+        populatePage();
         addPaginationControls();
     }
+    
+    @Override
+    protected void paginationEmpty() {
+        setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
+                .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(
+                        Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build()
+        );
+    }
 
-    private void populateCollectableItems() {
-        if (expiredItems == null || expiredItems.isEmpty()) {
-            setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
-                    .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(
-                            Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build()
-            );
-            return;
-        }
-        for (int i = 0; i <= maxItemsPerPage; i++) {
-            index = maxItemsPerPage * page + i;
-            if (index >= expiredItems.size() || i == maxItemsPerPage) break;
-            CollectableItem collectableItem = expiredItems.get(index);
-
+    @Override
+    protected void fillPaginationItems() {
+        for (CollectableItem collectableItem : expiredItems) {
             ItemBuilder itemStack = new ItemBuilder(collectableItem.itemStack().clone())
                     .addLore(Menus.EXPIRED_LISTINGS_LORE.toLore(TimeUtil.formatTimeSince(collectableItem.dateAdded())));
 
-            removeItem(listingSlot.get(i));
-            setItem(listingSlot.get(i), itemStack.build(), e -> {
+            addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
                 int slot = viewer.getInventory().firstEmpty();
                 if (slot >= 36) {
                     viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
@@ -90,11 +70,12 @@ public class ExpiredListingsMenu extends FastInv {
                         collectableItem.itemStack(), null, null);
                 HistoricItemsCache.addLog(owner.getUniqueId(), historicItem);
                 Fadah.getINSTANCE().getDatabase().addToHistory(owner.getUniqueId(), historicItem);
-            });
+            }));
         }
     }
 
-    private void addPaginationControls() {
+    @Override
+    protected void addPaginationControls() {
         if (page > 0) {
             setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e ->
                     new ExpiredListingsMenu(viewer, owner, page - 1).open(viewer));
@@ -108,29 +89,5 @@ public class ExpiredListingsMenu extends FastInv {
     private void addNavigationButtons() {
         setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e ->
                 new ProfileMenu(viewer, owner).open(viewer));
-    }
-
-    private void fillMappings() {
-        listingSlot.put(0, 10);
-        listingSlot.put(1, 11);
-        listingSlot.put(2, 12);
-        listingSlot.put(3, 13);
-        listingSlot.put(4, 14);
-        listingSlot.put(5, 15);
-        listingSlot.put(6, 16);
-        listingSlot.put(7, 19);
-        listingSlot.put(8, 20);
-        listingSlot.put(9, 21);
-        listingSlot.put(10, 22);
-        listingSlot.put(11, 23);
-        listingSlot.put(12, 24);
-        listingSlot.put(13, 25);
-        listingSlot.put(14, 28);
-        listingSlot.put(15, 29);
-        listingSlot.put(16, 30);
-        listingSlot.put(17, 31);
-        listingSlot.put(18, 32);
-        listingSlot.put(19, 33);
-        listingSlot.put(20, 34);
     }
 }

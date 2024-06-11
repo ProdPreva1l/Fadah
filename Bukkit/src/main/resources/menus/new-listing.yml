@@ -1,0 +1,22 @@
+title: '&9&lAuction House &8> &3New Listing'
+
+lang:
+  create:
+    icon: EMERALD
+    model_data: 0
+    name: '&aClick to create listing!'
+    lore:
+      - '&cClicking this button will immediately post'
+      - '&cyour item on the auction house for &a${0}'
+  time:
+    icon: CLOCK
+    model_data: 0
+    name: '&aTime for listing to be active'
+    lore:
+      - '&fCurrent: &6{0}'
+      - '&7Left Click to Add 1 Hour'
+      - '&7Right Click to Remove 1 Hour'
+      - '&7Shift Left Click to Add 30 Minutes'
+      - '&7Shift Right Click to Remove 30 Minutes'
+
+layout:

@@ -16,7 +16,7 @@ public class ActiveListingsSubCommand extends SubCommand {
         super(plugin);
     }
 
-    @SubCommandArgs(name = "active-listings", aliases = {"activelistings", "active"}, permission = "fadah.active-listings", description = "View your Active listings!")
+    @SubCommandArgs(name = "active-listings.yml", aliases = {"activelistings", "active"}, permission = "fadah.active-listings.yml", description = "View your Active listings!")
     public void execute(@NotNull SubCommandArguments command) {
         if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
@@ -31,6 +31,6 @@ public class ActiveListingsSubCommand extends SubCommand {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));
             return;
         }
-        new ActiveListingsMenu(command.getPlayer(), owner, 0).open(command.getPlayer());
+        new ActiveListingsMenu(command.getPlayer(), owner).open(command.getPlayer());
     }
 }
