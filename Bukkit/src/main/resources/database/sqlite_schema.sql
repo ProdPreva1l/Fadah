@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS listings (
     creationDate INTEGER NOT NULL,
     deletionDate INTEGER NOT NULL,
     price REAL NOT NULL,
+    tax REAL NOT NULL,
     itemStack TEXT NOT NULL
 );
 

@@ -24,6 +24,7 @@ import info.preva1l.fadah.utils.helpers.TransactionLogger;
 import lombok.Getter;
 import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -36,9 +37,9 @@ import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
-// TODO Listing Tax
 // TODO Biddable Auctions
 // TODO Custom Inventory Layouts (In progress)
+// TODO Folia & ShreddedPaper support (In progress)
 
 public final class Fadah extends JavaPlugin {
     private static final int METRICS_ID = 21651;
@@ -61,6 +62,7 @@ public final class Fadah extends JavaPlugin {
     @Getter private Database database;
     @Getter private CommandManager commandManager;
     @Getter private Economy economy;
+    @Getter private Permission offlinePermissions;
     @Getter private HookManager hookManager;
     @Getter private LayoutManager layoutManager;
 
@@ -191,6 +193,13 @@ public final class Fadah extends JavaPlugin {
             return false;
         }
 
+        if (!hookIntoVaultEco() || !hookIntoVaultPerms()) {
+            return false;
+        }
+        return true;
+    }
+
+    private boolean hookIntoVaultEco() {
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             getConsole().info("No Economy Plugin Installed");
@@ -199,6 +208,17 @@ public final class Fadah extends JavaPlugin {
         economy = rsp.getProvider();
 
         return economy != null;
+    }
+
+    private boolean hookIntoVaultPerms() {
+        RegisteredServiceProvider<Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
+        if (rsp == null) {
+            getConsole().info("No Economy Plugin Installed");
+            return false;
+        }
+        offlinePermissions = rsp.getProvider();
+
+        return offlinePermissions != null;
     }
 
     private void loadDataAndPopulateCaches() {

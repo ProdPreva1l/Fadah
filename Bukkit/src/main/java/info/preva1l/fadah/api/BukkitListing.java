@@ -23,8 +23,9 @@ import java.util.UUID;
 
 public class BukkitListing extends Listing {
 
-    public BukkitListing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName, @NotNull ItemStack itemStack, @NotNull String categoryID, double price, long creationDate, long deletionDate) {
-        super(id, owner, ownerName, itemStack, categoryID, price, creationDate, deletionDate);
+    public BukkitListing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName, @NotNull ItemStack itemStack,
+                         @NotNull String categoryID, double price, double tax, long creationDate, long deletionDate) {
+        super(id, owner, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate);
     }
 
     @Override
@@ -32,7 +33,8 @@ public class BukkitListing extends Listing {
         // Money Transfer
         Economy eco = Fadah.getINSTANCE().getEconomy();
         eco.withdrawPlayer(buyer, this.getPrice());
-        eco.depositPlayer(Bukkit.getOfflinePlayer(this.getOwner()), this.getPrice());
+        double priceAfterTax = (this.getTax()/100) * this.getPrice();
+        eco.depositPlayer(Bukkit.getOfflinePlayer(this.getOwner()), priceAfterTax);
 
         // Remove Listing
         if (Fadah.getINSTANCE().getCacheSync() == null) {

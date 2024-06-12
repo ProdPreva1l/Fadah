@@ -94,8 +94,10 @@ public class NewListingMenu extends FastInv {
             return;
         }
 
+        double tax = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
+
         Listing listing = new BukkitListing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
-                itemToSell, category, price, Instant.now().toEpochMilli(), deletionDate.toEpochMilli());
+                itemToSell, category, price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli());
 
         Fadah.getINSTANCE().getDatabase().addListing(listing);
         if (Fadah.getINSTANCE().getCacheSync() != null) {
@@ -108,9 +110,13 @@ public class NewListingMenu extends FastInv {
 
         player.closeInventory();
 
+        double taxAmount = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
         String itemname = listing.getItemStack().getItemMeta().getDisplayName().isBlank() ? listing.getItemStack().getType().name() : listing.getItemStack().getItemMeta().getDisplayName();
         String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemname,
-                new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()), TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player), PermissionsData.valueFromPermission(PermissionsData.PermissionType.MAX_LISTINGS, player)));
+                new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
+                TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
+                PermissionsData.getHighestInt(PermissionsData.PermissionType.MAX_LISTINGS, player),
+                taxAmount, (taxAmount/100) * price));
         player.sendMessage(message);
 
         TransactionLogger.listingCreated(listing);

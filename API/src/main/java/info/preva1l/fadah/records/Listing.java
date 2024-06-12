@@ -15,16 +15,19 @@ public abstract class Listing {
     final @NotNull ItemStack itemStack;
     final @NotNull String categoryID;
     final double price;
+    final double tax;
     final long creationDate;
     final long deletionDate;
 
-    protected Listing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName, @NotNull ItemStack itemStack, @NotNull String categoryID, double price, long creationDate, long deletionDate) {
+    protected Listing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName, @NotNull ItemStack itemStack,
+                      @NotNull String categoryID, double price, double tax, long creationDate, long deletionDate) {
         this.id = id;
         this.owner = owner;
         this.ownerName = ownerName;
         this.itemStack = itemStack;
         this.categoryID = categoryID;
         this.price = price;
+        this.tax = tax;
         this.creationDate = creationDate;
         this.deletionDate = deletionDate;
     }

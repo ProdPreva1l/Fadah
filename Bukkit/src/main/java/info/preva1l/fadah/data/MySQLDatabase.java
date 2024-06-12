@@ -275,8 +275,8 @@ public class MySQLDatabase implements Database {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `listings`
-                        (`uuid`,`ownerUUID`,`ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `itemStack`)
-                        VALUES (?,?,?,?,?,?,?,?);""")) {
+                        (`uuid`,`ownerUUID`,`ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`)
+                        VALUES (?,?,?,?,?,?,?,?,?);""")) {
                     statement.setString(1, listing.getId().toString());
                     statement.setString(2, listing.getOwner().toString());
                     statement.setString(3, listing.getOwnerName());
@@ -284,7 +284,8 @@ public class MySQLDatabase implements Database {
                     statement.setLong(5, listing.getCreationDate());
                     statement.setLong(6, listing.getDeletionDate());
                     statement.setDouble(7, listing.getPrice());
-                    statement.setString(8, ItemSerializer.serialize(listing.getItemStack()));
+                    statement.setDouble(8, listing.getTax());
+                    statement.setString(9, ItemSerializer.serialize(listing.getItemStack()));
                     statement.executeUpdate();
                 }
             } catch (SQLException e) {
@@ -326,7 +327,7 @@ public class MySQLDatabase implements Database {
             final List<Listing> retrievedData = Lists.newArrayList();
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT `uuid`
+                        SELECT `uuid`, `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`
                         FROM `listings`;""")) {
                     final ResultSet resultSet = statement.executeQuery();
                     while (resultSet.next()) {
@@ -337,8 +338,9 @@ public class MySQLDatabase implements Database {
                         final long creationDate = resultSet.getLong("creationDate");
                         final long deletionDate = resultSet.getLong("deletionDate");
                         final double price = resultSet.getDouble("price");
+                        final double tax = resultSet.getDouble("tax");
                         final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
-                        retrievedData.add(new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, creationDate, deletionDate));
+                        retrievedData.add(new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate));
                     }
                     return retrievedData;
                 }
@@ -358,7 +360,7 @@ public class MySQLDatabase implements Database {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT  `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `itemStack`
+                        SELECT `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`
                         FROM `listings`
                         WHERE `uuid`=?;"""
                 )) {
@@ -371,8 +373,9 @@ public class MySQLDatabase implements Database {
                         final long creationDate = resultSet.getLong("creationDate");
                         final long deletionDate = resultSet.getLong("deletionDate");
                         final double price = resultSet.getDouble("price");
+                        final double tax = resultSet.getDouble("tax");
                         final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
-                        return new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, creationDate, deletionDate);
+                        return new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate);
                     }
                 }
             } catch (SQLException e) {
