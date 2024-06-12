@@ -45,6 +45,7 @@ public enum Lang {
             "&fPrice: &a${1}",
             "&fExpires in: &6{2}",
             "&fActive Listings: &d{3}&f/&5{4}",
+            "&fYou have been taxed: &9{5}% &7(&a${6}&7)",
             "&f------------------------------------------------"
     )),
     CANCELLED("notifications.cancelled", "&cListing Cancelled!"),

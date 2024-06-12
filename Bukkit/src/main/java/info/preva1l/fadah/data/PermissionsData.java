@@ -22,7 +22,7 @@ public class PermissionsData {
         return listings.size();
     }
 
-    public int valueFromPermission(PermissionType type, Player player) {
+    public int getHighestInt(PermissionType type, Player player) {
         int currentMax = 0;
         boolean matched = false;
         for (PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
@@ -38,9 +38,26 @@ public class PermissionsData {
         return matched ? currentMax : Config.DEFAULT_MAX_LISTINGS.toInteger();
     }
 
+    public double getHighestDouble(PermissionType type, Player player) {
+        double currentMax = 0;
+        boolean matched = false;
+        for (PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+            if (!effectivePermission.getPermission().startsWith(type.permissionString)) continue;
+            String numberStr = effectivePermission.getPermission().substring(type.permissionString.length());
+            try {
+                if (currentMax < Double.parseDouble(numberStr)) {
+                    currentMax = Double.parseDouble(numberStr);
+                    matched = true;
+                }
+            } catch (NumberFormatException ignored) {}
+        }
+        return matched ? currentMax : Config.DEFAULT_MAX_LISTINGS.toDouble();
+    }
+
     @AllArgsConstructor
     public enum PermissionType {
         MAX_LISTINGS("fadah.max-listings."),
+        LISTING_TAX("fadah.listing-tax.")
         ;
         private final String permissionString;
     }

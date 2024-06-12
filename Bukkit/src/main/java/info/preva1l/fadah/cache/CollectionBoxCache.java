@@ -4,10 +4,11 @@ import info.preva1l.fadah.records.CollectableItem;
 import lombok.experimental.UtilityClass;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @UtilityClass
 public class CollectionBoxCache {
-    private final HashMap<UUID, List<CollectableItem>> collectionbox = new HashMap<>();
+    private final Map<UUID, List<CollectableItem>> collectionbox = new ConcurrentHashMap<>();
 
     public void addItem(UUID playerUUID, CollectableItem item) {
         collectionbox.compute(playerUUID, (uuid, items) -> {

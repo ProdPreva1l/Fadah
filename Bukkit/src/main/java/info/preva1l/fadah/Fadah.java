@@ -36,9 +36,9 @@ import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
-// TODO Listing Tax
 // TODO Biddable Auctions
 // TODO Custom Inventory Layouts (In progress)
+// TODO Folia & ShreddedPaper support (In progress)
 
 public final class Fadah extends JavaPlugin {
     private static final int METRICS_ID = 21651;
