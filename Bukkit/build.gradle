@@ -4,16 +4,20 @@ repositories {
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.spaceio.xyz/repository/maven-public' }
+    maven { url "https://repo.clojars.org/" }
 }
 
 dependencies {
+    implementation project(":API")
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
 
-    implementation project(":API")
+    implementation "com.github.puregero:multilib:1.2.1" // Folia & ShreddedPaper Support
 
+    // Cross Server Support
     compileOnly 'redis.clients:jedis:5.1.0'
     compileOnly 'org.apache.commons:commons-pool2:2.12.0'
 
+    // Database
     implementation 'com.zaxxer:HikariCP:5.1.0'
     compileOnly 'org.xerial:sqlite-jdbc:3.45.2.0'
     compileOnly 'com.mysql:mysql-connector-j:8.3.0'
@@ -22,9 +26,12 @@ dependencies {
     }
     compileOnly 'org.mongodb:mongodb-driver-sync:5.0.0'
 
-    implementation 'net.wesjd:anvilgui:1.9.5-SNAPSHOT'
-    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    implementation 'net.wesjd:anvilgui:1.9.5-SNAPSHOT' // Search Menu
 
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7' // Economy Hook
+
+    // Extra Hooks
+    // Eco Items
     compileOnly 'com.willfp:libreforge:4.58.1'
     compileOnly 'com.willfp:eco:6.56.0'
     compileOnly 'com.willfp:EcoItems:5.43.1'
@@ -33,6 +40,7 @@ dependencies {
 shadowJar {
     relocate 'com.zaxxer', 'info.preva1l.fadah.libs'
     relocate 'net.wesjd', 'info.preva1l.fadah.libs'
+    relocate 'com.github.puregero.multilib', 'info.preva1l.fadah.libs'
 
     archiveClassifier.set('')
     //minimize()

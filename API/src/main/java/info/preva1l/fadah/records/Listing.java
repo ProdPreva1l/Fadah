@@ -43,5 +43,5 @@ public abstract class Listing {
 
     public abstract void purchase(@NotNull Player buyer);
 
-    public abstract void cancel(@NotNull Player canceller);
+    public abstract boolean cancel(@NotNull Player canceller);
 }

@@ -105,7 +105,7 @@ public class LanguageConfig {
     }
 
     public @NotNull List<String> getLore(String path, Object... replacements) {
-        List<String> str = Fadah.getINSTANCE().getMenusFile().getStringList(path);
+        List<String> str = superSection.getStringList(path);
         if (str.isEmpty() || str.get(0).equals(path) || str.get(0).equals("null")) {
             return Collections.emptyList();
         }
@@ -117,9 +117,9 @@ public class LanguageConfig {
     }
 
     public @NotNull List<String> getLore(String path, List<String> def, Object... replacements) {
-        List<String> str = Fadah.getINSTANCE().getMenusFile().getStringList(path);
+        List<String> str = superSection.getStringList(path);
         if (str.isEmpty() || str.get(0).equals(path) || str.get(0).equals("null")) {
-            return def;
+            return StringUtils.colorizeList(def);
         }
         List<String> ret = new ArrayList<>();
         for (String line : str) {

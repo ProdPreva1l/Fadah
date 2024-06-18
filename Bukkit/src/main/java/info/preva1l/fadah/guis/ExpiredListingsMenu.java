@@ -1,5 +1,6 @@
 package info.preva1l.fadah.guis;
 
+import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
@@ -53,23 +54,25 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
                     .addLore(Menus.EXPIRED_LISTINGS_LORE.toLore(TimeUtil.formatTimeSince(collectableItem.dateAdded())));
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
-                int slot = viewer.getInventory().firstEmpty();
-                if (slot >= 36) {
-                    viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
-                    return;
-                }
-                ExpiredListingsCache.removeItem(owner.getUniqueId(), collectableItem);
-                Fadah.getINSTANCE().getDatabase().removeFromExpiredItems(owner.getUniqueId(), collectableItem);
-                viewer.getInventory().setItem(slot, collectableItem.itemStack());
-                new ExpiredListingsMenu(viewer, owner, 0).open(viewer);
+                MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {
+                    int slot = viewer.getInventory().firstEmpty();
+                    if (slot >= 36) {
+                        viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
+                        return;
+                    }
+                    ExpiredListingsCache.removeItem(owner.getUniqueId(), collectableItem);
+                    Fadah.getINSTANCE().getDatabase().removeFromExpiredItems(owner.getUniqueId(), collectableItem);
+                    viewer.getInventory().setItem(slot, collectableItem.itemStack());
+                    new ExpiredListingsMenu(viewer, owner, 0).open(viewer);
 
-                // In game logs
-                boolean isAdmin = viewer.getUniqueId() != owner.getUniqueId();
-                HistoricItem historicItem = new HistoricItem(owner.getUniqueId(), Instant.now().toEpochMilli(),
-                        isAdmin ? HistoricItem.LoggedAction.EXPIRED_ITEM_ADMIN_CLAIM : HistoricItem.LoggedAction.EXPIRED_ITEM_CLAIM,
-                        collectableItem.itemStack(), null, null);
-                HistoricItemsCache.addLog(owner.getUniqueId(), historicItem);
-                Fadah.getINSTANCE().getDatabase().addToHistory(owner.getUniqueId(), historicItem);
+                    // In game logs
+                    boolean isAdmin = viewer.getUniqueId() != owner.getUniqueId();
+                    HistoricItem historicItem = new HistoricItem(owner.getUniqueId(), Instant.now().toEpochMilli(),
+                            isAdmin ? HistoricItem.LoggedAction.EXPIRED_ITEM_ADMIN_CLAIM : HistoricItem.LoggedAction.EXPIRED_ITEM_CLAIM,
+                            collectableItem.itemStack(), null, null);
+                    HistoricItemsCache.addLog(owner.getUniqueId(), historicItem);
+                    Fadah.getINSTANCE().getDatabase().addToHistory(owner.getUniqueId(), historicItem);
+                },null, 0L);
             }));
         }
     }
