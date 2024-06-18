@@ -1,5 +1,6 @@
 package info.preva1l.fadah.cache;
 
+import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.records.Listing;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
@@ -12,7 +13,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @UtilityClass
 public final class ListingCache {
-    private final Map<UUID, @NotNull Listing> listings = new ConcurrentHashMap<>();
+    private Map<UUID, @NotNull Listing> listings = new ConcurrentHashMap<>();
 
     public void addListing(@Nullable Listing newListing) {
         if (newListing == null) {
@@ -29,8 +30,10 @@ public final class ListingCache {
         return listings.get(id);
     }
 
-    public void purgeListings() {
-        listings.clear();
+    public void update() {
+        Map<UUID, Listing> temp = new ConcurrentHashMap<>();
+        Fadah.getINSTANCE().getDatabase().getListings().thenAccept(listings -> listings.forEach(listing -> temp.put(listing.getId(), listing)));
+        listings = temp;
     }
 
     public Map<UUID, Listing> getListings() {

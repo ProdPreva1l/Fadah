@@ -50,13 +50,12 @@ public interface Database {
 
     CompletableFuture<Void> removeListing(UUID id);
 
-    default CompletableFuture<Void> loadListings() {
+    default void loadListings() {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return CompletableFuture.supplyAsync(()->null);
+            return;
         }
-        ListingCache.purgeListings();
-        return getListings().thenAccept(listings -> listings.forEach(ListingCache::addListing));
+        ListingCache.update();
     }
 
     CompletableFuture<List<Listing>> getListings();
