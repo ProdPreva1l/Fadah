@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 @UtilityClass
@@ -25,7 +26,8 @@ public class PermissionsData {
     public int getHighestInt(PermissionType type, Player player) {
         int currentMax = 0;
         boolean matched = false;
-        for (PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+        final Set<PermissionAttachmentInfo> finalEffectivePermissions = player.getEffectivePermissions(); // "Thread Safe"
+        for (PermissionAttachmentInfo effectivePermission : finalEffectivePermissions) {
             if (!effectivePermission.getPermission().startsWith(type.permissionString)) continue;
             String numberStr = effectivePermission.getPermission().substring(type.permissionString.length());
             try {
@@ -41,7 +43,8 @@ public class PermissionsData {
     public double getHighestDouble(PermissionType type, Player player) {
         double currentMax = 0;
         boolean matched = false;
-        for (PermissionAttachmentInfo effectivePermission : player.getEffectivePermissions()) {
+        final Set<PermissionAttachmentInfo> finalEffectivePermissions = player.getEffectivePermissions(); // "Thread Safe"
+        for (PermissionAttachmentInfo effectivePermission : finalEffectivePermissions) {
             if (!effectivePermission.getPermission().startsWith(type.permissionString)) continue;
             String numberStr = effectivePermission.getPermission().substring(type.permissionString.length());
             try {
