@@ -1,5 +1,6 @@
 package info.preva1l.fadah;
 
+import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.api.AuctionHouseAPI;
 import info.preva1l.fadah.api.BukkitAuctionHouseAPI;
 import info.preva1l.fadah.cache.CategoryCache;
@@ -24,9 +25,10 @@ import info.preva1l.fadah.utils.helpers.TransactionLogger;
 import lombok.Getter;
 import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -64,7 +66,6 @@ public final class Fadah extends JavaPlugin {
     @Getter private Database database;
     @Getter private CommandManager commandManager;
     @Getter private Economy economy;
-    @Getter private Permission offlinePermissions;
     @Getter private HookManager hookManager;
     @Getter private LayoutManager layoutManager;
 
@@ -126,6 +127,12 @@ public final class Fadah extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            MultiLib.getEntityScheduler(player).execute(this,
+                    () -> player.closeInventory(InventoryCloseEvent.Reason.UNLOADED),
+                    () -> getConsole().severe("Failed to close %s's inventory (Entity Not Found)"),
+                    0L);
+        }
         if (database != null) database.destroy();
         if (cacheSync != null) cacheSync.destroy();
         if (metrics != null) metrics.shutdown();
@@ -195,13 +202,6 @@ public final class Fadah extends JavaPlugin {
             return false;
         }
 
-        if (!hookIntoVaultEco() || !hookIntoVaultPerms()) {
-            return false;
-        }
-        return true;
-    }
-
-    private boolean hookIntoVaultEco() {
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             getConsole().info("No Economy Plugin Installed");
@@ -209,19 +209,9 @@ public final class Fadah extends JavaPlugin {
         }
         economy = rsp.getProvider();
 
-        return economy != null;
+        return true;
     }
 
-    private boolean hookIntoVaultPerms() {
-        RegisteredServiceProvider<Permission> rsp = Bukkit.getServer().getServicesManager().getRegistration(Permission.class);
-        if (rsp == null) {
-            getConsole().info("No Economy Plugin Installed");
-            return false;
-        }
-        offlinePermissions = rsp.getProvider();
-
-        return offlinePermissions != null;
-    }
 
     private void loadDataAndPopulateCaches() {
         getConsole().info("Connecting to Database and populating caches...");

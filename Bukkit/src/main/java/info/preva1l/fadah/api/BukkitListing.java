@@ -72,14 +72,14 @@ public class BukkitListing extends Listing {
     }
 
     @Override
-    public void cancel(@NotNull Player canceller) {
+    public boolean cancel(@NotNull Player canceller) {
         if (!this.isOwner(canceller)) {
-            return;
+            return false;
         }
 
         if (ListingCache.getListing(this.getId()) == null || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(this.getId()) == null)) {
             canceller.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
-            return;
+            return false;
         }
         canceller.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString()));
         if (Fadah.getINSTANCE().getCacheSync() == null) {
@@ -94,5 +94,6 @@ public class BukkitListing extends Listing {
 
         Fadah.getINSTANCE().getDatabase().addToExpiredItems(getOwner(), collectableItem);
         TransactionLogger.listingRemoval(this, false);
+        return true;
     }
 }

@@ -142,7 +142,9 @@ public class MainMenu extends ScrollBarFastInv {
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
                 if (e.isShiftClick()) {
-                    listing.cancel(((Player) e.getWhoClicked()));
+                    if (listing.cancel(((Player) e.getWhoClicked()))) {
+                        updatePagination();
+                    }
                     return;
                 }
 
@@ -151,10 +153,15 @@ public class MainMenu extends ScrollBarFastInv {
                     return;
                 }
 
+                if (listing.isOwner(player)) {
+                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.OWN_LISTING.toFormattedString());
+                    return;
+                }
+
                 if (!Fadah.getINSTANCE().getEconomy().has(player, listing.getPrice())
                         || ListingCache.getListing(listing.getId()) == null
                         || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(listing.getId()) == null)) {
-                    player.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
                     return;
                 }
                 new ConfirmPurchaseMenu(listing, player, category, search, sortingMethod, sortingDirection).open(player);

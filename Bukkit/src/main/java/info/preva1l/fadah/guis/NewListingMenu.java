@@ -1,5 +1,6 @@
 package info.preva1l.fadah.guis;
 
+import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.api.BukkitListing;
 import info.preva1l.fadah.cache.CategoryCache;
@@ -24,8 +25,9 @@ import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 
 public class NewListingMenu extends FastInv {
+    private final Fadah plugin = Fadah.getINSTANCE();
     private final Player player;
-    private final ItemStack itemToSell;
+    private ItemStack itemToSell;
     private Instant timeToDelete;
     private boolean listingStarted = false;
 
@@ -33,7 +35,10 @@ public class NewListingMenu extends FastInv {
         super(54, Menus.NEW_LISTING_TITLE.toFormattedString(), LayoutManager.MenuType.NEW_LISTING);
         this.player = player;
         this.itemToSell = player.getInventory().getItemInMainHand().clone();
-        player.getInventory().setItemInMainHand(new ItemStack(Material.AIR));
+        MultiLib.getEntityScheduler(player).execute(plugin,
+                () -> player.getInventory().setItemInMainHand(new ItemStack(Material.AIR)),
+                () -> this.itemToSell = new ItemStack(Material.AIR),
+                0L);
         this.timeToDelete = Instant.now().plus(6, ChronoUnit.HOURS);
 
         setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));

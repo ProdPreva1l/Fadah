@@ -1,5 +1,6 @@
 package info.preva1l.fadah.utils.guis;
 
+import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.utils.LanguageConfig;
 import org.bukkit.Bukkit;
@@ -167,7 +168,10 @@ public class FastInv implements InventoryHolder {
      * @param player The player to open the menu.
      */
     public void open(Player player) {
-        player.openInventory(this.inventory);
+        MultiLib.getEntityScheduler(player).execute(Fadah.getINSTANCE(),
+                () -> player.openInventory(this.inventory),
+                null,
+                0L);
     }
 
     /**

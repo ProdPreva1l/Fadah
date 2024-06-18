@@ -9,6 +9,7 @@ notifications:
     - '&eYou have a successfully listed an item for sale!'
     - '&fItem: &e{0}'
     - '&fPrice: &a${1}'
+    - '&fTax: &9{5}%'
     - '&fExpires in: &6{2}'
     - '&fActive Listings: &d{3}&f/&5{4}'
     - '&f------------------------------------------------'

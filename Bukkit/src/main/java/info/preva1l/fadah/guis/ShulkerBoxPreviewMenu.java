@@ -26,7 +26,7 @@ public class ShulkerBoxPreviewMenu extends FastInv {
                 for (int i = 0; i < shulker.getInventory().getSize(); i++) {
                     ItemStack itemStack = shulker.getInventory().getItem(i);
                     if (itemStack == null) {
-                        itemStack = new ItemBuilder(Material.AIR).name("&r ").build();
+                        itemStack = new ItemBuilder(Material.AIR).build();
                     }
                     setItem(i, itemStack);
                 }

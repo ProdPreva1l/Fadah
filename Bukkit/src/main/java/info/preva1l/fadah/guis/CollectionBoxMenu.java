@@ -1,5 +1,6 @@
 package info.preva1l.fadah.guis;
 
+import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
@@ -53,25 +54,27 @@ public class CollectionBoxMenu extends PaginatedFastInv {
                     .lore(Menus.COLLECTION_BOX_LORE.toLore(TimeUtil.formatTimeSince(collectableItem.dateAdded())));
 
             addPaginationItem(new PaginatedItem(itemBuilder.build(), e -> {
-                int slot = viewer.getInventory().firstEmpty();
-                if (slot >= 36) {
-                    viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
-                    return;
-                }
-                CollectionBoxCache.removeItem(owner.getUniqueId(), collectableItem);
-                Fadah.getINSTANCE().getDatabase().removeFromCollectionBox(owner.getUniqueId(), collectableItem);
-                viewer.getInventory().setItem(slot, collectableItem.itemStack());
+                MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {
+                    int slot = viewer.getInventory().firstEmpty();
+                    if (slot >= 36) {
+                        viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
+                        return;
+                    }
+                    CollectionBoxCache.removeItem(owner.getUniqueId(), collectableItem);
+                    Fadah.getINSTANCE().getDatabase().removeFromCollectionBox(owner.getUniqueId(), collectableItem);
+                    viewer.getInventory().setItem(slot, collectableItem.itemStack());
 
-                new CollectionBoxMenu(viewer, owner).open(viewer);
+                    new CollectionBoxMenu(viewer, owner).open(viewer);
 
-                // In game logs
-                boolean isAdmin = viewer.getUniqueId() != owner.getUniqueId();
-                HistoricItem historicItem = new HistoricItem(owner.getUniqueId(), Instant.now().toEpochMilli(),
-                        isAdmin ? HistoricItem.LoggedAction.COLLECTION_BOX_ADMIN_CLAIM
-                                : HistoricItem.LoggedAction.COLLECTION_BOX_CLAIM,
-                        collectableItem.itemStack(), null, null);
-                HistoricItemsCache.addLog(owner.getUniqueId(), historicItem);
-                Fadah.getINSTANCE().getDatabase().addToHistory(owner.getUniqueId(), historicItem);
+                    // In game logs
+                    boolean isAdmin = viewer.getUniqueId() != owner.getUniqueId();
+                    HistoricItem historicItem = new HistoricItem(owner.getUniqueId(), Instant.now().toEpochMilli(),
+                            isAdmin ? HistoricItem.LoggedAction.COLLECTION_BOX_ADMIN_CLAIM
+                                    : HistoricItem.LoggedAction.COLLECTION_BOX_CLAIM,
+                            collectableItem.itemStack(), null, null);
+                    HistoricItemsCache.addLog(owner.getUniqueId(), historicItem);
+                    Fadah.getINSTANCE().getDatabase().addToHistory(owner.getUniqueId(), historicItem);
+                }, null, 0L);
             }));
         }
     }
