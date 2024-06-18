@@ -2,6 +2,8 @@ package info.preva1l.fadah.utils.guis;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.utils.BasicConfig;
+import info.preva1l.fadah.utils.LanguageConfig;
+import info.preva1l.fadah.utils.StringUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 
@@ -25,14 +27,24 @@ public class LayoutManager {
             default: throw new IllegalStateException("The config file %s is not related to a GuiLayout".formatted(config.getFileName()));
         };
 
+        final String guiTitle = StringUtils.colorize(config.getString("title"));
+
         final List<Integer> fillerSlots = new ArrayList<>();
         final List<Integer> paginationSlots = new ArrayList<>();
         final List<Integer> scrollbarSlots = new ArrayList<>();
-        final HashMap<Integer, ButtonType> buttonSlots = new HashMap<>();
+        final List<Integer> noItems = new ArrayList<>();
+        final HashMap<ButtonType, Integer> buttonSlots = new HashMap<>();
 
-        ConfigurationSection layoutSection = config.getConfiguration().getConfigurationSection("layout");
+        final ConfigurationSection superSection = config.getConfiguration().getConfigurationSection("lang");
+        if (superSection == null) {
+            Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Missing the lang config section.");
+            return;
+        }
+        final LanguageConfig languageConfig = new LanguageConfig(superSection);
+
+        final ConfigurationSection layoutSection = config.getConfiguration().getConfigurationSection("layout");
         if (layoutSection == null) {
-            Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Missing the Layout config section.");
+            Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Missing the layout config section.");
             return;
         }
 
@@ -64,10 +76,27 @@ public class LayoutManager {
                 scrollbarSlots.add(slotNumber);
                 continue;
             }
-            buttonSlots.put(slotNumber, buttonType);
+            if (buttonType.equals(ButtonType.NO_ITEMS)) {
+                noItems.add(slotNumber);
+                continue;
+            }
+            buttonSlots.put(buttonType, slotNumber);
         }
 
-        guiLayouts.add(new GuiLayout(menuType, fillerSlots, paginationSlots, scrollbarSlots, buttonSlots, config));
+        guiLayouts.add(new GuiLayout(menuType, fillerSlots, paginationSlots, scrollbarSlots, noItems, buttonSlots, guiTitle, languageConfig, config));
+    }
+
+    public void reloadLayout(MenuType menuType) {
+        final String temp = menuType.getLayout().extraConfig().getFileName();
+        guiLayouts.removeIf(mT -> mT.menuType().equals(menuType));
+        loadLayout(new BasicConfig(Fadah.getINSTANCE(), "menus/" + temp));
+    }
+
+    public @NotNull GuiLayout getLayout(MenuType menuType) {
+        for (GuiLayout layout : guiLayouts) {
+            if (menuType == layout.menuType()) return layout;
+        }
+        throw new IllegalStateException("No GuiLayout found for inventory type %s".formatted(menuType));
     }
 
     public @NotNull GuiLayout getLayout(FastInv inventory) {
@@ -90,7 +119,11 @@ public class LayoutManager {
          * Guis without layouts
          */
         SHULKER_PREVIEW,
-        LAYOUT_EDITOR
+        ;
+
+        public GuiLayout getLayout() {
+            return Fadah.getINSTANCE().getLayoutManager().getLayout(this);
+        }
     }
 
     public enum ButtonType {
@@ -123,6 +156,6 @@ public class LayoutManager {
         NO_ITEMS,
         FILLER,
         BACK,
-        SEARCH
+        SEARCH,
     }
 }

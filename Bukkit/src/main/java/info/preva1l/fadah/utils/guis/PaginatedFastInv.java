@@ -15,7 +15,7 @@ public abstract class PaginatedFastInv extends FastInv {
 
     protected int page = 0;
     protected int index = 0;
-    private final List<Integer> paginationMappings;
+    private List<Integer> paginationMappings;
     private final List<PaginatedItem> paginatedItems = new ArrayList<>();
 
     protected PaginatedFastInv(int size, @NotNull String title, @NotNull Player player, LayoutManager.MenuType menuType) {
@@ -38,6 +38,10 @@ public abstract class PaginatedFastInv extends FastInv {
 
         BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(), this::populatePage, 20L, 20L);
         InventoryEventHandler.tasksToQuit.put(getInventory(), task);
+    }
+
+    protected void setPaginationMappings(List<Integer> list) {
+        this.paginationMappings = list;
     }
 
     protected void nextPage() {

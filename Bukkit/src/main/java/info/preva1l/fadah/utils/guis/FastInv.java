@@ -1,5 +1,7 @@
 package info.preva1l.fadah.utils.guis;
 
+import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.utils.LanguageConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -217,5 +219,13 @@ public class FastInv implements InventoryHolder {
 
     public @NotNull LayoutManager.MenuType getMenuType() {
         return menuType;
+    }
+
+    public @NotNull GuiLayout getLayout() {
+        return Fadah.getINSTANCE().getLayoutManager().getLayout(this);
+    }
+
+    public @NotNull LanguageConfig getLang() {
+        return getLayout().language();
     }
 }

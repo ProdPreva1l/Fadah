@@ -36,7 +36,7 @@ public class MainMenu extends ScrollBarFastInv {
 
     public MainMenu(@Nullable Category category, @NotNull Player player, @Nullable String search,
                     @Nullable SortingMethod sortingMethod, @Nullable SortingDirection sortingDirection) {
-        super(54, Menus.MAIN_TITLE.toFormattedString(), player, LayoutManager.MenuType.MAIN);
+        super(54, LayoutManager.MenuType.MAIN.getLayout().guiTitle(), player, LayoutManager.MenuType.MAIN);
         this.category = category;
         this.listings = new ArrayList<>(ListingCache.getListings().values());
 
@@ -55,9 +55,15 @@ public class MainMenu extends ScrollBarFastInv {
                     && !checkForStringInItem(search.toUpperCase(), listing.getItemStack())
                     && !checkForEnchantmentOnBook(search.toUpperCase(), listing.getItemStack()));
         }
+        /* new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 17, 19, 26, 28, 35, 37, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53} */
+        List<Integer> fillerSlots = getLayout().fillerSlots();
+        if (!fillerSlots.isEmpty()) {
+            setItems(fillerSlots.stream().mapToInt(Integer::intValue).toArray(),
+                    GuiHelper.constructButton(GuiButtonType.BORDER));
+        }
 
-        setItems(new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 17, 19, 26, 28, 35, 37, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53},
-                GuiHelper.constructButton(GuiButtonType.BORDER));
+        setScrollbarSlots(getLayout().scrollbarSlots());
+        setPaginationMappings(getLayout().paginationSlots());
 
         addNavigationButtons();
         addFilterButtons();
@@ -120,18 +126,18 @@ public class MainMenu extends ScrollBarFastInv {
     protected void fillPaginationItems() {
         for (Listing listing : listings) {
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
-                    .addLore(Menus.MAIN_LISTING_LORE.toLore(listing.getOwnerName(), listing.getCategoryID(),
+                    .addLore(getLang().getLore("listing.lore-body", listing.getOwnerName(), listing.getCategoryID(),
                             new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()), TimeUtil.formatTimeUntil(listing.getDeletionDate())));
 
             if (player.getUniqueId().equals(listing.getOwner())) {
-                itemStack.addLore(Menus.MAIN_LISTING_FOOTER_OWN_LISTING.toFormattedString());
+                itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.own-listing"));
             } else if (Fadah.getINSTANCE().getEconomy().has(player, listing.getPrice())) {
-                itemStack.addLore(Menus.MAIN_LISTING_FOOTER_BUY.toFormattedString());
+                itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.buy"));
             } else {
-                itemStack.addLore(Menus.MAIN_LISTING_FOOTER_EXPENSIVE.toFormattedString());
+                itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.too-expensive"));
             }
             if (listing.getItemStack().getType().name().toUpperCase().endsWith("_SHULKER_BOX")) {
-                itemStack.addLore(Menus.MAIN_LISTING_FOOTER_SHULKER.toFormattedString());
+                itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.is-shulker"));
             }
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
@@ -158,36 +164,53 @@ public class MainMenu extends ScrollBarFastInv {
 
     @Override
     protected void addPaginationControls() {
-        setItem(48, GuiHelper.constructButton(GuiButtonType.BORDER));
-        setItem(50, GuiHelper.constructButton(GuiButtonType.BORDER));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 48),
+                GuiHelper.constructButton(GuiButtonType.BORDER));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,50),
+                GuiHelper.constructButton(GuiButtonType.BORDER));
         if (page > 0) {
-            setItem(48, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> previousPage());
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 48),
+                    GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> previousPage());
         }
 
         if (listings != null && listings.size() >= index + 1) {
-            setItem(50, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> nextPage());
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,50),
+                    GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> nextPage());
         }
     }
 
     private void addNavigationButtons() {
-        setItem(0, GuiHelper.constructButton(GuiButtonType.SCROLL_PREVIOUS), e -> scrollUp());
-        setItem(45, GuiHelper.constructButton(GuiButtonType.SCROLL_NEXT), e -> scrollDown());
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SCROLLBAR_CONTROL_ONE,0),
+                GuiHelper.constructButton(GuiButtonType.SCROLL_PREVIOUS), e -> scrollUp());
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SCROLLBAR_CONTROL_TWO,45),
+                GuiHelper.constructButton(GuiButtonType.SCROLL_NEXT), e -> scrollDown());
 
-        setItem(53, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player)
-                .name(Menus.MAIN_PROFILE_NAME.toFormattedString(StringUtils.capitalize(Lang.WORD_YOUR.toString())))
-                .addLore(Menus.MAIN_PROFILE_LORE.toLore()).build(), e -> new ProfileMenu(player, player).open(player));
-
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE,53),
+                new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player)
+                .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile", StringUtils.capitalize(Lang.WORD_YOUR.toString())))
+                .addLore(getLang().getLore("profile-button.lore", List.of("&fClick to view your profile!")))
+                        .build(), e -> new ProfileMenu(player, player).open(player));
     }
 
     private void addFilterButtons() {
         // Filter Type Cycle
         SortingMethod prev = sortingMethod.previous();
         SortingMethod next = sortingMethod.next();
-        removeItem(47);
-        setItem(47, new ItemBuilder(Menus.MAIN_FILTER_TYPE_ICON.toMaterial())
-                .name(Menus.MAIN_FILTER_TYPE_NAME.toFormattedString())
-                .modelData(Menus.MAIN_FILTER_TYPE_MODEL_DATA.toInteger())
-                .addLore(Menus.MAIN_FILTER_TYPE_LORE.toLore((prev == null ? Lang.WORD_NONE.toString() : prev.getFriendlyName()),
+        List<String> defFiltLore = List.of(
+                "&7Left Click to cycle up",
+                "&7Right Click to cycle down",
+                "&8-------------------------",
+                "&f{0}",
+                "&8> &e{1}",
+                "&f{2}",
+                "&8-------------------------"
+        );
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER,47));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER,47),
+                new ItemBuilder(getLang().getAsMaterial("filter.change-type.icon", Material.PUFFERFISH))
+                .name(getLang().getStringFormatted("filter.change-type.name", "&eListing Filter"))
+                .modelData(getLang().getInt("filter.change-type.model-data"))
+                .addLore(getLang().getLore("filter.change-type.lore", defFiltLore, (prev == null ? Lang.WORD_NONE.toString() : prev.getFriendlyName()),
                         sortingMethod.getFriendlyName(), (next == null ? Lang.WORD_NONE.toString() : next.getFriendlyName())))
                 .build(), e -> {
             if (e.isLeftClick()) {
@@ -205,26 +228,35 @@ public class MainMenu extends ScrollBarFastInv {
         });
 
         // Search
-        removeItem(49);
-        setItem(49, new ItemBuilder(Menus.MAIN_SEARCH_ICON.toMaterial())
-                .name(Menus.MAIN_SEARCH_NAME.toFormattedString())
-                .modelData(Menus.MAIN_SEARCH_MODEL_DATA.toInteger())
-                .lore(Menus.MAIN_SEARCH_LORE.toLore()).build(), e ->
-                new SearchMenu(player, Menus.MAIN_SEARCH_PLACEHOLDER.toString(), search ->
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SEARCH,49));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SEARCH,49),
+                new ItemBuilder(getLang().getAsMaterial("filter.search.icon", Material.OAK_SIGN))
+                .name(getLang().getStringFormatted("filter.search.name", "&3&lSearch"))
+                .modelData(getLang().getInt("filter.search.model-data"))
+                .lore(getLang().getLore("filter.search.lore")).build(), e ->
+                new SearchMenu(player, getLang().getString("filter.search.placeholder", "Search Query..."), search ->
                         new MainMenu(category, player, search, sortingMethod, sortingDirection).open(player)));
 
         // Filter Direction Toggle
+        List<String> defDirLore = List.of(
+                "&7Click To Toggle",
+                "&8-------------------------",
+                "{0}",
+                "{1}",
+                "&8-------------------------"
+        );
         String asc = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.ASCENDING
-                        ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toFormattedString()
-                        : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toFormattedString(),
+                        ? getLang().getStringFormatted("filter.change-direction.options.selected", "&8> &e{0}")
+                        : getLang().getStringFormatted("filter.change-direction.options.not-selected", "&f{0}"),
                 sortingMethod.getLang(SortingDirection.ASCENDING));
         String desc = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.DESCENDING
-                        ? Menus.MAIN_FILTER_DIRECTION_SELECTED.toFormattedString()
-                        : Menus.MAIN_FILTER_DIRECTION_NOT_SELECTED.toFormattedString(),
+                        ? getLang().getStringFormatted("filter.change-direction.options.selected", "&8> &e{0}")
+                        : getLang().getStringFormatted("filter.change-direction.options.not-selected", "&f{0}"),
                 sortingMethod.getLang(SortingDirection.DESCENDING));
 
-        removeItem(51);
-        setItem(51, new ItemBuilder(Menus.MAIN_FILTER_DIRECTION_ICON.toMaterial())
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER_DIRECTION,51));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER_DIRECTION,51),
+                new ItemBuilder(Menus.MAIN_FILTER_DIRECTION_ICON.toMaterial())
                         .name(Menus.MAIN_FILTER_DIRECTION_NAME.toFormattedString())
                         .modelData(Menus.MAIN_FILTER_DIRECTION_MODEL_DATA.toInteger())
                         .lore(Menus.MAIN_FILTER_DIRECTION_LORE.toLore(asc, desc)).build(), e -> {
@@ -260,7 +292,13 @@ public class MainMenu extends ScrollBarFastInv {
 
     @Override
     protected void paginationEmpty() {
-        setItems(new int[]{22, 23, 31, 32}, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
-                .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
+        List<Integer> noItems = getLayout().noItems();
+        if (!noItems.isEmpty()) {
+            setItems(noItems.stream().mapToInt(Integer::intValue).toArray(),
+                    new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
+                            .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString())
+                            .modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger())
+                            .lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
+        }
     }
 }

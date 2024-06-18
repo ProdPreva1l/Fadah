@@ -15,54 +15,19 @@ import java.util.List;
 @AllArgsConstructor
 @SuppressWarnings("unchecked")
 public enum Menus {
-    MAIN_TITLE("main.title", "&9&lAuction House"),
-    MAIN_LISTING_LORE("main.listing.lore-body", List.of(
-            "&8&n---------------------------",
-            "&fSeller: &e{0}",
-            "&fCategory: &e{1}",
-            "&r ",
-            "&fBuy Now: &6${2}",
-            "&r ",
-            "&fExpires In: &e{3}",
-            "&8&n---------------------------"
-    )),
-    MAIN_LISTING_FOOTER_BUY("main.listing.lore-footer.buy", "&aClick to buy now!"),
-    MAIN_LISTING_FOOTER_EXPENSIVE("main.listing.lore-footer.too-expensive", "&cYou cannot afford this item!"),
-    MAIN_LISTING_FOOTER_OWN_LISTING("main.listing.lore-footer.own-listing", "&cYou cannot buy your own listing! &8(Shift Click to Cancel)"),
-    MAIN_LISTING_FOOTER_SHULKER("main.listing.lore-footer.is-shulker", "&fRight Click to Preview!"),
-    MAIN_PROFILE_NAME("main.profile-button.name", "&e&lYour Profile"),
-    MAIN_PROFILE_LORE("main.profile-button.lore", Collections.singletonList("&fClick to view your profile!")),
-    MAIN_PROFILE_DESCRIPTION("main.profile-button.description", List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {1}.")),
-    MAIN_SEARCH_ICON("main.filter.search.icon", "OAK_SIGN"),
-    MAIN_SEARCH_MODEL_DATA("main.filter.search.model_data", 0),
-    MAIN_SEARCH_PLACEHOLDER("main.filter.search.placeholder", "Search Query..."),
-    MAIN_SEARCH_NAME("main.filter.search.name", "&3&lSearch"),
-    MAIN_SEARCH_LORE("main.filter.search.lore", Collections.singletonList("&fClick to search for an item name/type!")),
-    MAIN_FILTER_TYPE_ICON("main.filter.change-type.icon", "PUFFERFISH"),
-    MAIN_FILTER_TYPE_MODEL_DATA("main.filter.change-type.model_data", 0),
-    MAIN_FILTER_TYPE_NAME("main.filter.change-type.name", "&eListing Filter"),
-    MAIN_FILTER_TYPE_LORE("main.filter.change-type.lore", List.of(
-            "&7Left Click to cycle up",
-            "&7Right Click to cycle down",
-            "&8-------------------------",
-            "&f{0}",
-            "&8> &e{1}",
-            "&f{2}",
-            "&8-------------------------"
-    )),
+    // TODO: relocate this to profile config
+    MAIN_PROFILE_DESCRIPTION("profile-button.description", List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {1}.")),
 
-    MAIN_FILTER_DIRECTION_ICON("main.filter.change-direction.icon", "CLOCK"),
-    MAIN_FILTER_DIRECTION_MODEL_DATA("main.filter.change-direction.model_data", 0),
-    MAIN_FILTER_DIRECTION_NAME("main.filter.change-direction.name", "&eFilter Direction"),
-    MAIN_FILTER_DIRECTION_LORE("main.filter.change-direction.lore", List.of(
+    MAIN_FILTER_DIRECTION_ICON("filter.change-direction.icon", "CLOCK"),
+    MAIN_FILTER_DIRECTION_MODEL_DATA("filter.change-direction.model_data", 0),
+    MAIN_FILTER_DIRECTION_NAME("filter.change-direction.name", "&eFilter Direction"),
+    MAIN_FILTER_DIRECTION_LORE("filter.change-direction.lore", List.of(
             "&7Click To Toggle",
             "&8-------------------------",
             "{0}",
             "{1}",
             "&8-------------------------"
     )),
-    MAIN_FILTER_DIRECTION_SELECTED("main.filter.change-direction.options.selected", "&8> &e{0}"),
-    MAIN_FILTER_DIRECTION_NOT_SELECTED("main.filter.change-direction.options.not-selected", "&f{0}"),
 
     SEARCH_TITLE("search.title", "&9&lAuction House &8> &fSearch"),
     NEW_LISTING_TITLE("new-listing.title", "&9&lAuction House &8> &3New Listing"),

@@ -8,6 +8,7 @@ import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
 import info.preva1l.fadah.utils.commands.SubCommandArguments;
+import info.preva1l.fadah.utils.guis.LayoutManager;
 import org.jetbrains.annotations.NotNull;
 
 public class ReloadSubCommand extends SubCommand {
@@ -23,7 +24,8 @@ public class ReloadSubCommand extends SubCommand {
         }
         Fadah.getINSTANCE().getConfigFile().load();
         Fadah.getINSTANCE().getLangFile().load();
-        Fadah.getINSTANCE().getMenusFile().load();
+        Fadah.getINSTANCE().getMenusFile().load(); // TODO deprecate
+        Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.MAIN);
         Fadah.getINSTANCE().getCategoriesFile().load();
         CategoryCache.update();
         Fadah.getINSTANCE().getDatabase().loadListings();

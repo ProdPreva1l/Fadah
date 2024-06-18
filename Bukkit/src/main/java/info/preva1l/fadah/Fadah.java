@@ -40,6 +40,8 @@ import java.util.logging.Logger;
 // TODO Biddable Auctions
 // TODO Custom Inventory Layouts (In progress)
 // TODO Folia & ShreddedPaper support (In progress)
+// TODO Purchasable listing adverts
+// TODO Allow listing adverts to send automatically everytime a new listing is made
 
 public final class Fadah extends JavaPlugin {
     private static final int METRICS_ID = 21651;

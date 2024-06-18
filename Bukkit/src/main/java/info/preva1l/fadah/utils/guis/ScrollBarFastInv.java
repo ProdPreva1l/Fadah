@@ -30,6 +30,14 @@ public abstract class ScrollBarFastInv extends PaginatedFastInv {
         }
     }
 
+    protected void setScrollbarSlots(List<Integer> integers) {
+        int i = 0;
+        for (Integer num : integers) {
+            this.scrollbarSlots.put(i, num);
+            i++;
+        }
+    }
+
     protected void updateScrollbar() {
         scrollbarItems.clear();
         fillScrollbarItems();

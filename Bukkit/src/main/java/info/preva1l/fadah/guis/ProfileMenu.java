@@ -25,8 +25,9 @@ public class ProfileMenu extends FastInv {
     }
 
     private void fillItems() {
+        // TODO: dont use main menu stuff
         setItem(20, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(owner)
-                .name(Menus.MAIN_PROFILE_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
+                .name(Menus.MAIN_FILTER_DIRECTION_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
                 .addLore(Menus.MAIN_PROFILE_DESCRIPTION.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName(),
                         viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOU.toString() : owner.getName())).build());
 
