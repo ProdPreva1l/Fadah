@@ -59,9 +59,6 @@ public final class Fadah extends JavaPlugin {
     @Getter private BasicConfig langFile;
     @Getter private BasicConfig menusFile;
 
-    @Getter private BasicConfig miscMenuFile;
-    @Getter private BasicConfig buttonsFile;
-
     @Getter @Setter private CacheSync cacheSync;
     @Getter private Database database;
     @Getter private CommandManager commandManager;
@@ -168,11 +165,9 @@ public final class Fadah extends JavaPlugin {
         configFile = new BasicConfig(this, "config.yml");
         categoriesFile = new BasicConfig(this, "categories.yml");
         langFile = new BasicConfig(this, "lang.yml");
-        menusFile = new BasicConfig(this, "menus.yml");
 
         Config.loadDefault();
         Lang.loadDefault();
-        Menus.loadDefault();
 
         categoriesFile.save();
         categoriesFile.load();
@@ -182,8 +177,8 @@ public final class Fadah extends JavaPlugin {
     private void loadMenus() {
         layoutManager = new LayoutManager();
 
-        buttonsFile = new BasicConfig(this, "menus/buttons.yml");
-        miscMenuFile = new BasicConfig(this, "menus/misc.yml");
+        menusFile = new BasicConfig(this, "menus/misc.yml");
+        Menus.loadDefault();
 
         layoutManager.loadLayout(new BasicConfig(this, "menus/main.yml"));
         layoutManager.loadLayout(new BasicConfig(this, "menus/new-listing.yml"));

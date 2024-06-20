@@ -16,18 +16,9 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public enum Menus {
     // TODO: relocate this to profile config
-    MAIN_PROFILE_DESCRIPTION("profile-button.description", List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {1}.")),
-
-    MAIN_FILTER_DIRECTION_ICON("filter.change-direction.icon", "CLOCK"),
-    MAIN_FILTER_DIRECTION_MODEL_DATA("filter.change-direction.model_data", 0),
-    MAIN_FILTER_DIRECTION_NAME("filter.change-direction.name", "&eFilter Direction"),
-    MAIN_FILTER_DIRECTION_LORE("filter.change-direction.lore", List.of(
-            "&7Click To Toggle",
-            "&8-------------------------",
-            "{0}",
-            "{1}",
-            "&8-------------------------"
-    )),
+    MAIN_PROFILE_DESCRIPTION("profile-button.description",
+            List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {1}.")),
+    MAIN_FILTER_DIRECTION_NAME("filter.change-direction.name", "&eFilter Direction"), // remove later
 
     SEARCH_TITLE("search.title", "&9&lAuction House &8> &fSearch"),
     NEW_LISTING_TITLE("new-listing.title", "&9&lAuction House &8> &3New Listing"),
@@ -167,39 +158,46 @@ public enum Menus {
             "&8&n---------------------------"
     )),
 
+    // To Keep
     NO_ITEM_FOUND_ICON("no-items-found.icon", "BARRIER"),
     NO_ITEM_FOUND_MODEL_DATA("no-items-found.model_data", 0),
     NO_ITEM_FOUND_NAME("no-items-found.name", "&c&lNo items found!"),
     NO_ITEM_FOUND_LORE("no-items-found.lore", Collections.emptyList()),
 
-    BACK_BUTTON_ICON("all.back.icon", "FEATHER"),
-    BACK_BUTTON_MODEL_DATA("all.back.model_data", 0),
-    BACK_BUTTON_NAME("all.back.name", "&cGo Back"),
-    BACK_BUTTON_LORE("all.back.lore", Collections.singletonList("&7Click to go back")),
-    PREVIOUS_BUTTON_ICON("all.previous_page.icon", "ARROW"),
-    PREVIOUS_BUTTON_MODEL_DATA("all.previous_page.model_data", 0),
-    PREVIOUS_BUTTON_NAME("all.previous_page.name", "&c&lPrevious Page"),
-    PREVIOUS_BUTTON_LORE("all.previous_page.lore", Collections.singletonList("&7Click to go to the previous page")),
-    NEXT_BUTTON_ICON("all.next_page.icon", "ARROW"),
-    NEXT_BUTTON_MODEL_DATA("all.next_page.model_data", 0),
-    NEXT_BUTTON_NAME("all.next_page.name", "&a&lNext Page"),
-    NEXT_BUTTON_LORE("all.next_page.lore", Collections.singletonList("&7Click to go to the next page")),
-    SCROLL_NEXT_BUTTON_ICON("all.scroll_next.icon", "ARROW"),
-    SCROLL_NEXT_BUTTON_MODEL_DATA("all.scroll_next.model_data", 0),
-    SCROLL_NEXT_BUTTON_NAME("all.scroll_next.name", "&a&lScroll Categories Down"),
-    SCROLL_NEXT_BUTTON_LORE("all.scroll_next.lore", Collections.singletonList("&7Click to move the categories down")),
-    SCROLL_PREVIOUS_BUTTON_ICON("all.scroll_previous.icon", "ARROW"),
-    SCROLL_PREVIOUS_BUTTON_MODEL_DATA("all.scroll_previous.model_data", 0),
-    SCROLL_PREVIOUS_BUTTON_NAME("all.scroll_previous.name", "&a&lScroll Categories Up"),
-    SCROLL_PREVIOUS_BUTTON_LORE("all.scroll_previous.lore", Collections.singletonList("&7Click to move the categories up")),
-    CLOSE_BUTTON_ICON("all.close.icon", "BARRIER"),
-    CLOSE_BUTTON_MODEL_DATA("all.close.model_data", 0),
-    CLOSE_BUTTON_NAME("all.close.name", "&c&l✗ Close"),
-    CLOSE_BUTTON_LORE("all.close.lore", Collections.singletonList("&7Click to close the menu")),
-    BORDER_ICON("menu-border.icon", "BLACK_STAINED_GLASS_PANE"),
-    BORDER_MODEL_DATA("menu-border.model_data", 0),
-    BORDER_NAME("menu-border.name", "&r "),
-    BORDER_LORE("menu-border.lore", Collections.singletonList("&8play.dxtrus.net")),
+    BACK_BUTTON_ICON("back.icon", "FEATHER"),
+    BACK_BUTTON_MODEL_DATA("back.model_data", 0),
+    BACK_BUTTON_NAME("back.name", "&cGo Back"),
+    BACK_BUTTON_LORE("back.lore", Collections.singletonList("&7Click to go back")),
+
+    PREVIOUS_BUTTON_ICON("previous_page.icon", "ARROW"),
+    PREVIOUS_BUTTON_MODEL_DATA("previous_page.model_data", 0),
+    PREVIOUS_BUTTON_NAME("previous_page.name", "&c&lPrevious Page"),
+    PREVIOUS_BUTTON_LORE("previous_page.lore", Collections.singletonList("&7Click to go to the previous page")),
+
+    NEXT_BUTTON_ICON("next_page.icon", "ARROW"),
+    NEXT_BUTTON_MODEL_DATA("next_page.model_data", 0),
+    NEXT_BUTTON_NAME("next_page.name", "&a&lNext Page"),
+    NEXT_BUTTON_LORE("next_page.lore", Collections.singletonList("&7Click to go to the next page")),
+
+    SCROLL_NEXT_BUTTON_ICON("scroll_next.icon", "ARROW"),
+    SCROLL_NEXT_BUTTON_MODEL_DATA("scroll_next.model_data", 0),
+    SCROLL_NEXT_BUTTON_NAME("scroll_next.name", "&a&lScroll Categories Down"),
+    SCROLL_NEXT_BUTTON_LORE("scroll_next.lore", Collections.singletonList("&7Click to move the categories down")),
+
+    SCROLL_PREVIOUS_BUTTON_ICON("scroll_previous.icon", "ARROW"),
+    SCROLL_PREVIOUS_BUTTON_MODEL_DATA("scroll_previous.model_data", 0),
+    SCROLL_PREVIOUS_BUTTON_NAME("scroll_previous.name", "&a&lScroll Categories Up"),
+    SCROLL_PREVIOUS_BUTTON_LORE("scroll_previous.lore", Collections.singletonList("&7Click to move the categories up")),
+   
+    CLOSE_BUTTON_ICON("close.icon", "BARRIER"),
+    CLOSE_BUTTON_MODEL_DATA("close.model_data", 0),
+    CLOSE_BUTTON_NAME("close.name", "&c&l✗ Close"),
+    CLOSE_BUTTON_LORE("close.lore", Collections.singletonList("&7Click to close the menu")),
+    
+    BORDER_ICON("filler.icon", "BLACK_STAINED_GLASS_PANE"),
+    BORDER_MODEL_DATA("filler.model-data", 0),
+    BORDER_NAME("filler.name", "&r "),
+    BORDER_LORE("filler.lore", Collections.singletonList("&8I <3 Fadah")),
     ;
 
     private final String path;

@@ -263,10 +263,10 @@ public class MainMenu extends ScrollBarFastInv {
 
         removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER_DIRECTION,51));
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER_DIRECTION,51),
-                new ItemBuilder(Menus.MAIN_FILTER_DIRECTION_ICON.toMaterial())
-                        .name(Menus.MAIN_FILTER_DIRECTION_NAME.toFormattedString())
-                        .modelData(Menus.MAIN_FILTER_DIRECTION_MODEL_DATA.toInteger())
-                        .lore(Menus.MAIN_FILTER_DIRECTION_LORE.toLore(asc, desc)).build(), e -> {
+                new ItemBuilder(getLang().getAsMaterial("filter.change-direction.icon", Material.CLOCK))
+                        .name(getLang().getStringFormatted("filter.change-direction.name", "&eFilter Direction"))
+                        .modelData(getLang().getInt("filter.change-direction.model-data"))
+                        .lore(getLang().getLore("filter.change-direction.lore", defDirLore, asc, desc)).build(), e -> {
                     this.sortingDirection = sortingDirection == SortingDirection.ASCENDING
                             ? SortingDirection.DESCENDING
                             : SortingDirection.ASCENDING;

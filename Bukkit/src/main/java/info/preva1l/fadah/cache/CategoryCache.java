@@ -4,6 +4,7 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.hooks.impl.EcoItemsHook;
 import info.preva1l.fadah.records.Category;
+import info.preva1l.fadah.utils.BasicConfig;
 import info.preva1l.fadah.utils.SetHelper;
 import lombok.experimental.UtilityClass;
 import org.bukkit.Material;
@@ -15,6 +16,7 @@ import java.util.*;
 @UtilityClass
 public final class CategoryCache {
     private List<Category> categories = new ArrayList<>();
+    private final BasicConfig categoriesFile = Fadah.getINSTANCE().getCategoriesFile();
 
     public void update() {
         categories = fillListWithCategories();
@@ -49,23 +51,23 @@ public final class CategoryCache {
 
     public List<Category> fillListWithCategories() {
         List<Category> list = new ArrayList<>();
-        for (String key : Fadah.getINSTANCE().getCategoriesFile().getConfiguration().getKeys(false)) {
-            String name = Fadah.getINSTANCE().getCategoriesFile().getString(key + ".name");
-            Material icon = Material.getMaterial(Fadah.getINSTANCE().getCategoriesFile().getString(key + ".icon"));
-            int priority = Fadah.getINSTANCE().getCategoriesFile().getInt(key + ".priority");
-            int modelData = Fadah.getINSTANCE().getCategoriesFile().getInt(key + ".icon_model_data");
+        for (String key : categoriesFile.getConfiguration().getKeys(false)) {
+            String name = categoriesFile.getString(key + ".name");
+            Material icon = Material.getMaterial(categoriesFile.getString(key + ".icon"));
+            int priority = categoriesFile.getInt(key + ".priority");
+            int modelData = categoriesFile.getInt(key + ".icon_model_data");
 
-            List<String> description = Fadah.getINSTANCE().getCategoriesFile().getStringList(key + ".description");
-            List<String> materialsList = Fadah.getINSTANCE().getCategoriesFile().getStringList(key + ".materials");
+            List<String> description = categoriesFile.getStringList(key + ".description");
+            List<String> materialsList = categoriesFile.getStringList(key + ".materials");
             Set<Material> materials = null;
             if (!materialsList.isEmpty()) {
                 if (!materialsList.get(0).equals(key + ".materials"))
                     materials = SetHelper.stringSetToMaterialSet(SetHelper.listToSet(materialsList));
             }
 
-            boolean isCustomItems = Fadah.getINSTANCE().getCategoriesFile().getBoolean(key + ".custom-items");
+            boolean isCustomItems = categoriesFile.getBoolean(key + ".custom-items");
             Category.CustomItemMode customItemMode = Category.CustomItemMode.API;
-            String cim = Fadah.getINSTANCE().getCategoriesFile().getString(key + ".custom-item-mode").toUpperCase();
+            String cim = categoriesFile.getString(key + ".custom-item-mode").toUpperCase();
             try {
                 customItemMode = Category.CustomItemMode.valueOf(cim);
             } catch (EnumConstantNotPresentException | IllegalArgumentException ignored) {
@@ -78,7 +80,7 @@ public final class CategoryCache {
             }
             List<String> customItemIDs = null;
             if (isCustomItems)
-                customItemIDs = Fadah.getINSTANCE().getCategoriesFile().getStringList(key + ".custom-item-ids");
+                customItemIDs = categoriesFile.getStringList(key + ".custom-item-ids");
             list.add(new Category(key, name, priority, modelData, (icon == null ? Material.GRASS_BLOCK : icon), description, materials, isCustomItems, customItemMode, SetHelper.listToSet(customItemIDs)));
         }
         list.sort(Comparator.comparingInt(Category::priority).reversed());

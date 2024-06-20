@@ -77,6 +77,7 @@ public class LayoutManager {
                 continue;
             }
             if (buttonType.equals(ButtonType.NO_ITEMS)) {
+                paginationSlots.add(slotNumber);
                 noItems.add(slotNumber);
                 continue;
             }
@@ -157,5 +158,6 @@ public class LayoutManager {
         FILLER,
         BACK,
         SEARCH,
+        EMPTY,
     }
 }
