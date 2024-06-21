@@ -7,7 +7,6 @@ import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.Listing;
@@ -22,6 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.UUID;
 
 public class NewListingMenu extends FastInv {
@@ -32,7 +32,7 @@ public class NewListingMenu extends FastInv {
     private boolean listingStarted = false;
 
     public NewListingMenu(Player player, double price) {
-        super(54, Menus.NEW_LISTING_TITLE.toFormattedString(), LayoutManager.MenuType.NEW_LISTING);
+        super(54, LayoutManager.MenuType.NEW_LISTING.getLayout().guiTitle(), LayoutManager.MenuType.NEW_LISTING);
         this.player = player;
         this.itemToSell = player.getInventory().getItemInMainHand().clone();
         MultiLib.getEntityScheduler(player).execute(plugin,
@@ -41,15 +41,27 @@ public class NewListingMenu extends FastInv {
                 0L);
         this.timeToDelete = Instant.now().plus(6, ChronoUnit.HOURS);
 
-        setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
+        List<Integer> fillerSlots = getLayout().fillerSlots();
+        if (!fillerSlots.isEmpty()) {
+            setItems(fillerSlots.stream().mapToInt(Integer::intValue).toArray(),
+                    GuiHelper.constructButton(GuiButtonType.BORDER));
+        }
 
-        setItem(30, new ItemBuilder(Menus.NEW_LISTING_CREATE_ICON.toMaterial()).name(Menus.NEW_LISTING_CREATE_NAME.toFormattedString())
-                .modelData(Menus.NEW_LISTING_CREATE_MODEL_DATA.toInteger())
-                .addLore(Menus.NEW_LISTING_CREATE_LORE.toLore(new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(price))).build(), e -> startListing(timeToDelete, price));
+        List<String> createDefLore = List.of(
+                "&cClicking this button will immediately post",
+                "&cyour item on the auction house for &a${0}");
+
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_START, 30),
+                new ItemBuilder(getLang().getAsMaterial("create.icon", Material.EMERALD))
+                        .name(getLang().getStringFormatted("create.name", "&aClick to create listing!"))
+                        .modelData(getLang().getInt("create.model-data"))
+                        .addLore(getLang().getLore("create.lore", createDefLore,
+                                new DecimalFormat(Config.DECIMAL_FORMAT.toString())
+                                        .format(price))).build(), e -> startListing(timeToDelete, price));
         setClock();
 
         addNavigationButtons();
-        setItem(22, itemToSell);
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ITEM, 22), itemToSell);
     }
 
     @Override
@@ -59,9 +71,18 @@ public class NewListingMenu extends FastInv {
     }
 
     private void setClock() {
-        removeItem(32);
-        setItem(32, new ItemBuilder(Menus.NEW_LISTING_TIME_ICON.toMaterial()).name(Menus.NEW_LISTING_TIME_NAME.toFormattedString())
-                .addLore(Menus.NEW_LISTING_TIME_LORE.toLore(TimeUtil.formatTimeUntil(timeToDelete.toEpochMilli()))).build(), e -> {
+        List<String> timeDefLore = List.of(
+                "&fCurrent: &6{0}",
+                "&7Left Click to Add 1 Hour",
+                "&7Right Click to Remove 1 Hour",
+                "&7Shift Left Click to Add 30 Minutes",
+                "&7Shift Right Click to Remove 30 Minutes"
+        );
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 32));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 32),
+                new ItemBuilder(getLang().getAsMaterial("time.icon", Material.CLOCK))
+                        .name(getLang().getStringFormatted("time.name", "&aTime for listing to be active"))
+                        .addLore(getLang().getLore("time.lore", timeDefLore, TimeUtil.formatTimeUntil(timeToDelete.toEpochMilli()))).build(), e -> {
             if (e.isRightClick()) {
                 if (e.isShiftClick()) {
                     if (timeToDelete.minus(30, ChronoUnit.MINUTES).toEpochMilli() <= Instant.now().toEpochMilli())
@@ -128,6 +149,7 @@ public class NewListingMenu extends FastInv {
     }
 
     private void addNavigationButtons() {
-        setItem(49, GuiHelper.constructButton(GuiButtonType.CLOSE), e -> e.getWhoClicked().closeInventory());
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CLOSE, 49),
+                GuiHelper.constructButton(GuiButtonType.CLOSE), e -> e.getWhoClicked().closeInventory());
     }
 }

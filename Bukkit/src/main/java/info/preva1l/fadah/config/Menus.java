@@ -21,24 +21,6 @@ public enum Menus {
     MAIN_FILTER_DIRECTION_NAME("filter.change-direction.name", "&eFilter Direction"), // remove later
 
     SEARCH_TITLE("search.title", "&9&lAuction House &8> &fSearch"),
-    NEW_LISTING_TITLE("new-listing.title", "&9&lAuction House &8> &3New Listing"),
-    NEW_LISTING_CREATE_ICON("new-listing.create.icon", "EMERALD"),
-    NEW_LISTING_CREATE_MODEL_DATA("new-listing.create.model_data", 0),
-    NEW_LISTING_CREATE_NAME("new-listing.create.name", "&aClick to create listing!"),
-    NEW_LISTING_CREATE_LORE("new-listing.create.lore", List.of(
-            "&cClicking this button will immediately post",
-            "&cyour item on the auction house for &a${0}")),
-    NEW_LISTING_TIME_ICON("new-listing.time.icon", "CLOCK"),
-    NEW_LISTING_TIME_NAME("new-listing.time.name", "&aTime for listing to be active"),
-    NEW_LISTING_TIME_LORE("new-listing.time.lore", List.of(
-            "&fCurrent: &6{0}",
-            "&7Left Click to Add 1 Hour",
-            "&7Right Click to Remove 1 Hour",
-            "&7Shift Left Click to Add 30 Minutes",
-            "&7Shift Right Click to Remove 30 Minutes"
-    )),
-
-
 
     CONFIRM_TITLE("confirm.title", "&9&lAuction House &8> &aConfirm Purchase"),
     CONFIRM_BUTTON_ICON("confirm.confirm.icon", "LIME_CONCRETE"),

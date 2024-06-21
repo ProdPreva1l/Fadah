@@ -3,14 +3,14 @@ title: '&9&lAuction House &8> &3New Listing'
 lang:
   create:
     icon: EMERALD
-    model_data: 0
+    model-data: 0
     name: '&aClick to create listing!'
     lore:
       - '&cClicking this button will immediately post'
       - '&cyour item on the auction house for &a${0}'
   time:
     icon: CLOCK
-    model_data: 0
+    model-data: 0
     name: '&aTime for listing to be active'
     lore:
       - '&fCurrent: &6{0}'
@@ -20,3 +20,32 @@ lang:
       - '&7Shift Right Click to Remove 30 Minutes'
 
 layout:
+  '0': "FILLER"
+  '1': "FILLER"
+  '2': "FILLER"
+  '3': "FILLER"
+  '4': "FILLER"
+  '5': "FILLER"
+  '6': "FILLER"
+  '7': "FILLER"
+  '8': "FILLER"
+  '9': "FILLER"
+  '17': "FILLER"
+  '18': "FILLER"
+  '22': "LISTING_ITEM"
+  '26': "FILLER"
+  '27': "FILLER"
+  '30': "LISTING_START"
+  '32': "LISTING_TIME"
+  '35': "FILLER"
+  '36': "FILLER"
+  '44': "FILLER"
+  '45': "FILLER"
+  '46': "FILLER"
+  '47': "FILLER"
+  '48': "FILLER"
+  '49': "CLOSE"
+  '50': "FILLER"
+  '51': "FILLER"
+  '52': "FILLER"
+  '53': "FILLER"

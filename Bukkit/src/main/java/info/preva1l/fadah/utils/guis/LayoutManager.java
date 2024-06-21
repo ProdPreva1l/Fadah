@@ -147,6 +147,12 @@ public class LayoutManager {
         FILTER,
         FILTER_DIRECTION,
         /**
+         * New Listing Menu Specific Items
+         */
+        LISTING_START,
+        LISTING_TIME,
+        LISTING_ITEM,
+        /**
          * Confirm Menu Specific Items
          */
         CONFIRM,
@@ -157,7 +163,7 @@ public class LayoutManager {
         NO_ITEMS,
         FILLER,
         BACK,
+        CLOSE,
         SEARCH,
-        EMPTY,
     }
 }
