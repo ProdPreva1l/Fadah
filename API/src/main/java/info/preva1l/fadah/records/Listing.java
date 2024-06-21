@@ -18,9 +18,11 @@ public abstract class Listing {
     final double tax;
     final long creationDate;
     final long deletionDate;
+    final boolean biddable;
 
-    protected Listing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName, @NotNull ItemStack itemStack,
-                      @NotNull String categoryID, double price, double tax, long creationDate, long deletionDate) {
+    protected Listing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName,
+                      @NotNull ItemStack itemStack, @NotNull String categoryID, double price,
+                      double tax, long creationDate, long deletionDate, boolean biddable) {
         this.id = id;
         this.owner = owner;
         this.ownerName = ownerName;
@@ -30,6 +32,7 @@ public abstract class Listing {
         this.tax = tax;
         this.creationDate = creationDate;
         this.deletionDate = deletionDate;
+        this.biddable = biddable;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

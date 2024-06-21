@@ -1,5 +1,7 @@
 package info.preva1l.fadah.cache;
 
+import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.records.CollectableItem;
 import lombok.experimental.UtilityClass;
 
@@ -48,5 +50,18 @@ public class CollectionBoxCache {
             return items;
         });
         return ret;
+    }
+
+    public boolean doesItemExist(UUID playerUUID, CollectableItem e) {
+        if (Config.STRICT_CHECKS.toBoolean()) {
+            for (CollectableItem item : Fadah.getINSTANCE().getDatabase().getCollectionBox(playerUUID).join()) {
+                if (item.equals(e)) return true;
+            }
+        } else {
+            for (CollectableItem item : getCollectionBox(playerUUID)) {
+                if (item.equals(e)) return true;
+            }
+        }
+        return false;
     }
 }

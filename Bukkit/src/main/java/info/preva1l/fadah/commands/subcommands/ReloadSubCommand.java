@@ -24,8 +24,9 @@ public class ReloadSubCommand extends SubCommand {
         }
         Fadah.getINSTANCE().getConfigFile().load();
         Fadah.getINSTANCE().getLangFile().load();
-        Fadah.getINSTANCE().getMenusFile().load(); // TODO deprecate
+        Fadah.getINSTANCE().getMenusFile().load();
         Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.MAIN);
+        Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.NEW_LISTING);
         Fadah.getINSTANCE().getCategoriesFile().load();
         CategoryCache.update();
         Fadah.getINSTANCE().getDatabase().loadListings();

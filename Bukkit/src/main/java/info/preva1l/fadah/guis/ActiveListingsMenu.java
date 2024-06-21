@@ -69,6 +69,14 @@ public class ActiveListingsMenu extends PaginatedFastInv {
         }
     }
 
+    @Override
+    protected void updatePagination() {
+        this.listings.clear();
+        this.listings.addAll(ListingCache.getListings().values());
+        listings.removeIf(listing -> !listing.isOwner(owner.getUniqueId()));
+        super.updatePagination();
+    }
+
     private void addNavigationButtons() {
         setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e ->
                 new ProfileMenu(viewer, owner).open(viewer));

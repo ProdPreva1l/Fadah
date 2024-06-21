@@ -179,7 +179,8 @@ public class MongoDatabase implements Database {
                     .append("deletionDate", listing.getDeletionDate())
                     .append("price", listing.getPrice())
                     .append("tax", listing.getTax())
-                    .append("itemStack", ItemSerializer.serialize(listing.getItemStack()));
+                    .append("itemStack", ItemSerializer.serialize(listing.getItemStack()))
+                    .append("biddable", listing.isBiddable());
             collectionHelper.insertDocument("listings", document);
             return null;
         });
@@ -219,7 +220,8 @@ public class MongoDatabase implements Database {
                 final double price = doc.getDouble("price");
                 final double tax = doc.getDouble("tax");
                 final ItemStack itemStack = ItemSerializer.deserialize(doc.getString("itemStack"))[0];
-                list.add(new BukkitListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate));
+                final boolean biddable = doc.getBoolean("biddable");
+                list.add(new BukkitListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable));
             }
             return list;
         });
@@ -244,7 +246,8 @@ public class MongoDatabase implements Database {
             final double price = listingDocument.getDouble("price");
             final double tax = listingDocument.getDouble("tax");
             final ItemStack itemStack = ItemSerializer.deserialize(listingDocument.getString("itemStack"))[0];
-            return new BukkitListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate);
+            final boolean biddable = listingDocument.getBoolean("biddable");
+            return new BukkitListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable);
         });
     }
 

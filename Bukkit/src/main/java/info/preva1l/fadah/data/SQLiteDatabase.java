@@ -292,8 +292,8 @@ public class SQLiteDatabase implements Database {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `listings`
-                        (`uuid`,`ownerUUID`,`ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`)
-                        VALUES (?,?,?,?,?,?,?,?,?);""")) {
+                        (`uuid`,`ownerUUID`,`ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`)
+                        VALUES (?,?,?,?,?,?,?,?,?,?);""")) {
                     statement.setString(1, listing.getId().toString());
                     statement.setString(2, listing.getOwner().toString());
                     statement.setString(3, listing.getOwnerName());
@@ -303,6 +303,7 @@ public class SQLiteDatabase implements Database {
                     statement.setDouble(7, listing.getPrice());
                     statement.setDouble(8, listing.getTax());
                     statement.setString(9, ItemSerializer.serialize(listing.getItemStack()));
+                    statement.setBoolean(10, listing.isBiddable());
                     statement.execute();
                 }
             } catch (SQLException e) {
@@ -343,7 +344,7 @@ public class SQLiteDatabase implements Database {
             final List<Listing> retrievedData = Lists.newArrayList();
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT  `uuid`, `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`
+                        SELECT  `uuid`, `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`
                         FROM `listings`;""")) {
                     final ResultSet resultSet = statement.executeQuery();
                     while (resultSet.next()) {
@@ -356,7 +357,8 @@ public class SQLiteDatabase implements Database {
                         final double price = resultSet.getDouble("price");
                         final double tax = resultSet.getDouble("tax");
                         final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
-                        retrievedData.add(new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate));
+                        final boolean biddable = resultSet.getBoolean("biddable");
+                        retrievedData.add(new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable));
                     }
                     return retrievedData;
                 }
@@ -376,7 +378,7 @@ public class SQLiteDatabase implements Database {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT  `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`
+                        SELECT  `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`
                         FROM `listings`
                         WHERE `uuid`=?;""")) {
                     statement.setString(1, id.toString());
@@ -390,7 +392,8 @@ public class SQLiteDatabase implements Database {
                         final double price = resultSet.getDouble("price");
                         final double tax = resultSet.getDouble("tax");
                         final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
-                        return new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate);
+                        final boolean biddable = resultSet.getBoolean("biddable");
+                        return new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable);
                     }
                 }
             } catch (SQLException e) {

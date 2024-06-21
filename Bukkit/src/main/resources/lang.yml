@@ -52,6 +52,10 @@ sort:
     alphabetical: Sort Alphabetically By Name
     price: Sort By Listing Price
 
+modes:
+  buy-it-now: "BIN"
+  biddable: "Bidding"
+
 logging-actions:
   listing-start: Listing Started
   listing-purchased: Listing Purchased

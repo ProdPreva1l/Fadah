@@ -18,6 +18,21 @@ lang:
       - '&7Right Click to Remove 1 Hour'
       - '&7Shift Left Click to Add 30 Minutes'
       - '&7Shift Right Click to Remove 30 Minutes'
+  mode:
+    icon: HOPPER
+    model-data: 0
+    name: '&bAuction Mode'
+    lore:
+      - '&7Click To Toggle'
+      - '&8-------------------------'
+      - '{0}'
+      - '{1}'
+      - '&8-------------------------'
+    options:
+      selected: '&8> &e{0}'
+      not-selected: '&f{0}'
+
+size: 6
 
 layout:
   '0': "FILLER"

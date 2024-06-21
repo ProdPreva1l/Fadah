@@ -15,6 +15,7 @@ public record GuiLayout(
         @NotNull List<Integer> noItems,
         @NotNull HashMap<LayoutManager.ButtonType, Integer> buttonSlots,
         @NotNull String guiTitle,
+        int guiSize,
         @NotNull LanguageConfig language,
         @NotNull BasicConfig extraConfig
 ) {

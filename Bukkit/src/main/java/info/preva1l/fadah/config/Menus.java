@@ -20,7 +20,7 @@ public enum Menus {
             List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {1}.")),
     MAIN_FILTER_DIRECTION_NAME("filter.change-direction.name", "&eFilter Direction"), // remove later
 
-    SEARCH_TITLE("search.title", "&9&lAuction House &8> &fSearch"),
+    SEARCH_TITLE("search-title", "&9&lAuction House &8> &fSearch"),
 
     CONFIRM_TITLE("confirm.title", "&9&lAuction House &8> &aConfirm Purchase"),
     CONFIRM_BUTTON_ICON("confirm.confirm.icon", "LIME_CONCRETE"),

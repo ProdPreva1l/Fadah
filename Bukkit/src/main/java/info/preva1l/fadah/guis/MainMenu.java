@@ -36,7 +36,7 @@ public class MainMenu extends ScrollBarFastInv {
 
     public MainMenu(@Nullable Category category, @NotNull Player player, @Nullable String search,
                     @Nullable SortingMethod sortingMethod, @Nullable SortingDirection sortingDirection) {
-        super(54, LayoutManager.MenuType.MAIN.getLayout().guiTitle(), player, LayoutManager.MenuType.MAIN);
+        super(LayoutManager.MenuType.MAIN.getLayout().guiSize(), LayoutManager.MenuType.MAIN.getLayout().guiTitle(), player, LayoutManager.MenuType.MAIN);
         this.category = category;
         this.listings = new ArrayList<>(ListingCache.getListings().values());
 
@@ -55,7 +55,7 @@ public class MainMenu extends ScrollBarFastInv {
                     && !checkForStringInItem(search.toUpperCase(), listing.getItemStack())
                     && !checkForEnchantmentOnBook(search.toUpperCase(), listing.getItemStack()));
         }
-        /* new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 17, 19, 26, 28, 35, 37, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53} */
+
         List<Integer> fillerSlots = getLayout().fillerSlots();
         if (!fillerSlots.isEmpty()) {
             setItems(fillerSlots.stream().mapToInt(Integer::intValue).toArray(),
@@ -125,9 +125,15 @@ public class MainMenu extends ScrollBarFastInv {
     @Override
     protected void fillPaginationItems() {
         for (Listing listing : listings) {
+
+            String buyMode = listing.isBiddable()
+                    ? getLang().getStringFormatted("listing.lore-buy.bidding")
+                    : getLang().getStringFormatted("listing.lore-buy.buy-it-now");
+
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
-                    .addLore(getLang().getLore("listing.lore-body", listing.getOwnerName(), listing.getCategoryID(),
-                            new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()), TimeUtil.formatTimeUntil(listing.getDeletionDate())));
+                    .addLore(getLang().getLore("listing.lore-body",
+                            listing.getOwnerName(), listing.getCategoryID(), buyMode, new DecimalFormat(Config.DECIMAL_FORMAT.toString())
+                                    .format(listing.getPrice()), TimeUtil.formatTimeUntil(listing.getDeletionDate())));
 
             if (player.getUniqueId().equals(listing.getOwner())) {
                 itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.own-listing"));

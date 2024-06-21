@@ -15,7 +15,8 @@ public class LayoutManager {
     private final List<GuiLayout> guiLayouts = new ArrayList<>();
 
     public void loadLayout(BasicConfig config) {
-        final MenuType menuType = switch (config.getFileName()) {
+        String[] temp = config.getFileName().split("/");
+        final MenuType menuType = switch (temp[temp.length - 1]) {
             case "main.yml": yield MenuType.MAIN;
             case "new-listing.yml": yield MenuType.NEW_LISTING;
             case "profile.yml": yield MenuType.PROFILE;
@@ -37,28 +38,35 @@ public class LayoutManager {
 
         final ConfigurationSection superSection = config.getConfiguration().getConfigurationSection("lang");
         if (superSection == null) {
-            Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Missing the lang config section.");
+            Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Missing the lang config section.".formatted(menuType.toString()));
             return;
         }
         final LanguageConfig languageConfig = new LanguageConfig(superSection);
 
         final ConfigurationSection layoutSection = config.getConfiguration().getConfigurationSection("layout");
         if (layoutSection == null) {
-            Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Missing the layout config section.");
+            Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Missing the layout config section.".formatted(menuType.toString()));
             return;
         }
 
+        final int guiSize = config.getInt("size") * 9;
+
         for (String key : layoutSection.getKeys(false)) {
             int slotNumber = Integer.parseInt(key);
+            if (slotNumber > guiSize - 1) {
+                Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Slot: %s is out of bounds for gui size %s (%s)".formatted(menuType.toString(), slotNumber, guiSize, guiSize/9));
+                return;
+            }
+
             ButtonType buttonType;
-            String temp = layoutSection.getString(key);
-            if (temp == null || temp.isBlank()) {
+            String temp2 = layoutSection.getString(key);
+            if (temp2 == null || temp2.isBlank()) {
                 Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Slot: %s is an empty string?".formatted(menuType.toString(), slotNumber));
                 return;
             }
 
             try {
-                buttonType = ButtonType.valueOf(temp);
+                buttonType = ButtonType.valueOf(temp2);
             } catch (IllegalArgumentException e) {
                 Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Slot: %s Button Type %s does not exist!".formatted(menuType.toString(), slotNumber, temp));
                 return;
@@ -84,13 +92,13 @@ public class LayoutManager {
             buttonSlots.put(buttonType, slotNumber);
         }
 
-        guiLayouts.add(new GuiLayout(menuType, fillerSlots, paginationSlots, scrollbarSlots, noItems, buttonSlots, guiTitle, languageConfig, config));
+        guiLayouts.add(new GuiLayout(menuType, fillerSlots, paginationSlots, scrollbarSlots, noItems, buttonSlots, guiTitle, guiSize, languageConfig, config));
     }
 
     public void reloadLayout(MenuType menuType) {
         final String temp = menuType.getLayout().extraConfig().getFileName();
         guiLayouts.removeIf(mT -> mT.menuType().equals(menuType));
-        loadLayout(new BasicConfig(Fadah.getINSTANCE(), "menus/" + temp));
+        loadLayout(new BasicConfig(Fadah.getINSTANCE(), temp));
     }
 
     public @NotNull GuiLayout getLayout(MenuType menuType) {
@@ -152,6 +160,7 @@ public class LayoutManager {
         LISTING_START,
         LISTING_TIME,
         LISTING_ITEM,
+        LISTING_MODE,
         /**
          * Confirm Menu Specific Items
          */

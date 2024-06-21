@@ -10,6 +10,7 @@ import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.Listing;
+import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import info.preva1l.fadah.utils.helpers.TransactionLogger;
@@ -30,17 +31,13 @@ public class NewListingMenu extends FastInv {
     private ItemStack itemToSell;
     private Instant timeToDelete;
     private boolean listingStarted = false;
+    private boolean isBidding = false;
 
     public NewListingMenu(Player player, double price) {
-        super(54, LayoutManager.MenuType.NEW_LISTING.getLayout().guiTitle(), LayoutManager.MenuType.NEW_LISTING);
+        super(LayoutManager.MenuType.NEW_LISTING.getLayout().guiSize(), LayoutManager.MenuType.NEW_LISTING.getLayout().guiTitle(), LayoutManager.MenuType.NEW_LISTING);
         this.player = player;
         this.itemToSell = player.getInventory().getItemInMainHand().clone();
-        MultiLib.getEntityScheduler(player).execute(plugin,
-                () -> player.getInventory().setItemInMainHand(new ItemStack(Material.AIR)),
-                () -> this.itemToSell = new ItemStack(Material.AIR),
-                0L);
         this.timeToDelete = Instant.now().plus(6, ChronoUnit.HOURS);
-
         List<Integer> fillerSlots = getLayout().fillerSlots();
         if (!fillerSlots.isEmpty()) {
             setItems(fillerSlots.stream().mapToInt(Integer::intValue).toArray(),
@@ -50,7 +47,6 @@ public class NewListingMenu extends FastInv {
         List<String> createDefLore = List.of(
                 "&cClicking this button will immediately post",
                 "&cyour item on the auction house for &a${0}");
-
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_START, 30),
                 new ItemBuilder(getLang().getAsMaterial("create.icon", Material.EMERALD))
                         .name(getLang().getStringFormatted("create.name", "&aClick to create listing!"))
@@ -59,8 +55,13 @@ public class NewListingMenu extends FastInv {
                                 new DecimalFormat(Config.DECIMAL_FORMAT.toString())
                                         .format(price))).build(), e -> startListing(timeToDelete, price));
         setClock();
-
+        setModeButton();
         addNavigationButtons();
+
+        MultiLib.getEntityScheduler(player).execute(plugin,
+                () -> player.getInventory().setItemInMainHand(new ItemStack(Material.AIR)),
+                () -> this.itemToSell = new ItemStack(Material.AIR),
+                0L);
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ITEM, 22), itemToSell);
     }
 
@@ -112,6 +113,35 @@ public class NewListingMenu extends FastInv {
         });
     }
 
+    private void setModeButton() {
+        List<String> defModeLore = List.of(
+                "&7Click To Toggle",
+                "&8-------------------------",
+                "{0}",
+                "{1}",
+                "&8-------------------------"
+        );
+        String bidding = StringUtils.formatPlaceholders(isBidding
+                        ? getLang().getStringFormatted("mode.options.selected", "&8> &e{0}")
+                        : getLang().getStringFormatted("mode.options.not-selected", "&f{0}"),
+                Lang.MODE_BIDDING.toFormattedString());
+        String bin = StringUtils.formatPlaceholders(!isBidding
+                        ? getLang().getStringFormatted("mode.options.selected", "&8> &e{0}")
+                        : getLang().getStringFormatted("mode.options.not-selected", "&f{0}"),
+                Lang.MODE_BUY_IT_NOW.toFormattedString());
+
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE,31));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE,31),
+                new ItemBuilder(getLang().getAsMaterial("mode.icon", Material.HOPPER))
+                        .name(getLang().getStringFormatted("mode.name", "&bAuction Mode"))
+                        .modelData(getLang().getInt("mode.model-data"))
+                        .lore(getLang().getLore("mode.lore", defModeLore, bidding, bin)).build(), e -> {
+                    this.isBidding = !isBidding;
+                    setModeButton();
+                }
+        );
+    }
+
     private void startListing(Instant deletionDate, double price) {
         String category = CategoryCache.getCategoryForItem(itemToSell);
 
@@ -123,10 +153,10 @@ public class NewListingMenu extends FastInv {
         double tax = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
 
         Listing listing = new BukkitListing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
-                itemToSell, category, price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli());
+                itemToSell, category, price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli(), isBidding);
 
-        Fadah.getINSTANCE().getDatabase().addListing(listing);
-        if (Fadah.getINSTANCE().getCacheSync() != null) {
+        plugin.getDatabase().addListing(listing);
+        if (plugin.getCacheSync() != null) {
             CacheSync.send(listing.getId(), false);
         } else {
             ListingCache.addListing(listing);

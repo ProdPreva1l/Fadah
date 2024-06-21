@@ -3,7 +3,7 @@ repositories {
     maven { url 'https://oss.sonatype.org/content/groups/public/' }
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
     maven { url 'https://jitpack.io' }
-    maven { url 'https://repo.spaceio.xyz/repository/maven-public' }
+    maven { url 'https://repo.codemc.io/repository/maven-snapshots/' }
     maven { url "https://repo.clojars.org/" }
 }
 
@@ -40,7 +40,7 @@ dependencies {
 shadowJar {
     relocate 'com.zaxxer', 'info.preva1l.fadah.libs'
     relocate 'net.wesjd', 'info.preva1l.fadah.libs'
-    relocate 'com.github.puregero.multilib', 'info.preva1l.fadah.libs'
+    relocate 'com.github.puregero.multilib', 'info.preva1l.fadah.libs.multilib'
 
     archiveClassifier.set('')
     //minimize()

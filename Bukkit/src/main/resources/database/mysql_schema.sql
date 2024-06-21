@@ -28,7 +28,8 @@ CREATE TABLE IF NOT EXISTS listings (
     deletionDate BIGINT NOT NULL,
     price DOUBLE NOT NULL,
     tax DOUBLE NOT NULL,
-    itemStack TEXT NOT NULL
+    itemStack TEXT NOT NULL,
+    biddable INT(1) NOT NULL
 ) CHARACTER SET utf8
     COLLATE utf8_unicode_ci;
 

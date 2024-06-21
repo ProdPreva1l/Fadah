@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public abstract class PaginatedFastInv extends FastInv {
     protected final Player player;
 
@@ -27,7 +26,7 @@ public abstract class PaginatedFastInv extends FastInv {
                 31, 32, 33, 34, 38, 39, 40,
                 41, 42, 43);
 
-        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(), this::populatePage, 20L, 20L);
+        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(), this::updatePagination, 20L, 20L);
         InventoryEventHandler.tasksToQuit.put(getInventory(), task);
     }
 
@@ -36,7 +35,7 @@ public abstract class PaginatedFastInv extends FastInv {
         this.player = player;
         this.paginationMappings = paginationMappings;
 
-        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(), this::populatePage, 20L, 20L);
+        BukkitTask task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(Fadah.getINSTANCE(), this::updatePagination, 20L, 20L);
         InventoryEventHandler.tasksToQuit.put(getInventory(), task);
     }
 
@@ -62,19 +61,15 @@ public abstract class PaginatedFastInv extends FastInv {
         addPaginationControls();
     }
 
-    // I will refactor this later if need be but for now it is fine
     protected void populatePage() {
         int maxItemsPerPage = paginationMappings.size();
         boolean empty = paginatedItems == null || paginatedItems.isEmpty();
         for (int i = 0; i < maxItemsPerPage; i++) {
             removeItem(paginationMappings.get(i));
-
             if (empty) continue;
-
             index = maxItemsPerPage * page + i;
             if (index >= paginatedItems.size()) continue;
             PaginatedItem item = paginatedItems.get(index);
-
             setItem(paginationMappings.get(i), item.itemStack(), item.eventConsumer());
         }
         if (empty) {

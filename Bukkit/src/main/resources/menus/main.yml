@@ -7,10 +7,13 @@ lang:
       - '&fSeller: &e{0}'
       - '&fCategory: &e{1}'
       - '&r '
-      - '&fBuy Now: &6${2}'
+      - '&f{2}: &6${3}'
       - '&r '
-      - '&fExpires In: &e{3}'
+      - '&fExpires In: &e{4}'
       - '&8&n---------------------------'
+    lore-buy:
+      buy-it-now: "Buy Now"
+      bidding: "Current Bid"
     lore-footer:
       buy: '&aClick to buy now!'
       too-expensive: '&cYou cannot afford this item!'
@@ -73,6 +76,8 @@ lang:
       name: '&a&lScroll Categories Up'
       lore:
         - '&7Click to move the categories up'
+
+size: 6
 
 layout:
   '0': "SCROLLBAR_CONTROL_ONE"

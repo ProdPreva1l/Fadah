@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS listings (
     deletionDate INTEGER NOT NULL,
     price REAL NOT NULL,
     tax REAL NOT NULL,
-    itemStack TEXT NOT NULL
+    itemStack TEXT NOT NULL,
+    biddable INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS history (

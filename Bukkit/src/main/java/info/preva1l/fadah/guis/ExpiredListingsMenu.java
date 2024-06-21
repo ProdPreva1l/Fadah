@@ -8,6 +8,7 @@ import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.HistoricItem;
+import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.OfflinePlayer;
@@ -60,10 +61,15 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
                         viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
                         return;
                     }
+                    if (ExpiredListingsCache.doesItemExist(player.getUniqueId(), collectableItem)) {
+                        viewer.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+                        return;
+                    }
                     ExpiredListingsCache.removeItem(owner.getUniqueId(), collectableItem);
                     Fadah.getINSTANCE().getDatabase().removeFromExpiredItems(owner.getUniqueId(), collectableItem);
                     viewer.getInventory().setItem(slot, collectableItem.itemStack());
-                    new ExpiredListingsMenu(viewer, owner, 0).open(viewer);
+
+                    updatePagination();
 
                     // In game logs
                     boolean isAdmin = viewer.getUniqueId() != owner.getUniqueId();
@@ -87,6 +93,13 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
             setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e ->
                     new ExpiredListingsMenu(viewer, owner, page + 1).open(viewer));
         }
+    }
+
+    @Override
+    protected void updatePagination() {
+        this.expiredItems.clear();
+        this.expiredItems.addAll(ExpiredListingsCache.getExpiredListings(player.getUniqueId()));
+        super.updatePagination();
     }
 
     private void addNavigationButtons() {

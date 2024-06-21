@@ -3,11 +3,13 @@ package info.preva1l.fadah.guis;
 import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
+import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.HistoricItem;
+import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.OfflinePlayer;
@@ -49,7 +51,6 @@ public class CollectionBoxMenu extends PaginatedFastInv {
     @Override
     protected void fillPaginationItems() {
         for (CollectableItem collectableItem : collectionBox) {
-
             ItemBuilder itemBuilder = new ItemBuilder(collectableItem.itemStack().clone())
                     .lore(Menus.COLLECTION_BOX_LORE.toLore(TimeUtil.formatTimeSince(collectableItem.dateAdded())));
 
@@ -60,11 +61,15 @@ public class CollectionBoxMenu extends PaginatedFastInv {
                         viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
                         return;
                     }
+                    if (CollectionBoxCache.doesItemExist(player.getUniqueId(), collectableItem)) {
+                        viewer.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+                        return;
+                    }
                     CollectionBoxCache.removeItem(owner.getUniqueId(), collectableItem);
                     Fadah.getINSTANCE().getDatabase().removeFromCollectionBox(owner.getUniqueId(), collectableItem);
                     viewer.getInventory().setItem(slot, collectableItem.itemStack());
 
-                    new CollectionBoxMenu(viewer, owner).open(viewer);
+                    updatePagination();
 
                     // In game logs
                     boolean isAdmin = viewer.getUniqueId() != owner.getUniqueId();
@@ -89,6 +94,13 @@ public class CollectionBoxMenu extends PaginatedFastInv {
             setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e ->
                     new CollectionBoxMenu(viewer, owner).open(viewer));
         }
+    }
+
+    @Override
+    protected void updatePagination() {
+        this.collectionBox.clear();
+        this.collectionBox.addAll(ExpiredListingsCache.getExpiredListings(player.getUniqueId()));
+        super.updatePagination();
     }
 
     private void addNavigationButtons() {

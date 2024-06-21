@@ -23,9 +23,10 @@ import java.util.UUID;
 
 public class BukkitListing extends Listing {
 
-    public BukkitListing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName, @NotNull ItemStack itemStack,
-                         @NotNull String categoryID, double price, double tax, long creationDate, long deletionDate) {
-        super(id, owner, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate);
+    public BukkitListing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName,
+                         @NotNull ItemStack itemStack, @NotNull String categoryID, double price,
+                         double tax, long creationDate, long deletionDate, boolean biddable) {
+        super(id, owner, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable);
     }
 
     @Override

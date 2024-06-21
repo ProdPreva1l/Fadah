@@ -75,6 +75,9 @@ public enum Lang {
     SORT_ALPHABETICAL_NAME("sort.type.alphabetical", "Sort Alphabetically By Name"),
     SORT_PRICE_NAME("sort.type.price", "Sort By Listing Price"),
 
+    MODE_BUY_IT_NOW("modes.buy-it-now", "BIN"),
+    MODE_BIDDING("modes.biddable", "Bidding"),
+
     ACTIONS_LISTING_START("logging-actions.listing-start", "Listing Started"),
     ACTIONS_LISTING_PURCHASED("logging-actions.listing-purchased", "Listing Purchased"),
     ACTIONS_LISTING_SOLD("logging-actions.listing-sold", "Listing Sold"),
