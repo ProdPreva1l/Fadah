@@ -102,6 +102,7 @@ public class MainMenu extends ScrollBarFastInv {
             ItemBuilder itemBuilder = new ItemBuilder(cat.icon())
                     .name(StringUtils.colorize(cat.name()))
                     .addLore(StringUtils.colorizeList(cat.description()))
+                    .setAttributes(null)
                     .flags(ItemFlag.HIDE_ENCHANTS,
                             ItemFlag.HIDE_ATTRIBUTES,
                             ItemFlag.HIDE_UNBREAKABLE,
@@ -112,6 +113,7 @@ public class MainMenu extends ScrollBarFastInv {
             if (category == cat) {
                 itemBuilder.name(StringUtils.colorize(cat.name() + "&r " + Lang.CATEGORY_SELECTED.toFormattedString()))
                         .enchant(Enchantment.DURABILITY);
+                itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             }
 
             addScrollbarItem(new PaginatedItem(itemBuilder.build(), e -> {

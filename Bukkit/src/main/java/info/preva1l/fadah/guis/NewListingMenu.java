@@ -17,6 +17,7 @@ import info.preva1l.fadah.utils.logging.TransactionLogger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 
 import java.text.DecimalFormat;
@@ -54,7 +55,10 @@ public class NewListingMenu extends FastInv {
                         .modelData(getLang().getInt("create.model-data"))
                         .addLore(getLang().getLore("create.lore", createDefLore,
                                 new DecimalFormat(Config.DECIMAL_FORMAT.toString())
-                                        .format(price))).build(), e -> startListing(timeToDelete, price));
+                                        .format(price)))
+                        .setAttributes(null)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
+                        .build(), e -> startListing(timeToDelete, price));
         setClock();
         //setModeButton();
         addNavigationButtons();
@@ -84,6 +88,8 @@ public class NewListingMenu extends FastInv {
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 32),
                 new ItemBuilder(getLang().getAsMaterial("time.icon", Material.CLOCK))
                         .name(getLang().getStringFormatted("time.name", "&aTime for listing to be active"))
+                        .setAttributes(null)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .addLore(getLang().getLore("time.lore", timeDefLore, TimeUtil.formatTimeUntil(timeToDelete.toEpochMilli()))).build(), e -> {
             if (e.isRightClick()) {
                 if (e.isShiftClick()) {
@@ -137,6 +143,8 @@ public class NewListingMenu extends FastInv {
                 new ItemBuilder(getLang().getAsMaterial("mode.icon", Material.HOPPER))
                         .name(getLang().getStringFormatted("mode.name", "&bAuction Mode"))
                         .modelData(getLang().getInt("mode.model-data"))
+                        .setAttributes(null)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .lore(getLang().getLore("mode.lore", defModeLore, bidding, bin)).build(), e -> {
                     this.isBidding = !isBidding;
                     setModeButton();
