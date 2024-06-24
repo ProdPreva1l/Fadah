@@ -17,11 +17,15 @@ import info.preva1l.fadah.listeners.PlayerListener;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.Listing;
-import info.preva1l.fadah.utils.*;
+import info.preva1l.fadah.utils.Metrics;
+import info.preva1l.fadah.utils.StringUtils;
+import info.preva1l.fadah.utils.TaskManager;
 import info.preva1l.fadah.utils.commands.CommandManager;
+import info.preva1l.fadah.utils.config.BasicConfig;
 import info.preva1l.fadah.utils.guis.FastInvManager;
 import info.preva1l.fadah.utils.guis.LayoutManager;
-import info.preva1l.fadah.utils.helpers.TransactionLogger;
+import info.preva1l.fadah.utils.logging.TransactionLogFormatter;
+import info.preva1l.fadah.utils.logging.TransactionLogger;
 import lombok.Getter;
 import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
@@ -38,7 +42,7 @@ import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
-// TODO Biddable Auctions
+// TODO Biddable Auctions (On Hold until 2.1.0)
 // TODO Custom Inventory Layouts (In progress)
 // TODO Purchasable listing adverts
 // TODO Allow listing adverts to send automatically everytime a new listing is made

@@ -13,7 +13,7 @@ import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
-import info.preva1l.fadah.utils.helpers.TransactionLogger;
+import info.preva1l.fadah.utils.logging.TransactionLogger;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;

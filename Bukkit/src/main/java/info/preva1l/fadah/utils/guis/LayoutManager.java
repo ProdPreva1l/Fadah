@@ -1,9 +1,9 @@
 package info.preva1l.fadah.utils.guis;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.utils.BasicConfig;
-import info.preva1l.fadah.utils.LanguageConfig;
 import info.preva1l.fadah.utils.StringUtils;
+import info.preva1l.fadah.utils.config.BasicConfig;
+import info.preva1l.fadah.utils.config.LanguageConfig;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 

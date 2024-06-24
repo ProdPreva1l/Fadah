@@ -1,10 +1,10 @@
 package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.config.Menus;
+import info.preva1l.fadah.filters.SortingDirection;
+import info.preva1l.fadah.filters.SortingMethod;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
-import info.preva1l.fadah.utils.filters.SortingDirection;
-import info.preva1l.fadah.utils.filters.SortingMethod;
 import info.preva1l.fadah.utils.guis.FastInv;
 import info.preva1l.fadah.utils.guis.GuiButtonType;
 import info.preva1l.fadah.utils.guis.GuiHelper;

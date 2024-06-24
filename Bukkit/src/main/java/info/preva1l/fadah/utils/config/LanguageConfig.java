@@ -1,6 +1,7 @@
-package info.preva1l.fadah.utils;
+package info.preva1l.fadah.utils.config;
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.utils.StringUtils;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;

@@ -1,4 +1,4 @@
-package info.preva1l.fadah.utils.helpers;
+package info.preva1l.fadah.utils.logging;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.HistoricItemsCache;

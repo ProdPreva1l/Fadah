@@ -1,4 +1,4 @@
-package info.preva1l.fadah.utils.filters;
+package info.preva1l.fadah.filters;
 
 import info.preva1l.fadah.config.Lang;
 import lombok.AllArgsConstructor;

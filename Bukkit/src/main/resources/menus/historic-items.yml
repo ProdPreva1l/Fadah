@@ -37,7 +37,7 @@ lang:
     - '&8&n---------------------------'
   search:
     icon: OAK_SIGN
-    model_data: 0
+    model-data: 0
     placeholder: 'Ex: 21/04/2024 22:26'
     name: '&eSearch Date'
     lore:

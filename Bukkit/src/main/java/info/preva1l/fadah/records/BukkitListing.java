@@ -8,7 +8,7 @@ import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.utils.StringUtils;
-import info.preva1l.fadah.utils.helpers.TransactionLogger;
+import info.preva1l.fadah.utils.logging.TransactionLogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;

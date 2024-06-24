@@ -1,6 +1,7 @@
 package info.preva1l.fadah.utils.guis;
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.config.Menus;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
@@ -84,7 +85,16 @@ public abstract class PaginatedFastInv extends FastInv {
         addPaginationControls();
     }
 
-    protected abstract void paginationEmpty();
+    protected void paginationEmpty() {
+        List<Integer> noItems = getLayout().noItems();
+        if (!noItems.isEmpty()) {
+            setItems(noItems.stream().mapToInt(Integer::intValue).toArray(),
+                    new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
+                            .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString())
+                            .modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger())
+                            .lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
+        }
+    }
 
     protected abstract void fillPaginationItems();
 

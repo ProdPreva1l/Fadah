@@ -3,8 +3,8 @@ package info.preva1l.fadah.config;
 
 import com.google.common.collect.ImmutableList;
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.utils.BasicConfig;
 import info.preva1l.fadah.utils.StringUtils;
+import info.preva1l.fadah.utils.config.BasicConfig;
 import lombok.AllArgsConstructor;
 import org.bukkit.Material;
 
@@ -82,46 +82,6 @@ public enum Menus {
             "&8&n---------------------------"
     )),
 
-    HISTORIC_ITEMS_TITLE("historic-items.title", "&9&lAuction House &8> &c{0} History"),
-    HISTORIC_ITEMS_LORE("historic-items.lore", List.of(
-            "&8&n---------------------------",
-            "&fAction: &e{0}",
-            "&r ",
-            "&fDate: &e{1}",
-            "&8&n---------------------------"
-    )),
-    HISTORIC_ITEMS_WITH_PRICE_LORE("historic-items.lore-with-price", List.of(
-            "&8&n---------------------------",
-            "&fAction: &e{0}",
-            "&r ",
-            "&fPrice: &6${1}",
-            "&r ",
-            "&fDate: &e{2}",
-            "&8&n---------------------------"
-    )),
-    HISTORIC_ITEMS_WITH_BUYER_LORE("historic-items.lore-with-buyer", List.of(
-            "&8&n---------------------------",
-            "&fAction: &e{0}",
-            "&r ",
-            "&fBuyer: &3{1}",
-            "&r",
-            "&fPrice: &6${2}",
-            "&r ",
-            "&fDate: &e{3}",
-            "&8&n---------------------------"
-    )),
-    HISTORIC_ITEMS_WITH_SELLER_LORE("historic-items.lore-with-seller", List.of(
-            "&8&n---------------------------",
-            "&fAction: &e{0}",
-            "&r ",
-            "&fSeller: &3{1}",
-            "&r",
-            "&fPrice: &6${2}",
-            "&r ",
-            "&fDate: &e{3}",
-            "&8&n---------------------------"
-    )),
-    HISTORY_SEARCH_ICON("historic-items.search.icon", "OAK_SIGN"),
     HISTORY_SEARCH_MODEL_DATA("historic-items.search.model_data", 0),
     HISTORY_SEARCH_PLACEHOLDER("historic-items.search.placeholder", "Ex: 21/04/2024 22:26"),
     HISTORY_SEARCH_NAME("historic-items.search.name", "&eSearch Date"),

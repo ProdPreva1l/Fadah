@@ -1,7 +1,8 @@
 package info.preva1l.fadah.utils.guis;
 
-import info.preva1l.fadah.utils.BasicConfig;
-import info.preva1l.fadah.utils.LanguageConfig;
+import info.preva1l.fadah.utils.StringUtils;
+import info.preva1l.fadah.utils.config.BasicConfig;
+import info.preva1l.fadah.utils.config.LanguageConfig;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -19,4 +20,7 @@ public record GuiLayout(
         @NotNull LanguageConfig language,
         @NotNull BasicConfig extraConfig
 ) {
+    public String formattedTitle(Object... args) {
+        return StringUtils.formatPlaceholders(guiTitle, args);
+    }
 }

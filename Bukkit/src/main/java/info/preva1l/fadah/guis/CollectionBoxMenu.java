@@ -41,14 +41,6 @@ public class CollectionBoxMenu extends PaginatedFastInv {
     }
 
     @Override
-    protected void paginationEmpty() {
-        setItem(22, new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
-                .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString()).modelData(
-                        Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger()).lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build()
-        );
-    }
-
-    @Override
     protected void fillPaginationItems() {
         for (CollectableItem collectableItem : collectionBox) {
             ItemBuilder itemBuilder = new ItemBuilder(collectableItem.itemStack().clone())
@@ -86,13 +78,18 @@ public class CollectionBoxMenu extends PaginatedFastInv {
 
     @Override
     protected void addPaginationControls() {
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+                GuiHelper.constructButton(GuiButtonType.BORDER));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+                GuiHelper.constructButton(GuiButtonType.BORDER));
         if (page > 0) {
-            setItem(39, GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e ->
-                    new CollectionBoxMenu(viewer, owner).open(viewer));
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+                    GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> previousPage());
         }
+
         if (collectionBox != null && collectionBox.size() >= index + 1) {
-            setItem(41, GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e ->
-                    new CollectionBoxMenu(viewer, owner).open(viewer));
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+                    GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> nextPage());
         }
     }
 

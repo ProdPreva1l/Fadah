@@ -2,7 +2,7 @@ package info.preva1l.fadah.utils.guis;
 
 import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.utils.LanguageConfig;
+import info.preva1l.fadah.utils.config.LanguageConfig;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;

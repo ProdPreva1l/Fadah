@@ -5,13 +5,12 @@ import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.config.Menus;
+import info.preva1l.fadah.filters.SortingDirection;
+import info.preva1l.fadah.filters.SortingMethod;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
-import info.preva1l.fadah.utils.filters.SortingDirection;
-import info.preva1l.fadah.utils.filters.SortingMethod;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
@@ -301,17 +300,5 @@ public class MainMenu extends ScrollBarFastInv {
         }
 
         super.updatePagination();
-    }
-
-    @Override
-    protected void paginationEmpty() {
-        List<Integer> noItems = getLayout().noItems();
-        if (!noItems.isEmpty()) {
-            setItems(noItems.stream().mapToInt(Integer::intValue).toArray(),
-                    new ItemBuilder(Menus.NO_ITEM_FOUND_ICON.toMaterial())
-                            .name(Menus.NO_ITEM_FOUND_NAME.toFormattedString())
-                            .modelData(Menus.NO_ITEM_FOUND_MODEL_DATA.toInteger())
-                            .lore(Menus.NO_ITEM_FOUND_LORE.toLore()).build());
-        }
     }
 }

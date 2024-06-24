@@ -1,4 +1,4 @@
-package info.preva1l.fadah.utils;
+package info.preva1l.fadah.utils.config;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -3,8 +3,8 @@ package info.preva1l.fadah.config;
 import com.google.common.collect.ImmutableList;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.data.DatabaseType;
-import info.preva1l.fadah.utils.BasicConfig;
 import info.preva1l.fadah.utils.StringUtils;
+import info.preva1l.fadah.utils.config.BasicConfig;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

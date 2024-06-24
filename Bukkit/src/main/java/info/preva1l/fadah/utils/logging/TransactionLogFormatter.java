@@ -1,4 +1,6 @@
-package info.preva1l.fadah.utils;
+package info.preva1l.fadah.utils.logging;
+
+import info.preva1l.fadah.utils.StringUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
