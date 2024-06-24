@@ -83,7 +83,7 @@ public class LanguageConfig {
     public @NotNull String getStringFormatted(String path, String def, Object... replacements) {
         String f = superSection.getString(path);
         if (f == null || f.equals(path)) {
-            throw new RuntimeException("No value at path %s".formatted(path));
+            return def;
         }
         return StringUtils.colorize(StringUtils.formatPlaceholders(f, replacements));
     }

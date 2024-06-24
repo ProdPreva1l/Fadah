@@ -1,7 +1,7 @@
 repositories {
     maven { url "https://repo.auxilor.io/repository/maven-public/" }
     maven { url 'https://oss.sonatype.org/content/groups/public/' }
-    maven { url 'https://repo.papermc.io/repository/maven-public/' }
+    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url 'https://jitpack.io' }
     maven { url 'https://repo.codemc.io/repository/maven-snapshots/' }
     maven { url "https://repo.clojars.org/" }
@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     implementation project(":API")
-    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
 
     implementation "com.github.puregero:multilib:1.2.1" // Folia & ShreddedPaper Support
 

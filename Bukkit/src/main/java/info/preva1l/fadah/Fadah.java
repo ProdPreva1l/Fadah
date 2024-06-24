@@ -28,7 +28,6 @@ import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -125,7 +124,7 @@ public final class Fadah extends JavaPlugin {
     public void onDisable() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             MultiLib.getEntityScheduler(player).execute(this,
-                    () -> player.closeInventory(InventoryCloseEvent.Reason.UNLOADED),
+                    player::closeInventory,
                     () -> getConsole().severe("Failed to close %s's inventory (Entity Not Found)"),
                     0L);
         }
@@ -227,7 +226,7 @@ public final class Fadah extends JavaPlugin {
         getConsole().info("Configuring Hooks...");
 
         if (Config.HOOK_ECO_ITEMS.toBoolean()) {
-            new EcoItemsHook();
+            getHookManager().registerHook(new EcoItemsHook());
         }
 
         getConsole().info("Hooked into %s plugins!".formatted(getHookManager().hookCount()));

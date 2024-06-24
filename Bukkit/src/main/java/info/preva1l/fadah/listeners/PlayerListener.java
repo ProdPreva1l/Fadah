@@ -16,7 +16,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 public class PlayerListener implements Listener {
     @EventHandler
-    @SuppressWarnings("deprecation")
     public void joinListener(AsyncPlayerPreLoginEvent e) {
         if (!Fadah.getINSTANCE().getDatabase().isConnected()) {
             e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);

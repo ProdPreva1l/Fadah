@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -19,10 +20,11 @@ public abstract class Listing {
     final long creationDate;
     final long deletionDate;
     final boolean biddable;
+    final List<Bid> bids;
 
     protected Listing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName,
                       @NotNull ItemStack itemStack, @NotNull String categoryID, double price,
-                      double tax, long creationDate, long deletionDate, boolean biddable) {
+                      double tax, long creationDate, long deletionDate, boolean biddable, List<Bid> bids) {
         this.id = id;
         this.owner = owner;
         this.ownerName = ownerName;
@@ -33,6 +35,20 @@ public abstract class Listing {
         this.creationDate = creationDate;
         this.deletionDate = deletionDate;
         this.biddable = biddable;
+        this.bids = bids;
+    }
+
+    /**
+     * Add a new bid
+     * @param bidder the person bidding
+     * @param bidAmount the amount of the bid
+     * @return true if the bid was successful, false if the bid is not high enough
+     */
+    public boolean newBid(@NotNull Player bidder, double bidAmount) {
+        if (!biddable) throw new IllegalStateException("Tried to add a new bid to a BIN auction!");
+        if (bidAmount <= price) return false;
+        // TODO: implement
+        return false;
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

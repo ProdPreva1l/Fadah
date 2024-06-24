@@ -10,6 +10,7 @@ public class HookManager {
     private final List<Hook> registeredHooks = new ArrayList<>();
 
     public void registerHook(Hook hook) {
+        hook.enable();
         registeredHooks.add(hook);
     }
 

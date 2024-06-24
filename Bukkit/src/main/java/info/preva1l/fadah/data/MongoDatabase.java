@@ -4,11 +4,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.api.BukkitListing;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.records.CollectableItem;
-import info.preva1l.fadah.records.HistoricItem;
-import info.preva1l.fadah.records.Listing;
+import info.preva1l.fadah.records.*;
 import info.preva1l.fadah.utils.ItemSerializer;
 import info.preva1l.fadah.utils.mongo.CacheHandler;
 import info.preva1l.fadah.utils.mongo.CollectionHelper;
@@ -180,7 +177,8 @@ public class MongoDatabase implements Database {
                     .append("price", listing.getPrice())
                     .append("tax", listing.getTax())
                     .append("itemStack", ItemSerializer.serialize(listing.getItemStack()))
-                    .append("biddable", listing.isBiddable());
+                    .append("biddable", listing.isBiddable())
+                    .append("bids", gson.toJson(listing.getBids()));
             collectionHelper.insertDocument("listings", document);
             return null;
         });
@@ -221,7 +219,8 @@ public class MongoDatabase implements Database {
                 final double tax = doc.getDouble("tax");
                 final ItemStack itemStack = ItemSerializer.deserialize(doc.getString("itemStack"))[0];
                 final boolean biddable = doc.getBoolean("biddable");
-                list.add(new BukkitListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable));
+                final List<Bid> bids = gson.fromJson(doc.getString("bids"), bidsType);
+                list.add(new BukkitListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable, bids));
             }
             return list;
         });
@@ -236,18 +235,19 @@ public class MongoDatabase implements Database {
         }
         return CompletableFuture.supplyAsync(() -> {
             MongoCollection<Document> collection = collectionHelper.getCollection("listings");
-            final Document listingDocument = collection.find().filter(Filters.eq("uuid", id)).first();
-            if (listingDocument == null) return null;
-            final UUID owner = listingDocument.get("ownerUUID", UUID.class);
-            final String ownerName = listingDocument.getString("ownerName");
-            final String category = listingDocument.getString("category");
-            final long creationDate = listingDocument.getLong("creationDate");
-            final long deletionDate = listingDocument.getLong("deletionDate");
-            final double price = listingDocument.getDouble("price");
-            final double tax = listingDocument.getDouble("tax");
-            final ItemStack itemStack = ItemSerializer.deserialize(listingDocument.getString("itemStack"))[0];
-            final boolean biddable = listingDocument.getBoolean("biddable");
-            return new BukkitListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable);
+            final Document doc = collection.find().filter(Filters.eq("uuid", id)).first();
+            if (doc == null) return null;
+            final UUID owner = doc.get("ownerUUID", UUID.class);
+            final String ownerName = doc.getString("ownerName");
+            final String category = doc.getString("category");
+            final long creationDate = doc.getLong("creationDate");
+            final long deletionDate = doc.getLong("deletionDate");
+            final double price = doc.getDouble("price");
+            final double tax = doc.getDouble("tax");
+            final ItemStack itemStack = ItemSerializer.deserialize(doc.getString("itemStack"))[0];
+            final boolean biddable = doc.getBoolean("biddable");
+            final List<Bid> bids = gson.fromJson(doc.getString("bids"), bidsType);
+            return new BukkitListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable, bids);
         });
     }
 

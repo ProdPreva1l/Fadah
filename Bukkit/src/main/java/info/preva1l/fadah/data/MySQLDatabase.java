@@ -3,11 +3,8 @@ package info.preva1l.fadah.data;
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.api.BukkitListing;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.records.CollectableItem;
-import info.preva1l.fadah.records.HistoricItem;
-import info.preva1l.fadah.records.Listing;
+import info.preva1l.fadah.records.*;
 import info.preva1l.fadah.utils.ItemSerializer;
 import lombok.Getter;
 import lombok.Setter;
@@ -275,8 +272,8 @@ public class MySQLDatabase implements Database {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `listings`
-                        (`uuid`,`ownerUUID`,`ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`)
-                        VALUES (?,?,?,?,?,?,?,?,?,?);""")) {
+                        (`uuid`,`ownerUUID`,`ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`, `bids`)
+                        VALUES (?,?,?,?,?,?,?,?,?,?,?);""")) {
                     statement.setString(1, listing.getId().toString());
                     statement.setString(2, listing.getOwner().toString());
                     statement.setString(3, listing.getOwnerName());
@@ -287,6 +284,7 @@ public class MySQLDatabase implements Database {
                     statement.setDouble(8, listing.getTax());
                     statement.setString(9, ItemSerializer.serialize(listing.getItemStack()));
                     statement.setBoolean(10, listing.isBiddable());
+                    statement.setString(11, gson.toJson(listing.getBids()));
                     statement.executeUpdate();
                 }
             } catch (SQLException e) {
@@ -328,7 +326,7 @@ public class MySQLDatabase implements Database {
             final List<Listing> retrievedData = Lists.newArrayList();
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT `uuid`, `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`
+                        SELECT `uuid`, `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`, `bids`
                         FROM `listings`;""")) {
                     final ResultSet resultSet = statement.executeQuery();
                     while (resultSet.next()) {
@@ -342,7 +340,8 @@ public class MySQLDatabase implements Database {
                         final double tax = resultSet.getDouble("tax");
                         final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
                         final boolean biddable = resultSet.getBoolean("biddable");
-                        retrievedData.add(new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable));
+                        final List<Bid> bids = gson.fromJson(resultSet.getString("bids"), bidsType);
+                        retrievedData.add(new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids));
                     }
                     return retrievedData;
                 }
@@ -362,7 +361,7 @@ public class MySQLDatabase implements Database {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`
+                        SELECT `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`, `bids`
                         FROM `listings`
                         WHERE `uuid`=?;"""
                 )) {
@@ -378,7 +377,8 @@ public class MySQLDatabase implements Database {
                         final double tax = resultSet.getDouble("tax");
                         final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
                         final boolean biddable = resultSet.getBoolean("biddable");
-                        return new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable);
+                        final List<Bid> bids = gson.fromJson(resultSet.getString("bids"), bidsType);
+                        return new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids);
                     }
                 }
             } catch (SQLException e) {

@@ -2,13 +2,13 @@ package info.preva1l.fadah.guis;
 
 import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.api.BukkitListing;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.multiserver.CacheSync;
+import info.preva1l.fadah.records.BukkitListing;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import java.text.DecimalFormat;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -55,7 +56,7 @@ public class NewListingMenu extends FastInv {
                                 new DecimalFormat(Config.DECIMAL_FORMAT.toString())
                                         .format(price))).build(), e -> startListing(timeToDelete, price));
         setClock();
-        setModeButton();
+        //setModeButton();
         addNavigationButtons();
 
         MultiLib.getEntityScheduler(player).execute(plugin,
@@ -113,6 +114,7 @@ public class NewListingMenu extends FastInv {
         });
     }
 
+    // Not Used (For future bidding update)
     private void setModeButton() {
         List<String> defModeLore = List.of(
                 "&7Click To Toggle",
@@ -153,7 +155,7 @@ public class NewListingMenu extends FastInv {
         double tax = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
 
         Listing listing = new BukkitListing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
-                itemToSell, category, price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli(), isBidding);
+                itemToSell, category, price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli(), isBidding, Collections.emptyList());
 
         plugin.getDatabase().addListing(listing);
         if (plugin.getCacheSync() != null) {

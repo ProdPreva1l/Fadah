@@ -13,7 +13,7 @@ import org.bukkit.OfflinePlayer;
 import java.util.List;
 import java.util.UUID;
 
-public class BukkitAuctionHouseAPI extends AuctionHouseAPI {
+public final class BukkitAuctionHouseAPI extends AuctionHouseAPI {
     @Override
     public NamespacedKey getCustomItemNameSpacedKey() {
         return Fadah.getCustomItemKey();

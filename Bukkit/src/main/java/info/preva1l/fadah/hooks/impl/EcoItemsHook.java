@@ -12,11 +12,6 @@ import org.bukkit.inventory.ItemStack;
 public class EcoItemsHook implements Hook {
     private boolean enabled = false;
 
-    @Override
-    public void enable() {
-        setEnabled(true);
-    }
-
     public boolean isEcoItem(ItemStack item) {
         for (EcoItem ecoItem : EcoItems.INSTANCE.values()) {
             if (item.getItemMeta().getPersistentDataContainer().getKeys().contains(ecoItem.getId())) return true;

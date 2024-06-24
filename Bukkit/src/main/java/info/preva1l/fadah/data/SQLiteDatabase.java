@@ -4,11 +4,8 @@ import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.api.BukkitListing;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.records.CollectableItem;
-import info.preva1l.fadah.records.HistoricItem;
-import info.preva1l.fadah.records.Listing;
+import info.preva1l.fadah.records.*;
 import info.preva1l.fadah.utils.ItemSerializer;
 import lombok.Getter;
 import lombok.Setter;
@@ -292,8 +289,8 @@ public class SQLiteDatabase implements Database {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `listings`
-                        (`uuid`,`ownerUUID`,`ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`)
-                        VALUES (?,?,?,?,?,?,?,?,?,?);""")) {
+                        (`uuid`,`ownerUUID`,`ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`, `bids`)
+                        VALUES (?,?,?,?,?,?,?,?,?,?,?);""")) {
                     statement.setString(1, listing.getId().toString());
                     statement.setString(2, listing.getOwner().toString());
                     statement.setString(3, listing.getOwnerName());
@@ -302,8 +299,9 @@ public class SQLiteDatabase implements Database {
                     statement.setLong(6, listing.getDeletionDate());
                     statement.setDouble(7, listing.getPrice());
                     statement.setDouble(8, listing.getTax());
-                    statement.setString(9, ItemSerializer.serialize(listing.getItemStack()));
+                    statement.setString(9, gson.toJson(listing.getItemStack()));
                     statement.setBoolean(10, listing.isBiddable());
+                    statement.setString(11, gson.toJson(listing.getBids()));
                     statement.execute();
                 }
             } catch (SQLException e) {
@@ -344,7 +342,7 @@ public class SQLiteDatabase implements Database {
             final List<Listing> retrievedData = Lists.newArrayList();
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT  `uuid`, `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`
+                        SELECT  `uuid`, `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`, `bids`
                         FROM `listings`;""")) {
                     final ResultSet resultSet = statement.executeQuery();
                     while (resultSet.next()) {
@@ -356,9 +354,10 @@ public class SQLiteDatabase implements Database {
                         final long deletionDate = resultSet.getLong("deletionDate");
                         final double price = resultSet.getDouble("price");
                         final double tax = resultSet.getDouble("tax");
-                        final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
+                        final ItemStack itemStack = gson.fromJson(resultSet.getString("itemStack"), ItemStack.class);
                         final boolean biddable = resultSet.getBoolean("biddable");
-                        retrievedData.add(new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable));
+                        final List<Bid> bids = gson.fromJson(resultSet.getString("bids"), bidsType);
+                        retrievedData.add(new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids));
                     }
                     return retrievedData;
                 }
@@ -378,7 +377,7 @@ public class SQLiteDatabase implements Database {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT  `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`
+                        SELECT  `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`, `bids`
                         FROM `listings`
                         WHERE `uuid`=?;""")) {
                     statement.setString(1, id.toString());
@@ -391,9 +390,10 @@ public class SQLiteDatabase implements Database {
                         final long deletionDate = resultSet.getLong("deletionDate");
                         final double price = resultSet.getDouble("price");
                         final double tax = resultSet.getDouble("tax");
-                        final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
+                        final ItemStack itemStack = gson.fromJson(resultSet.getString("itemStack"), ItemStack.class);
                         final boolean biddable = resultSet.getBoolean("biddable");
-                        return new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable);
+                        final List<Bid> bids = gson.fromJson(resultSet.getString("bids"), bidsType);
+                        return new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids);
                     }
                 }
             } catch (SQLException e) {

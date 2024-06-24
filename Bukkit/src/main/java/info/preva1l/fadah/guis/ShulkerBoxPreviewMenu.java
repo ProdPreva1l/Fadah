@@ -19,7 +19,7 @@ public class ShulkerBoxPreviewMenu extends FastInv {
                                  @Nullable SortingMethod sortingMethod,
                                  @Nullable SortingDirection sortingDirection) {
         super(36, listing.getItemStack().getItemMeta().getDisplayName().isBlank()
-                ? listing.getItemStack().getI18NDisplayName()
+                ? listing.getItemStack().getItemMeta().getLocalizedName()
                 : listing.getItemStack().getItemMeta().getDisplayName(), LayoutManager.MenuType.SHULKER_PREVIEW);
         if (listing.getItemStack().getItemMeta() instanceof BlockStateMeta im) {
             if (im.getBlockState() instanceof ShulkerBox shulker) {

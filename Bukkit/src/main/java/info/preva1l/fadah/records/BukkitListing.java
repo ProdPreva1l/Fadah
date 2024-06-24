@@ -1,4 +1,4 @@
-package info.preva1l.fadah.api;
+package info.preva1l.fadah.records;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
@@ -7,8 +7,6 @@ import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.multiserver.CacheSync;
-import info.preva1l.fadah.records.CollectableItem;
-import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.helpers.TransactionLogger;
 import net.milkbowl.vault.economy.Economy;
@@ -19,14 +17,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.text.DecimalFormat;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 public class BukkitListing extends Listing {
 
     public BukkitListing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName,
                          @NotNull ItemStack itemStack, @NotNull String categoryID, double price,
-                         double tax, long creationDate, long deletionDate, boolean biddable) {
-        super(id, owner, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable);
+                         double tax, long creationDate, long deletionDate, boolean biddable, List<Bid> bids) {
+        super(id, owner, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids);
     }
 
     @Override

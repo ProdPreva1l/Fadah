@@ -52,7 +52,7 @@ sort:
     alphabetical: Sort Alphabetically By Name
     price: Sort By Listing Price
 
-modes:
+modes: # Future Feature
   buy-it-now: "BIN"
   biddable: "Bidding"
 
