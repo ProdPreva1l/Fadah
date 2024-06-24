@@ -6,6 +6,7 @@ import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 
 public class ProfileMenu extends FastInv {
@@ -34,6 +35,8 @@ public class ProfileMenu extends FastInv {
         setItem(22, new ItemBuilder(Menus.PROFILE_YOUR_LISTINGS_ICON.toMaterial())
                 .name(Menus.PROFILE_YOUR_LISTINGS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
                 .modelData(Menus.PROFILE_YOUR_LISTINGS_MODEL_DATA.toInteger())
+                .setAttributes(null)
+                .flags(ItemFlag.HIDE_ATTRIBUTES)
                 .addLore(Menus.PROFILE_YOUR_LISTINGS_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
             if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.active-listings"))
                     || viewer.getUniqueId() == owner.getUniqueId()) {
@@ -44,6 +47,8 @@ public class ProfileMenu extends FastInv {
         setItem(23, new ItemBuilder(Menus.PROFILE_COLLECTION_BOX_ICON.toMaterial())
                 .name(Menus.PROFILE_COLLECTION_BOX_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
                 .modelData(Menus.PROFILE_COLLECTION_BOX_MODEL_DATA.toInteger())
+                .setAttributes(null)
+                .flags(ItemFlag.HIDE_ATTRIBUTES)
                 .addLore(Menus.PROFILE_COLLECTION_BOX_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
             if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.collection-box"))
                     || viewer.getUniqueId() == owner.getUniqueId()) {
@@ -54,6 +59,8 @@ public class ProfileMenu extends FastInv {
         setItem(24, new ItemBuilder(Menus.PROFILE_EXPIRED_LISTINGS_ICON.toMaterial())
                 .name(Menus.PROFILE_EXPIRED_LISTINGS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
                 .modelData(Menus.PROFILE_EXPIRED_LISTINGS_MODEL_DATA.toInteger())
+                .setAttributes(null)
+                .flags(ItemFlag.HIDE_ATTRIBUTES)
                 .addLore(Menus.PROFILE_EXPIRED_LISTINGS_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
             if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.expired-listings"))
                     || viewer.getUniqueId() == owner.getUniqueId()) {
@@ -64,6 +71,8 @@ public class ProfileMenu extends FastInv {
         setItem(31, new ItemBuilder(Menus.PROFILE_HISTORIC_ITEMS_ICON.toMaterial())
                 .name(Menus.PROFILE_HISTORIC_ITEMS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
                 .modelData(Menus.PROFILE_HISTORIC_ITEMS_MODEL_DATA.toInteger())
+                .setAttributes(null)
+                .flags(ItemFlag.HIDE_ATTRIBUTES)
                 .addLore(Menus.PROFILE_HISTORIC_ITEMS_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
             if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.history"))
                     || viewer.getUniqueId() == owner.getUniqueId()) {
