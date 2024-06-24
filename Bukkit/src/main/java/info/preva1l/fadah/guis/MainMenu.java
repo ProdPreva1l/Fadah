@@ -102,7 +102,13 @@ public class MainMenu extends ScrollBarFastInv {
             ItemBuilder itemBuilder = new ItemBuilder(cat.icon())
                     .name(StringUtils.colorize(cat.name()))
                     .addLore(StringUtils.colorizeList(cat.description()))
-                    .flags(ItemFlag.HIDE_ENCHANTS);
+                    .flags(ItemFlag.HIDE_ENCHANTS,
+                            ItemFlag.HIDE_ATTRIBUTES,
+                            ItemFlag.HIDE_UNBREAKABLE,
+                            ItemFlag.HIDE_DESTROYS,
+                            ItemFlag.HIDE_PLACED_ON,
+                            ItemFlag.HIDE_DYE,
+                            ItemFlag.HIDE_POTION_EFFECTS);
             if (category == cat) {
                 itemBuilder.name(StringUtils.colorize(cat.name() + "&r " + Lang.CATEGORY_SELECTED.toFormattedString()))
                         .enchant(Enchantment.DURABILITY);
