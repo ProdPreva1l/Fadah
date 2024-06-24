@@ -114,7 +114,7 @@ public class MainMenu extends ScrollBarFastInv {
                 itemBuilder.name(StringUtils.colorize(cat.name() + "&r " + Lang.CATEGORY_SELECTED.toFormattedString()))
                         .enchant(Enchantment.DURABILITY);
                 itemBuilder
-                        .flags(ItemFlag.HIDE_ENCHANTS)
+                        .flags(ItemFlag.HIDE_ENCHANTS);
             }
 
             addScrollbarItem(new PaginatedItem(itemBuilder.build(), e -> {
