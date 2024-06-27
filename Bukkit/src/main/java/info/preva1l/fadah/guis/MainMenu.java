@@ -86,7 +86,6 @@ public class MainMenu extends ScrollBarFastInv {
         return false;
     }
 
-    @SuppressWarnings("deprecation")
     private boolean checkForStringInItem(String toCheck, ItemStack item) {
         if (item.hasItemMeta()) {
             return item.getItemMeta().getDisplayName().toUpperCase().contains(toCheck.toUpperCase())
@@ -171,12 +170,17 @@ public class MainMenu extends ScrollBarFastInv {
                     return;
                 }
 
-                if (!Fadah.getINSTANCE().getEconomy().has(player, listing.getPrice())
-                        || ListingCache.getListing(listing.getId()) == null
+                if (!Fadah.getINSTANCE().getEconomy().has(player, listing.getPrice())) {
+                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.TOO_EXPENSIVE.toFormattedString());
+                    return;
+                }
+
+                if (ListingCache.getListing(listing.getId()) == null
                         || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(listing.getId()) == null)) {
                     player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
                     return;
                 }
+
                 new ConfirmPurchaseMenu(listing, player, category, search, sortingMethod, sortingDirection).open(player);
             }));
         }

@@ -2,18 +2,20 @@ package info.preva1l.fadah.guis;
 
 import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.api.ListingCreateEvent;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.multiserver.CacheSync;
-import info.preva1l.fadah.records.BukkitListing;
+import info.preva1l.fadah.records.CurrentListing;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -153,6 +155,13 @@ public class NewListingMenu extends FastInv {
     }
 
     private void startListing(Instant deletionDate, double price) {
+        ListingCreateEvent createEvent = new ListingCreateEvent();
+        Bukkit.getServer().getPluginManager().callEvent(createEvent);
+        if (createEvent.isCancelled()) {
+            player.sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.message(createEvent.getCancelReason()));
+            return;
+        }
+
         String category = CategoryCache.getCategoryForItem(itemToSell);
 
         if (category == null) {
@@ -162,7 +171,7 @@ public class NewListingMenu extends FastInv {
 
         double tax = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
 
-        Listing listing = new BukkitListing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
+        Listing listing = new CurrentListing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
                 itemToSell, category, price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli(), isBidding, Collections.emptyList());
 
         plugin.getDatabase().addListing(listing);

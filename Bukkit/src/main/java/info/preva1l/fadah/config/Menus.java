@@ -73,20 +73,6 @@ public enum Menus {
             "&8&n---------------------------"
     )),
 
-    EXPIRED_LISTINGS_TITLE("expired-listings.title", "&9&lAuction House &8> &c{0} Expired Listings"),
-    EXPIRED_LISTINGS_LORE("expired-listings.collectable-lore", List.of(
-            "&8&n---------------------------",
-            "&fAdded: &e{0} &fago",
-            "&r ",
-            "&eClick To Re-Claim!",
-            "&8&n---------------------------"
-    )),
-
-    HISTORY_SEARCH_MODEL_DATA("historic-items.search.model_data", 0),
-    HISTORY_SEARCH_PLACEHOLDER("historic-items.search.placeholder", "Ex: 21/04/2024 22:26"),
-    HISTORY_SEARCH_NAME("historic-items.search.name", "&eSearch Date"),
-    HISTORY_SEARCH_LORE("historic-items.search.lore", Collections.singletonList("&fClick to search for a logs date & time!")),
-
     ACTIVE_LISTINGS_TITLE("active-listings.title", "&9&lAuction House &8> &1{0} Listings"),
     ACTIVE_LISTINGS_LORE("active-listings.title", List.of(
             "&8&n---------------------------",

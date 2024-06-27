@@ -29,7 +29,7 @@ CREATE TABLE IF NOT EXISTS listings (
     price DOUBLE NOT NULL,
     tax DOUBLE NOT NULL,
     itemStack TEXT NOT NULL,
-    biddable INT(1) NOT NULL,
+    biddable BOOLEAN NOT NULL,
     bids TEXT NOT NULL
 ) CHARACTER SET utf8
     COLLATE utf8_unicode_ci;

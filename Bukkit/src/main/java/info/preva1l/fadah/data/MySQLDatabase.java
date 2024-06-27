@@ -44,59 +44,56 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
-    public CompletableFuture<Void> connect() {
-        return CompletableFuture.supplyAsync(() -> {
-            dataSource = new HikariDataSource();
-            dataSource.setDriverClassName(driverClass);
-            dataSource.setJdbcUrl(Config.DATABASE_URI.toString());
+    public void connect() {
+        dataSource = new HikariDataSource();
+        dataSource.setDriverClassName(driverClass);
+        dataSource.setJdbcUrl(Config.DATABASE_URI.toString());
 
-            dataSource.setMaximumPoolSize(10);
-            dataSource.setMinimumIdle(10);
-            dataSource.setMaxLifetime(1800000);
-            dataSource.setKeepaliveTime(0);
-            dataSource.setConnectionTimeout(5000);
-            dataSource.setPoolName("FadahHikariPool");
+        dataSource.setMaximumPoolSize(10);
+        dataSource.setMinimumIdle(10);
+        dataSource.setMaxLifetime(1800000);
+        dataSource.setKeepaliveTime(0);
+        dataSource.setConnectionTimeout(5000);
+        dataSource.setPoolName("FadahHikariPool");
 
-            final Properties properties = new Properties();
-            properties.putAll(
-                    Map.of("cachePrepStmts", "true",
-                            "prepStmtCacheSize", "250",
-                            "prepStmtCacheSqlLimit", "2048",
-                            "useServerPrepStmts", "true",
-                            "useLocalSessionState", "true",
-                            "useLocalTransactionState", "true"
-                    ));
-            properties.putAll(
-                    Map.of(
-                            "rewriteBatchedStatements", "true",
-                            "cacheResultSetMetadata", "true",
-                            "cacheServerConfiguration", "true",
-                            "elideSetAutoCommits", "true",
-                            "maintainTimeStats", "false")
-            );
-            dataSource.setDataSourceProperties(properties);
+        final Properties properties = new Properties();
+        properties.putAll(
+                Map.of("cachePrepStmts", "true",
+                        "prepStmtCacheSize", "250",
+                        "prepStmtCacheSqlLimit", "2048",
+                        "useServerPrepStmts", "true",
+                        "useLocalSessionState", "true",
+                        "useLocalTransactionState", "true"
+                ));
+        properties.putAll(
+                Map.of(
+                        "rewriteBatchedStatements", "true",
+                        "cacheResultSetMetadata", "true",
+                        "cacheServerConfiguration", "true",
+                        "elideSetAutoCommits", "true",
+                        "maintainTimeStats", "false")
+        );
+        dataSource.setDataSourceProperties(properties);
 
-            try (Connection connection = dataSource.getConnection()) {
-                final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
-                try (Statement statement = connection.createStatement()) {
-                    for (String tableCreationStatement : databaseSchema) {
-                        statement.execute(tableCreationStatement);
-                    }
-                    setConnected(true);
-                } catch (SQLException e) {
-                    destroy();
-                    throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
-                            "and that your connecting user account has privileges to create tables.", e);
+        try (Connection connection = dataSource.getConnection()) {
+            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
+            try (Statement statement = connection.createStatement()) {
+                for (String tableCreationStatement : databaseSchema) {
+                    statement.execute(tableCreationStatement);
                 }
-            } catch (SQLException | IOException e) {
+                setConnected(true);
+            } catch (SQLException e) {
                 destroy();
-                throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
-                        "Please check the supplied database credentials in the config file", e);
+                throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
+                        "and that your connecting user account has privileges to create tables.", e);
             }
+        } catch (SQLException | IOException e) {
+            destroy();
+            throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
+                    "Please check the supplied database credentials in the config file", e);
+        }
 
-            this.loadListings();
-            return null;
-        });
+        this.loadListings();
     }
 
     @Override
@@ -341,7 +338,7 @@ public class MySQLDatabase implements Database {
                         final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
                         final boolean biddable = resultSet.getBoolean("biddable");
                         final List<Bid> bids = gson.fromJson(resultSet.getString("bids"), bidsType);
-                        retrievedData.add(new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids));
+                        retrievedData.add(new CurrentListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids));
                     }
                     return retrievedData;
                 }
@@ -378,7 +375,7 @@ public class MySQLDatabase implements Database {
                         final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
                         final boolean biddable = resultSet.getBoolean("biddable");
                         final List<Bid> bids = gson.fromJson(resultSet.getString("bids"), bidsType);
-                        return new BukkitListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids);
+                        return new CurrentListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids);
                     }
                 }
             } catch (SQLException e) {

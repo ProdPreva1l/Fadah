@@ -1,6 +1,9 @@
 package info.preva1l.fadah.records;
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.api.ListingEndEvent;
+import info.preva1l.fadah.api.ListingEndReason;
+import info.preva1l.fadah.api.ListingPurchaseEvent;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.ListingCache;
@@ -20,16 +23,25 @@ import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
-public class BukkitListing extends Listing {
+public final class CurrentListing extends Listing {
 
-    public BukkitListing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName,
-                         @NotNull ItemStack itemStack, @NotNull String categoryID, double price,
-                         double tax, long creationDate, long deletionDate, boolean biddable, List<Bid> bids) {
+    public CurrentListing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName,
+                          @NotNull ItemStack itemStack, @NotNull String categoryID, double price,
+                          double tax, long creationDate, long deletionDate, boolean biddable, List<Bid> bids) {
         super(id, owner, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids);
     }
 
     @Override
     public void purchase(@NotNull Player buyer) {
+        if (!Fadah.getINSTANCE().getEconomy().has(buyer, this.getPrice())) {
+            buyer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.TOO_EXPENSIVE.toFormattedString());
+            return;
+        }
+        if (ListingCache.getListing(this.getId()) == null
+                || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(this.getId()) == null)) {
+            buyer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
+            return;
+        }
         // Money Transfer
         Economy eco = Fadah.getINSTANCE().getEconomy();
         eco.withdrawPlayer(buyer, this.getPrice());
@@ -69,14 +81,12 @@ public class BukkitListing extends Listing {
         }
 
         TransactionLogger.listingSold(this, buyer);
+
+        Bukkit.getServer().getPluginManager().callEvent(new ListingPurchaseEvent(this.getAsStale(), buyer));
     }
 
     @Override
     public boolean cancel(@NotNull Player canceller) {
-        if (!this.isOwner(canceller)) {
-            return false;
-        }
-
         if (ListingCache.getListing(this.getId()) == null || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(this.getId()) == null)) {
             canceller.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
             return false;
@@ -93,7 +103,14 @@ public class BukkitListing extends Listing {
         CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, getOwner());
 
         Fadah.getINSTANCE().getDatabase().addToExpiredItems(getOwner(), collectableItem);
-        TransactionLogger.listingRemoval(this, false);
+
+        boolean isAdmin = !this.isOwner(canceller);
+        TransactionLogger.listingRemoval(this, isAdmin);
+        Bukkit.getServer().getPluginManager().callEvent(new ListingEndEvent(isAdmin ? ListingEndReason.CANCELLED_ADMIN : ListingEndReason.CANCELLED));
         return true;
+    }
+
+    public StaleListing getAsStale() {
+        return new StaleListing(id, owner, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids);
     }
 }

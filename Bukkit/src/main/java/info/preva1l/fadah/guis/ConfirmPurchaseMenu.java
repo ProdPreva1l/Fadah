@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
 public class ConfirmPurchaseMenu extends FastInv {
-
     public ConfirmPurchaseMenu(Listing listing, Player player, @Nullable Category category, @Nullable String search,
                                @Nullable SortingMethod sortingMethod, @Nullable SortingDirection sortingDirection) {
         super(54, Menus.CONFIRM_TITLE.toFormattedString(), LayoutManager.MenuType.CONFIRM_PURCHASE);
@@ -22,6 +21,7 @@ public class ConfirmPurchaseMenu extends FastInv {
 
         setItem(30, GuiHelper.constructButton(GuiButtonType.CONFIRM), e -> {
             player.closeInventory();
+
             listing.purchase(((Player) e.getWhoClicked()));
         });
 

@@ -22,7 +22,7 @@ public interface Database {
     Gson gson = new Gson();
     Type bidsType = new TypeToken<List<Bid>>() {}.getType();
 
-    CompletableFuture<Void> connect();
+    void connect();
 
     void destroy();
 

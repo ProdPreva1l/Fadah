@@ -3,6 +3,8 @@ package info.preva1l.fadah;
 import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.api.AuctionHouseAPI;
 import info.preva1l.fadah.api.BukkitAuctionHouseAPI;
+import info.preva1l.fadah.api.ListingEndEvent;
+import info.preva1l.fadah.api.ListingEndReason;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.ListingCache;
@@ -150,6 +152,8 @@ public final class Fadah extends JavaPlugin {
                     getINSTANCE().getDatabase().addToExpiredItems(listing.getOwner(), item);
 
                     TransactionLogger.listingExpired(listing);
+
+                    getServer().getPluginManager().callEvent(new ListingEndEvent(ListingEndReason.EXPIRED));
                 }
             }
         };
@@ -219,9 +223,10 @@ public final class Fadah extends JavaPlugin {
             case MYSQL, MARIADB -> new MySQLDatabase();
             case SQLITE -> new SQLiteDatabase();
         };
+
         database.connect();
 
-        CategoryCache.loadCategories();
+        CategoryCache.update();
 
         getConsole().info("Connected to Database and populated caches!");
     }

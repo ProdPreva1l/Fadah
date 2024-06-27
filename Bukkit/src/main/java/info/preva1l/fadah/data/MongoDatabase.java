@@ -32,24 +32,21 @@ public class MongoDatabase implements Database {
     private CollectionHelper collectionHelper;
 
     @Override
-    public CompletableFuture<Void> connect() {
-        return CompletableFuture.supplyAsync(() -> {
-            try {
-                @NotNull String connectionURI = Config.DATABASE_URI.toString();
-                @NotNull String database = Config.DATABASE.toString();
-                Fadah.getConsole().info("Connecting to: " + connectionURI);
-                connectionHandler = new MongoConnectionHandler(connectionURI, database);
-                cacheHandler = new CacheHandler(connectionHandler);
-                collectionHelper = new CollectionHelper(connectionHandler.getDatabase(), cacheHandler);
-                setConnected(true);
-            } catch (Exception e) {
-                destroy();
-                throw new IllegalStateException("Failed to establish a connection to the MongoDB database. " +
-                        "Please check the supplied database credentials in the config file", e);
-            }
-            this.loadListings();
-            return null;
-        });
+    public void connect() {
+        try {
+            @NotNull String connectionURI = Config.DATABASE_URI.toString();
+            @NotNull String database = Config.DATABASE.toString();
+            Fadah.getConsole().info("Connecting to: " + connectionURI);
+            connectionHandler = new MongoConnectionHandler(connectionURI, database);
+            cacheHandler = new CacheHandler(connectionHandler);
+            collectionHelper = new CollectionHelper(connectionHandler.getDatabase(), cacheHandler);
+            setConnected(true);
+        } catch (Exception e) {
+            destroy();
+            throw new IllegalStateException("Failed to establish a connection to the MongoDB database. " +
+                    "Please check the supplied database credentials in the config file", e);
+        }
+        this.loadListings();
     }
 
     @Override
@@ -96,7 +93,7 @@ public class MongoDatabase implements Database {
     public CompletableFuture<List<CollectableItem>> getCollectionBox(UUID playerUUID) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return CompletableFuture.supplyAsync(Collections::emptyList);
+            return CompletableFuture.completedFuture(List.of());
         }
         return CompletableFuture.supplyAsync(() -> {
             List<CollectableItem> list = new ArrayList<>();
@@ -220,7 +217,7 @@ public class MongoDatabase implements Database {
                 final ItemStack itemStack = ItemSerializer.deserialize(doc.getString("itemStack"))[0];
                 final boolean biddable = doc.getBoolean("biddable");
                 final List<Bid> bids = gson.fromJson(doc.getString("bids"), bidsType);
-                list.add(new BukkitListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable, bids));
+                list.add(new CurrentListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable, bids));
             }
             return list;
         });
@@ -247,7 +244,7 @@ public class MongoDatabase implements Database {
             final ItemStack itemStack = ItemSerializer.deserialize(doc.getString("itemStack"))[0];
             final boolean biddable = doc.getBoolean("biddable");
             final List<Bid> bids = gson.fromJson(doc.getString("bids"), bidsType);
-            return new BukkitListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable, bids);
+            return new CurrentListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable, bids);
         });
     }
 

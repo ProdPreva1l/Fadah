@@ -34,7 +34,8 @@ public final class CategoryCache {
     public String getCategoryForItem(ItemStack itemStack) {
         for (Category category : getCategories()) {
             if (category.isCustomItems()) {
-                if (Config.HOOK_ECO_ITEMS.toBoolean() && Fadah.getINSTANCE().getHookManager().getHook(EcoItemsHook.class).isPresent()) {
+                if (Config.HOOK_ECO_ITEMS.toBoolean()
+                        && Fadah.getINSTANCE().getHookManager().getHook(EcoItemsHook.class).isPresent()) {
                     EcoItemsHook ecoItemsHook = (EcoItemsHook) Fadah.getINSTANCE().getHookManager().getHook(EcoItemsHook.class).get();
                     if (ecoItemsHook.isEcoItem(itemStack)) return category.id();
                 }
@@ -43,10 +44,6 @@ public final class CategoryCache {
                 return category.id();
         }
         return null;
-    }
-
-    public void loadCategories() {
-        categories = fillListWithCategories();
     }
 
     public List<Category> fillListWithCategories() {

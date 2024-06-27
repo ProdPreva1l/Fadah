@@ -5,7 +5,6 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.utils.StringUtils;
@@ -23,7 +22,7 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
     private final List<CollectableItem> expiredItems;
 
     public ExpiredListingsMenu(Player viewer, OfflinePlayer owner, int page) {
-        super(45, Menus.EXPIRED_LISTINGS_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId()
+        super(45, LayoutManager.MenuType.EXPIRED_LISTINGS.getLayout().formattedTitle(viewer.getUniqueId() == owner.getUniqueId()
                         ? Lang.WORD_YOUR.toCapital()
                 : owner.getName()+"'s", owner.getName()+"'s"), viewer, LayoutManager.MenuType.EXPIRED_LISTINGS,
                 List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34));
@@ -42,9 +41,17 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
 
     @Override
     protected void fillPaginationItems() {
+        List<String> defListLore = List.of(
+                "&8&n---------------------------",
+                "&fAdded: &e{0} &fago",
+                "&r ",
+                "&eClick To Re-Claim!",
+                "&8&n---------------------------"
+        );
+
         for (CollectableItem collectableItem : expiredItems) {
             ItemBuilder itemStack = new ItemBuilder(collectableItem.itemStack().clone())
-                    .addLore(Menus.EXPIRED_LISTINGS_LORE.toLore(TimeUtil.formatTimeSince(collectableItem.dateAdded())));
+                    .addLore(getLang().getLore("collectable-lore", defListLore, TimeUtil.formatTimeSince(collectableItem.dateAdded())));
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
                 MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {

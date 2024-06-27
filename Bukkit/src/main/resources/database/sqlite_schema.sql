@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS listings (
     tax REAL NOT NULL,
     itemStack TEXT NOT NULL,
     biddable INTEGER NOT NULL,
-    bids TEXT NOT NULL
+    bids TEXT NULLABLE
 );
 
 CREATE TABLE IF NOT EXISTS history (
