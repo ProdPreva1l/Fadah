@@ -38,7 +38,8 @@ public class NewListingMenu extends FastInv {
     private boolean isBidding = false;
 
     public NewListingMenu(Player player, double price) {
-        super(LayoutManager.MenuType.NEW_LISTING.getLayout().guiSize(), LayoutManager.MenuType.NEW_LISTING.getLayout().guiTitle(), LayoutManager.MenuType.NEW_LISTING);
+        super(LayoutManager.MenuType.NEW_LISTING.getLayout().guiSize(),
+                LayoutManager.MenuType.NEW_LISTING.getLayout().guiTitle(), LayoutManager.MenuType.NEW_LISTING);
         this.player = player;
         this.itemToSell = player.getInventory().getItemInMainHand().clone();
         this.timeToDelete = Instant.now().plus(6, ChronoUnit.HOURS);

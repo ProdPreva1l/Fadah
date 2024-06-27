@@ -8,6 +8,7 @@ import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
 import info.preva1l.fadah.utils.commands.SubCommandArguments;
+import info.preva1l.fadah.utils.guis.FastInvManager;
 import info.preva1l.fadah.utils.guis.LayoutManager;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,6 +23,7 @@ public class ReloadSubCommand extends SubCommand {
             CacheSync.send(CacheSync.CacheType.RELOAD);
             return;
         }
+        FastInvManager.closeAll();
         Fadah.getINSTANCE().getConfigFile().load();
         Fadah.getINSTANCE().getLangFile().load();
         Fadah.getINSTANCE().getMenusFile().load();

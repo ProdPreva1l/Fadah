@@ -15,78 +15,36 @@ import java.util.List;
 @AllArgsConstructor
 @SuppressWarnings("unchecked")
 public enum Menus {
-    // TODO: relocate this to profile config
-    MAIN_PROFILE_DESCRIPTION("profile-button.description",
-            List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {1}.")),
-    MAIN_FILTER_DIRECTION_NAME("filter.change-direction.name", "&eFilter Direction"), // remove later
-
-    SEARCH_TITLE("search-title", "&9&lAuction House &8> &fSearch"),
-
-    CONFIRM_TITLE("confirm.title", "&9&lAuction House &8> &aConfirm Purchase"),
-    CONFIRM_BUTTON_ICON("confirm.confirm.icon", "LIME_CONCRETE"),
-    CONFIRM_BUTTON_MODEL_DATA("confirm.confirm.model_data",  0),
-    CONFIRM_BUTTON_NAME("confirm.confirm.name", "&a&lCONFIRM"),
-    CONFIRM_BUTTON_LORE("confirm.confirm.lore", Collections.singletonList("&7Click to confirm")),
-    CANCEL_BUTTON_ICON("confirm.cancel.icon", "RED_CONCRETE"),
-    CANCEL_BUTTON_MODEL_DATA("confirm.cancel.model_data", 0),
-    CANCEL_BUTTON_NAME("confirm.cancel.name", "&c&lCANCEL"),
-    CANCEL_BUTTON_LORE("confirm.cancel.lore", Collections.singletonList("&7Click to cancel")),
-
-    PROFILE_TITLE("profile.title", "&9&lAuction House &8> &bYour Profile"),
-    PROFILE_YOUR_LISTINGS_ICON("profile.your-listings.icon", "EMERALD"),
-    PROFILE_YOUR_LISTINGS_MODEL_DATA("profile.your-listings.model_data", 0),
-    PROFILE_YOUR_LISTINGS_NAME("profile.your-listings.name", "&1Your listings"),
-    PROFILE_YOUR_LISTINGS_LORE("profile.your-listings.lore", List.of(
+    PROFILE_YOUR_LISTINGS_LORE("your-listings.lore", List.of(
             "&fClick to view & manage",
             "&f{0} active listings!"
     )),
-    PROFILE_COLLECTION_BOX_ICON("profile.collection-box.icon", "CHEST_MINECART"),
-    PROFILE_COLLECTION_BOX_MODEL_DATA("profile.collection-box.model_data", 0),
-    PROFILE_COLLECTION_BOX_NAME("profile.collection-box.name", "&e{0} Collection Box"),
-    PROFILE_COLLECTION_BOX_LORE("profile.collection-box.lore", List.of(
+    PROFILE_COLLECTION_BOX_ICON("collection-box.icon", "CHEST_MINECART"),
+    PROFILE_COLLECTION_BOX_MODEL_DATA("collection-box.model_data", 0),
+    PROFILE_COLLECTION_BOX_NAME("collection-box.name", "&e{0} Collection Box"),
+    PROFILE_COLLECTION_BOX_LORE("collection-box.lore", List.of(
             "&fClick to view & claim",
             "&f{0} purchases!"
     )),
-    PROFILE_EXPIRED_LISTINGS_ICON("profile.expired-items.icon", "ENDER_CHEST"),
-    PROFILE_EXPIRED_LISTINGS_MODEL_DATA("profile.expired-items.model_data", 0),
-    PROFILE_EXPIRED_LISTINGS_NAME("profile.expired-items.name", "&c{0} Expired Listings"),
-    PROFILE_EXPIRED_LISTINGS_LORE("profile.expired-items.lore", List.of(
+    PROFILE_EXPIRED_LISTINGS_ICON("expired-items.icon", "ENDER_CHEST"),
+    PROFILE_EXPIRED_LISTINGS_MODEL_DATA("expired-items.model_data", 0),
+    PROFILE_EXPIRED_LISTINGS_NAME("expired-items.name", "&c{0} Expired Listings"),
+    PROFILE_EXPIRED_LISTINGS_LORE("expired-items.lore", List.of(
             "&fClick to view & claim",
             "&f{0} expired listings!"
     )),
 
-    PROFILE_HISTORIC_ITEMS_ICON("profile.historic-items.icon", "WRITABLE_BOOK"),
-    PROFILE_HISTORIC_ITEMS_MODEL_DATA("profile.historic-items.model_data", 0),
-    PROFILE_HISTORIC_ITEMS_NAME("profile.historic-items.name", "&c{0} History"),
-    PROFILE_HISTORIC_ITEMS_LORE("profile.historic-items.lore", List.of(
+    PROFILE_HISTORIC_ITEMS_ICON("historic-items.icon", "WRITABLE_BOOK"),
+    PROFILE_HISTORIC_ITEMS_MODEL_DATA("historic-items.model_data", 0),
+    PROFILE_HISTORIC_ITEMS_NAME("historic-items.name", "&c{0} History"),
+    PROFILE_HISTORIC_ITEMS_LORE("historic-items.lore", List.of(
             "&fClick to view",
             "&f{0} history!"
     )),
 
-
-    COLLECTION_BOX_TITLE("collection-box.title", "&9&lAuction House &8> &e{0} Collection Box"),
-    COLLECTION_BOX_LORE("collection-box.collectable-lore", List.of(
-            "&8&n---------------------------",
-            "&fAdded: &e{0} &fago",
-            "&r ",
-            "&eClick To Claim!",
-            "&8&n---------------------------"
-    )),
-
-    ACTIVE_LISTINGS_TITLE("active-listings.title", "&9&lAuction House &8> &1{0} Listings"),
-    ACTIVE_LISTINGS_LORE("active-listings.title", List.of(
-            "&8&n---------------------------",
-            "&fCategory: &e{0}",
-            "&r ",
-            "&fPrice: &6${1}",
-            "&r ",
-            "&fExpires In: &e{2}",
-            "&r ",
-            "&eClick To Cancel This Listing!",
-            "&8&n---------------------------"
-    )),
-
     // To Keep
+    SEARCH_TITLE("search-title", "&9&lAuction House &8> &fSearch"),
+
     NO_ITEM_FOUND_ICON("no-items-found.icon", "BARRIER"),
     NO_ITEM_FOUND_MODEL_DATA("no-items-found.model_data", 0),
     NO_ITEM_FOUND_NAME("no-items-found.name", "&c&lNo items found!"),

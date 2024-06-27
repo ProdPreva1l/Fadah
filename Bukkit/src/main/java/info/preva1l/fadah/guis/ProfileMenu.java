@@ -9,32 +9,48 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class ProfileMenu extends FastInv {
     private final Player viewer;
     private final OfflinePlayer owner;
 
     public ProfileMenu(@NotNull Player viewer, @NotNull OfflinePlayer owner) {
-        super(54, Menus.PROFILE_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId()
+        super(LayoutManager.MenuType.PROFILE.getLayout().guiSize(),
+                LayoutManager.MenuType.PROFILE.getLayout().formattedTitle(viewer.getUniqueId() == owner.getUniqueId()
                 ? Lang.WORD_YOUR.toCapital()
                 : owner.getName()+"'s", owner.getName()+"'s"), LayoutManager.MenuType.PROFILE);
         this.viewer = viewer;
         this.owner = owner;
 
-        setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
-        setItem(45, GuiHelper.constructButton(GuiButtonType.BACK), e -> new MainMenu(null, viewer, null, null, null).open(viewer));
-        fillItems();
+        List<Integer> fillerSlots = getLayout().fillerSlots();
+        if (!fillerSlots.isEmpty()) {
+            setItems(fillerSlots.stream().mapToInt(Integer::intValue).toArray(),
+                    GuiHelper.constructButton(GuiButtonType.BORDER));
+        }
+
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, 45),
+                GuiHelper.constructButton(GuiButtonType.BACK),
+                e -> new MainMenu(null, viewer, null, null, null).open(viewer));
+
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_SUMMARY, 20),
+                new ItemBuilder(Material.PLAYER_HEAD).skullOwner(owner)
+                        .modelData(getLang().getInt("profile-button.model-data"))
+                        .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile",
+                                viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
+                        .addLore(getLang().getLore("profile-button.description",
+                                List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {0}."),
+                                viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName(),
+                                viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOU.toString() : owner.getName())).build());
+
+        setButtons();
     }
 
-    private void fillItems() {
-        // TODO: dont use main menu stuff
-        setItem(20, new ItemBuilder(Material.PLAYER_HEAD).skullOwner(owner)
-                .name(Menus.MAIN_FILTER_DIRECTION_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
-                .addLore(Menus.MAIN_PROFILE_DESCRIPTION.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName(),
-                        viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOU.toString() : owner.getName())).build());
-
-        setItem(22, new ItemBuilder(Menus.PROFILE_YOUR_LISTINGS_ICON.toMaterial())
-                .name(Menus.PROFILE_YOUR_LISTINGS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
-                .modelData(Menus.PROFILE_YOUR_LISTINGS_MODEL_DATA.toInteger())
+    private void setButtons() {
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_ACTIVE_LISTINGS, 22),
+                new ItemBuilder(getLang().getAsMaterial("your-listings.icon", Material.EMERALD))
+                .name(getLang().getStringFormatted("your-listings.name", "&1Your listings", viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
+                .modelData(getLang().getInt("your-listings.model-data"))
                 .setAttributes(null)
                 .flags(ItemFlag.HIDE_ATTRIBUTES)
                 .addLore(Menus.PROFILE_YOUR_LISTINGS_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
@@ -44,7 +60,8 @@ public class ProfileMenu extends FastInv {
             }
         });
         
-        setItem(23, new ItemBuilder(Menus.PROFILE_COLLECTION_BOX_ICON.toMaterial())
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_COLLECTION_BOX, 23),
+                new ItemBuilder(Menus.PROFILE_COLLECTION_BOX_ICON.toMaterial())
                 .name(Menus.PROFILE_COLLECTION_BOX_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
                 .modelData(Menus.PROFILE_COLLECTION_BOX_MODEL_DATA.toInteger())
                 .setAttributes(null)
@@ -56,7 +73,8 @@ public class ProfileMenu extends FastInv {
             }
         });
 
-        setItem(24, new ItemBuilder(Menus.PROFILE_EXPIRED_LISTINGS_ICON.toMaterial())
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_EXPIRED_LISTINGS, 24),
+                new ItemBuilder(Menus.PROFILE_EXPIRED_LISTINGS_ICON.toMaterial())
                 .name(Menus.PROFILE_EXPIRED_LISTINGS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
                 .modelData(Menus.PROFILE_EXPIRED_LISTINGS_MODEL_DATA.toInteger())
                 .setAttributes(null)
@@ -68,7 +86,8 @@ public class ProfileMenu extends FastInv {
             }
         });
 
-        setItem(31, new ItemBuilder(Menus.PROFILE_HISTORIC_ITEMS_ICON.toMaterial())
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_HISTORY, 31),
+                new ItemBuilder(Menus.PROFILE_HISTORIC_ITEMS_ICON.toMaterial())
                 .name(Menus.PROFILE_HISTORIC_ITEMS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
                 .modelData(Menus.PROFILE_HISTORIC_ITEMS_MODEL_DATA.toInteger())
                 .setAttributes(null)

@@ -15,18 +15,7 @@ public class LayoutManager {
     private final List<GuiLayout> guiLayouts = new ArrayList<>();
 
     public void loadLayout(BasicConfig config) {
-        String[] temp = config.getFileName().split("/");
-        final MenuType menuType = switch (temp[temp.length - 1]) {
-            case "main.yml": yield MenuType.MAIN;
-            case "new-listing.yml": yield MenuType.NEW_LISTING;
-            case "profile.yml": yield MenuType.PROFILE;
-            case "confirm.yml": yield MenuType.CONFIRM_PURCHASE;
-            case "collection-box.yml": yield MenuType.COLLECTION_BOX;
-            case "expired-listings.yml": yield MenuType.EXPIRED_LISTINGS;
-            case "historic-items.yml": yield MenuType.HISTORY;
-            case "active-listings.yml": yield MenuType.ACTIVE_LISTINGS;
-            default: throw new IllegalStateException("The config file %s is not related to a GuiLayout".formatted(config.getFileName()));
-        };
+        final MenuType menuType = getMenuType(config.getFileName());
 
         final String guiTitle = StringUtils.colorize(config.getString("title"));
 
@@ -68,7 +57,7 @@ public class LayoutManager {
             try {
                 buttonType = ButtonType.valueOf(temp2);
             } catch (IllegalArgumentException e) {
-                Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Slot: %s Button Type %s does not exist!".formatted(menuType.toString(), slotNumber, temp));
+                Fadah.getConsole().severe("Gui Layout for the GUI %s is invalid! Slot: %s Button Type %s does not exist!".formatted(menuType.toString(), slotNumber, temp2));
                 return;
             }
 
@@ -76,23 +65,42 @@ public class LayoutManager {
                 fillerSlots.add(slotNumber);
                 continue;
             }
+
             if (buttonType.equals(ButtonType.PAGINATION_ITEM)) {
                 paginationSlots.add(slotNumber);
                 continue;
             }
+
             if (buttonType.equals(ButtonType.SCROLLBAR_ITEM)) {
                 scrollbarSlots.add(slotNumber);
                 continue;
             }
+
             if (buttonType.equals(ButtonType.NO_ITEMS)) {
                 paginationSlots.add(slotNumber);
                 noItems.add(slotNumber);
                 continue;
             }
+
             buttonSlots.put(buttonType, slotNumber);
         }
 
         guiLayouts.add(new GuiLayout(menuType, fillerSlots, paginationSlots, scrollbarSlots, noItems, buttonSlots, guiTitle, guiSize, languageConfig, config));
+    }
+
+    private MenuType getMenuType(String fileName) {
+        String[] temp = fileName.split("/");
+        return switch (temp[temp.length - 1]) {
+            case "main.yml": yield MenuType.MAIN;
+            case "new-listing.yml": yield MenuType.NEW_LISTING;
+            case "profile.yml": yield MenuType.PROFILE;
+            case "confirm.yml": yield MenuType.CONFIRM_PURCHASE;
+            case "collection-box.yml": yield MenuType.COLLECTION_BOX;
+            case "expired-listings.yml": yield MenuType.EXPIRED_LISTINGS;
+            case "historic-items.yml": yield MenuType.HISTORY;
+            case "active-listings.yml": yield MenuType.ACTIVE_LISTINGS;
+            default: throw new IllegalStateException("The config file %s is not related to a GuiLayout".formatted(fileName));
+        };
     }
 
     public void reloadLayout(MenuType menuType) {
@@ -166,6 +174,15 @@ public class LayoutManager {
          */
         CONFIRM,
         CANCEL,
+        ITEM_TO_PURCHASE,
+        /**
+         * Profile Menu Specific Items
+         */
+        PROFILE_SUMMARY,
+        PROFILE_HISTORY,
+        PROFILE_COLLECTION_BOX,
+        PROFILE_ACTIVE_LISTINGS,
+        PROFILE_EXPIRED_LISTINGS,
         /**
          * Misc Items
          */

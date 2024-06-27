@@ -6,7 +6,6 @@ import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.utils.StringUtils;
@@ -24,7 +23,8 @@ public class CollectionBoxMenu extends PaginatedFastInv {
     private final List<CollectableItem> collectionBox;
 
     public CollectionBoxMenu(Player viewer, OfflinePlayer owner) {
-        super(45, Menus.COLLECTION_BOX_TITLE.toFormattedString(viewer.getUniqueId() == owner.getUniqueId()
+        super(LayoutManager.MenuType.COLLECTION_BOX.getLayout().guiSize(),
+                LayoutManager.MenuType.COLLECTION_BOX.getLayout().formattedTitle(viewer.getUniqueId() == owner.getUniqueId()
                         ? Lang.WORD_YOUR.toCapital()
                         : owner.getName()+"'s", owner.getName()+"'s"), viewer, LayoutManager.MenuType.COLLECTION_BOX,
                 List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34));
@@ -32,7 +32,12 @@ public class CollectionBoxMenu extends PaginatedFastInv {
         this.owner = owner;
         this.collectionBox = CollectionBoxCache.getCollectionBox(owner.getUniqueId());
 
-        setItems(getBorders(), GuiHelper.constructButton(GuiButtonType.BORDER));
+        List<Integer> fillerSlots = getLayout().fillerSlots();
+        if (!fillerSlots.isEmpty()) {
+            setItems(fillerSlots.stream().mapToInt(Integer::intValue).toArray(),
+                    GuiHelper.constructButton(GuiButtonType.BORDER));
+        }
+        setPaginationMappings(getLayout().paginationSlots());
 
         addNavigationButtons();
         fillPaginationItems();
@@ -42,9 +47,16 @@ public class CollectionBoxMenu extends PaginatedFastInv {
 
     @Override
     protected void fillPaginationItems() {
+        List<String> defLore = List.of(
+                "&8&n---------------------------",
+                "&fAdded: &e{0} &fago",
+                "&r ",
+                "&eClick To Claim!",
+                "&8&n---------------------------"
+        );
         for (CollectableItem collectableItem : collectionBox) {
             ItemBuilder itemBuilder = new ItemBuilder(collectableItem.itemStack().clone())
-                    .lore(Menus.COLLECTION_BOX_LORE.toLore(TimeUtil.formatTimeSince(collectableItem.dateAdded())));
+                    .lore(getLang().getLore("collectable-lore", defLore, TimeUtil.formatTimeSince(collectableItem.dateAdded())));
 
             addPaginationItem(new PaginatedItem(itemBuilder.build(), e -> {
                 MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {
@@ -101,7 +113,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
     }
 
     private void addNavigationButtons() {
-        setItem(36, GuiHelper.constructButton(GuiButtonType.BACK), e ->
-                new ProfileMenu(viewer, owner).open(viewer));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, 36),
+                GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
     }
 }

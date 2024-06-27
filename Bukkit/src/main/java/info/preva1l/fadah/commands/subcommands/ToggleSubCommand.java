@@ -7,6 +7,7 @@ import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
 import info.preva1l.fadah.utils.commands.SubCommandArguments;
+import info.preva1l.fadah.utils.guis.FastInvManager;
 import org.jetbrains.annotations.NotNull;
 
 public class ToggleSubCommand extends SubCommand {
@@ -27,6 +28,8 @@ public class ToggleSubCommand extends SubCommand {
         message += (enabled ? StringUtils.colorize("&c&lDisabled!") : StringUtils.colorize("&a&lEnabled!"));
 
         Fadah.getINSTANCE().getConfigFile().save();
+        FastInvManager.closeAll();
+
         command.sender().sendMessage(message);
     }
 }

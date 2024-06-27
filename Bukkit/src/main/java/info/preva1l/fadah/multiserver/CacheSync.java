@@ -7,6 +7,7 @@ import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TaskManager;
+import info.preva1l.fadah.utils.guis.FastInvManager;
 import lombok.AllArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -180,6 +181,7 @@ public class CacheSync extends JedisPubSub {
         RELOAD {
             @Override
             public void handleMessage(JSONObject obj) {
+                FastInvManager.closeAll();
                 Fadah.getINSTANCE().getConfigFile().load();
                 Fadah.getINSTANCE().getLangFile().load();
                 Fadah.getINSTANCE().getMenusFile().load();
@@ -199,6 +201,8 @@ public class CacheSync extends JedisPubSub {
                 message += (enabled ? StringUtils.colorize("&c&lDisabled") : StringUtils.colorize("&a&lEnabled"));
                 message += StringUtils.colorize(" &ffrom remote server!");
                 Fadah.getINSTANCE().getConfigFile().save();
+
+                FastInvManager.closeAll();
 
                 Bukkit.getConsoleSender().sendMessage(message);
             }

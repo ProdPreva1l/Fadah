@@ -2,7 +2,6 @@ package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
@@ -41,9 +40,20 @@ public class ActiveListingsMenu extends PaginatedFastInv {
 
     @Override
     protected void fillPaginationItems() {
+        List<String> defLore = List.of(
+                "&8&n---------------------------",
+                "&fCategory: &e{0}",
+                "&r ",
+                "&fPrice: &6${1}",
+                "&r ",
+                "&fExpires In: &e{2}",
+                "&r ",
+                "&eClick To Cancel This Listing!",
+                "&8&n---------------------------"
+        );
         for (Listing listing : listings) {
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
-                    .addLore(Menus.ACTIVE_LISTINGS_LORE.toLore(listing.getCategoryID(), listing.getPrice(),
+                    .addLore(getLang().getLore("lore", defLore, listing.getCategoryID(), listing.getPrice(),
                             TimeUtil.formatTimeUntil(listing.getDeletionDate())));
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
@@ -79,7 +89,8 @@ public class ActiveListingsMenu extends PaginatedFastInv {
     }
 
     private void addNavigationButtons() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, 36), GuiHelper.constructButton(GuiButtonType.BACK), e ->
-                new ProfileMenu(viewer, owner).open(viewer));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, 36),
+                GuiHelper.constructButton(GuiButtonType.BACK), e ->
+                        new ProfileMenu(viewer, owner).open(viewer));
     }
 }

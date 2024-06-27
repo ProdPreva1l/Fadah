@@ -1,6 +1,5 @@
 package info.preva1l.fadah;
 
-import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.api.AuctionHouseAPI;
 import info.preva1l.fadah.api.BukkitAuctionHouseAPI;
 import info.preva1l.fadah.api.ListingEndEvent;
@@ -33,7 +32,6 @@ import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -128,12 +126,6 @@ public final class Fadah extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            MultiLib.getEntityScheduler(player).execute(this,
-                    player::closeInventory,
-                    () -> getConsole().severe("Failed to close %s's inventory (Entity Not Found)"),
-                    0L);
-        }
         if (database != null) database.destroy();
         if (cacheSync != null) cacheSync.destroy();
         if (metrics != null) metrics.shutdown();
@@ -199,13 +191,13 @@ public final class Fadah extends JavaPlugin {
     private boolean hookIntoVault() {
         getConsole().info("Hooking into Vault...");
         if (INSTANCE.getServer().getPluginManager().getPlugin("Vault") == null) {
-            getConsole().info("Vault not installed");
+            getConsole().severe("Vault not installed");
             return false;
         }
 
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
-            getConsole().info("No Economy Plugin Installed");
+            getConsole().severe("No Economy Plugin Installed");
             return false;
         }
         economy = rsp.getProvider();

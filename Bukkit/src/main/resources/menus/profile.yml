@@ -1,35 +1,74 @@
 title: '&9&lAuction House &8> &b{0} Profile' # {0} = "Your" or the players name if in management mode, {1} = the players username
 
 
+# {0} = "Your" or the players name if in management mode, {1} = the players username
 lang:
+  profile-button:
+    name: '&e&l{0} Profile'
+    model-data: 0
+    lore:
+      - '&fThis is {0} profile!'
+      - '&fHere you will find items from the auction house relating to {0}'
   your-listings:
     icon: EMERALD
-    model_data: 0
+    model-data: 0
     name: '&1{0} Listings'
     lore:
       - '&fClick to view & manage'
       - '&f{0} active listings!'
   collection-box:
     icon: CHEST_MINECART
-    model_data: 0
+    model-data: 0
     name: '&e{0} Collection Box'
     lore:
       - '&fClick to view & claim'
       - '&f{0} purchases!'
   expired-items:
     icon: ENDER_CHEST
-    model_data: 0
+    model-data: 0
     name: '&c{0} Expired Listings'
     lore:
       - '&fClick to view & claim'
       - '&f{0} expired listings!'
   historic-items:
     icon: WRITABLE_BOOK
-    model_data: 0
+    model-data: 0
     name: '&c{0} History'
     lore:
       - '&fClick to view'
       - '&f{0} history!'
 
+size: 6
+
 layout:
   '0': "FILLER"
+  '1': "FILLER"
+  '2': "FILLER"
+  '3': "FILLER"
+  '4': "FILLER"
+  '5': "FILLER"
+  '6': "FILLER"
+  '7': "FILLER"
+  '8': "FILLER"
+  '9': "FILLER"
+  '17': "FILLER"
+  '18': "FILLER"
+  '20': "PROFILE_SUMMARY"
+  '22': "PROFILE_ACTIVE_LISTINGS"
+  '23': "PROFILE_COLLECTION_BOX"
+  '24': "PROFILE_EXPIRED_LISTINGS"
+  '26': "FILLER"
+  '27': "FILLER"
+  '31': "PROFILE_HISTORY"
+  '35': "FILLER"
+  '36': "FILLER"
+  '44': "FILLER"
+  '45': "BACK"
+  '46': "FILLER"
+  '47': "FILLER"
+  '48': "FILLER"
+  '49': "FILLER"
+  '50': "FILLER"
+  '51': "FILLER"
+  '52': "FILLER"
+  '53': "FILLER"

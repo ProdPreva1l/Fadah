@@ -20,14 +20,10 @@ lang:
       own-listing: '&cYou cannot buy your own listing! &8(Shift Click to Cancel)'
       is-shulker: '&fRight Click to Preview!'
 
-  # {0} = "Your" or the players name if in management mode, {1} = the players username
   profile-button:
-    name: '&e&l{0} Profile'
+    name: '&e&lYour Profile'
     lore:
       - '&fClick to view your profile!'
-    description:
-      - '&fThis is {0} profile!'
-      - '&fHere you will find items from the auction house relating to {0}'
 
   filter:
     search:

@@ -33,20 +33,10 @@ public class GuiHelper {
                     .name(Menus.SCROLL_PREVIOUS_BUTTON_NAME.toFormattedString())
                     .modelData(Menus.SCROLL_PREVIOUS_BUTTON_MODEL_DATA.toInteger())
                     .lore(Menus.SCROLL_PREVIOUS_BUTTON_LORE.toLore()).build();
-            case CANCEL -> new ItemBuilder(Menus.CANCEL_BUTTON_ICON.toMaterial())
-                    .name(Menus.CANCEL_BUTTON_NAME.toFormattedString())
-                    .modelData(Menus.CANCEL_BUTTON_MODEL_DATA.toInteger())
-                    .lore(Menus.CANCEL_BUTTON_LORE.toLore()).build();
-            case CONFIRM -> new ItemBuilder(Menus.CONFIRM_BUTTON_ICON.toMaterial())
-                    .name(Menus.CONFIRM_BUTTON_NAME.toFormattedString())
-                    .modelData(Menus.CONFIRM_BUTTON_MODEL_DATA.toInteger())
-                    .lore(Menus.CONFIRM_BUTTON_LORE.toLore()).build();
             case BORDER -> new ItemBuilder(Menus.BORDER_ICON.toMaterial())
                     .name(Menus.BORDER_NAME.toFormattedString())
                     .modelData(Menus.BORDER_MODEL_DATA.toInteger())
                     .lore(Menus.BORDER_LORE.toLore()).build();
-            case GENERIC ->
-                    throw new GuiButtonException("Attempted to create a button with type \"GENERIC\" without required params.");
         };
     }
 }
