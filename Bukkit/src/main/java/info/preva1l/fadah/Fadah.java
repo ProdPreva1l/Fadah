@@ -42,11 +42,6 @@ import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 
-// TODO Biddable Auctions (On Hold until 2.1.0)
-// TODO Custom Inventory Layouts (In progress)
-// TODO Purchasable listing adverts
-// TODO Allow listing adverts to send automatically everytime a new listing is made
-
 public final class Fadah extends JavaPlugin {
     private static final int METRICS_ID = 21651;
 

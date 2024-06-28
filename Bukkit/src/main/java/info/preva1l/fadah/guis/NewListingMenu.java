@@ -15,6 +15,9 @@ import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -35,6 +38,7 @@ public class NewListingMenu extends FastInv {
     private ItemStack itemToSell;
     private Instant timeToDelete;
     private boolean listingStarted = false;
+    private boolean advertise = Config.ADVERT_DEFAULT.toBoolean();
     private boolean isBidding = false;
 
     public NewListingMenu(Player player, double price) {
@@ -63,6 +67,7 @@ public class NewListingMenu extends FastInv {
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .build(), e -> startListing(timeToDelete, price));
         setClock();
+        setAdvertButton();
         //setModeButton();
         addNavigationButtons();
 
@@ -87,8 +92,8 @@ public class NewListingMenu extends FastInv {
                 "&7Shift Left Click to Add 30 Minutes",
                 "&7Shift Right Click to Remove 30 Minutes"
         );
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 32));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 32),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 11));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 11),
                 new ItemBuilder(getLang().getAsMaterial("time.icon", Material.CLOCK))
                         .name(getLang().getStringFormatted("time.name", "&aTime for listing to be active"))
                         .setAttributes(null)
@@ -123,6 +128,40 @@ public class NewListingMenu extends FastInv {
         });
     }
 
+    private void setAdvertButton() {
+        List<String> defModeLore = List.of(
+                "&fAdvert Price: &a${0}",
+                "&7Click To Toggle",
+                "&8-------------------------",
+                "{1}",
+                "{2}",
+                "&8-------------------------"
+        );
+        String postAdvert = StringUtils.formatPlaceholders(advertise
+                        ? getLang().getStringFormatted("advert.options.selected", "&8> &e{0}")
+                        : getLang().getStringFormatted("advert.options.not-selected", "&f{0}"),
+                Lang.ADVERT_POST.toFormattedString());
+        String dontPost = StringUtils.formatPlaceholders(!advertise
+                        ? getLang().getStringFormatted("advert.options.selected", "&8> &e{0}")
+                        : getLang().getStringFormatted("advert.options.not-selected", "&f{0}"),
+                Lang.ADVERT_DONT_POST.toFormattedString());
+
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT,29));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT,29),
+                new ItemBuilder(getLang().getAsMaterial("advert.icon", Material.OAK_SIGN))
+                        .name(getLang().getStringFormatted("advert.name", "&eAdvertise Listing"))
+                        .modelData(getLang().getInt("advert.model-data"))
+                        .setAttributes(null)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
+                        .lore(getLang().getLore("advert.lore", defModeLore,
+                                new DecimalFormat(Config.DECIMAL_FORMAT.toString())
+                                        .format(PermissionsData.getHighestDouble(PermissionsData.PermissionType.ADVERT_PRICE, player)),
+                                postAdvert, dontPost)).build(), e -> {
+                    this.advertise = !advertise;
+                    setAdvertButton();
+                }
+        );
+    }
     // Not Used (For future bidding update)
     private void setModeButton() {
         List<String> defModeLore = List.of(
@@ -187,8 +226,8 @@ public class NewListingMenu extends FastInv {
         player.closeInventory();
 
         double taxAmount = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
-        String itemname = listing.getItemStack().getItemMeta().getDisplayName().isBlank() ? listing.getItemStack().getType().name() : listing.getItemStack().getItemMeta().getDisplayName();
-        String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemname,
+        String itemName = listing.getItemStack().getItemMeta().getDisplayName().isBlank() ? listing.getItemStack().getType().name() : listing.getItemStack().getItemMeta().getDisplayName();
+        String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemName,
                 new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
                 TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
                 PermissionsData.getHighestInt(PermissionsData.PermissionType.MAX_LISTINGS, player),
@@ -196,6 +235,26 @@ public class NewListingMenu extends FastInv {
         player.sendMessage(message);
 
         TransactionLogger.listingCreated(listing);
+
+        if (advertise) {
+            Economy eco = Fadah.getINSTANCE().getEconomy();
+            double advertPrice = PermissionsData.getHighestDouble(PermissionsData.PermissionType.ADVERT_PRICE, player);
+            if (!eco.has(player, advertPrice)) {
+                player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADVERT_EXPENSE.toFormattedString());
+                return;
+            }
+
+            eco.withdrawPlayer(player, advertPrice);
+
+            String advertMessage = String.join("\n", Lang.NOTIFICATION_ADVERT.toLore(
+                    player.getName(), itemName,
+                    new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice())));
+
+            TextComponent textComponent = new TextComponent(advertMessage);
+            textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ah view-listing " + listing.getId()));
+
+            Bukkit.spigot().broadcast(textComponent);
+        }
     }
 
     private void addNavigationButtons() {

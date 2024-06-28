@@ -294,7 +294,7 @@ public class SQLiteDatabase implements Database {
                     statement.setLong(6, listing.getDeletionDate());
                     statement.setDouble(7, listing.getPrice());
                     statement.setDouble(8, listing.getTax());
-                    statement.setString(9, gson.toJson(listing.getItemStack()));
+                    statement.setString(9, ItemSerializer.serialize(listing.getItemStack()));
                     statement.setBoolean(10, listing.isBiddable());
                     statement.setString(11, gson.toJson(listing.getBids()));
                     statement.execute();
@@ -349,7 +349,7 @@ public class SQLiteDatabase implements Database {
                         final long deletionDate = resultSet.getLong("deletionDate");
                         final double price = resultSet.getDouble("price");
                         final double tax = resultSet.getDouble("tax");
-                        final ItemStack itemStack = gson.fromJson(resultSet.getString("itemStack"), ItemStack.class);
+                        final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
                         final boolean biddable = resultSet.getBoolean("biddable");
                         final List<Bid> bids = gson.fromJson(resultSet.getString("bids"), bidsType);
                         retrievedData.add(new CurrentListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids));
@@ -385,7 +385,7 @@ public class SQLiteDatabase implements Database {
                         final long deletionDate = resultSet.getLong("deletionDate");
                         final double price = resultSet.getDouble("price");
                         final double tax = resultSet.getDouble("tax");
-                        final ItemStack itemStack = gson.fromJson(resultSet.getString("itemStack"), ItemStack.class);
+                        final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
                         final boolean biddable = resultSet.getBoolean("biddable");
                         final List<Bid> bids = gson.fromJson(resultSet.getString("bids"), bidsType);
                         return new CurrentListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids);

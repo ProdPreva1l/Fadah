@@ -66,7 +66,7 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
                         viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
                         return;
                     }
-                    if (ExpiredListingsCache.doesItemExist(player.getUniqueId(), collectableItem)) {
+                    if (!ExpiredListingsCache.doesItemExist(player.getUniqueId(), collectableItem)) {
                         viewer.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
                         return;
                     }

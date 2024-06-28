@@ -18,6 +18,20 @@ lang:
       - '&7Right Click to Remove 1 Hour'
       - '&7Shift Left Click to Add 30 Minutes'
       - '&7Shift Right Click to Remove 30 Minutes'
+  advert:
+    icon: OAK_SIGN
+    model-data: 0
+    name: "&eAdvertise Listing"
+    lore:
+      - '&fAdvert Price: &a${0}'
+      - '&7Click To Toggle'
+      - '&8-------------------------'
+      - '{1}'
+      - '{2}'
+      - '&8-------------------------'
+    options:
+      selected: '&8> &e{0}'
+      not-selected: '&f{0}'
   mode: # Future Feature
     icon: HOPPER
     model-data: 0
@@ -45,13 +59,14 @@ layout:
   '7': "FILLER"
   '8': "FILLER"
   '9': "FILLER"
+  '11': "LISTING_TIME"
   '17': "FILLER"
   '18': "FILLER"
-  '20': "LISTING_TIME"
   '22': "LISTING_ITEM"
   '24': "LISTING_START"
   '26': "FILLER"
   '27': "FILLER"
+  '29': "LISTING_ADVERT"
   '35': "FILLER"
   '36': "FILLER"
   '37': "FILLER"

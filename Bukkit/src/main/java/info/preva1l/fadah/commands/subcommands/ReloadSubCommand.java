@@ -17,7 +17,7 @@ public class ReloadSubCommand extends SubCommand {
         super(plugin);
     }
 
-    @SubCommandArgs(name = "reload", aliases = {"rl"}, permission = "fadah.reload", description = "Reloads the plugin!")
+    @SubCommandArgs(name = "reload", aliases = {"rl"}, permission = "fadah.reload", inGameOnly = false, description = "Reloads the plugin!")
     public void execute(@NotNull SubCommandArguments command) {
         if (Fadah.getINSTANCE().getCacheSync() != null) {
             CacheSync.send(CacheSync.CacheType.RELOAD);

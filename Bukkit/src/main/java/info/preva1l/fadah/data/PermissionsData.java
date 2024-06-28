@@ -37,7 +37,7 @@ public class PermissionsData {
                 }
             } catch (NumberFormatException ignored) {}
         }
-        return matched ? currentMax : Config.DEFAULT_MAX_LISTINGS.toInteger();
+        return matched ? currentMax : (int) type.def;
     }
 
     public double getHighestDouble(PermissionType type, Player player) {
@@ -54,14 +54,16 @@ public class PermissionsData {
                 }
             } catch (NumberFormatException ignored) {}
         }
-        return matched ? currentMax : Config.DEFAULT_MAX_LISTINGS.toDouble();
+        return matched ? currentMax : (double) type.def;
     }
 
     @AllArgsConstructor
     public enum PermissionType {
-        MAX_LISTINGS("fadah.max-listings."),
-        LISTING_TAX("fadah.listing-tax.")
+        MAX_LISTINGS("fadah.max-listings.", Config.DEFAULT_MAX_LISTINGS.toInteger()),
+        LISTING_TAX("fadah.listing-tax.", 0.00D),
+        ADVERT_PRICE("fadah.advert-price.", Config.ADVERT_DEFAULT_PRICE.toDouble()),
         ;
         private final String permissionString;
+        private final Object def;
     }
 }

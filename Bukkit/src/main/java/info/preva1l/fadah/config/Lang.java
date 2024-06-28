@@ -34,6 +34,8 @@ public enum Lang {
     MIN_LISTING_PRICE("fail.listing-price.min", "&fPrice must be at least &a${0}"),
     MUST_BE_NUMBER("fail.must-be-number", "&cThe price must be a number!"),
     MUST_HOLD_ITEM("fail.must-hold-item", "&fYou must have an item in your hand to sell!"),
+    ADVERT_EXPENSE("fail.advert-too-expensive", "&cYour advert failed to post because you did not have enough money!"),
+
 
     HELP_COMMAND_HEADER("help-command.header", "&#9555FF&lAuctionHouse &eHelp"),
     HELP_COMMAND_FORMAT("help-command.format", "&b/{0} &8&l| &f{1}"),
@@ -62,18 +64,29 @@ public enum Lang {
             "&f             /ah redeem!",
             "&f------------------------------------------"
     )),
+    NOTIFICATION_ADVERT("notifications.advert", List.of(
+            "&f--------------------------------------------------",
+            "&f{0} &ehas just made a new listing on the auction house!",
+            "&fItem: &e{1}",
+            "&fPrice: &a${2}",
+            "&7(Click this message to view the listing!)",
+            "&f--------------------------------------------------"
+    )),
 
     CATEGORY_SELECTED("category-selected", "&e&lSELECTED"),
 
-    SORT_ASCENDING("sort.ascending.normal", "Ascending (A-Z)"),
-    SORT_ASCENDING_AGE("sort.ascending.age", "Newest First"),
-    SORT_ASCENDING_PRICE("sort.ascending.price", "Most Expensive First"),
-    SORT_DESCENDING("sort.descending.normal", "Descending (Z-A)"),
-    SORT_DESCENDING_AGE("sort.descending.age", "Oldest First"),
-    SORT_DESCENDING_PRICE("sort.descending.price", "Cheapest First"),
+    SORT_ASCENDING("sort.direction.ascending.normal", "Ascending (A-Z)"),
+    SORT_ASCENDING_AGE("sort.direction.ascending.age", "Newest First"),
+    SORT_ASCENDING_PRICE("sort.direction.ascending.price", "Most Expensive First"),
+    SORT_DESCENDING("sort.direction.descending.normal", "Descending (Z-A)"),
+    SORT_DESCENDING_AGE("sort.direction.descending.age", "Oldest First"),
+    SORT_DESCENDING_PRICE("sort.direction.descending.price", "Cheapest First"),
     SORT_AGE_NAME("sort.type.age", "Sort By Listing Age"),
     SORT_ALPHABETICAL_NAME("sort.type.alphabetical", "Sort Alphabetically By Name"),
     SORT_PRICE_NAME("sort.type.price", "Sort By Listing Price"),
+
+    ADVERT_POST("listing-advert.post", "Post Advert"),
+    ADVERT_DONT_POST("listing-advert.dont-post", "No Advert"),
 
     MODE_BUY_IT_NOW("modes.buy-it-now", "BIN"),
     MODE_BIDDING("modes.biddable", "Bidding"),

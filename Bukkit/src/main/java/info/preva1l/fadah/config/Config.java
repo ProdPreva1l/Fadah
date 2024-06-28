@@ -19,6 +19,9 @@ public enum Config {
     DEFAULT_MAX_LISTINGS("default-max-listings", 3),
     DECIMAL_FORMAT("decimal-format", "#,###.00"),
 
+    ADVERT_DEFAULT("listing-adverts.default", false),
+    ADVERT_DEFAULT_PRICE("listing-adverts.price", 100.0),
+
     STRICT_CHECKS("strict-checks", false),
 
     HOOK_ECO_ITEMS("hooks.eco-items", false),

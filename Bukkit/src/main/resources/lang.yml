@@ -12,6 +12,7 @@ notifications:
     - '&fTax: &9{5}%'
     - '&fExpires in: &6{2}'
     - '&fActive Listings: &d{3}&f/&5{4}'
+    - '&fYou have been taxed: &9{5}% &7(&a${6}&7)'
     - '&f------------------------------------------------'
   new-sell:
     - '&f----------------------------------------------'
@@ -24,12 +25,15 @@ notifications:
     - '&eYou have a new item in your collection box!'
     - '&f             /ah redeem!'
     - '&f------------------------------------------'
+  advert:
+    - '&f--------------------------------------------------'
+    - '&f{0} &ehas just made a new listing on the auction house!'
+    - '&fItem: &e{1}'
+    - '&fPrice: &a${2}'
+    - '&7(Click this message to view the listing!)'
+    - '&f--------------------------------------------------'
 
 sort:
-  types:
-    alphabetical: Sort Alphabetically By Name
-    age: Sort By Listing Age
-    price: Sort By Listing Price
   direction:
     ascending:
       normal: Ascending (A-Z)
@@ -39,18 +43,14 @@ sort:
       normal: Descending (Z-A)
       age: Oldest First
       price: Cheapest First
-  ascending:
-    normal: Ascending (A-Z)
-    age: Newest First
-    price: Most Expensive First
-  descending:
-    normal: Descending (Z-A)
-    age: Oldest First
-    price: Cheapest First
   type:
     age: Sort By Listing Age
     alphabetical: Sort Alphabetically By Name
     price: Sort By Listing Price
+
+listing-advert:
+  post: "Post Advert"
+  dont-post: "No Advert"
 
 modes: # Future Feature
   buy-it-now: "BIN"
@@ -78,6 +78,7 @@ fail:
   max-listings: '&cYou have reached your max listings! &7({0}/{1})'
   must-be-number: '&cThe price must be a number!'
   must-hold-item: '&fYou must have an item in your hand to sell!'
+  advert-too-expensive: '&cYour advert failed to post because you did not have enough money!'
   listing-price:
     max: '&fPrice must be less than &a${0}'
     min: '&fPrice must be at least &a${0}'

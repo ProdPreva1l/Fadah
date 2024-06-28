@@ -47,7 +47,7 @@ public abstract class Listing {
     public boolean newBid(@NotNull Player bidder, double bidAmount) {
         if (!biddable) throw new IllegalStateException("Tried to add a new bid to a BIN auction!");
         if (bidAmount <= price) return false;
-        // TODO: implement
+        // implement
         return false;
     }
 

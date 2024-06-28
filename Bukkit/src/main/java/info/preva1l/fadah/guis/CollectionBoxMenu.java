@@ -3,7 +3,6 @@ package info.preva1l.fadah.guis;
 import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
-import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.CollectableItem;
@@ -65,7 +64,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
                         viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
                         return;
                     }
-                    if (CollectionBoxCache.doesItemExist(player.getUniqueId(), collectableItem)) {
+                    if (!CollectionBoxCache.doesItemExist(player.getUniqueId(), collectableItem)) {
                         viewer.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
                         return;
                     }
@@ -108,7 +107,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
     @Override
     protected void updatePagination() {
         this.collectionBox.clear();
-        this.collectionBox.addAll(ExpiredListingsCache.getExpiredListings(player.getUniqueId()));
+        this.collectionBox.addAll(CollectionBoxCache.getCollectionBox(player.getUniqueId()));
         super.updatePagination();
     }
 

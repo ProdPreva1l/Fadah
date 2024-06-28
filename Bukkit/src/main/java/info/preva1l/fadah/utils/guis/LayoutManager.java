@@ -169,6 +169,7 @@ public class LayoutManager {
         LISTING_TIME,
         LISTING_ITEM,
         LISTING_MODE,
+        LISTING_ADVERT,
         /**
          * Confirm Menu Specific Items
          */
