@@ -15,34 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 @SuppressWarnings("unchecked")
 public enum Menus {
-    PROFILE_YOUR_LISTINGS_LORE("your-listings.lore", List.of(
-            "&fClick to view & manage",
-            "&f{0} active listings!"
-    )),
-    PROFILE_COLLECTION_BOX_ICON("collection-box.icon", "CHEST_MINECART"),
-    PROFILE_COLLECTION_BOX_MODEL_DATA("collection-box.model_data", 0),
-    PROFILE_COLLECTION_BOX_NAME("collection-box.name", "&e{0} Collection Box"),
-    PROFILE_COLLECTION_BOX_LORE("collection-box.lore", List.of(
-            "&fClick to view & claim",
-            "&f{0} purchases!"
-    )),
-    PROFILE_EXPIRED_LISTINGS_ICON("expired-items.icon", "ENDER_CHEST"),
-    PROFILE_EXPIRED_LISTINGS_MODEL_DATA("expired-items.model_data", 0),
-    PROFILE_EXPIRED_LISTINGS_NAME("expired-items.name", "&c{0} Expired Listings"),
-    PROFILE_EXPIRED_LISTINGS_LORE("expired-items.lore", List.of(
-            "&fClick to view & claim",
-            "&f{0} expired listings!"
-    )),
-
-    PROFILE_HISTORIC_ITEMS_ICON("historic-items.icon", "WRITABLE_BOOK"),
-    PROFILE_HISTORIC_ITEMS_MODEL_DATA("historic-items.model_data", 0),
-    PROFILE_HISTORIC_ITEMS_NAME("historic-items.name", "&c{0} History"),
-    PROFILE_HISTORIC_ITEMS_LORE("historic-items.lore", List.of(
-            "&fClick to view",
-            "&f{0} history!"
-    )),
-
-    // To Keep
     SEARCH_TITLE("search-title", "&9&lAuction House &8> &fSearch"),
 
     NO_ITEM_FOUND_ICON("no-items-found.icon", "BARRIER"),

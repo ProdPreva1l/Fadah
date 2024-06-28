@@ -8,7 +8,7 @@ lang:
     model-data: 0
     lore:
       - '&fThis is {0} profile!'
-      - '&fHere you will find items from the auction house relating to {0}'
+      - '&fHere you will find items from the auction house relating to {1}.' # {1} = you or the players username, {2} = the players username
   your-listings:
     icon: EMERALD
     model-data: 0

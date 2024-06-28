@@ -1,7 +1,6 @@
 package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -38,65 +37,90 @@ public class ProfileMenu extends FastInv {
                         .modelData(getLang().getInt("profile-button.model-data"))
                         .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile",
                                 viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
-                        .addLore(getLang().getLore("profile-button.description",
-                                List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {0}."),
+                        .addLore(getLang().getLore("profile-button.lore",
+                                List.of("&fThis is {0} profile!", "&fHere you will find items from the auction house relating to {1}."),
                                 viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName(),
-                                viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOU.toString() : owner.getName())).build());
+                                viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOU.toString() : owner.getName(),  owner.getName())).build());
 
-        setButtons();
+        activeListingsButton();
+        collectionBoxButton();
+        expiredListingsButton();
+        historyButton();
     }
 
-    private void setButtons() {
+    private void activeListingsButton() {
+        List<String> defLore = List.of(
+                "&fClick to view & manage",
+                "&f{0} active listings!"
+        );
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_ACTIVE_LISTINGS, 22),
                 new ItemBuilder(getLang().getAsMaterial("your-listings.icon", Material.EMERALD))
-                .name(getLang().getStringFormatted("your-listings.name", "&1Your listings", viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
-                .modelData(getLang().getInt("your-listings.model-data"))
-                .setAttributes(null)
-                .flags(ItemFlag.HIDE_ATTRIBUTES)
-                .addLore(Menus.PROFILE_YOUR_LISTINGS_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
-            if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.active-listings"))
-                    || viewer.getUniqueId() == owner.getUniqueId()) {
-                new ActiveListingsMenu(viewer, owner).open(viewer);
-            }
-        });
-        
+                        .name(getLang().getStringFormatted("your-listings.name", "&1{0} listings", viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName() + "'s", owner.getName() + "'s"))
+                        .modelData(getLang().getInt("your-listings.model-data"))
+                        .setAttributes(null)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
+                        .addLore(getLang().getLore("your-listings.lore", defLore, viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName() + "'s")).build(), e -> {
+                    if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.active-listings"))
+                            || viewer.getUniqueId() == owner.getUniqueId()) {
+                        new ActiveListingsMenu(viewer, owner).open(viewer);
+                    }
+                });
+    }
+
+    private void collectionBoxButton() {
+        List<String> defLore = List.of(
+                "&fClick to view & claim",
+                "&f{0} purchases!"
+        );
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_COLLECTION_BOX, 23),
-                new ItemBuilder(Menus.PROFILE_COLLECTION_BOX_ICON.toMaterial())
-                .name(Menus.PROFILE_COLLECTION_BOX_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
-                .modelData(Menus.PROFILE_COLLECTION_BOX_MODEL_DATA.toInteger())
-                .setAttributes(null)
-                .flags(ItemFlag.HIDE_ATTRIBUTES)
-                .addLore(Menus.PROFILE_COLLECTION_BOX_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
-            if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.collection-box"))
-                    || viewer.getUniqueId() == owner.getUniqueId()) {
-                new CollectionBoxMenu(viewer, owner).open(viewer);
-            }
-        });
+                new ItemBuilder(getLang().getAsMaterial("collection-box.icon", Material.CHEST_MINECART))
+                        .name(getLang().getStringFormatted("collection-box.name", "&e{0} Collection Box", viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName() + "'s", owner.getName() + "'s"))
+                        .modelData(getLang().getInt("collection-box.model-data"))
+                        .setAttributes(null)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
+                        .addLore(getLang().getLore("collection-box.lore", defLore, viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName() + "'s")).build(), e -> {
+                    if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.collection-box"))
+                            || viewer.getUniqueId() == owner.getUniqueId()) {
+                        new CollectionBoxMenu(viewer, owner).open(viewer);
+                    }
+                });
+    }
 
+    private void expiredListingsButton() {
+        List<String> defLore = List.of(
+                "&fClick to view & claim",
+                "&f{0} expired listings!"
+        );
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_EXPIRED_LISTINGS, 24),
-                new ItemBuilder(Menus.PROFILE_EXPIRED_LISTINGS_ICON.toMaterial())
-                .name(Menus.PROFILE_EXPIRED_LISTINGS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
-                .modelData(Menus.PROFILE_EXPIRED_LISTINGS_MODEL_DATA.toInteger())
-                .setAttributes(null)
-                .flags(ItemFlag.HIDE_ATTRIBUTES)
-                .addLore(Menus.PROFILE_EXPIRED_LISTINGS_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
-            if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.expired-listings"))
-                    || viewer.getUniqueId() == owner.getUniqueId()) {
-                new ExpiredListingsMenu(viewer, owner, 0).open(viewer);
-            }
-        });
+                new ItemBuilder(getLang().getAsMaterial("expired-items.icon", Material.ENDER_CHEST))
+                        .name(getLang().getStringFormatted("expired-items.name", "&c{0} Expired Listings", viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName() + "'s", owner.getName() + "'s"))
+                        .modelData(getLang().getInt("expired-items.model-data"))
+                        .setAttributes(null)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
+                        .addLore(getLang().getLore("your-listings.lore", defLore, viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName() + "'s")).build(), e -> {
+                    if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.expired-listings"))
+                            || viewer.getUniqueId() == owner.getUniqueId()) {
+                        new ExpiredListingsMenu(viewer, owner, 0).open(viewer);
+                    }
+                });
+    }
 
+    private void historyButton() {
+        List<String> defLore = List.of(
+                "&fClick to view",
+                "&f{0} history!"
+        );
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_HISTORY, 31),
-                new ItemBuilder(Menus.PROFILE_HISTORIC_ITEMS_ICON.toMaterial())
-                .name(Menus.PROFILE_HISTORIC_ITEMS_NAME.toFormattedString(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName()+"'s", owner.getName()+"'s"))
-                .modelData(Menus.PROFILE_HISTORIC_ITEMS_MODEL_DATA.toInteger())
-                .setAttributes(null)
-                .flags(ItemFlag.HIDE_ATTRIBUTES)
-                .addLore(Menus.PROFILE_HISTORIC_ITEMS_LORE.toLore(viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName()+"'s")).build(), e -> {
-            if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.history"))
-                    || viewer.getUniqueId() == owner.getUniqueId()) {
-                new HistoryMenu(viewer, owner, null).open(viewer);
-            }
-        });
+                new ItemBuilder(getLang().getAsMaterial("historic-items.icon", Material.ENDER_CHEST))
+                        .name(getLang().getStringFormatted("historic-items.name", "&c{0} History", viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName() + "'s", owner.getName() + "'s"))
+                        .modelData(getLang().getInt("historic-items.model-data"))
+                        .setAttributes(null)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
+                        .addLore(getLang().getLore("your-listings.lore", defLore, viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName() + "'s")).build(), e -> {
+                    if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.history"))
+                            || viewer.getUniqueId() == owner.getUniqueId()) {
+                        new HistoryMenu(viewer, owner, null).open(viewer);
+                    }
+                });
     }
 }

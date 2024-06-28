@@ -92,7 +92,6 @@ public class SQLiteDatabase implements Database {
             final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
             try (Statement statement = getConnection().createStatement()) {
                 for (String tableCreationStatement : databaseSchema) {
-                    Fadah.getConsole().info(tableCreationStatement);
                     statement.execute(tableCreationStatement);
                 }
             } catch (SQLException e) {
