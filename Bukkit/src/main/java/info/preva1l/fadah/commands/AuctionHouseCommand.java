@@ -33,9 +33,8 @@ public class AuctionHouseCommand extends Command {
         subCommands.add(new ViewListingCommand(plugin));
     }
 
-    @CommandArgs(name = "auctionhouse", aliases = {"ah", "auctions", "auction"}, permission = "fadah.use")
+    @CommandArgs(name = "auctionhouse", aliases = {"ah", "auctions", "auction"}, inGameOnly = false, permission = "fadah.use")
     public void execute(@NotNull CommandArguments command) {
-        assert command.getPlayer() != null;
         if (command.args().length >= 1) {
             if (subCommandExecutor(command, subCommands)) return;
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.NO_COMMAND.toFormattedString());
@@ -45,6 +44,11 @@ public class AuctionHouseCommand extends Command {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
             return;
         }
+        if (command.getPlayer() == null) {
+            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.MUST_BE_PLAYER.toFormattedString());
+            return;
+        }
+
         new MainMenu(null, command.getPlayer(), null, null, null).open(command.getPlayer());
     }
 

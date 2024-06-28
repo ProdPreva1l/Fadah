@@ -181,7 +181,7 @@ public class CacheSync extends JedisPubSub {
         RELOAD {
             @Override
             public void handleMessage(JSONObject obj) {
-                FastInvManager.closeAll();
+                FastInvManager.closeAll(Fadah.getINSTANCE());
                 Fadah.getINSTANCE().getConfigFile().load();
                 Fadah.getINSTANCE().getLangFile().load();
                 Fadah.getINSTANCE().getMenusFile().load();
@@ -202,7 +202,7 @@ public class CacheSync extends JedisPubSub {
                 message += StringUtils.colorize(" &ffrom remote server!");
                 Fadah.getINSTANCE().getConfigFile().save();
 
-                FastInvManager.closeAll();
+                FastInvManager.closeAll(Fadah.getINSTANCE());
 
                 Bukkit.getConsoleSender().sendMessage(message);
             }

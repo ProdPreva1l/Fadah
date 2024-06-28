@@ -23,7 +23,7 @@ public class ReloadSubCommand extends SubCommand {
             CacheSync.send(CacheSync.CacheType.RELOAD);
             return;
         }
-        FastInvManager.closeAll();
+        FastInvManager.closeAll(plugin);
         Fadah.getINSTANCE().getConfigFile().load();
         Fadah.getINSTANCE().getLangFile().load();
         Fadah.getINSTANCE().getMenusFile().load();

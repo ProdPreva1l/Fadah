@@ -28,7 +28,7 @@ public class ToggleSubCommand extends SubCommand {
         message += (enabled ? StringUtils.colorize("&c&lDisabled!") : StringUtils.colorize("&a&lEnabled!"));
 
         Fadah.getINSTANCE().getConfigFile().save();
-        FastInvManager.closeAll();
+        FastInvManager.closeAll(plugin);
 
         command.sender().sendMessage(message);
     }

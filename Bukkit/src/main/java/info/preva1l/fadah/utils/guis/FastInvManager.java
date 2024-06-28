@@ -1,5 +1,6 @@
 package info.preva1l.fadah.utils.guis;
 
+import com.github.puregero.multilib.MultiLib;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -46,10 +47,10 @@ public final class FastInvManager {
     /**
      * Close all open FastInv inventories.
      */
-    public static void closeAll() {
-        Bukkit.getOnlinePlayers().stream()
-                .filter(p -> p.getOpenInventory().getTopInventory().getHolder() instanceof FastInv)
-                .forEach(Player::closeInventory);
+    public static void closeAll(Plugin plugin) {
+        for (Player player : Bukkit.getOnlinePlayers().stream().filter(p -> p.getOpenInventory().getTopInventory().getHolder() instanceof FastInv).toList()) {
+            MultiLib.getEntityScheduler(player).execute(plugin, player::closeInventory, null, 0L);
+        }
     }
 
     public static final class InventoryListener implements Listener {
@@ -94,7 +95,7 @@ public final class FastInvManager {
         @EventHandler
         public void onPluginDisable(PluginDisableEvent e) {
             if (e.getPlugin() == this.plugin) {
-                closeAll();
+                closeAll(this.plugin);
 
                 REGISTERED.set(false);
             }
