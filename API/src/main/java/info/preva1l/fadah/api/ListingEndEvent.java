@@ -10,7 +10,7 @@ public final class ListingEndEvent extends Event {
     private final ListingEndReason reason;
 
     public ListingEndEvent(ListingEndReason reason) {
-        super();
+        super(true);
         this.reason = reason;
     }
 }
