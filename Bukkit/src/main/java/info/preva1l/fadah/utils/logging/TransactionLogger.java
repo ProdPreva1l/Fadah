@@ -22,7 +22,7 @@ public class TransactionLogger {
         Fadah.getINSTANCE().getDatabase().addToHistory(listing.getOwner(), historicItem);
 
         // Log file logs
-        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[NEW LISTING] Seller: {0} ({1}), getPrice: {2}, getItemStack: {3}",
+        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[NEW LISTING] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
                 Bukkit.getOfflinePlayer(listing.getOwner()).getName(), Bukkit.getOfflinePlayer(listing.getOwner()).getUniqueId().toString(),
                 listing.getPrice(), listing.getItemStack().toString()));
     }
@@ -46,7 +46,7 @@ public class TransactionLogger {
         CacheSync.send(CacheSync.CacheType.HISTORY, buyer.getUniqueId());
 
         // Log file logs
-        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING SOLD] Seller: {0} ({1}), Buyer: {2} ({3}), getPrice: {4}, getItemStack: {5}",
+        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING SOLD] Seller: {0} ({1}), Buyer: {2} ({3}), Price: {4}, ItemStack: {5}",
                 listing.getOwnerName(), listing.getOwner(), buyer.getName(), buyer.getUniqueId(), listing.getPrice(), listing.getItemStack()));
     }
 
@@ -59,7 +59,7 @@ public class TransactionLogger {
         Fadah.getINSTANCE().getDatabase().addToHistory(listing.getOwner(), historicItem);
 
         // Log file logs
-        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING REMOVED] Seller: {0} ({1}), getPrice: {2}, getItemStack: {3}",
+        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING REMOVED] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
                 Bukkit.getOfflinePlayer(listing.getOwner()).getName(), Bukkit.getOfflinePlayer(listing.getOwner()).getUniqueId().toString(),
                 listing.getPrice(), listing.getItemStack().toString()));
     }
@@ -72,7 +72,7 @@ public class TransactionLogger {
         Fadah.getINSTANCE().getDatabase().addToHistory(listing.getOwner(), historicItem);
 
         // Log file logs
-        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING EXPIRED] Seller: {0} ({1}), getPrice: {2}, getItemStack: {3}",
+        Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING EXPIRED] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
                 Bukkit.getOfflinePlayer(listing.getOwner()).getName(), Bukkit.getOfflinePlayer(listing.getOwner()).getUniqueId().toString(),
                 listing.getPrice(), listing.getItemStack().toString()));
     }
