@@ -28,10 +28,10 @@ Spigot/Download: https://www.spigotmc.org/resources/fadah-finally-a-decent-aucti
 /ah redeem | fadah.collection-box
 
 Permissions:
-`fadah.max-listings.<amount>` - How many items the user can list on the auction house at any one time
-`fadah.listing-tax.<percent>` - The percent a user should be taxed from the products price
-`fadah.advert-price.<amount>` - How much an advert should cost
-`fadah.manage.<command>` - Allows the user to manage other peoples profiles etc
+- `fadah.max-listings.<amount>` - How many items the user can list on the auction house at any one time
+- `fadah.listing-tax.<percent>` - The percent a user should be taxed from the products price
+- `fadah.advert-price.<amount>` - How much an advert should cost
+- `fadah.manage.<command>` - Allows the user to manage other peoples profiles etc
 
 Support: https://discord.gg/4KcF7S94HF
 
