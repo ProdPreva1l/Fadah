@@ -11,7 +11,7 @@ dependencies {
     implementation project(":API")
     compileOnly 'org.spigotmc:spigot-api:1.16.5-R0.1-SNAPSHOT'
 
-    implementation "com.github.puregero:multilib:1.2.1" // Folia & ShreddedPaper Support
+    implementation "com.github.puregero:multilib:1.2.2" // Folia & ShreddedPaper Support
 
     // Cross Server Support
     compileOnly 'redis.clients:jedis:5.1.0'
