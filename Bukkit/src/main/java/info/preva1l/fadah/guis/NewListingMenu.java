@@ -231,7 +231,7 @@ public class NewListingMenu extends FastInv {
                 new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
                 TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
                 PermissionsData.getHighestInt(PermissionsData.PermissionType.MAX_LISTINGS, player),
-                taxAmount, (taxAmount/100) * price));
+                taxAmount, new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format((taxAmount/100) * price)));
         player.sendMessage(message);
 
         TransactionLogger.listingCreated(listing);

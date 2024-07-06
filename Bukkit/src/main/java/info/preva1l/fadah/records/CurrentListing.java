@@ -45,8 +45,8 @@ public final class CurrentListing extends Listing {
         // Money Transfer
         Economy eco = Fadah.getINSTANCE().getEconomy();
         eco.withdrawPlayer(buyer, this.getPrice());
-        double priceAfterTax = (this.getTax()/100) * this.getPrice();
-        eco.depositPlayer(Bukkit.getOfflinePlayer(this.getOwner()), priceAfterTax);
+        double taxed = (this.getTax()/100) * this.getPrice();
+        eco.depositPlayer(Bukkit.getOfflinePlayer(this.getOwner()), this.getPrice() - taxed);
 
         // Remove Listing
         if (Fadah.getINSTANCE().getCacheSync() == null) {
@@ -70,7 +70,7 @@ public final class CurrentListing extends Listing {
 
         String itemName = this.getItemStack().getItemMeta().getDisplayName().isBlank() ?
                 this.getItemStack().getType().name() : this.getItemStack().getItemMeta().getDisplayName();
-        String formattedPrice = new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(getPrice());
+        String formattedPrice = new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(this.getPrice() - taxed);
         String message = String.join("\n", Lang.NOTIFICATION_NEW_SELL.toLore(itemName, formattedPrice));
 
         Player seller = Bukkit.getPlayer(this.getOwner());
