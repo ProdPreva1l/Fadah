@@ -6,7 +6,6 @@ import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,6 +36,6 @@ public final class ListingCache {
     }
 
     public Map<UUID, Listing> getListings() {
-        return new HashMap<>(listings);
+        return new ConcurrentHashMap<>(listings);
     }
 }

@@ -87,7 +87,9 @@ public final class CurrentListing extends Listing {
 
     @Override
     public boolean cancel(@NotNull Player canceller) {
-        if (ListingCache.getListing(this.getId()) == null || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(this.getId()) == null)) {
+        if (ListingCache.getListing(this.getId()) == null
+                || (Config.STRICT_CHECKS.toBoolean()
+                && Fadah.getINSTANCE().getDatabase().getListing(this.getId()) == null)) {
             canceller.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
             return false;
         }
@@ -106,7 +108,13 @@ public final class CurrentListing extends Listing {
 
         boolean isAdmin = !this.isOwner(canceller);
         TransactionLogger.listingRemoval(this, isAdmin);
-        Bukkit.getServer().getPluginManager().callEvent(new ListingEndEvent(isAdmin ? ListingEndReason.CANCELLED_ADMIN : ListingEndReason.CANCELLED));
+        Bukkit.getScheduler().runTaskAsynchronously(Fadah.getINSTANCE(), () ->
+                Bukkit.getServer().getPluginManager().callEvent(
+                        new ListingEndEvent(isAdmin
+                                ? ListingEndReason.CANCELLED_ADMIN
+                                : ListingEndReason.CANCELLED)
+                )
+        );
         return true;
     }
 

@@ -8,6 +8,7 @@ import lombok.experimental.UtilityClass;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -16,7 +17,7 @@ import java.util.UUID;
 public class PermissionsData {
     public int getCurrentListings(Player player) {
         Map<UUID, Listing> listings = ListingCache.getListings();
-        for (UUID key : listings.keySet()) {
+        for (UUID key : new ArrayList<>(listings.keySet())) {
             Listing listing = listings.get(key);
             if (!listing.isOwner(player)) listings.remove(key);
         }
