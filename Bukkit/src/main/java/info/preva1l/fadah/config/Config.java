@@ -26,6 +26,8 @@ public enum Config {
 
     HOOK_ECO_ITEMS("hooks.eco-items", false),
 
+    MIGRATOR_ZAUCTIONHOUSE_CATEGORIES("migrators.z-auction-house.categories-to-migrate", List.of("Blocks", "Tools", "Weapons", "Potions", "Misc")),
+
     LOG_TO_FILE("log-to-file", true),
 
     DATABASE_TYPE("database.type", "SQLITE"),

@@ -19,6 +19,16 @@ listing-adverts:
 hooks:
   eco-items: false
 
+migrators:
+  z-auction-house:
+    categories-to-migrate:
+      - "Blocks"
+      - "Tools"
+      - "Weapons"
+      - "Potions"
+      - "Misc"
+
+
 log-to-file: true
 
 database:

@@ -8,6 +8,7 @@ import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.commands.AuctionHouseCommand;
+import info.preva1l.fadah.commands.MigrateCommand;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
@@ -15,6 +16,8 @@ import info.preva1l.fadah.data.*;
 import info.preva1l.fadah.hooks.HookManager;
 import info.preva1l.fadah.hooks.impl.EcoItemsHook;
 import info.preva1l.fadah.listeners.PlayerListener;
+import info.preva1l.fadah.migrator.MigratorManager;
+import info.preva1l.fadah.migrator.zAuctionHouseMigrator;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.Listing;
@@ -63,6 +66,8 @@ public final class Fadah extends JavaPlugin {
     @Getter private HookManager hookManager;
     @Getter private LayoutManager layoutManager;
 
+    @Getter private MigratorManager migratorManager;
+
     private Metrics metrics;
 
     @Override
@@ -105,6 +110,7 @@ public final class Fadah extends JavaPlugin {
         customItemKey = NamespacedKey.minecraft("auctionhouse");
 
         loadHooks();
+        loadMigrators();
 
         initLogger();
         setupMetrics();
@@ -150,6 +156,7 @@ public final class Fadah extends JavaPlugin {
         getConsole().info("Loading commands...");
         this.commandManager = new CommandManager(this);
         new AuctionHouseCommand(this);
+        new MigrateCommand(this);
         getConsole().info("Commands Loaded!");
     }
 
@@ -226,6 +233,15 @@ public final class Fadah extends JavaPlugin {
         }
 
         getConsole().info("Hooked into %s plugins!".formatted(getHookManager().hookCount()));
+    }
+
+    private void loadMigrators() {
+        getConsole().info("Loading migrators...");
+
+        migratorManager = new MigratorManager();
+        migratorManager.loadMigrator(new zAuctionHouseMigrator());
+
+        getConsole().info("%s Migrators Loaded!".formatted(migratorManager.getMigratorNames().size()));
     }
 
     private void setupMetrics() {

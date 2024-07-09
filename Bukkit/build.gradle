@@ -35,6 +35,10 @@ dependencies {
     compileOnly 'com.willfp:libreforge:4.58.1'
     compileOnly 'com.willfp:eco:6.56.0'
     compileOnly 'com.willfp:EcoItems:5.43.1'
+
+    // Migrators
+    // zAuctionHouse
+    compileOnly 'com.github.Maxlego08:zAuctionHouseV3-API:3.2.1.9'
 }
 
 shadowJar {
