@@ -1,17 +1,10 @@
-import org.apache.tools.ant.filters.ReplaceTokens
-
 plugins {
     id 'java'
-    id 'org.ajoberstar.grgit' version '5.2.2'
     id 'io.github.goooler.shadow' version '8.1.7'
 }
 
 group = 'info.preva1l'
-version = "2.1.0${versionMetadata()}"
-
-ext {
-    set 'version', version.toString()
-}
+version = "2.1.0"
 
 allprojects {
     apply plugin: 'io.github.goooler.shadow'
@@ -50,9 +43,11 @@ allprojects {
     }
 
     processResources {
-        filesMatching(['**/*.json', '**/*.yml']) {
-            filter ReplaceTokens as Class, beginToken: '${', endToken: '}',
-                    tokens: rootProject.ext.properties
+        def props = [version: rootProject.version]
+        inputs.properties props
+        filteringCharset 'UTF-8'
+        filesMatching('plugin.yml') {
+            expand props
         }
     }
 }
@@ -99,19 +94,3 @@ subprojects {
 }
 
 logger.lifecycle("Building Fadah ${version}")
-
-@SuppressWarnings('GrMethodMayBeStatic')
-def versionMetadata() {
-    if (grgit == null) {
-        return '-' + System.getenv("GITHUB_RUN_NUMBER") ? 'build.' + System.getenv("GITHUB_RUN_NUMBER") : 'unknown'
-    }
-
-    // Get if there is a tag for this commit
-    def tag = grgit.tag.list().find { it.commit.id == grgit.head().id }
-    if (tag != null) {
-        return ''
-    }
-
-    // Otherwise, get the last commit hash and if it's a clean head
-    return '-' + grgit.head().abbreviatedId + (grgit.status().clean ? '' : '-indev')
-}
