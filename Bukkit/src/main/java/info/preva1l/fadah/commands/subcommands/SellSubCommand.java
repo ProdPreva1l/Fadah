@@ -19,25 +19,38 @@ public class SellSubCommand extends SubCommand {
 
     @SubCommandArgs(name = "sell", aliases = {"new-listing", "create-listing"}, permission = "fadah.use", description = "Create a new listing on the auction house!")
     public void execute(@NotNull SubCommandArguments command) {
+        if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
+            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
+            return;
+        }
+        assert command.getPlayer() != null;
+        if (command.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR) {
+            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.MUST_HOLD_ITEM.toFormattedString());
+            return;
+        }
+        if (command.args().length == 0) {
+            command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.BAD_USAGE.toFormattedString("ah sell <price>")));
+            return;
+        }
+        String priceString = command.args()[0];
+        int multi = 1;
+
+        if (priceString.endsWith("k") || priceString.endsWith("K")) {
+            multi = 1000;
+            priceString = priceString.replace("k", "");
+            priceString = priceString.replace("K", "");
+        } else if (priceString.endsWith("m") || priceString.endsWith("M")) {
+            multi = 1000000;
+            priceString = priceString.replace("m", "");
+            priceString = priceString.replace("M", "");
+        }
+
         try {
-            if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
-                command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
-                return;
-            }
-            assert command.getPlayer() != null;
-            if (command.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR) {
-                command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.MUST_HOLD_ITEM.toFormattedString());
-                return;
-            }
-            if (command.args().length == 0) {
-                command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.BAD_USAGE.toFormattedString("ah sell <price>")));
-                return;
-            }
-            if (Double.parseDouble(command.args()[0]) < Config.MIN_LISTING_PRICE.toDouble()) {
+            if (Double.parseDouble(priceString) * multi < Config.MIN_LISTING_PRICE.toDouble()) {
                 command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MIN_LISTING_PRICE.toFormattedString(Config.MIN_LISTING_PRICE.toString())));
                 return;
             }
-            if (Double.parseDouble(command.args()[0]) > Config.MAX_LISTING_PRICE.toDouble()) {
+            if (Double.parseDouble(priceString) * multi > Config.MAX_LISTING_PRICE.toDouble()) {
                 command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MAX_LISTING_PRICE.toFormattedString(Config.MAX_LISTING_PRICE.toString())));
                 return;
             }
@@ -47,7 +60,7 @@ public class SellSubCommand extends SubCommand {
                 command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MAX_LISTINGS.toFormattedString(currentListings, maxListings)));
                 return;
             }
-            new NewListingMenu(command.getPlayer(), Double.parseDouble(command.args()[0])).open(command.getPlayer());
+            new NewListingMenu(command.getPlayer(), Double.parseDouble(priceString) * multi).open(command.getPlayer());
         } catch (NumberFormatException e) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.MUST_BE_NUMBER.toFormattedString());
         }
