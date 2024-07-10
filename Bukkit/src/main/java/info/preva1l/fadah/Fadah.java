@@ -239,7 +239,9 @@ public final class Fadah extends JavaPlugin {
         getConsole().info("Loading migrators...");
 
         migratorManager = new MigratorManager();
-        migratorManager.loadMigrator(new zAuctionHouseMigrator());
+        if (getServer().getPluginManager().getPlugin("zAuctionHouse") != null) {
+            migratorManager.loadMigrator(new zAuctionHouseMigrator());
+        }
 
         getConsole().info("%s Migrators Loaded!".formatted(migratorManager.getMigratorNames().size()));
     }
