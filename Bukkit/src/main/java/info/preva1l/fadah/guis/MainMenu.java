@@ -148,7 +148,7 @@ public class MainMenu extends ScrollBarFastInv {
             } else {
                 itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.too-expensive"));
             }
-            if (listing.getItemStack().getType().name().toUpperCase().endsWith("_SHULKER_BOX")) {
+            if (listing.getItemStack().getType().name().toUpperCase().endsWith("SHULKER_BOX")) {
                 itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.is-shulker"));
             }
 
@@ -160,7 +160,7 @@ public class MainMenu extends ScrollBarFastInv {
                     return;
                 }
 
-                if (e.isRightClick() && listing.getItemStack().getType().name().toUpperCase().endsWith("_SHULKER_BOX")) {
+                if (e.isRightClick() && listing.getItemStack().getType().name().toUpperCase().endsWith("SHULKER_BOX")) {
                     new ShulkerBoxPreviewMenu(listing, player, category, search, sortingMethod, sortingDirection).open(player);
                     return;
                 }
