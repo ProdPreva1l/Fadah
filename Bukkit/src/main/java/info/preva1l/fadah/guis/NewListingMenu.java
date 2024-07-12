@@ -46,7 +46,7 @@ public class NewListingMenu extends FastInv {
                 LayoutManager.MenuType.NEW_LISTING.getLayout().guiTitle(), LayoutManager.MenuType.NEW_LISTING);
         this.player = player;
         this.itemToSell = player.getInventory().getItemInMainHand().clone();
-        this.timeToDelete = Instant.now().plus(6, ChronoUnit.HOURS);
+        this.timeToDelete = Instant.now().plus(2, ChronoUnit.DAYS);
         List<Integer> fillerSlots = getLayout().fillerSlots();
         if (!fillerSlots.isEmpty()) {
             setItems(fillerSlots.stream().mapToInt(Integer::intValue).toArray(),
