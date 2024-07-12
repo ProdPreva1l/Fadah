@@ -154,7 +154,7 @@ public class MainMenu extends ScrollBarFastInv {
             }
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
-                if (e.isShiftClick()) {
+                if (e.isShiftClick() && e.getWhoClicked().hasPermission("fadah.manage.active-listings")) {
                     if (listing.cancel(((Player) e.getWhoClicked()))) {
                         updatePagination();
                     }
