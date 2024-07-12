@@ -35,7 +35,7 @@ public enum Lang {
     MUST_BE_NUMBER("fail.must-be-number", "&cThe price must be a number!"),
     MUST_HOLD_ITEM("fail.must-hold-item", "&fYou must have an item in your hand to sell!"),
     ADVERT_EXPENSE("fail.advert-too-expensive", "&cYour advert failed to post because you did not have enough money!"),
-
+    COOLDOWN("fail.cooldown", "&cPlease wait &f{0}&c!"),
 
     HELP_COMMAND_HEADER("help-command.header", "&#9555FF&lAuctionHouse &eHelp"),
     HELP_COMMAND_FORMAT("help-command.format", "&b/{0} &8&l| &f{1}"),

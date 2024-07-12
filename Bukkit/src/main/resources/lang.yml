@@ -78,6 +78,7 @@ fail:
   must-be-number: '&cThe price must be a number!'
   must-hold-item: '&fYou must have an item in your hand to sell!'
   advert-too-expensive: '&cYour advert failed to post because you did not have enough money!'
+  cooldown: '&cPlease wait &f{0}&c!'
   listing-price:
     max: '&fPrice must be less than &a${0}'
     min: '&fPrice must be at least &a${0}'

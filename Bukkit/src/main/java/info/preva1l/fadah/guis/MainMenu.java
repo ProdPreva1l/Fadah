@@ -9,6 +9,7 @@ import info.preva1l.fadah.filters.SortingDirection;
 import info.preva1l.fadah.filters.SortingMethod;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
+import info.preva1l.fadah.utils.CooldownManager;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
@@ -237,18 +238,23 @@ public class MainMenu extends ScrollBarFastInv {
                 .addLore(getLang().getLore("filter.change-type.lore", defFiltLore, (prev == null ? Lang.WORD_NONE.toString() : prev.getFriendlyName()),
                         sortingMethod.getFriendlyName(), (next == null ? Lang.WORD_NONE.toString() : next.getFriendlyName())))
                 .build(), e -> {
-            if (e.isLeftClick()) {
-                if (sortingMethod.previous() == null) return;
-                this.sortingMethod = sortingMethod.previous();
-                updatePagination();
-                addFilterButtons();
-            }
-            if (e.isRightClick()) {
-                if (sortingMethod.next() == null) return;
-                this.sortingMethod = sortingMethod.next();
-                updatePagination();
-                addFilterButtons();
-            }
+                    if (CooldownManager.hasCooldown(CooldownManager.Cooldown.SORT, player)) {
+                        player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.COOLDOWN.toFormattedString(CooldownManager.getCooldownString(CooldownManager.Cooldown.SORT, player)));
+                        return;
+                    }
+                    CooldownManager.startCooldown(CooldownManager.Cooldown.SORT, player);
+                    if (e.isLeftClick()) {
+                        if (sortingMethod.previous() == null) return;
+                        this.sortingMethod = sortingMethod.previous();
+                        updatePagination();
+                        addFilterButtons();
+                    }
+                    if (e.isRightClick()) {
+                        if (sortingMethod.next() == null) return;
+                        this.sortingMethod = sortingMethod.next();
+                        updatePagination();
+                        addFilterButtons();
+                    }
         });
 
         // Search
@@ -284,6 +290,11 @@ public class MainMenu extends ScrollBarFastInv {
                         .name(getLang().getStringFormatted("filter.change-direction.name", "&eFilter Direction"))
                         .modelData(getLang().getInt("filter.change-direction.model-data"))
                         .lore(getLang().getLore("filter.change-direction.lore", defDirLore, asc, desc)).build(), e -> {
+                    if (CooldownManager.hasCooldown(CooldownManager.Cooldown.SORT, player)) {
+                        player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.COOLDOWN.toFormattedString(CooldownManager.getCooldownString(CooldownManager.Cooldown.SORT, player)));
+                        return;
+                    }
+                    CooldownManager.startCooldown(CooldownManager.Cooldown.SORT, player);
                     this.sortingDirection = sortingDirection == SortingDirection.ASCENDING
                             ? SortingDirection.DESCENDING
                             : SortingDirection.ASCENDING;

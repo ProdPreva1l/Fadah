@@ -39,6 +39,7 @@ public class TimeUtil {
         long hours = durationUntilDeletion.toHours() % 24;
         long minutes = durationUntilDeletion.toMinutes() % 60;
         long seconds = durationUntilDeletion.getSeconds() % 60;
+        long milliseconds = durationUntilDeletion.toMillis() % 100;
 
         if (days > 0) {
             return String.format("%dd, %dh, %dm, %ds", days, hours, minutes, seconds);
@@ -46,8 +47,10 @@ public class TimeUtil {
             return String.format("%dh, %dm, %ds", hours, minutes, seconds);
         } else if (minutes > 0) {
             return String.format("%dm, %ds", minutes, seconds);
-        } else {
+        } else if (seconds > 0) {
             return String.format("%ds", seconds);
+        } else {
+            return String.format("%dms", milliseconds);
         }
     }
 
