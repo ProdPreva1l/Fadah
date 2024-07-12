@@ -280,8 +280,8 @@ public class MySQLDatabase implements Database {
                     statement.setDouble(7, listing.getPrice());
                     statement.setDouble(8, listing.getTax());
                     statement.setString(9, ItemSerializer.serialize(listing.getItemStack()));
-                    statement.setBoolean(10, listing.isBiddable());
-                    statement.setString(11, gson.toJson(listing.getBids()));
+                    statement.setBoolean(10, false);
+                    statement.setString(11, "");
                     statement.executeUpdate();
                 }
             } catch (SQLException e) {

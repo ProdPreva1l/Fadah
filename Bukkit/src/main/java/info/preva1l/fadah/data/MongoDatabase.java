@@ -174,8 +174,8 @@ public class MongoDatabase implements Database {
                     .append("price", listing.getPrice())
                     .append("tax", listing.getTax())
                     .append("itemStack", ItemSerializer.serialize(listing.getItemStack()))
-                    .append("biddable", listing.isBiddable())
-                    .append("bids", gson.toJson(listing.getBids()));
+                    .append("biddable", false)
+                    .append("bids", "");
             collectionHelper.insertDocument("listings", document);
             return null;
         });
