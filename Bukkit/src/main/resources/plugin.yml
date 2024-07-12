@@ -26,7 +26,7 @@ permissions:
   fadah.listing-tax.<amount>:
     description: The percentage a player will get taxed when creating a listing.
   fadah.advert-price.<amount>:
-    description:
+    description: The cost of a listing advertisement
   fadah.use:
     default: true
   fadah.collection-box:

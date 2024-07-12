@@ -60,7 +60,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
             addPaginationItem(new PaginatedItem(itemBuilder.build(), e -> {
                 MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {
                     int slot = viewer.getInventory().firstEmpty();
-                    if (slot >= 36) {
+                    if (slot == -1) {
                         viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
                         return;
                     }
