@@ -52,7 +52,7 @@ public final class CategoryCache {
             String name = categoriesFile.getString(key + ".name");
             Material icon = Material.getMaterial(categoriesFile.getString(key + ".icon"));
             int priority = categoriesFile.getInt(key + ".priority");
-            int modelData = categoriesFile.getInt(key + ".icon_model_data");
+            int modelData = categoriesFile.getInt(key + ".icon-model-data");
 
             List<String> description = categoriesFile.getStringList(key + ".description");
             List<String> materialsList = categoriesFile.getStringList(key + ".materials");

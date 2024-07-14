@@ -102,6 +102,7 @@ public class MainMenu extends ScrollBarFastInv {
             ItemBuilder itemBuilder = new ItemBuilder(cat.icon())
                     .name(StringUtils.colorize(cat.name()))
                     .addLore(StringUtils.colorizeList(cat.description()))
+                    .modelData(cat.modelData())
                     .setAttributes(null)
                     .flags(ItemFlag.HIDE_ENCHANTS,
                             ItemFlag.HIDE_ATTRIBUTES,
@@ -211,9 +212,10 @@ public class MainMenu extends ScrollBarFastInv {
                 GuiHelper.constructButton(GuiButtonType.SCROLL_NEXT), e -> scrollDown());
 
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE,53),
-                new ItemBuilder(Material.PLAYER_HEAD).skullOwner(player)
-                .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile", StringUtils.capitalize(Lang.WORD_YOUR.toString())))
-                .addLore(getLang().getLore("profile-button.lore", List.of("&fClick to view your profile!")))
+                new ItemBuilder(getLang().getAsMaterial("profile-button.icon", Material.PLAYER_HEAD)).skullOwner(player)
+                        .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile", StringUtils.capitalize(Lang.WORD_YOUR.toString())))
+                        .addLore(getLang().getLore("profile-button.lore", List.of("&fClick to view your profile!")))
+                        .modelData(getLang().getInt("profile-button.model-data"))
                         .build(), e -> new ProfileMenu(player, player).open(player));
     }
 

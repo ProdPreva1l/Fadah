@@ -4,8 +4,9 @@ title: '&9&lAuction House &8> &b{0} Profile' # {0} = "Your" or the players name 
 # {0} = "Your" or the players name if in management mode, {1} = the players username
 lang:
   profile-button:
-    name: '&e&l{0} Profile'
+    icon: PLAYER_HEAD
     model-data: 0
+    name: '&e&l{0} Profile'
     lore:
       - '&fThis is {0} profile!'
       - '&fHere you will find items from the auction house relating to {1}.' # {1} = you or the players username, {2} = the players username

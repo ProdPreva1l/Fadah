@@ -21,6 +21,8 @@ lang:
       is-shulker: '&fRight Click to Preview!'
 
   profile-button:
+    icon: PLAYER_HEAD
+    model-data: 0
     name: '&e&lYour Profile'
     lore:
       - '&fClick to view your profile!'

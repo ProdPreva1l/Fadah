@@ -2,7 +2,7 @@ tools:
   name: '&aTools'
   priority: 2
   icon: DIAMOND_PICKAXE
-  icon_model_data: 0
+  icon-model-data: 0
   description:
     - '&fPickaxes, Axes, Hoes, etc'
   materials:
@@ -18,7 +18,7 @@ combat:
   name: '&cCombat'
   priority: 2
   icon: DIAMOND_SWORD
-  icon_model_data: 0
+  icon-model-data: 0
   description:
     - '&fSwords, Armour and Bows'
   materials:
@@ -36,7 +36,7 @@ spawners-and-eggs:
   name: '&5Spawners and Mob Eggs'
   priority: 2
   icon: CHICKEN_SPAWN_EGG
-  icon_model_data: 0
+  icon-model-data: 0
   description:
     - '&fAll Mob Spawners and Mob Spawn Eggs'
   materials:
@@ -50,7 +50,7 @@ building-blocks:
   name: '&dBuilding Blocks'
   priority: 2
   icon: BRICKS
-  icon_model_data: 0
+  icon-model-data: 0
   description:
     - '&fBlocks used to make &ebeautiful &fbuildings!'
   materials:
@@ -71,7 +71,7 @@ redstone:
   name: '&cRedstone'
   priority: 3
   icon: REPEATER
-  icon_model_data: 0
+  icon-model-data: 0
   description:
     - '&fRedstone components.'
   materials:
@@ -88,7 +88,7 @@ eco-items:
   name: '&fEco Items Example'
   priority: 3
   icon: BLUE_DYE
-  icon_model_data: 0
+  icon-model-data: 0
   description:
     - '&fAn example usage for the ecoitems hook'
   materials: []
@@ -101,7 +101,7 @@ misc:
   name: '&eMisc'
   priority: 1
   icon: LEATHER
-  icon_model_data: 0
+  icon-model-data: 0
   description:
     - '&fItems that don''t fit under any other category.'
   materials:
