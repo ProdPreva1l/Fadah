@@ -5,10 +5,9 @@ website: https://discord.gg/4KcF7S94HF
 version: '${version}'
 
 depend: [Vault]
-softdepend: [EcoItems, zAuctionHouseV3]
+softdepend: [EcoItems, zAuctionHouseV3, AuctionHouse]
 
-folia: true
-shreddedpaper: true
+folia-supported: true
 
 main: info.preva1l.fadah.Fadah
 api-version: '1.16'

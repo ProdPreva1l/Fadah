@@ -37,8 +37,8 @@ dependencies {
     compileOnly 'com.willfp:EcoItems:5.43.1'
 
     // Migrators
-    // zAuctionHouse
-    compileOnly 'com.github.Maxlego08:zAuctionHouseV3-API:3.2.1.9'
+    compileOnly 'com.github.Maxlego08:zAuctionHouseV3-API:3.2.1.9' // zAuctionHouse
+    compileOnly files('../libs/AuctionHouse-1.20.4-3.7.1.jar') // AuctionHouse
 }
 
 shadowJar {

@@ -16,6 +16,7 @@ import info.preva1l.fadah.data.*;
 import info.preva1l.fadah.hooks.HookManager;
 import info.preva1l.fadah.hooks.impl.EcoItemsHook;
 import info.preva1l.fadah.listeners.PlayerListener;
+import info.preva1l.fadah.migrator.AuctionHouseMigrator;
 import info.preva1l.fadah.migrator.MigratorManager;
 import info.preva1l.fadah.migrator.zAuctionHouseMigrator;
 import info.preva1l.fadah.multiserver.CacheSync;
@@ -239,8 +240,13 @@ public final class Fadah extends JavaPlugin {
         getConsole().info("Loading migrators...");
 
         migratorManager = new MigratorManager();
+
         if (getServer().getPluginManager().getPlugin("zAuctionHouseV3") != null) {
             migratorManager.loadMigrator(new zAuctionHouseMigrator());
+        }
+
+        if (getServer().getPluginManager().getPlugin("AuctionHouse") != null) {
+            migratorManager.loadMigrator(new AuctionHouseMigrator());
         }
 
         getConsole().info("%s Migrators Loaded!".formatted(migratorManager.getMigratorNames().size()));

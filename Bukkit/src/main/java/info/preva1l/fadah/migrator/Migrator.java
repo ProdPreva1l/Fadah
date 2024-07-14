@@ -28,26 +28,24 @@ public interface Migrator {
             Fadah.getConsole().info("Migrated %s listings!".formatted(migratedListings));
 
             int migratedCollectionBoxes = 0;
-            List<Map<CollectableItem, UUID>> collectionBoxes = migrateCollectionBoxes();
+            Map<UUID, List<CollectableItem>> collectionBoxes = migrateCollectionBoxes();
 
-            for (Map<CollectableItem, UUID> collectionBox : collectionBoxes) {
-                for (CollectableItem item : collectionBox.keySet()) {
-                    UUID player = collectionBox.get(item);
-                    CollectionBoxCache.addItem(player, item);
-                    plugin.getDatabase().addToCollectionBox(player, item);
+            for (UUID owner : collectionBoxes.keySet()) {
+                for (CollectableItem item : collectionBoxes.get(owner)) {
+                    CollectionBoxCache.addItem(owner, item);
+                    plugin.getDatabase().addToCollectionBox(owner, item);
                 }
                 migratedCollectionBoxes++;
             }
             Fadah.getConsole().info("Migrated %s collection boxes!".formatted(migratedCollectionBoxes));
 
             int migratedExpiredItems = 0;
-            List<Map<CollectableItem, UUID>> expiredItems = migrateExpiredListings();
+            Map<UUID, List<CollectableItem>> expiredItems = migrateExpiredListings();
 
-            for (Map<CollectableItem, UUID> collectionBox : collectionBoxes) {
-                for (CollectableItem item : collectionBox.keySet()) {
-                    UUID player = collectionBox.get(item);
-                    ExpiredListingsCache.addItem(player, item);
-                    plugin.getDatabase().addToExpiredItems(player, item);
+            for (UUID owner : expiredItems.keySet()) {
+                for (CollectableItem item : expiredItems.get(owner)) {
+                    ExpiredListingsCache.addItem(owner, item);
+                    plugin.getDatabase().addToExpiredItems(owner, item);
                 }
                 migratedExpiredItems++;
             }
@@ -57,6 +55,6 @@ public interface Migrator {
     }
 
     List<Listing> migrateListings();
-    List<Map<CollectableItem, UUID>> migrateCollectionBoxes();
-    List<Map<CollectableItem, UUID>> migrateExpiredListings();
+    Map<UUID, List<CollectableItem>> migrateCollectionBoxes();
+    Map<UUID, List<CollectableItem>> migrateExpiredListings();
 }

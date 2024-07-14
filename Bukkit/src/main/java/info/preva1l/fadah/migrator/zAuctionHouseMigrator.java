@@ -64,15 +64,15 @@ public final class zAuctionHouseMigrator implements Migrator {
     }
 
     @Override
-    public List<Map<CollectableItem, UUID>> migrateCollectionBoxes() {
+    public Map<UUID, List<CollectableItem>> migrateCollectionBoxes() {
         Fadah.getConsole().warning("Not migrating collection boxes! (zAuctionHouse API does not permit)");
-        return List.of();
+        return Collections.emptyMap();
     }
 
     @Override
-    public List<Map<CollectableItem, UUID>> migrateExpiredListings() {
+    public Map<UUID, List<CollectableItem>> migrateExpiredListings() {
         Fadah.getConsole().warning("Not migrating expired listings! (zAuctionHouse API does not permit)");
-        return List.of();
+        return Collections.emptyMap();
     }
 
     private <T> T getProvider(Class<T> clazz) {
