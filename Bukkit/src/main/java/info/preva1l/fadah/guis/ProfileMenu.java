@@ -97,7 +97,7 @@ public class ProfileMenu extends FastInv {
                         .modelData(getLang().getInt("expired-items.model-data"))
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
-                        .addLore(getLang().getLore("your-listings.lore", defLore, viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName() + "'s")).build(), e -> {
+                        .addLore(getLang().getLore("expired-items.lore", defLore, viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName() + "'s")).build(), e -> {
                     if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.expired-listings"))
                             || viewer.getUniqueId() == owner.getUniqueId()) {
                         new ExpiredListingsMenu(viewer, owner, 0).open(viewer);
@@ -116,7 +116,7 @@ public class ProfileMenu extends FastInv {
                         .modelData(getLang().getInt("historic-items.model-data"))
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
-                        .addLore(getLang().getLore("your-listings.lore", defLore, viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName() + "'s")).build(), e -> {
+                        .addLore(getLang().getLore("historic-items.lore", defLore, viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toString() : owner.getName() + "'s")).build(), e -> {
                     if ((viewer.getUniqueId() != owner.getUniqueId() && viewer.hasPermission("fadah.manage.history"))
                             || viewer.getUniqueId() == owner.getUniqueId()) {
                         new HistoryMenu(viewer, owner, null).open(viewer);
