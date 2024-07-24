@@ -102,6 +102,13 @@ public enum Lang {
     ACTIONS_COLLECTION_BOX_CLAIM("logging-actions.collection-box-claimed", "Collection Box Item Claimed"),
     ACTIONS_COLLECTION_BOX_ADMIN_CLAIM("logging-actions.collection-box-claimed-admin", "Collection Box Item Claimed by Admins"),
 
+    ADMIN_RELOAD("admin.reload.message", "&aConfigs reloaded!"),
+    ADMIN_RELOAD_REMOTE("admin.reload.remote", "&aConfigs reloaded from remote server!"),
+    ADMIN_TOGGLE_MESSAGE("admin.toggle.message", "&fAuction House has been {0}&r&f!"),
+    ADMIN_TOGGLE_REMOTE("admin.toggle.remote", "&fAuction House has been {0}&r&f from a remote server!"),
+    ADMIN_TOGGLE_ENABLED("admin.toggle.enabled", "&a&lEnabled"),
+    ADMIN_TOGGLE_DISABLED("admin.toggle.disabled", "&c&lDisabled"),
+
     WORD_YOU("words.you", "you"),
     WORD_YOUR("words.your", "your"),
     WORD_NONE("words.none", "None"),

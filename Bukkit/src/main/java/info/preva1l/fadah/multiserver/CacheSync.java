@@ -185,23 +185,19 @@ public class CacheSync extends JedisPubSub {
             @Override
             public void handleMessage(JSONObject obj) {
                 Fadah.getINSTANCE().reload();
-                Bukkit.getConsoleSender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + "&aConfig reloaded from remote server!"));
+                Bukkit.getConsoleSender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADMIN_RELOAD_REMOTE.toFormattedString());
             }
         },
         TOGGLE {
             @Override
             public void handleMessage(JSONObject obj) {
+                FastInvManager.closeAll(Fadah.getINSTANCE());
                 boolean enabled = Fadah.getINSTANCE().getConfigFile().getBoolean("enabled");
                 Fadah.getINSTANCE().getConfigFile().getConfiguration().set("enabled", !enabled);
-
-                String message = Lang.PREFIX.toFormattedString() + StringUtils.colorize("&fAuction House has been ");
-                message += (enabled ? StringUtils.colorize("&c&lDisabled") : StringUtils.colorize("&a&lEnabled"));
-                message += StringUtils.colorize(" &ffrom remote server!");
                 Fadah.getINSTANCE().getConfigFile().save();
 
-                FastInvManager.closeAll(Fadah.getINSTANCE());
-
-                Bukkit.getConsoleSender().sendMessage(message);
+                String toggle = enabled ? Lang.ADMIN_TOGGLE_DISABLED.toFormattedString() : Lang.ADMIN_TOGGLE_ENABLED.toFormattedString();
+                Bukkit.getConsoleSender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADMIN_TOGGLE_REMOTE.toFormattedString(toggle));
             }
         },
         HISTORY {

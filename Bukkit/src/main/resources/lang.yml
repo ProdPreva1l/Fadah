@@ -96,6 +96,16 @@ errors:
   no-command: '&cThis command does not exist!'
   cant-sell: '&cYou cannot sell this item!'
 
+admin:
+  reload:
+    message: "&aConfigs reloaded!"
+    remote: "&aConfigs reloaded from remote server!"
+  toggle:
+    message: "&fAuction House has been {0}&r&f!"
+    remote: "&fAuction House has been {0}&r&f from a remote server!"
+    enabled: "&a&lEnabled"
+    disabled: "&c&lDisabled"
+
 words:
   you: you
   your: your
