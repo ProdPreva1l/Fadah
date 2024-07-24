@@ -1,7 +1,10 @@
 package info.preva1l.fadah.multiserver;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.cache.*;
+import info.preva1l.fadah.cache.CollectionBoxCache;
+import info.preva1l.fadah.cache.ExpiredListingsCache;
+import info.preva1l.fadah.cache.HistoricItemsCache;
+import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.Listing;
@@ -181,13 +184,7 @@ public class CacheSync extends JedisPubSub {
         RELOAD {
             @Override
             public void handleMessage(JSONObject obj) {
-                FastInvManager.closeAll(Fadah.getINSTANCE());
-                Fadah.getINSTANCE().getConfigFile().load();
-                Fadah.getINSTANCE().getLangFile().load();
-                Fadah.getINSTANCE().getMenusFile().load();
-                Fadah.getINSTANCE().getCategoriesFile().load();
-                CategoryCache.update();
-                Fadah.getINSTANCE().getDatabase().loadListings();
+                Fadah.getINSTANCE().reload();
                 Bukkit.getConsoleSender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + "&aConfig reloaded from remote server!"));
             }
         },

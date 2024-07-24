@@ -295,4 +295,22 @@ public final class Fadah extends JavaPlugin {
 
         getConsole().info("Logger Started!");
     }
+
+    public void reload() {
+        FastInvManager.closeAll(this);
+        Fadah.getINSTANCE().getConfigFile().load();
+        Fadah.getINSTANCE().getLangFile().load();
+        Fadah.getINSTANCE().getMenusFile().load();
+        Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.MAIN);
+        Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.NEW_LISTING);
+        Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.PROFILE);
+        Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.EXPIRED_LISTINGS);
+        Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.ACTIVE_LISTINGS);
+        Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.COLLECTION_BOX);
+        Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.CONFIRM_PURCHASE);
+        Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.HISTORY);
+        Fadah.getINSTANCE().getCategoriesFile().load();
+        CategoryCache.update();
+        Fadah.getINSTANCE().getDatabase().loadListings();
+    }
 }
