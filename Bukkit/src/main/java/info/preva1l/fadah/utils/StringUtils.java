@@ -27,6 +27,48 @@ public class StringUtils {
         return ret;
     }
 
+    /**
+     * Converts MiniMessage to legacy colour codes.
+     * @param message message with mini message formatting
+     * @return string with legacy formatting (not colorized)
+     */
+    public String miniMessageToLegacy(String message) {
+        message = message.replace("<dark_red>", "&4");
+        message = message.replace("<red>", "&c");
+        message = message.replace("<gold>", "&6");
+        message = message.replace("<yellow>", "&e");
+        message = message.replace("<dark_green>", "&2");
+        message = message.replace("<green>", "&a");
+        message = message.replace("<aqua>", "&b");
+        message = message.replace("<dark_aqua>", "&3");
+        message = message.replace("<dark_blue>", "&1");
+        message = message.replace("<blue>", "&9");
+        message = message.replace("<light_purple>", "&d");
+        message = message.replace("<dark_purple>", "&5");
+        message = message.replace("<white>", "&f");
+        message = message.replace("<gray>", "&7");
+        message = message.replace("<dark_gray>", "&8");
+        message = message.replace("<black>", "&0");
+        message = message.replace("<b>", "&l");
+        message = message.replace("<obf>", "&k");
+        message = message.replace("<st>", "&m");
+        message = message.replace("<u>", "&n");
+        message = message.replace("<i>", "&o");
+        message = message.replace("<reset>", "&r");
+
+
+        Pattern pattern = Pattern.compile("<#[a-fA-F0-9]{6}>");
+        Matcher match = pattern.matcher(message);
+        String code = message;
+        while (match.find()) {
+            code = message.substring(match.start(), match.end());
+            code = code.replace("<", "&");
+            code = code.replace(">", "");
+        }
+        return message.replaceAll("<#[a-fA-F0-9]{6}>", code);
+    }
+
+
     private final Pattern HEX_PATTERN = Pattern.compile("&#(\\w{5}[0-9a-fA-F])");
 
     /**
@@ -65,7 +107,7 @@ public class StringUtils {
     public String message(String message, Object... args) {
         message = formatPlaceholders(message, args);
 
-        return colorize(message);
+        return colorize(miniMessageToLegacy(message));
     }
 
     /**

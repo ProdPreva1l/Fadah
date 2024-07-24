@@ -10,7 +10,7 @@ softdepend: [EcoItems, zAuctionHouseV3, AuctionHouse]
 folia-supported: true
 
 main: info.preva1l.fadah.Fadah
-api-version: '1.16'
+api-version: '1.17'
 libraries:
   - redis.clients:jedis:5.1.0
   - org.apache.commons:commons-pool2:2.12.0

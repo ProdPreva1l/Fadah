@@ -34,6 +34,8 @@ import info.preva1l.fadah.utils.logging.TransactionLogger;
 import lombok.Getter;
 import lombok.Setter;
 import net.milkbowl.vault.economy.Economy;
+import net.william278.desertwell.util.UpdateChecker;
+import net.william278.desertwell.util.Version;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -48,6 +50,8 @@ import java.util.logging.Logger;
 
 public final class Fadah extends JavaPlugin {
     private static final int METRICS_ID = 21651;
+    private static final int SPIGOT_ID = 116157;
+    private Version pluginVersion;
 
     @Getter private static Fadah INSTANCE;
     @Getter @Setter private static NamespacedKey customItemKey;
@@ -74,6 +78,7 @@ public final class Fadah extends JavaPlugin {
     @Override
     public void onEnable() {
         INSTANCE = this;
+        pluginVersion = Version.fromString(getDescription().getVersion());
         console = getLogger();
         hookManager = new HookManager();
 
@@ -124,6 +129,8 @@ public final class Fadah extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(StringUtils.colorize("&a Finally a Decent Auction House"));
         Bukkit.getConsoleSender().sendMessage(StringUtils.colorize("&a   has successfully started!"));
         Bukkit.getConsoleSender().sendMessage(StringUtils.colorize("&2&l------------------------------"));
+
+        TaskManager.Sync.runLater(this, this::checkForUpdates, 60L);
     }
 
     @Override
@@ -294,6 +301,21 @@ public final class Fadah extends JavaPlugin {
         }
 
         getConsole().info("Logger Started!");
+    }
+
+    private void checkForUpdates() {
+        final UpdateChecker checker = UpdateChecker.builder()
+                .currentVersion(pluginVersion)
+                .endpoint(UpdateChecker.Endpoint.SPIGOT)
+                .resource(Integer.toString(SPIGOT_ID))
+                .build();
+        checker.check().thenAccept(checked -> {
+            if (checked.isUpToDate()) {
+                return;
+            }
+            Bukkit.getConsoleSender().sendMessage(StringUtils.colorize("&f[Fadah] Fadah is &#D63C3COUTDATED&f! " +
+                    "&7Current: &#D63C3C%s &7Latest: &#18D53A%s".formatted(checked.getCurrentVersion(), checked.getCurrentVersion())));
+        });
     }
 
     public void reload() {

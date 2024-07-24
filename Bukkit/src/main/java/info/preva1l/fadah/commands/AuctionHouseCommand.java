@@ -31,6 +31,7 @@ public class AuctionHouseCommand extends Command {
         subCommands.add(new ActiveListingsSubCommand(plugin));
         subCommands.add(new HistorySubCommand(plugin));
         subCommands.add(new ViewListingCommand(plugin));
+        subCommands.add(new AboutSubCommand(plugin));
     }
 
     @CommandArgs(name = "auctionhouse", aliases = {"ah", "auctions", "auction"}, inGameOnly = false, permission = "fadah.use")
