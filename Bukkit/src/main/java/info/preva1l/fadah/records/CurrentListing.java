@@ -10,7 +10,6 @@ import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.multiserver.CacheSync;
-import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -90,10 +89,10 @@ public final class CurrentListing extends Listing {
         if (ListingCache.getListing(this.getId()) == null
                 || (Config.STRICT_CHECKS.toBoolean()
                 && Fadah.getINSTANCE().getDatabase().getListing(this.getId()) == null)) {
-            canceller.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+            canceller.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
             return false;
         }
-        canceller.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString()));
+        canceller.sendMessage(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString());
         if (Fadah.getINSTANCE().getCacheSync() == null) {
             ListingCache.removeListing(this);
         }

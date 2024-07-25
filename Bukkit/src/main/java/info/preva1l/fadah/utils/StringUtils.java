@@ -50,11 +50,17 @@ public class StringUtils {
         message = message.replace("<dark_gray>", "&8");
         message = message.replace("<black>", "&0");
         message = message.replace("<b>", "&l");
+        message = message.replace("<bold>", "&l");
         message = message.replace("<obf>", "&k");
+        message = message.replace("<obfuscated>", "&k");
         message = message.replace("<st>", "&m");
+        message = message.replace("<strikethrough>", "&m");
         message = message.replace("<u>", "&n");
+        message = message.replace("<underline>", "&n");
         message = message.replace("<i>", "&o");
+        message = message.replace("<italic>", "&o");
         message = message.replace("<reset>", "&r");
+        message = message.replace("<r>", "&r");
 
 
         Pattern pattern = Pattern.compile("<#[a-fA-F0-9]{6}>");
@@ -77,6 +83,7 @@ public class StringUtils {
      * @return Colorized String
      */
     public String colorize(String text) {
+        text = miniMessageToLegacy(text);
         Matcher matcher = HEX_PATTERN.matcher(text);
         StringBuilder buffer = new StringBuilder();
 
@@ -107,7 +114,7 @@ public class StringUtils {
     public String message(String message, Object... args) {
         message = formatPlaceholders(message, args);
 
-        return colorize(miniMessageToLegacy(message));
+        return colorize(message);
     }
 
     /**
