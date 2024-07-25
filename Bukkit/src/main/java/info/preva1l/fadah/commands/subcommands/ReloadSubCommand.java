@@ -3,7 +3,6 @@ package info.preva1l.fadah.commands.subcommands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.multiserver.CacheSync;
-import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
 import info.preva1l.fadah.utils.commands.SubCommandArguments;
@@ -21,6 +20,6 @@ public class ReloadSubCommand extends SubCommand {
             return;
         }
         plugin.reload();
-        command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + "&aConfig reloaded!"));
+        command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADMIN_RELOAD.toFormattedString());
     }
 }
