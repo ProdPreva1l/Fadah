@@ -17,7 +17,7 @@ public class AboutSubCommand extends SubCommand {
         this.bukkitAudiences = BukkitAudiences.builder(plugin).build();
     }
 
-    @SubCommandArgs(name = "about", inGameOnly = false)
+    @SubCommandArgs(name = "about", inGameOnly = false, description = "Get information on the plugin")
     public void execute(@NotNull SubCommandArguments command) {
         final AboutMenu aboutMenu = AboutMenu.builder()
                 .title(Component.text("Finally a Decent Auction House"))

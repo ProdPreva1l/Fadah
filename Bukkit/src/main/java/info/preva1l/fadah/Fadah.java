@@ -295,6 +295,7 @@ public final class Fadah extends JavaPlugin {
 
             FileHandler fileHandler = new FileHandler(logFile.getAbsolutePath());
             fileHandler.setFormatter(new TransactionLogFormatter());
+            transactionLogger.setUseParentHandlers(false);
             transactionLogger.addHandler(fileHandler);
         } catch (IOException e) {
             throw new RuntimeException(e);

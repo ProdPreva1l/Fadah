@@ -57,7 +57,7 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
 
         for (CollectableItem collectableItem : expiredItems) {
             ItemBuilder itemStack = new ItemBuilder(collectableItem.itemStack().clone())
-                    .addLore(getLang().getLore("collectable-lore", defListLore, TimeUtil.formatTimeSince(collectableItem.dateAdded())));
+                    .addLore(getLang().getLore("lore", defListLore, TimeUtil.formatTimeSince(collectableItem.dateAdded())));
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
                 MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {
