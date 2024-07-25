@@ -1,7 +1,9 @@
 package info.preva1l.fadah.utils;
 
 import lombok.experimental.UtilityClass;
+import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.Bukkit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,6 +86,9 @@ public class StringUtils {
      */
     public String colorize(String text) {
         text = miniMessageToLegacy(text);
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            text = PlaceholderAPI.setPlaceholders(null, text);
+        }
         Matcher matcher = HEX_PATTERN.matcher(text);
         StringBuilder buffer = new StringBuilder();
 
