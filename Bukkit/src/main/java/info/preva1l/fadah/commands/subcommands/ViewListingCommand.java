@@ -44,6 +44,7 @@ public class ViewListingCommand extends SubCommand {
             return;
         }
 
-        new ConfirmPurchaseMenu(listing, command.getPlayer(), null, null, null, null).open(command.getPlayer());
+        new ConfirmPurchaseMenu(listing, command.getPlayer(), null, null, null,
+                null, false, null).open(command.getPlayer());
     }
 }

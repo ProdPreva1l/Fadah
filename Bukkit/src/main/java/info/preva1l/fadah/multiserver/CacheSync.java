@@ -27,6 +27,7 @@ import redis.clients.jedis.util.Pool;
 import java.security.InvalidParameterException;
 import java.util.UUID;
 
+// TODO: Rewrite entire multi-server system
 @SuppressWarnings("unchecked")
 public class CacheSync extends JedisPubSub {
     private static Pool<Jedis> jedisPool;

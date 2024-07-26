@@ -99,6 +99,7 @@ public class LayoutManager {
             case "expired-listings.yml": yield MenuType.EXPIRED_LISTINGS;
             case "historic-items.yml": yield MenuType.HISTORY;
             case "active-listings.yml": yield MenuType.ACTIVE_LISTINGS;
+            case "view-listings.yml": yield MenuType.VIEW_LISTINGS;
             default: throw new IllegalStateException("The config file %s is not related to a GuiLayout".formatted(fileName));
         };
     }
@@ -132,6 +133,7 @@ public class LayoutManager {
         CONFIRM_PURCHASE,
         COLLECTION_BOX,
         ACTIVE_LISTINGS,
+        VIEW_LISTINGS,
         /**
          * Guis without layouts
          */

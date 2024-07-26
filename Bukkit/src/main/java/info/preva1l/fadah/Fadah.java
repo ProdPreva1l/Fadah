@@ -47,6 +47,7 @@ import java.time.Instant;
 import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public final class Fadah extends JavaPlugin {
     private static final int METRICS_ID = 21651;
@@ -188,14 +189,17 @@ public final class Fadah extends JavaPlugin {
         menusFile = new BasicConfig(this, "menus/misc.yml");
         Menus.loadDefault();
 
-        layoutManager.loadLayout(new BasicConfig(this, "menus/main.yml"));
-        layoutManager.loadLayout(new BasicConfig(this, "menus/new-listing.yml"));
-        layoutManager.loadLayout(new BasicConfig(this, "menus/expired-listings.yml"));
-        layoutManager.loadLayout(new BasicConfig(this, "menus/active-listings.yml"));
-        layoutManager.loadLayout(new BasicConfig(this, "menus/historic-items.yml"));
-        layoutManager.loadLayout(new BasicConfig(this, "menus/confirm.yml"));
-        layoutManager.loadLayout(new BasicConfig(this, "menus/collection-box.yml"));
-        layoutManager.loadLayout(new BasicConfig(this, "menus/profile.yml"));
+        Stream.of(
+                new BasicConfig(this, "menus/main.yml"),
+                new BasicConfig(this, "menus/new-listing.yml"),
+                new BasicConfig(this, "menus/expired-listings.yml"),
+                new BasicConfig(this, "menus/active-listings.yml"),
+                new BasicConfig(this, "menus/historic-items.yml"),
+                new BasicConfig(this, "menus/confirm.yml"),
+                new BasicConfig(this, "menus/collection-box.yml"),
+                new BasicConfig(this, "menus/profile.yml"),
+                new BasicConfig(this, "menus/view-listings.yml")
+        ).forEach(layoutManager::loadLayout);
     }
 
     private boolean hookIntoVault() {

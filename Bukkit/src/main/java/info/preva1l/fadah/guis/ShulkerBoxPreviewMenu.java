@@ -6,6 +6,7 @@ import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,7 +18,9 @@ public class ShulkerBoxPreviewMenu extends FastInv {
                                  @Nullable Category category,
                                  @Nullable String search,
                                  @Nullable SortingMethod sortingMethod,
-                                 @Nullable SortingDirection sortingDirection) {
+                                 @Nullable SortingDirection sortingDirection,
+                                 boolean isViewListings,
+                                 @Nullable OfflinePlayer listingsPlayer) {
         super(36, listing.getItemStack().getItemMeta().getDisplayName().isBlank()
                 ? listing.getItemStack().getItemMeta().getLocalizedName()
                 : listing.getItemStack().getItemMeta().getDisplayName(), LayoutManager.MenuType.SHULKER_PREVIEW);
@@ -33,8 +36,14 @@ public class ShulkerBoxPreviewMenu extends FastInv {
             }
         }
 
-        setItem(31, GuiHelper.constructButton(GuiButtonType.CLOSE), e ->
-                new MainMenu(category, player, search, sortingMethod, sortingDirection).open(player));
+        setItem(31, GuiHelper.constructButton(GuiButtonType.CLOSE), e -> {
+            if (isViewListings) {
+                assert listingsPlayer != null;
+                new ViewListingsMenu(player, listingsPlayer).open(player);
+                return;
+            }
+            new MainMenu(category, player, search, sortingMethod, sortingDirection).open(player);
+        });
         setItems(new int[]{27, 28, 29, 30, 32, 33, 34, 35}, GuiHelper.constructButton(GuiButtonType.BORDER));
     }
 }

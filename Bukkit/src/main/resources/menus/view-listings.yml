@@ -1,0 +1,70 @@
+title: '&9&lAuction House &8> &1{0} Listings' # {0} = "Your" or the players name if in management mode, {1} = the players username
+
+lang:
+  listing:
+    lore-body:
+      - '&8&n---------------------------'
+      - '&fSeller: &e{0}'
+      - '&fCategory: &e{1}'
+      - '&r '
+      - '&f{2}: &6${3}'
+      - '&r '
+      - '&fExpires In: &e{4}'
+      - '&8&n---------------------------'
+    lore-buy:
+      buy-it-now: "Buy Now"
+      bidding: "Current Bid"
+    lore-footer:
+      buy: '&aClick to buy now!'
+      too-expensive: '&cYou cannot afford this item!'
+      own-listing: '&cYou cannot buy your own listing! &8(Shift Click to Cancel)'
+      is-shulker: '&fRight Click to Preview!'
+
+size: 5
+
+layout:
+  '0': "FILLER"
+  '1': "FILLER"
+  '2': "FILLER"
+  '3': "FILLER"
+  '4': "FILLER"
+  '5': "FILLER"
+  '6': "FILLER"
+  '7': "FILLER"
+  '8': "FILLER"
+  '9': "FILLER"
+  '10': "PAGINATION_ITEM"
+  '11': "PAGINATION_ITEM"
+  '12': "PAGINATION_ITEM"
+  '13': "PAGINATION_ITEM"
+  '14': "PAGINATION_ITEM"
+  '15': "PAGINATION_ITEM"
+  '16': "PAGINATION_ITEM"
+  '17': "FILLER"
+  '18': "FILLER"
+  '19': "PAGINATION_ITEM"
+  '20': "PAGINATION_ITEM"
+  '21': "PAGINATION_ITEM"
+  '22': "NO_ITEMS"
+  '23': "PAGINATION_ITEM"
+  '24': "PAGINATION_ITEM"
+  '25': "PAGINATION_ITEM"
+  '26': "FILLER"
+  '27': "FILLER"
+  '28': "PAGINATION_ITEM"
+  '29': "PAGINATION_ITEM"
+  '30': "PAGINATION_ITEM"
+  '31': "PAGINATION_ITEM"
+  '32': "PAGINATION_ITEM"
+  '33': "PAGINATION_ITEM"
+  '34': "PAGINATION_ITEM"
+  '35': "FILLER"
+  '36': "FILLER"
+  '37': "FILLER"
+  '38': "FILLER"
+  '39': "PAGINATION_CONTROL_ONE"
+  '40': "CLOSE"
+  '41': "PAGINATION_CONTROL_TWO"
+  '42': "FILLER"
+  '43': "FILLER"
+  '44': "FILLER"

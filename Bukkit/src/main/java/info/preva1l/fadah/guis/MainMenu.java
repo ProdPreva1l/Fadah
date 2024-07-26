@@ -133,7 +133,6 @@ public class MainMenu extends ScrollBarFastInv {
     @Override
     protected void fillPaginationItems() {
         for (Listing listing : listings) {
-
             String buyMode = listing.isBiddable()
                     ? getLang().getStringFormatted("listing.lore-buy.bidding")
                     : getLang().getStringFormatted("listing.lore-buy.buy-it-now");
@@ -163,7 +162,8 @@ public class MainMenu extends ScrollBarFastInv {
                 }
 
                 if (e.isRightClick() && listing.getItemStack().getType().name().toUpperCase().endsWith("SHULKER_BOX")) {
-                    new ShulkerBoxPreviewMenu(listing, player, category, search, sortingMethod, sortingDirection).open(player);
+                    new ShulkerBoxPreviewMenu(listing, player, category, search,
+                            sortingMethod, sortingDirection, false, null).open(player);
                     return;
                 }
 
@@ -183,7 +183,8 @@ public class MainMenu extends ScrollBarFastInv {
                     return;
                 }
 
-                new ConfirmPurchaseMenu(listing, player, category, search, sortingMethod, sortingDirection).open(player);
+                new ConfirmPurchaseMenu(listing, player, category, search,
+                        sortingMethod, sortingDirection, false, null).open(player);
             }));
         }
     }
