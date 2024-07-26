@@ -25,6 +25,7 @@ public final class ListingCache {
         listings.remove(listing.getId());
     }
 
+    @Nullable
     public Listing getListing(@NotNull UUID id) {
         return listings.get(id);
     }

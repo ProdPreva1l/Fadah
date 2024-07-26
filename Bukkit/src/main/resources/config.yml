@@ -28,7 +28,6 @@ migrators:
       - "Potions"
       - "Misc"
 
-
 log-to-file: true
 
 database:
@@ -39,15 +38,17 @@ database:
   uri: "jdbc:mysql://username:password@127.0.0.1:3306/Fadah"
   database: "Fadah"
 
-# Redis is only required for x-server environments.
+# A message broker is only required for x-server environments.
 # This mode is not compatible with SQLITE database
-# Snapchat's KeyDB is recommended as it is 2x faster than normal redis while still fully compatible.
-redis:
+broker:
   enabled: false
-  host: "127.0.0.1"
-  port: 6379
-  password: "password"
-  channel: "auctionhouse.cache"
+  type: "REDIS"
+  # Snapchat's KeyDB is recommended as it is 2x faster than normal redis while still fully compatible.
+  redis:
+    host: "127.0.0.1"
+    port: 6379
+    password: "password"
+    channel: "auctionhouse.cache"
 
 # Enable this if you are experiencing dupes (usually when there is a moderate delay with redis)
 strict-checks: false

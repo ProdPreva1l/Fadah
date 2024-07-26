@@ -3,6 +3,7 @@ package info.preva1l.fadah.config;
 import com.google.common.collect.ImmutableList;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.data.DatabaseType;
+import info.preva1l.fadah.multiserver.Broker;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.config.BasicConfig;
 import lombok.AllArgsConstructor;
@@ -34,11 +35,15 @@ public enum Config {
     DATABASE_URI("database.uri", "jdbc:mysql://username:password@127.0.0.1:3306/Fadah"),
     DATABASE("database.database", "Fadah"),
 
-    REDIS_ENABLED("redis.enabled", false),
-    REDIS_HOST("redis.host", "127.0.0.1"),
-    REDIS_PORT("redis.port", 6379),
-    REDIS_PASSWORD("redis.password", "password"),
-    REDIS_CHANNEL("redis.channel", "auctionhouse.cache"),
+    BROKER_ENABLED("broker.enabled", false),
+    BROKER_TYPE("broker.type", Broker.Type.REDIS),
+    REDIS_HOST("broker.redis.host", "127.0.0.1"),
+    REDIS_PORT("broker.redis.port", 6379),
+    REDIS_PASSWORD("broker.redis.password", "password"),
+    REDIS_CHANNEL("broker.redis.channel", "auctionhouse.cache"),
+    SERVICE_HOST("broker.service.host", "127.0.0.1"),
+    SERVICE_PORT("broker.service.port", 8743),
+    SERVICE_TOKEN("broker.service.token", "Must Match token.yml from FadahService"),
     ;
 
     private final String path;
@@ -72,10 +77,21 @@ public enum Config {
         try {
             databaseType = DatabaseType.valueOf(toString());
         } catch (EnumConstantNotPresentException ex) {
-            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Database Type \"{0}\" does not exist! \n Defaulting to MongoDB", toString()));
-            return DatabaseType.MONGO;
+            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Database Type \"{0}\" does not exist! \n Defaulting to SQLite", toString()));
+            return DatabaseType.SQLITE;
         }
         return databaseType;
+    }
+
+    public Broker.Type toBrokerType() {
+        Broker.Type brokerType;
+        try {
+            brokerType = Broker.Type.valueOf(toString());
+        } catch (EnumConstantNotPresentException ex) {
+            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Broker Type \"{0}\" does not exist! \n Defaulting to Redis", toString()));
+            return Broker.Type.REDIS;
+        }
+        return brokerType;
     }
 
     public String toFormattedString() {
