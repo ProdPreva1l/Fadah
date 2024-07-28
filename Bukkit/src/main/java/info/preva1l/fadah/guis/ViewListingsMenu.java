@@ -1,6 +1,7 @@
 package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
@@ -51,7 +52,7 @@ public class ViewListingsMenu extends PaginatedFastInv {
 
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
                     .addLore(getLang().getLore("listing.lore-body",
-                            listing.getOwnerName(), listing.getCategoryID(), buyMode, new DecimalFormat(Config.DECIMAL_FORMAT.toString())
+                            listing.getOwnerName(), CategoryCache.getCategory(listing.getCategoryID()).name(), buyMode, new DecimalFormat(Config.DECIMAL_FORMAT.toString())
                                     .format(listing.getPrice()), TimeUtil.formatTimeUntil(listing.getDeletionDate())));
 
             if (player.getUniqueId().equals(listing.getOwner())) {
