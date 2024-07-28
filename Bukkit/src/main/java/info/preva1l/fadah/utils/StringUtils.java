@@ -151,4 +151,18 @@ public class StringUtils {
         }
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
+
+    /**
+     * Formats an item name. OAK_LOG -> Oak Log
+     * @param itemName item name
+     * @return formatted item name
+     */
+    public String formatItemName(String itemName) {
+        String[] split = itemName.toLowerCase().split("_");
+        StringBuilder builder = new StringBuilder();
+        for (String s : split) {
+            builder.append(capitalize(s)).append(" ");
+        }
+        return builder.toString().trim();
+    }
 }
