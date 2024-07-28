@@ -226,7 +226,9 @@ public class NewListingMenu extends FastInv {
         player.closeInventory();
 
         double taxAmount = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
-        String itemName = listing.getItemStack().getItemMeta().getDisplayName().isBlank() ? listing.getItemStack().getType().name() : listing.getItemStack().getItemMeta().getDisplayName();
+        String itemName = listing.getItemStack().getItemMeta().getDisplayName().isBlank() ?
+                StringUtils.formatItemName(listing.getItemStack().getType().name()) :
+                listing.getItemStack().getItemMeta().getDisplayName();
         String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemName,
                 new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
                 TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
