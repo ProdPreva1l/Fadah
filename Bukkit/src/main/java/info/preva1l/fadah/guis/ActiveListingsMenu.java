@@ -40,20 +40,9 @@ public class ActiveListingsMenu extends PaginatedFastInv {
 
     @Override
     protected void fillPaginationItems() {
-        List<String> defLore = List.of(
-                "&8&n---------------------------",
-                "&fCategory: &e{0}",
-                "&r ",
-                "&fPrice: &6${1}",
-                "&r ",
-                "&fExpires In: &e{2}",
-                "&r ",
-                "&eClick To Cancel This Listing!",
-                "&8&n---------------------------"
-        );
         for (Listing listing : listings) {
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
-                    .addLore(getLang().getLore("lore", defLore, listing.getCategoryID(), listing.getPrice(),
+                    .addLore(getLang().getLore("lore", listing.getCategoryID(), listing.getPrice(),
                             TimeUtil.formatTimeUntil(listing.getDeletionDate())));
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {

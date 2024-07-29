@@ -215,7 +215,7 @@ public class MainMenu extends ScrollBarFastInv {
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE,53),
                 new ItemBuilder(getLang().getAsMaterial("profile-button.icon", Material.PLAYER_HEAD)).skullOwner(player)
                         .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile", StringUtils.capitalize(Lang.WORD_YOUR.toString())))
-                        .addLore(getLang().getLore("profile-button.lore", List.of("&fClick to view your profile!")))
+                        .addLore(getLang().getLore("profile-button.lore"))
                         .modelData(getLang().getInt("profile-button.model-data"))
                         .build(), e -> new ProfileMenu(player, player).open(player));
     }
@@ -224,21 +224,12 @@ public class MainMenu extends ScrollBarFastInv {
         // Filter Type Cycle
         SortingMethod prev = sortingMethod.previous();
         SortingMethod next = sortingMethod.next();
-        List<String> defFiltLore = List.of(
-                "&7Left Click to cycle up",
-                "&7Right Click to cycle down",
-                "&8-------------------------",
-                "&f{0}",
-                "&8> &e{1}",
-                "&f{2}",
-                "&8-------------------------"
-        );
         removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER,47));
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER,47),
                 new ItemBuilder(getLang().getAsMaterial("filter.change-type.icon", Material.PUFFERFISH))
                 .name(getLang().getStringFormatted("filter.change-type.name", "&eListing Filter"))
                 .modelData(getLang().getInt("filter.change-type.model-data"))
-                .addLore(getLang().getLore("filter.change-type.lore", defFiltLore, (prev == null ? Lang.WORD_NONE.toString() : prev.getFriendlyName()),
+                .addLore(getLang().getLore("filter.change-type.lore", (prev == null ? Lang.WORD_NONE.toString() : prev.getFriendlyName()),
                         sortingMethod.getFriendlyName(), (next == null ? Lang.WORD_NONE.toString() : next.getFriendlyName())))
                 .build(), e -> {
                     if (CooldownManager.hasCooldown(CooldownManager.Cooldown.SORT, player)) {
@@ -271,13 +262,6 @@ public class MainMenu extends ScrollBarFastInv {
                         new MainMenu(category, player, search, sortingMethod, sortingDirection).open(player)));
 
         // Filter Direction Toggle
-        List<String> defDirLore = List.of(
-                "&7Click To Toggle",
-                "&8-------------------------",
-                "{0}",
-                "{1}",
-                "&8-------------------------"
-        );
         String asc = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.ASCENDING
                         ? getLang().getStringFormatted("filter.change-direction.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("filter.change-direction.options.not-selected", "&f{0}"),
@@ -292,7 +276,7 @@ public class MainMenu extends ScrollBarFastInv {
                 new ItemBuilder(getLang().getAsMaterial("filter.change-direction.icon", Material.CLOCK))
                         .name(getLang().getStringFormatted("filter.change-direction.name", "&eFilter Direction"))
                         .modelData(getLang().getInt("filter.change-direction.model-data"))
-                        .lore(getLang().getLore("filter.change-direction.lore", defDirLore, asc, desc)).build(), e -> {
+                        .lore(getLang().getLore("filter.change-direction.lore", asc, desc)).build(), e -> {
                     if (CooldownManager.hasCooldown(CooldownManager.Cooldown.SORT, player)) {
                         player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.COOLDOWN.toFormattedString(CooldownManager.getCooldownString(CooldownManager.Cooldown.SORT, player)));
                         return;

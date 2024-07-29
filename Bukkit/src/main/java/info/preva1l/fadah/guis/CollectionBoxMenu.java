@@ -46,16 +46,9 @@ public class CollectionBoxMenu extends PaginatedFastInv {
 
     @Override
     protected void fillPaginationItems() {
-        List<String> defLore = List.of(
-                "&8&n---------------------------",
-                "&fAdded: &e{0} &fago",
-                "&r ",
-                "&eClick To Claim!",
-                "&8&n---------------------------"
-        );
         for (CollectableItem collectableItem : collectionBox) {
             ItemBuilder itemBuilder = new ItemBuilder(collectableItem.itemStack().clone())
-                    .lore(getLang().getLore("collectable-lore", defLore, TimeUtil.formatTimeSince(collectableItem.dateAdded())));
+                    .lore(getLang().getLore("collectable-lore", TimeUtil.formatTimeSince(collectableItem.dateAdded())));
 
             addPaginationItem(new PaginatedItem(itemBuilder.build(), e -> {
                 MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {

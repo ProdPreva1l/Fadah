@@ -47,17 +47,9 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
 
     @Override
     protected void fillPaginationItems() {
-        List<String> defListLore = List.of(
-                "&8&n---------------------------",
-                "&fAdded: &e{0} &fago",
-                "&r ",
-                "&eClick To Re-Claim!",
-                "&8&n---------------------------"
-        );
-
         for (CollectableItem collectableItem : expiredItems) {
             ItemBuilder itemStack = new ItemBuilder(collectableItem.itemStack().clone())
-                    .addLore(getLang().getLore("lore", defListLore, TimeUtil.formatTimeSince(collectableItem.dateAdded())));
+                    .addLore(getLang().getLore("lore", TimeUtil.formatTimeSince(collectableItem.dateAdded())));
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
                 MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {
