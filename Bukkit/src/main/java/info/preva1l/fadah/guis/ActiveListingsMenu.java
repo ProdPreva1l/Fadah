@@ -1,6 +1,7 @@
 package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.cache.ListingCache;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.TimeUtil;
@@ -8,6 +9,7 @@ import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -42,7 +44,8 @@ public class ActiveListingsMenu extends PaginatedFastInv {
     protected void fillPaginationItems() {
         for (Listing listing : listings) {
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
-                    .addLore(getLang().getLore("lore", listing.getCategoryID(), listing.getPrice(),
+                    .addLore(getLang().getLore("lore", listing.getCategoryID(),
+                            new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
                             TimeUtil.formatTimeUntil(listing.getDeletionDate())));
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
