@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import me.clip.placeholderapi.PlaceholderAPI;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -150,5 +151,25 @@ public class StringUtils {
             return str;
         }
         return str.substring(0, 1).toUpperCase() + str.substring(1);
+    }
+
+    /**
+     * Gets an item name from an item stack
+     * @param item item stack
+     * @return formatted item name
+     */
+    public String extractItemName(ItemStack item) {
+        if (item.getItemMeta() != null && item.getItemMeta().hasDisplayName()) {
+            return item.getItemMeta().getDisplayName();
+        }
+        if (item.getItemMeta() != null && item.getItemMeta().hasLocalizedName()) {
+            return item.getItemMeta().getLocalizedName();
+        }
+        String[] split = item.getType().name().toLowerCase().split("_");
+        StringBuilder builder = new StringBuilder();
+        for (String s : split) {
+            builder.append(capitalize(s)).append(" ");
+        }
+        return builder.toString().trim();
     }
 }

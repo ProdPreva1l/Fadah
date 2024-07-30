@@ -8,6 +8,7 @@ import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.PermissionsData;
+import info.preva1l.fadah.hooks.impl.DiscordHook;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.CurrentListing;
 import info.preva1l.fadah.records.Listing;
@@ -201,7 +202,7 @@ public class NewListingMenu extends FastInv {
         player.closeInventory();
 
         double taxAmount = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
-        String itemName = listing.getItemStack().getItemMeta().getDisplayName().isBlank() ? listing.getItemStack().getType().name() : listing.getItemStack().getItemMeta().getDisplayName();
+        String itemName = StringUtils.extractItemName(listing.getItemStack());
         String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemName,
                 new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
                 TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
@@ -210,6 +211,12 @@ public class NewListingMenu extends FastInv {
         player.sendMessage(message);
 
         TransactionLogger.listingCreated(listing);
+
+        if ((Config.HOOK_DISCORD_ENABLED.toBoolean() && plugin.getHookManager().getHook(DiscordHook.class).isPresent()) &&
+                ((Config.HOOK_DISCORD_ADVERT_ONLY.toBoolean() && advertise)
+                        || !Config.HOOK_DISCORD_ADVERT_ONLY.toBoolean())) {
+            plugin.getHookManager().getHook(DiscordHook.class).get().send(listing);
+        }
 
         if (advertise) {
             Economy eco = Fadah.getINSTANCE().getEconomy();

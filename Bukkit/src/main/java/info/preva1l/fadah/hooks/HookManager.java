@@ -25,7 +25,7 @@ public class HookManager {
      * @since 1.6
      */
     @ApiStatus.Internal
-    public Optional<Hook> getHook(Class<? extends Hook> hook) {
-        return registeredHooks.stream().filter(current -> current.getClass() == hook).findFirst();
+    public <H extends Hook> Optional<H> getHook(Class<H> hook) {
+        return (Optional<H>) registeredHooks.stream().filter(current -> current.getClass() == hook).findFirst();
     }
 }

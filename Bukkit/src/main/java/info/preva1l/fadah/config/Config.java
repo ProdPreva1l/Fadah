@@ -3,6 +3,7 @@ package info.preva1l.fadah.config;
 import com.google.common.collect.ImmutableList;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.data.DatabaseType;
+import info.preva1l.fadah.hooks.impl.DiscordHook;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.config.BasicConfig;
 import lombok.AllArgsConstructor;
@@ -25,6 +26,15 @@ public enum Config {
     STRICT_CHECKS("strict-checks", false),
 
     HOOK_ECO_ITEMS("hooks.eco-items", false),
+
+    HOOK_DISCORD_ENABLED("hooks.discord.enabled", false),
+    HOOK_DISCORD_URL("hooks.discord.webhook-url", "INSERT WEBHOOK URL"),
+    HOOK_DISCORD_ADVERT_ONLY("hooks.discord.only-send-on-advert", false),
+    HOOK_DISCORD_MODE("hooks.discord.mode", DiscordHook.Mode.EMBED),
+    HOOK_DISCORD_EMBED_TITLE("hooks.discord.embed.title", "New Listing by %player%!"),
+    HOOK_DISCORD_EMBED_CONTENT("hooks.discord.embed.content", "%player% just listed %item% for %price% on the auction house!"),
+    HOOK_DISCORD_EMBED_FOOTER("hooks.discord.embed.footer", "Powered by Finally a Decent Auction House"),
+    HOOK_DISCORD_PLAIN("hooks.discord.plain-text", ""),
 
     MIGRATOR_ZAUCTIONHOUSE_CATEGORIES("migrators.z-auction-house.categories-to-migrate", List.of("Blocks", "Tools", "Weapons", "Potions", "Misc")),
 
@@ -72,8 +82,19 @@ public enum Config {
         try {
             databaseType = DatabaseType.valueOf(toString());
         } catch (EnumConstantNotPresentException ex) {
-            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Database Type \"{0}\" does not exist! \n Defaulting to MongoDB", toString()));
-            return DatabaseType.MONGO;
+            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Database Type \"{0}\" does not exist! \n Defaulting to SQLite", toString()));
+            return DatabaseType.SQLITE;
+        }
+        return databaseType;
+    }
+
+    public DiscordHook.Mode toModeEnum() {
+        DiscordHook.Mode databaseType;
+        try {
+            databaseType = DiscordHook.Mode.valueOf(toString());
+        } catch (EnumConstantNotPresentException ex) {
+            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Discord hook mode \"{0}\" does not exist! \n Defaulting to EMBED", toString()));
+            return DiscordHook.Mode.EMBED;
         }
         return databaseType;
     }
