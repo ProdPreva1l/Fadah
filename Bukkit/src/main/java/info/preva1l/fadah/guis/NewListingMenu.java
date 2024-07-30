@@ -8,6 +8,7 @@ import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.PermissionsData;
+import info.preva1l.fadah.hooks.impl.DiscordHook;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.CurrentListing;
 import info.preva1l.fadah.records.Listing;
@@ -53,14 +54,11 @@ public class NewListingMenu extends FastInv {
                     GuiHelper.constructButton(GuiButtonType.BORDER));
         }
 
-        List<String> createDefLore = List.of(
-                "&cClicking this button will immediately post",
-                "&cyour item on the auction house for &a${0}");
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_START, 30),
                 new ItemBuilder(getLang().getAsMaterial("create.icon", Material.EMERALD))
                         .name(getLang().getStringFormatted("create.name", "&aClick to create listing!"))
                         .modelData(getLang().getInt("create.model-data"))
-                        .addLore(getLang().getLore("create.lore", createDefLore,
+                        .addLore(getLang().getLore("create.lore",
                                 new DecimalFormat(Config.DECIMAL_FORMAT.toString())
                                         .format(price)))
                         .setAttributes(null)
@@ -85,20 +83,13 @@ public class NewListingMenu extends FastInv {
     }
 
     private void setClock() {
-        List<String> timeDefLore = List.of(
-                "&fCurrent: &6{0}",
-                "&7Left Click to Add 1 Hour",
-                "&7Right Click to Remove 1 Hour",
-                "&7Shift Left Click to Add 30 Minutes",
-                "&7Shift Right Click to Remove 30 Minutes"
-        );
         removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 11));
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 11),
                 new ItemBuilder(getLang().getAsMaterial("time.icon", Material.CLOCK))
                         .name(getLang().getStringFormatted("time.name", "&aTime for listing to be active"))
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
-                        .addLore(getLang().getLore("time.lore", timeDefLore, TimeUtil.formatTimeUntil(timeToDelete.toEpochMilli()))).build(), e -> {
+                        .addLore(getLang().getLore("time.lore", TimeUtil.formatTimeUntil(timeToDelete.toEpochMilli()))).build(), e -> {
             if (e.isRightClick()) {
                 if (e.isShiftClick()) {
                     if (timeToDelete.minus(30, ChronoUnit.MINUTES).toEpochMilli() <= Instant.now().toEpochMilli())
@@ -129,14 +120,6 @@ public class NewListingMenu extends FastInv {
     }
 
     private void setAdvertButton() {
-        List<String> defModeLore = List.of(
-                "&fAdvert Price: &a${0}",
-                "&7Click To Toggle",
-                "&8-------------------------",
-                "{1}",
-                "{2}",
-                "&8-------------------------"
-        );
         String postAdvert = StringUtils.formatPlaceholders(advertise
                         ? getLang().getStringFormatted("advert.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("advert.options.not-selected", "&f{0}"),
@@ -153,7 +136,7 @@ public class NewListingMenu extends FastInv {
                         .modelData(getLang().getInt("advert.model-data"))
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
-                        .lore(getLang().getLore("advert.lore", defModeLore,
+                        .lore(getLang().getLore("advert.lore",
                                 new DecimalFormat(Config.DECIMAL_FORMAT.toString())
                                         .format(PermissionsData.getHighestDouble(PermissionsData.PermissionType.ADVERT_PRICE, player)),
                                 postAdvert, dontPost)).build(), e -> {
@@ -164,13 +147,6 @@ public class NewListingMenu extends FastInv {
     }
     // Not Used (For future bidding update)
     private void setModeButton() {
-        List<String> defModeLore = List.of(
-                "&7Click To Toggle",
-                "&8-------------------------",
-                "{0}",
-                "{1}",
-                "&8-------------------------"
-        );
         String bidding = StringUtils.formatPlaceholders(isBidding
                         ? getLang().getStringFormatted("mode.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("mode.options.not-selected", "&f{0}"),
@@ -187,7 +163,7 @@ public class NewListingMenu extends FastInv {
                         .modelData(getLang().getInt("mode.model-data"))
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
-                        .lore(getLang().getLore("mode.lore", defModeLore, bidding, bin)).build(), e -> {
+                        .lore(getLang().getLore("mode.lore", bidding, bin)).build(), e -> {
                     this.isBidding = !isBidding;
                     setModeButton();
                 }
@@ -226,9 +202,7 @@ public class NewListingMenu extends FastInv {
         player.closeInventory();
 
         double taxAmount = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
-        String itemName = listing.getItemStack().getItemMeta().getDisplayName().isBlank() ?
-                StringUtils.formatItemName(listing.getItemStack().getType().name()) :
-                listing.getItemStack().getItemMeta().getDisplayName();
+        String itemName = StringUtils.extractItemName(listing.getItemStack());
         String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemName,
                 new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
                 TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
@@ -237,6 +211,12 @@ public class NewListingMenu extends FastInv {
         player.sendMessage(message);
 
         TransactionLogger.listingCreated(listing);
+
+        if ((Config.HOOK_DISCORD_ENABLED.toBoolean() && plugin.getHookManager().getHook(DiscordHook.class).isPresent()) &&
+                ((Config.HOOK_DISCORD_ADVERT_ONLY.toBoolean() && advertise)
+                        || !Config.HOOK_DISCORD_ADVERT_ONLY.toBoolean())) {
+            plugin.getHookManager().getHook(DiscordHook.class).get().send(listing);
+        }
 
         if (advertise) {
             Economy eco = Fadah.getINSTANCE().getEconomy();

@@ -109,7 +109,7 @@ public enum Menus {
             return StringUtils.colorizeList(ret);
         }
         if (str.get(0).equals("null")) {
-            return ImmutableList.of();
+            return null;
         }
         List<String> ret = new ArrayList<>();
         for (String line : str) ret.add(StringUtils.formatPlaceholders(line));

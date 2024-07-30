@@ -19,6 +19,23 @@ listing-adverts:
 hooks:
   eco-items: false
 
+  discord:
+    enabled: false
+    webhook-url: "INSERT WEBHOOK URL HERE"
+    # If this is true the webhook will only send a message when the listing has been advertised (config above)
+    only-send-on-advert: false
+    # Supported: EMBED, PLAIN
+    mode: "EMBED"
+    # If mode is EMBED
+    embed:
+      # Supported: SIDE, BOTTOM
+      image-location: SIDE
+      title: "New Listing by %player%!"
+      content: "%player% just listed %item% for $%price% on the auction house!"
+      footer: "Powered by Finally a Decent Auction House"
+    # If mode is PLAIN
+    plain-text: "%player% just listed %item% for $%price% on the auction house!"
+
 migrators:
   z-auction-house:
     categories-to-migrate:
@@ -27,7 +44,8 @@ migrators:
       - "Weapons"
       - "Potions"
       - "Misc"
-
+  auction-house:
+    no-settings: "This Migrator has no settings!"
 
 log-to-file: true
 

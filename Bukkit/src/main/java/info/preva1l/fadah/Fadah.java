@@ -14,6 +14,7 @@ import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.data.*;
 import info.preva1l.fadah.hooks.HookManager;
+import info.preva1l.fadah.hooks.impl.DiscordHook;
 import info.preva1l.fadah.hooks.impl.EcoItemsHook;
 import info.preva1l.fadah.listeners.PlayerListener;
 import info.preva1l.fadah.migrator.AuctionHouseMigrator;
@@ -242,6 +243,10 @@ public final class Fadah extends JavaPlugin {
 
         if (Config.HOOK_ECO_ITEMS.toBoolean()) {
             getHookManager().registerHook(new EcoItemsHook());
+        }
+
+        if (Config.HOOK_DISCORD_ENABLED.toBoolean()) {
+            getHookManager().registerHook(new DiscordHook());
         }
 
         getConsole().info("Hooked into %s plugins!".formatted(getHookManager().hookCount()));

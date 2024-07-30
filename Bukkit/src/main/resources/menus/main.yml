@@ -61,20 +61,6 @@ lang:
         selected: '&8> &e{0}'
         not-selected: '&f{0}'
 
-  scrollbar:
-    scroll-next:
-      icon: ARROW
-      model-data: 0
-      name: '&a&lScroll Categories Down'
-      lore:
-        - '&7Click to move the categories down'
-    scroll-previous:
-      icon: ARROW
-      model-data: 0
-      name: '&a&lScroll Categories Up'
-      lore:
-        - '&7Click to move the categories up'
-
 size: 6
 
 layout:

@@ -2,6 +2,7 @@ package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.TimeUtil;
@@ -9,6 +10,7 @@ import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,20 +43,10 @@ public class ActiveListingsMenu extends PaginatedFastInv {
 
     @Override
     protected void fillPaginationItems() {
-        List<String> defLore = List.of(
-                "&8&n---------------------------",
-                "&fCategory: &e{0}",
-                "&r ",
-                "&fPrice: &6${1}",
-                "&r ",
-                "&fExpires In: &e{2}",
-                "&r ",
-                "&eClick To Cancel This Listing!",
-                "&8&n---------------------------"
-        );
         for (Listing listing : listings) {
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
-                    .addLore(getLang().getLore("lore", defLore, CategoryCache.getCategory(listing.getCategoryID()).name(), listing.getPrice(),
+                    .addLore(getLang().getLore("lore", CategoryCache.getCategory(listing.getCategoryID()).name(),
+                            new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
                             TimeUtil.formatTimeUntil(listing.getDeletionDate())));
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
