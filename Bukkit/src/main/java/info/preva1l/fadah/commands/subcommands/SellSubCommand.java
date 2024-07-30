@@ -33,6 +33,12 @@ public class SellSubCommand extends SubCommand {
             return;
         }
         String priceString = command.args()[0];
+
+        if (priceString.toLowerCase().contains("nan")) {
+            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.MUST_BE_NUMBER.toFormattedString());
+            return;
+        }
+
         int multi = 1;
 
         if (priceString.endsWith("k") || priceString.endsWith("K")) {
