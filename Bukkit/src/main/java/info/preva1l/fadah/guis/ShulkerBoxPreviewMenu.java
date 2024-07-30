@@ -22,9 +22,7 @@ public class ShulkerBoxPreviewMenu extends FastInv {
                                  @Nullable SortingDirection sortingDirection,
                                  boolean isViewListings,
                                  @Nullable OfflinePlayer listingsPlayer) {
-        super(36, listing.getItemStack().getItemMeta().getDisplayName().isBlank()
-                ? StringUtils.formatItemName(listing.getItemStack().getType().name())
-                : listing.getItemStack().getItemMeta().getDisplayName(), LayoutManager.MenuType.SHULKER_PREVIEW);
+        super(36, StringUtils.extractItemName(listing.getItemStack()), LayoutManager.MenuType.SHULKER_PREVIEW);
         if (listing.getItemStack().getItemMeta() instanceof BlockStateMeta im) {
             if (im.getBlockState() instanceof ShulkerBox shulker) {
                 for (int i = 0; i < shulker.getInventory().getSize(); i++) {
