@@ -1,5 +1,6 @@
 package info.preva1l.fadah.guis;
 
+import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
@@ -44,7 +45,7 @@ public class ActiveListingsMenu extends PaginatedFastInv {
     protected void fillPaginationItems() {
         for (Listing listing : listings) {
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
-                    .addLore(getLang().getLore("lore", listing.getCategoryID(),
+                    .addLore(getLang().getLore("lore", CategoryCache.getCategory(listing.getCategoryID()).name(),
                             new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
                             TimeUtil.formatTimeUntil(listing.getDeletionDate())));
 

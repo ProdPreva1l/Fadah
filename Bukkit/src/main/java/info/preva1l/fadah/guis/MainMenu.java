@@ -139,7 +139,7 @@ public class MainMenu extends ScrollBarFastInv {
 
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
                     .addLore(getLang().getLore("listing.lore-body",
-                            listing.getOwnerName(), listing.getCategoryID(), buyMode, new DecimalFormat(Config.DECIMAL_FORMAT.toString())
+                            listing.getOwnerName(), CategoryCache.getCategory(listing.getCategoryID()).name(), buyMode, new DecimalFormat(Config.DECIMAL_FORMAT.toString())
                                     .format(listing.getPrice()), TimeUtil.formatTimeUntil(listing.getDeletionDate())));
 
             if (player.getUniqueId().equals(listing.getOwner())) {
