@@ -1,9 +1,11 @@
 package info.preva1l.fadah.hooks.impl;
 
+import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.hooks.Hook;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
+import info.preva1l.fadah.utils.TaskManager;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +17,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +28,12 @@ public class DiscordHook implements Hook {
     private boolean enabled = false;
 
     public void send(Listing listing) {
-        switch (Config.HOOK_DISCORD_MODE.toModeEnum()) {
-            case EMBED -> sendEmbed(listing);
-            case PLAIN -> sendPlain(listing);
-        }
+        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+            switch (Config.HOOK_DISCORD_MODE.toModeEnum()) {
+                case EMBED -> sendEmbed(listing);
+                case PLAIN -> sendPlain(listing);
+            }
+        });
     }
 
     private void sendEmbed(Listing listing) {
@@ -40,8 +45,12 @@ public class DiscordHook implements Hook {
                 .description(StringUtils.colorize(Config.HOOK_DISCORD_EMBED_CONTENT.toString()
                                 .replace("%player%", listing.getOwnerName())
                                 .replace("%item%", StringUtils.extractItemName(listing.getItemStack()))
-                                .replace("%price%", new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()))))
-                .image(new DiscordWebhook.EmbedObject.Image(getImageUrlForItem(listing.getItemStack().getType())));
+                                .replace("%price%", new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()))));
+
+        switch (Config.HOOK_DISCORD_EMBED_IMAGE.toImageLocationEnum()) {
+            case SIDE -> embed.thumbnail(new DiscordWebhook.EmbedObject.Thumbnail(getImageUrlForItem(listing.getItemStack().getType())));
+            case BOTTOM -> embed.image(new DiscordWebhook.EmbedObject.Image(getImageUrlForItem(listing.getItemStack().getType())));
+        }
 
         if (!Config.HOOK_DISCORD_EMBED_FOOTER.toString().isEmpty()) {
                 embed.footer(new DiscordWebhook.EmbedObject.Footer(Config.HOOK_DISCORD_EMBED_FOOTER.toString(), ""));
@@ -76,6 +85,11 @@ public class DiscordHook implements Hook {
     public enum Mode {
         EMBED,
         PLAIN
+    }
+
+    public enum ImageLocation {
+        SIDE,
+        BOTTOM
     }
 
     public static class DiscordWebhook {
@@ -193,12 +207,12 @@ public class DiscordHook implements Hook {
             URL url = new URL(this.url);
             HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
             connection.addRequestProperty("Content-Type", "application/json");
-            connection.addRequestProperty("User-Agent", "Java-DiscordWebhook-BY-Gelox_");
+            connection.addRequestProperty("User-Agent", "Fadah-Discord-Webhook");
             connection.setDoOutput(true);
             connection.setRequestMethod("POST");
 
             OutputStream stream = connection.getOutputStream();
-            stream.write(json.toString().getBytes());
+            stream.write(json.toString().getBytes(StandardCharsets.UTF_8));
             stream.flush();
             stream.close();
 

@@ -28,11 +28,13 @@ hooks:
     mode: "EMBED"
     # If mode is EMBED
     embed:
+      # Supported: SIDE, BOTTOM
+      image-location: SIDE
       title: "New Listing by %player%!"
-      content: "%player% just listed %item% for %price% on the auction house!"
+      content: "%player% just listed %item% for $%price% on the auction house!"
       footer: "Powered by Finally a Decent Auction House"
     # If mode is PLAIN
-    plain-text: "%player% just listed %item% for %price% on the auction house!"
+    plain-text: "%player% just listed %item% for $%price% on the auction house!"
 
 migrators:
   z-auction-house:

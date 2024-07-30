@@ -194,8 +194,10 @@ public class CacheSync extends JedisPubSub {
             public void handleMessage(JSONObject obj) {
                 FastInvManager.closeAll(Fadah.getINSTANCE());
                 boolean enabled = Fadah.getINSTANCE().getConfigFile().getBoolean("enabled");
+                Fadah.getINSTANCE().getConfigFile().save();
                 Fadah.getINSTANCE().getConfigFile().getConfiguration().set("enabled", !enabled);
                 Fadah.getINSTANCE().getConfigFile().save();
+                Fadah.getINSTANCE().getConfigFile().load();
 
                 String toggle = enabled ? Lang.ADMIN_TOGGLE_DISABLED.toFormattedString() : Lang.ADMIN_TOGGLE_ENABLED.toFormattedString();
                 Bukkit.getConsoleSender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADMIN_TOGGLE_REMOTE.toFormattedString(toggle));

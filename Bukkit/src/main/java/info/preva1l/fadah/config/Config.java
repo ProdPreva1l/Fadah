@@ -31,6 +31,7 @@ public enum Config {
     HOOK_DISCORD_URL("hooks.discord.webhook-url", "INSERT WEBHOOK URL"),
     HOOK_DISCORD_ADVERT_ONLY("hooks.discord.only-send-on-advert", false),
     HOOK_DISCORD_MODE("hooks.discord.mode", DiscordHook.Mode.EMBED),
+    HOOK_DISCORD_EMBED_IMAGE("hooks.discord.embed.image-location", DiscordHook.ImageLocation.SIDE),
     HOOK_DISCORD_EMBED_TITLE("hooks.discord.embed.title", "New Listing by %player%!"),
     HOOK_DISCORD_EMBED_CONTENT("hooks.discord.embed.content", "%player% just listed %item% for %price% on the auction house!"),
     HOOK_DISCORD_EMBED_FOOTER("hooks.discord.embed.footer", "Powered by Finally a Decent Auction House"),
@@ -95,6 +96,17 @@ public enum Config {
         } catch (EnumConstantNotPresentException ex) {
             Fadah.getConsole().warning(StringUtils.formatPlaceholders("Discord hook mode \"{0}\" does not exist! \n Defaulting to EMBED", toString()));
             return DiscordHook.Mode.EMBED;
+        }
+        return databaseType;
+    }
+
+    public DiscordHook.ImageLocation toImageLocationEnum() {
+        DiscordHook.ImageLocation databaseType;
+        try {
+            databaseType = DiscordHook.ImageLocation.valueOf(toString());
+        } catch (EnumConstantNotPresentException ex) {
+            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Discord hook image location \"{0}\" does not exist! \n Defaulting to SIDE", toString()));
+            return DiscordHook.ImageLocation.SIDE;
         }
         return databaseType;
     }

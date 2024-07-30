@@ -7,5 +7,6 @@ dependencies {
 }
 
 shadowJar {
+    destinationDirectory.set(file("$rootDir/target"))
     minimize()
 }
