@@ -31,7 +31,7 @@ public class ConfirmPurchaseMenu extends FastInv {
                     GuiHelper.constructButton(GuiButtonType.BORDER));
         }
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CONFIRM, 24),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CONFIRM, -1),
                 new ItemBuilder(getLang().getAsMaterial("confirm.icon", Material.LIME_CONCRETE))
                         .name(getLang().getStringFormatted("confirm.name", "&a&lCONFIRM"))
                         .modelData(getLang().getInt("confirm.model-data"))
@@ -40,7 +40,7 @@ public class ConfirmPurchaseMenu extends FastInv {
             listing.purchase(((Player) e.getWhoClicked()));
         });
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CANCEL, 20),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CANCEL, -1),
                 new ItemBuilder(getLang().getAsMaterial("cancel.icon", Material.RED_CONCRETE))
                         .name(getLang().getStringFormatted("cancel.name", "&c&lCANCEL"))
                         .modelData(getLang().getInt("cancel.model-data"))
@@ -53,7 +53,7 @@ public class ConfirmPurchaseMenu extends FastInv {
             new MainMenu(category, player, search, sortingMethod, sortingDirection).open(player);
         });
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.ITEM_TO_PURCHASE, 22),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.ITEM_TO_PURCHASE, -1),
                 listing.getItemStack().clone());
     }
 }

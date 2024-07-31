@@ -84,26 +84,26 @@ public class HistoryMenu extends PaginatedFastInv {
 
     @Override
     protected void addPaginationControls() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
         if (page > 0) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                     GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> previousPage());
         }
 
         if (historicItems != null && historicItems.size() >= index + 1) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                     GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> nextPage());
         }
     }
 
     private void addNavigationButtons() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, 36),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, -1),
                 GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SEARCH, 40),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SEARCH, -1),
                 new ItemBuilder(getLang().getAsMaterial("search.icon", Material.OAK_SIGN))
                         .name(getLang().getStringFormatted("search.name", "&eSearch Date"))
                         .modelData(getLang().getInt("search.model-datta"))

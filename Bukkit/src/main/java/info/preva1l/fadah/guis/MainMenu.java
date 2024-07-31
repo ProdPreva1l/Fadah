@@ -191,28 +191,28 @@ public class MainMenu extends ScrollBarFastInv {
 
     @Override
     protected void addPaginationControls() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 48),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,50),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
         if (page > 0) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 48),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                     GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> previousPage());
         }
 
         if (listings != null && listings.size() >= index + 1) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,50),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                     GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> nextPage());
         }
     }
 
     private void addNavigationButtons() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SCROLLBAR_CONTROL_ONE,0),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SCROLLBAR_CONTROL_ONE,-1),
                 GuiHelper.constructButton(GuiButtonType.SCROLL_PREVIOUS), e -> scrollUp());
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SCROLLBAR_CONTROL_TWO,45),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SCROLLBAR_CONTROL_TWO,-1),
                 GuiHelper.constructButton(GuiButtonType.SCROLL_NEXT), e -> scrollDown());
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE,53),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE,-1),
                 new ItemBuilder(getLang().getAsMaterial("profile-button.icon", Material.PLAYER_HEAD)).skullOwner(player)
                         .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile", StringUtils.capitalize(Lang.WORD_YOUR.toString())))
                         .addLore(getLang().getLore("profile-button.lore"))
@@ -224,8 +224,8 @@ public class MainMenu extends ScrollBarFastInv {
         // Filter Type Cycle
         SortingMethod prev = sortingMethod.previous();
         SortingMethod next = sortingMethod.next();
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER,47));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER,47),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER,-1));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER,-1),
                 new ItemBuilder(getLang().getAsMaterial("filter.change-type.icon", Material.PUFFERFISH))
                 .name(getLang().getStringFormatted("filter.change-type.name", "&eListing Filter"))
                 .modelData(getLang().getInt("filter.change-type.model-data"))
@@ -252,8 +252,8 @@ public class MainMenu extends ScrollBarFastInv {
         });
 
         // Search
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SEARCH,49));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SEARCH,49),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SEARCH,-1));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SEARCH,-1),
                 new ItemBuilder(getLang().getAsMaterial("filter.search.icon", Material.OAK_SIGN))
                 .name(getLang().getStringFormatted("filter.search.name", "&3&lSearch"))
                 .modelData(getLang().getInt("filter.search.model-data"))
@@ -271,8 +271,8 @@ public class MainMenu extends ScrollBarFastInv {
                         : getLang().getStringFormatted("filter.change-direction.options.not-selected", "&f{0}"),
                 sortingMethod.getLang(SortingDirection.DESCENDING));
 
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER_DIRECTION,51));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER_DIRECTION,51),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER_DIRECTION,-1));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.FILTER_DIRECTION,-1),
                 new ItemBuilder(getLang().getAsMaterial("filter.change-direction.icon", Material.CLOCK))
                         .name(getLang().getStringFormatted("filter.change-direction.name", "&eFilter Direction"))
                         .modelData(getLang().getInt("filter.change-direction.model-data"))

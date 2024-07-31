@@ -105,17 +105,17 @@ public class ViewListingsMenu extends PaginatedFastInv {
 
     @Override
     protected void addPaginationControls() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
         if (page > 0) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                     GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> previousPage());
         }
 
         if (listings != null && listings.size() >= index + 1) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                     GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> nextPage());
         }
     }
@@ -129,7 +129,7 @@ public class ViewListingsMenu extends PaginatedFastInv {
     }
 
     private void addNavigationButtons() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CLOSE, 40),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CLOSE, -1),
                 GuiHelper.constructButton(GuiButtonType.CLOSE), e -> e.getWhoClicked().closeInventory());
     }
 }

@@ -54,7 +54,7 @@ public class NewListingMenu extends FastInv {
                     GuiHelper.constructButton(GuiButtonType.BORDER));
         }
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_START, 30),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_START, -1),
                 new ItemBuilder(getLang().getAsMaterial("create.icon", Material.EMERALD))
                         .name(getLang().getStringFormatted("create.name", "&aClick to create listing!"))
                         .modelData(getLang().getInt("create.model-data"))
@@ -73,7 +73,7 @@ public class NewListingMenu extends FastInv {
                 () -> player.getInventory().setItemInMainHand(new ItemStack(Material.AIR)),
                 () -> this.itemToSell = new ItemStack(Material.AIR),
                 0L);
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ITEM, 22), itemToSell);
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ITEM, -1), itemToSell);
     }
 
     @Override
@@ -83,8 +83,8 @@ public class NewListingMenu extends FastInv {
     }
 
     private void setClock() {
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 11));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 11),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, -1));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, -1),
                 new ItemBuilder(getLang().getAsMaterial("time.icon", Material.CLOCK))
                         .name(getLang().getStringFormatted("time.name", "&aTime for listing to be active"))
                         .setAttributes(null)
@@ -156,8 +156,8 @@ public class NewListingMenu extends FastInv {
                         : getLang().getStringFormatted("mode.options.not-selected", "&f{0}"),
                 Lang.MODE_BUY_IT_NOW.toFormattedString());
 
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE,31));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE,31),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE,-1));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE,-1),
                 new ItemBuilder(getLang().getAsMaterial("mode.icon", Material.HOPPER))
                         .name(getLang().getStringFormatted("mode.name", "&bAuction Mode"))
                         .modelData(getLang().getInt("mode.model-data"))
@@ -240,7 +240,7 @@ public class NewListingMenu extends FastInv {
     }
 
     private void addNavigationButtons() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CLOSE, 49),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CLOSE, -1),
                 GuiHelper.constructButton(GuiButtonType.CLOSE), e -> e.getWhoClicked().closeInventory());
     }
 }

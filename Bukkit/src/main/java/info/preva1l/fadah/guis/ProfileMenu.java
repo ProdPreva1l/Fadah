@@ -28,11 +28,11 @@ public class ProfileMenu extends FastInv {
                     GuiHelper.constructButton(GuiButtonType.BORDER));
         }
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, 45),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, -1),
                 GuiHelper.constructButton(GuiButtonType.BACK),
                 e -> new MainMenu(null, viewer, null, null, null).open(viewer));
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_SUMMARY, 20),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_SUMMARY, -1),
                 new ItemBuilder(Material.PLAYER_HEAD).skullOwner(owner)
                         .modelData(getLang().getInt("profile-button.model-data"))
                         .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile",
@@ -48,7 +48,7 @@ public class ProfileMenu extends FastInv {
     }
 
     private void activeListingsButton() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_ACTIVE_LISTINGS, 22),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_ACTIVE_LISTINGS, -1),
                 new ItemBuilder(getLang().getAsMaterial("your-listings.icon", Material.EMERALD))
                         .name(getLang().getStringFormatted("your-listings.name", "&1{0} listings", viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName() + "'s", owner.getName() + "'s"))
                         .modelData(getLang().getInt("your-listings.model-data"))
@@ -63,7 +63,7 @@ public class ProfileMenu extends FastInv {
     }
 
     private void collectionBoxButton() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_COLLECTION_BOX, 23),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_COLLECTION_BOX, -1),
                 new ItemBuilder(getLang().getAsMaterial("collection-box.icon", Material.CHEST_MINECART))
                         .name(getLang().getStringFormatted("collection-box.name", "&e{0} Collection Box", viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName() + "'s", owner.getName() + "'s"))
                         .modelData(getLang().getInt("collection-box.model-data"))
@@ -78,7 +78,7 @@ public class ProfileMenu extends FastInv {
     }
 
     private void expiredListingsButton() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_EXPIRED_LISTINGS, 24),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_EXPIRED_LISTINGS, -1),
                 new ItemBuilder(getLang().getAsMaterial("expired-items.icon", Material.ENDER_CHEST))
                         .name(getLang().getStringFormatted("expired-items.name", "&c{0} Expired Listings", viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName() + "'s", owner.getName() + "'s"))
                         .modelData(getLang().getInt("expired-items.model-data"))
@@ -93,7 +93,7 @@ public class ProfileMenu extends FastInv {
     }
 
     private void historyButton() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_HISTORY, 31),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_HISTORY, -1),
                 new ItemBuilder(getLang().getAsMaterial("historic-items.icon", Material.ENDER_CHEST))
                         .name(getLang().getStringFormatted("historic-items.name", "&c{0} History", viewer.getUniqueId() == owner.getUniqueId() ? Lang.WORD_YOUR.toCapital() : owner.getName() + "'s", owner.getName() + "'s"))
                         .modelData(getLang().getInt("historic-items.model-data"))
