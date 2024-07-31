@@ -129,8 +129,8 @@ public class NewListingMenu extends FastInv {
                         : getLang().getStringFormatted("advert.options.not-selected", "&f{0}"),
                 Lang.ADVERT_DONT_POST.toFormattedString());
 
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT,29));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT,29),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT,-1));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT,-1),
                 new ItemBuilder(getLang().getAsMaterial("advert.icon", Material.OAK_SIGN))
                         .name(getLang().getStringFormatted("advert.name", "&eAdvertise Listing"))
                         .modelData(getLang().getInt("advert.model-data"))
