@@ -1,4 +1,4 @@
-package info.preva1l.fadah.data;
+package info.preva1l.fadah.data.old;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;

@@ -12,7 +12,11 @@ import info.preva1l.fadah.commands.MigrateCommand;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
-import info.preva1l.fadah.data.*;
+import info.preva1l.fadah.data.DatabaseType;
+import info.preva1l.fadah.data.old.Database;
+import info.preva1l.fadah.data.old.MongoDatabase;
+import info.preva1l.fadah.data.old.MySQLDatabase;
+import info.preva1l.fadah.data.old.SQLiteDatabase;
 import info.preva1l.fadah.hooks.HookManager;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
 import info.preva1l.fadah.hooks.impl.EcoItemsHook;
@@ -67,7 +71,7 @@ public final class Fadah extends JavaPlugin {
     @Getter private BasicConfig menusFile;
 
     @Getter @Setter private CacheSync cacheSync;
-    @Getter private Database database;
+    @Getter @Deprecated(forRemoval = true) private Database database; // TODO: remove
     @Getter private CommandManager commandManager;
     @Getter private Economy economy;
     @Getter private HookManager hookManager;
@@ -96,8 +100,10 @@ public final class Fadah extends JavaPlugin {
 
         loadMenus();
         loadFiles();
-        loadDataAndPopulateCaches();
+        loadDataAndPopulateCaches(); // TODO: remove
         loadCommands();
+
+        CategoryCache.update();
 
         getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         TaskManager.Async.runTask(this, listingExpiryTask(), 10L);
@@ -222,9 +228,6 @@ public final class Fadah extends JavaPlugin {
 
 
     private void loadDataAndPopulateCaches() {
-        getConsole().info("Connecting to Database and populating caches...");
-        getConsole().info("DB Type: %s".formatted(Config.DATABASE_TYPE.toDBTypeEnum().getFriendlyName()));
-
         database = switch (Config.DATABASE_TYPE.toDBTypeEnum()) {
             case MONGO -> new MongoDatabase();
             case MYSQL, MARIADB -> new MySQLDatabase();
@@ -232,10 +235,6 @@ public final class Fadah extends JavaPlugin {
         };
 
         database.connect();
-
-        CategoryCache.update();
-
-        getConsole().info("Connected to Database and populated caches!");
     }
 
     private void loadHooks() {

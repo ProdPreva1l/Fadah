@@ -1,10 +1,10 @@
-package info.preva1l.fadah.data;
+package info.preva1l.fadah.data.old;
 
 import com.google.common.collect.Lists;
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.records.*;
 import info.preva1l.fadah.utils.ItemSerializer;
 import lombok.Getter;
@@ -12,24 +12,25 @@ import lombok.Setter;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.sql.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.logging.Level;
 
-public class SQLiteDatabase implements Database {
-    private static final String DATABASE_FILE_NAME = "FadahData.db";
-    @Getter @Setter private boolean connected = false;
-    private File databaseFile;
-    private HikariDataSource hikariDataSource;
+@Setter
+@Getter
+public class MySQLDatabase implements Database {
+    private final String driverClass;
+    private boolean connected = false;
+    private HikariDataSource dataSource;
 
+    public MySQLDatabase() {
+        this.driverClass = Config.DATABASE_TYPE.toDBTypeEnum() == DatabaseType.MARIADB ? "org.mariadb.jdbc.Driver" : "com.mysql.cj.jdbc.Driver";
+    }
+
+    // stolen from husktowns, thanks bbg will
     @SuppressWarnings("SameParameterValue")
     @NotNull
     private String[] getSchemaStatements(@NotNull String schemaFileName) throws IOException {
@@ -38,85 +39,67 @@ public class SQLiteDatabase implements Database {
     }
 
     private Connection getConnection() throws SQLException {
-        return hikariDataSource.getConnection();
-    }
-
-    private void setConnection() {
-        try {
-            if (databaseFile.createNewFile()) {
-                Fadah.getConsole().info("Created the SQLite database file");
-            }
-
-            Class.forName("org.sqlite.JDBC");
-
-            HikariConfig config = new HikariConfig();
-            config.setPoolName("FadahHikariPool");
-            config.setDriverClassName("org.sqlite.JDBC");
-            config.setJdbcUrl("jdbc:sqlite:" + databaseFile.getAbsolutePath());
-            config.setConnectionTestQuery("SELECT 1");
-            config.setMaxLifetime(60000);
-            config.setIdleTimeout(45000);
-            config.setMaximumPoolSize(50);
-            hikariDataSource = new HikariDataSource(config);
-
-        } catch (IOException e) {
-            Fadah.getConsole().log(Level.SEVERE, "An exception occurred creating the database file", e);
-        } catch (ClassNotFoundException e) {
-            Fadah.getConsole().log(Level.SEVERE, "Failed to load the necessary SQLite driver", e);
-        }
-    }
-
-    private void backupFlatFile(@NotNull File file) {
-        if (!file.exists()) {
-            return;
-        }
-
-        final File backup = new File(file.getParent(), String.format("%s.bak", file.getName()));
-        try {
-            if (!backup.exists() || backup.delete()) {
-                Files.copy(file.toPath(), backup.toPath());
-            }
-        } catch (IOException e) {
-            Fadah.getConsole().log(Level.WARNING, "Failed to backup flat file database", e);
-        }
+        return dataSource.getConnection();
     }
 
     @Override
     public void connect() {
-        databaseFile = new File(Fadah.getINSTANCE().getDataFolder(), DATABASE_FILE_NAME);
+        dataSource = new HikariDataSource();
+        dataSource.setDriverClassName(driverClass);
+        dataSource.setJdbcUrl(Config.DATABASE_URI.toString());
 
-        this.setConnection();
-        this.backupFlatFile(databaseFile);
+        dataSource.setMaximumPoolSize(10);
+        dataSource.setMinimumIdle(10);
+        dataSource.setMaxLifetime(1800000);
+        dataSource.setKeepaliveTime(0);
+        dataSource.setConnectionTimeout(5000);
+        dataSource.setPoolName("FadahHikariPool");
 
-        try {
+        final Properties properties = new Properties();
+        properties.putAll(
+                Map.of("cachePrepStmts", "true",
+                        "prepStmtCacheSize", "250",
+                        "prepStmtCacheSqlLimit", "2048",
+                        "useServerPrepStmts", "true",
+                        "useLocalSessionState", "true",
+                        "useLocalTransactionState", "true"
+                ));
+        properties.putAll(
+                Map.of(
+                        "rewriteBatchedStatements", "true",
+                        "cacheResultSetMetadata", "true",
+                        "cacheServerConfiguration", "true",
+                        "elideSetAutoCommits", "true",
+                        "maintainTimeStats", "false")
+        );
+        dataSource.setDataSourceProperties(properties);
+
+        try (Connection connection = dataSource.getConnection()) {
             final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
-            try (Statement statement = getConnection().createStatement()) {
+            try (Statement statement = connection.createStatement()) {
                 for (String tableCreationStatement : databaseSchema) {
                     statement.execute(tableCreationStatement);
                 }
+                setConnected(true);
             } catch (SQLException e) {
                 destroy();
-                throw new IllegalStateException("Failed to create database tables.", e);
+                throw new IllegalStateException("Failed to create database tables. Please ensure you are running MySQL v8.0+ " +
+                        "and that your connecting user account has privileges to create tables.", e);
             }
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             destroy();
-            throw new IllegalStateException("Failed to create database tables.", e);
+            throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
+                    "Please check the supplied database credentials in the config file", e);
         }
-        setConnected(true);
+
         this.loadListings();
     }
 
     @Override
     public void destroy() {
-        try {
-            if (getConnection() != null) {
-                if (!getConnection().isClosed()) {
-                    getConnection().close();
-                }
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        if (dataSource == null) return;
+        if (dataSource.isClosed()) return;
+        dataSource.close();
         setConnected(false);
     }
 
@@ -135,11 +118,10 @@ public class SQLiteDatabase implements Database {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
                     statement.setLong(3, collectableItem.dateAdded());
-                    statement.execute();
+                    statement.executeUpdate();
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to add item to collection box!");
-                throw new RuntimeException(e);
             }
             return null;
         });
@@ -155,15 +137,16 @@ public class SQLiteDatabase implements Database {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `collection_box`
-                        WHERE `playerUUID`=? AND `itemStack`=? AND `dateAdded` =?;""")) {
+                        WHERE `playerUUID`=? AND `itemStack`=? AND `dateAdded` =?
+                        LIMIT 1;"""
+                )) {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
                     statement.setLong(3, collectableItem.dateAdded());
-                    statement.execute();
+                    statement.executeUpdate();
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to remove item from collection box!");
-                throw new RuntimeException(e);
             }
             return null;
         });
@@ -193,8 +176,8 @@ public class SQLiteDatabase implements Database {
                 }
             } catch (SQLException e) {
                 Fadah.getConsole().severe("Failed to get items from collection box!");
-                throw new RuntimeException(e);
             }
+            return retrievedData;
         });
     }
 
@@ -213,10 +196,10 @@ public class SQLiteDatabase implements Database {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
                     statement.setLong(3, collectableItem.dateAdded());
-                    statement.execute();
+                    statement.executeUpdate();
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().log(Level.SEVERE, "Failed to add item to expired items!", e);
+                Fadah.getConsole().severe("Failed to add item to expired items!");
             }
             return null;
         });
@@ -226,20 +209,21 @@ public class SQLiteDatabase implements Database {
     public CompletableFuture<Void> removeFromExpiredItems(UUID playerUUID, CollectableItem collectableItem) {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
-            return CompletableFuture.supplyAsync(() -> null);
+            return CompletableFuture.supplyAsync(()->null);
         }
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `expired_items`
-                        WHERE `playerUUID`=? AND `itemStack`=? AND `dateAdded` =?;""")) {
+                        WHERE `playerUUID`=? AND `itemStack`=? AND `dateAdded` =?
+                        LIMIT 1;""")) {
                     statement.setString(1, playerUUID.toString());
                     statement.setString(2, ItemSerializer.serialize(collectableItem.itemStack()));
                     statement.setLong(3, collectableItem.dateAdded());
-                    statement.execute();
+                    statement.executeUpdate();
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().log(Level.SEVERE, "Failed to remove item from expired items!", e);
+                Fadah.getConsole().severe("Failed to remove item from expired items!");
             }
             return null;
         });
@@ -268,9 +252,9 @@ public class SQLiteDatabase implements Database {
                     return retrievedData;
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().log(Level.SEVERE, "Failed to get items from expired items!", e);
+                Fadah.getConsole().severe("Failed to get items from expired items!");
             }
-            return null;
+            return retrievedData;
         });
     }
 
@@ -297,10 +281,10 @@ public class SQLiteDatabase implements Database {
                     statement.setString(9, ItemSerializer.serialize(listing.getItemStack()));
                     statement.setBoolean(10, false);
                     statement.setString(11, "");
-                    statement.execute();
+                    statement.executeUpdate();
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().log(Level.SEVERE, "Failed to add item to listings!", e);
+                Fadah.getConsole().severe("Failed to add item to listings!");
             }
             return null;
         });
@@ -316,12 +300,13 @@ public class SQLiteDatabase implements Database {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         DELETE FROM `listings`
-                        WHERE uuid = ?;""")) {
+                        WHERE `uuid`=?
+                        LIMIT 1;""")) {
                     statement.setString(1, id.toString());
-                    statement.execute();
+                    statement.executeUpdate();
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().log(Level.SEVERE, "Failed to remove item from listings!", e);
+                Fadah.getConsole().severe("Failed to remove item from listings!");
             }
             return null;
         });
@@ -337,7 +322,7 @@ public class SQLiteDatabase implements Database {
             final List<Listing> retrievedData = Lists.newArrayList();
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT  `uuid`, `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`, `bids`
+                        SELECT `uuid`, `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`, `bids`
                         FROM `listings`;""")) {
                     final ResultSet resultSet = statement.executeQuery();
                     while (resultSet.next()) {
@@ -357,9 +342,9 @@ public class SQLiteDatabase implements Database {
                     return retrievedData;
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().log(Level.SEVERE, "Failed to get items from listings!", e);
+                Fadah.getConsole().severe("Failed to get items from listings!");
             }
-            return null;
+            return retrievedData;
         });
     }
 
@@ -372,9 +357,10 @@ public class SQLiteDatabase implements Database {
         return CompletableFuture.supplyAsync(() -> {
             try (Connection connection = getConnection()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT  `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`, `bids`
+                        SELECT `ownerUUID`, `ownerName`, `category`, `creationDate`, `deletionDate`, `price`, `tax`, `itemStack`, `biddable`, `bids`
                         FROM `listings`
-                        WHERE `uuid`=?;""")) {
+                        WHERE `uuid`=?;"""
+                )) {
                     statement.setString(1, id.toString());
                     final ResultSet resultSet = statement.executeQuery();
                     if (resultSet.next()) {
@@ -392,7 +378,7 @@ public class SQLiteDatabase implements Database {
                     }
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().log(Level.SEVERE, "Failed to get listing!", e);
+                Fadah.getConsole().severe("Failed to get items from expired items!");
             }
             return null;
         });
@@ -424,10 +410,10 @@ public class SQLiteDatabase implements Database {
                     } else {
                         statement.setNull(6, Types.VARCHAR);
                     }
-                    statement.execute();
+                    statement.executeUpdate();
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().log(Level.SEVERE, "Failed to add item to history!", e);
+                Fadah.getConsole().severe("Failed to add item to expired items!");
             }
             return null;
         });
@@ -459,9 +445,9 @@ public class SQLiteDatabase implements Database {
                     return retrievedData;
                 }
             } catch (SQLException e) {
-                Fadah.getConsole().log(Level.SEVERE, "Failed to get items from history!", e);
+                Fadah.getConsole().log(Level.SEVERE, "Failed to get items from expired items!", e);
             }
-            return null;
+            return retrievedData;
         });
     }
 }

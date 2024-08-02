@@ -1,4 +1,4 @@
-package info.preva1l.fadah.data;
+package info.preva1l.fadah.data.old;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

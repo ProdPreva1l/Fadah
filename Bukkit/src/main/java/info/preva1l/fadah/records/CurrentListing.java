@@ -9,6 +9,7 @@ import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
 import net.milkbowl.vault.economy.Economy;
@@ -36,8 +37,7 @@ public final class CurrentListing extends Listing {
             buyer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.TOO_EXPENSIVE.toFormattedString());
             return;
         }
-        if (ListingCache.getListing(this.getId()) == null
-                || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(this.getId()) == null)) {
+        if (ListingCache.getListing(this.getId()) == null) { // TODO: Readd strict check
             buyer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
             return;
         }
@@ -52,7 +52,8 @@ public final class CurrentListing extends Listing {
             ListingCache.removeListing(this);
         }
         CacheSync.send(this.getId(), true);
-        Fadah.getINSTANCE().getDatabase().removeListing(this.getId());
+        // Fadah.getINSTANCE().getDatabase().removeListing(this.getId()); - OLD TODO: remove
+        DatabaseManager.getInstance().delete(Listing.class, this);
 
         // Add to collection box
         ItemStack itemStack = this.getItemStack().clone();
