@@ -74,7 +74,8 @@ public class HistorySQLiteDao implements Dao<History> {
                 try (PreparedStatement statement = connection.prepareStatement("""
                         INSERT INTO `history`
                         (`playerUUID`, `itemStack`, `loggedDate`, `loggedAction`, `price`, `purchaserUUID`)
-                        VALUES (?,?,?,?,?,?);""")) {
+                        SELECT ?,?,?,?,?,? 
+                        WHERE NOT EXISTS ( SELECT 1 FROM `history` WHERE `loggedDate` = ? );""")) {
                     statement.setString(1, history.owner().toString());
                     statement.setString(2, ItemSerializer.serialize(historicItem.itemStack()));
                     statement.setLong(3, historicItem.loggedDate());
@@ -89,6 +90,7 @@ public class HistorySQLiteDao implements Dao<History> {
                     } else {
                         statement.setNull(6, Types.VARCHAR);
                     }
+                    statement.setLong(7, historicItem.loggedDate());
                     statement.execute();
                 }
             }
