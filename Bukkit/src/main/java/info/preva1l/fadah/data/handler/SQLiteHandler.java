@@ -5,12 +5,21 @@ import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.data.dao.Dao;
+import info.preva1l.fadah.data.dao.sqlite.CollectionBoxSQLiteDao;
+import info.preva1l.fadah.data.dao.sqlite.ExpiredItemsSQLiteDao;
+import info.preva1l.fadah.data.dao.sqlite.HistorySQLiteDao;
+import info.preva1l.fadah.data.dao.sqlite.ListingSQLiteDao;
+import info.preva1l.fadah.records.CollectionBox;
+import info.preva1l.fadah.records.ExpiredItems;
+import info.preva1l.fadah.records.History;
+import info.preva1l.fadah.records.Listing;
 import lombok.Getter;
-import org.apache.commons.lang.NotImplementedException;
+import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -27,10 +36,10 @@ public class SQLiteHandler implements DatabaseHandler {
     private HikariDataSource dataSource;
 
     @Override
+    @Blocking
     public void connect() {
-        databaseFile = new File(Fadah.getINSTANCE().getDataFolder(), DATABASE_FILE_NAME);
-
         try {
+            databaseFile = new File(Fadah.getINSTANCE().getDataFolder(), DATABASE_FILE_NAME);
             if (databaseFile.createNewFile()) {
                 Fadah.getConsole().info("Created the SQLite database file");
             }
@@ -49,7 +58,7 @@ public class SQLiteHandler implements DatabaseHandler {
             this.backupFlatFile(databaseFile);
 
             final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
-            try (Statement statement = getConnection().createStatement()) {
+            try (Statement statement = dataSource.getConnection().createStatement()) {
                 for (String tableCreationStatement : databaseSchema) {
                     statement.execute(tableCreationStatement);
                 }
@@ -64,6 +73,15 @@ public class SQLiteHandler implements DatabaseHandler {
             Fadah.getConsole().log(Level.SEVERE, "Failed to load the necessary SQLite driver", e);
             destroy();
         }
+        registerDaos();
+        connected = true;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    @NotNull
+    private String[] getSchemaStatements(@NotNull String schemaFileName) throws IOException {
+        return new String(Objects.requireNonNull(Fadah.getINSTANCE().getResource(schemaFileName))
+                .readAllBytes(), StandardCharsets.UTF_8).split(";");
     }
 
     private void backupFlatFile(@NotNull File file) {
@@ -83,12 +101,15 @@ public class SQLiteHandler implements DatabaseHandler {
 
     @Override
     public void destroy() {
-
+        if (dataSource != null) dataSource.close();
     }
 
     @Override
-    public <T> void registerDao(Class<T> clazz, Dao<T> dao) {
-        daos.put(clazz, dao);
+    public void registerDaos() {
+        daos.put(Listing.class, new ListingSQLiteDao(dataSource));
+        daos.put(CollectionBox.class, new CollectionBoxSQLiteDao(dataSource));
+        daos.put(ExpiredItems.class, new ExpiredItemsSQLiteDao(dataSource));
+        daos.put(History.class, new HistorySQLiteDao(dataSource));
     }
 
     @Override
@@ -113,7 +134,7 @@ public class SQLiteHandler implements DatabaseHandler {
 
     @Override
     public <T> void update(Class<T> clazz, T t, String[] params) {
-        throw new NotImplementedException();
+        getDao(clazz).update(t, params);
     }
 
     @Override
@@ -121,14 +142,20 @@ public class SQLiteHandler implements DatabaseHandler {
         getDao(clazz).delete(t);
     }
 
+    @Override
+    public <T> void deleteSpecific(Class<T> clazz, T t, Object o) {
+        getDao(clazz).deleteSpecific(t, o);
+    }
+
     /**
      * Gets the DAO for a specific class.
+     *
      * @param clazz The class to get the DAO for.
-     * @param <T> The type of the class.
+     * @param <T>   The type of the class.
      * @return The DAO for the specified class.
      */
     private <T> Dao<T> getDao(Class<?> clazz) {
-        if(!daos.containsKey(clazz))
+        if (!daos.containsKey(clazz))
             throw new IllegalArgumentException("No DAO registered for class " + clazz.getName());
         return (Dao<T>) daos.get(clazz);
     }

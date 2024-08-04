@@ -1,6 +1,5 @@
 package info.preva1l.fadah.cache;
 
-import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.records.HistoricItem;
 import lombok.experimental.UtilityClass;
 
@@ -46,6 +45,6 @@ public class HistoricItemsCache {
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean playerExists(UUID uuid) {
-        return !Fadah.getINSTANCE().getDatabase().getHistory(uuid).join().isEmpty();
+        return !getHistory(uuid).isEmpty();
     }
 }

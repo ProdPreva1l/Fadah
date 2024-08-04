@@ -91,8 +91,6 @@ public class MySQLDatabase implements Database {
             throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
                     "Please check the supplied database credentials in the config file", e);
         }
-
-        this.loadListings();
     }
 
     @Override

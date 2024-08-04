@@ -1,5 +1,7 @@
 package info.preva1l.fadah.data.dao;
 
+import org.apache.commons.lang.NotImplementedException;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,4 +43,13 @@ public interface Dao<T> {
      * @param t the object to delete.
      */
     void delete(T t);
+
+    /**
+     * Delete o from t if t is a collection
+     * @param t the collection to delete from.
+     * @param o the object to delete
+     */
+    default void deleteSpecific(T t, Object o) {
+        throw new NotImplementedException();
+    }
 }

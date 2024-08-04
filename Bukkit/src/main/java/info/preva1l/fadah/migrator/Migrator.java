@@ -4,7 +4,10 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.ListingCache;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.records.CollectableItem;
+import info.preva1l.fadah.records.CollectionBox;
+import info.preva1l.fadah.records.ExpiredItems;
 import info.preva1l.fadah.records.Listing;
 
 import java.util.List;
@@ -22,7 +25,7 @@ public interface Migrator {
 
             for (Listing listing : listings) {
                 ListingCache.addListing(listing);
-                plugin.getDatabase().addListing(listing);
+                DatabaseManager.getInstance().save(Listing.class, listing);
                 migratedListings++;
             }
             Fadah.getConsole().info("Migrated %s listings!".formatted(migratedListings));
@@ -33,7 +36,7 @@ public interface Migrator {
             for (UUID owner : collectionBoxes.keySet()) {
                 for (CollectableItem item : collectionBoxes.get(owner)) {
                     CollectionBoxCache.addItem(owner, item);
-                    plugin.getDatabase().addToCollectionBox(owner, item);
+                    DatabaseManager.getInstance().save(CollectionBox.class, new CollectionBox(owner, collectionBoxes.get(owner)));
                 }
                 migratedCollectionBoxes++;
             }
@@ -45,7 +48,7 @@ public interface Migrator {
             for (UUID owner : expiredItems.keySet()) {
                 for (CollectableItem item : expiredItems.get(owner)) {
                     ExpiredListingsCache.addItem(owner, item);
-                    plugin.getDatabase().addToExpiredItems(owner, item);
+                    DatabaseManager.getInstance().save(ExpiredItems.class, ExpiredItems.of(owner));
                 }
                 migratedExpiredItems++;
             }

@@ -46,7 +46,6 @@ public class MongoDatabase implements Database {
             throw new IllegalStateException("Failed to establish a connection to the MongoDB database. " +
                     "Please check the supplied database credentials in the config file", e);
         }
-        this.loadListings();
     }
 
     @Override

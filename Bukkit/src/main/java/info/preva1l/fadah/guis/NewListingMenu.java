@@ -7,6 +7,7 @@ import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
 import info.preva1l.fadah.multiserver.CacheSync;
@@ -190,7 +191,7 @@ public class NewListingMenu extends FastInv {
         Listing listing = new CurrentListing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
                 itemToSell, category, price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli(), isBidding, Collections.emptyList());
 
-        plugin.getDatabase().addListing(listing);
+        DatabaseManager.getInstance().save(Listing.class, listing);
         if (plugin.getCacheSync() != null) {
             CacheSync.send(listing.getId(), false);
         } else {

@@ -24,6 +24,9 @@ public record HistoricItem(
         @Nullable Double price,
         @Nullable UUID purchaserUUID
 ) {
+    /**
+     * The order must not change as ordinals are used.
+     */
     public enum LoggedAction {
         LISTING_START,
         LISTING_PURCHASED,

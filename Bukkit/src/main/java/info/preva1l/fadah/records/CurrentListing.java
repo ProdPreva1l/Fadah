@@ -52,14 +52,13 @@ public final class CurrentListing extends Listing {
             ListingCache.removeListing(this);
         }
         CacheSync.send(this.getId(), true);
-        // Fadah.getINSTANCE().getDatabase().removeListing(this.getId()); - OLD TODO: remove
         DatabaseManager.getInstance().delete(Listing.class, this);
 
         // Add to collection box
         ItemStack itemStack = this.getItemStack().clone();
         CollectableItem collectableItem = new CollectableItem(itemStack, Instant.now().toEpochMilli());
-        Fadah.getINSTANCE().getDatabase().addToCollectionBox(buyer.getUniqueId(), collectableItem);
         CollectionBoxCache.addItem(buyer.getUniqueId(), collectableItem);
+        DatabaseManager.getInstance().save(CollectionBox.class, CollectionBox.of(buyer.getUniqueId()));
 
         // Send Cache Updates
         CacheSync.send(CacheSync.CacheType.COLLECTION_BOX, buyer.getUniqueId());
@@ -87,9 +86,7 @@ public final class CurrentListing extends Listing {
 
     @Override
     public boolean cancel(@NotNull Player canceller) {
-        if (ListingCache.getListing(this.getId()) == null
-                || (Config.STRICT_CHECKS.toBoolean()
-                && Fadah.getINSTANCE().getDatabase().getListing(this.getId()) == null)) {
+        if (ListingCache.getListing(this.getId()) == null) { // todo: re-add strict checks
             canceller.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
             return false;
         }
@@ -98,13 +95,12 @@ public final class CurrentListing extends Listing {
             ListingCache.removeListing(this);
         }
         CacheSync.send(this.getId(), true);
-        Fadah.getINSTANCE().getDatabase().removeListing(this.getId());
+        DatabaseManager.getInstance().delete(Listing.class, this);
 
         CollectableItem collectableItem = new CollectableItem(this.getItemStack(), Instant.now().toEpochMilli());
         ExpiredListingsCache.addItem(getOwner(), collectableItem);
         CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, getOwner());
-
-        Fadah.getINSTANCE().getDatabase().addToExpiredItems(getOwner(), collectableItem);
+        DatabaseManager.getInstance().save(ExpiredItems.class, ExpiredItems.of(getOwner()));
 
         boolean isAdmin = !this.isOwner(canceller);
         TransactionLogger.listingRemoval(this, isAdmin);

@@ -2,8 +2,10 @@ package info.preva1l.fadah.utils.logging;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.HistoricItemsCache;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.HistoricItem;
+import info.preva1l.fadah.records.History;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import lombok.experimental.UtilityClass;
@@ -19,7 +21,7 @@ public class TransactionLogger {
         // In game logs
         HistoricItem historicItem = new HistoricItem(listing.getOwner(), Instant.now().toEpochMilli(), HistoricItem.LoggedAction.LISTING_START, listing.getItemStack(), listing.getPrice(), null);
         HistoricItemsCache.addLog(listing.getOwner(), historicItem);
-        Fadah.getINSTANCE().getDatabase().addToHistory(listing.getOwner(), historicItem);
+        DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
 
         // Log file logs
         Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[NEW LISTING] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
@@ -33,7 +35,7 @@ public class TransactionLogger {
                 HistoricItem.LoggedAction.LISTING_SOLD, listing.getItemStack(), listing.getPrice(), buyer.getUniqueId());
 
         HistoricItemsCache.addLog(listing.getOwner(), historicItemSeller);
-        Fadah.getINSTANCE().getDatabase().addToHistory(listing.getOwner(), historicItemSeller);
+        DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
 
         CacheSync.send(CacheSync.CacheType.HISTORY, listing.getOwner());
 
@@ -41,7 +43,7 @@ public class TransactionLogger {
                 HistoricItem.LoggedAction.LISTING_PURCHASED, listing.getItemStack(), listing.getPrice(), listing.getOwner());
 
         HistoricItemsCache.addLog(buyer.getUniqueId(), historicItemBuyer);
-        Fadah.getINSTANCE().getDatabase().addToHistory(buyer.getUniqueId(), historicItemBuyer);
+        DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
 
         CacheSync.send(CacheSync.CacheType.HISTORY, buyer.getUniqueId());
 
@@ -56,7 +58,7 @@ public class TransactionLogger {
                 isAdmin ? HistoricItem.LoggedAction.LISTING_ADMIN_CANCEL : HistoricItem.LoggedAction.LISTING_CANCEL,
                 listing.getItemStack(), null, null);
         HistoricItemsCache.addLog(listing.getOwner(), historicItem);
-        Fadah.getINSTANCE().getDatabase().addToHistory(listing.getOwner(), historicItem);
+        DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
 
         // Log file logs
         Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING REMOVED] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
@@ -69,7 +71,7 @@ public class TransactionLogger {
         HistoricItem historicItem = new HistoricItem(listing.getOwner(), Instant.now().toEpochMilli(), HistoricItem.LoggedAction.LISTING_EXPIRE,
                 listing.getItemStack(), null, null);
         HistoricItemsCache.addLog(listing.getOwner(), historicItem);
-        Fadah.getINSTANCE().getDatabase().addToHistory(listing.getOwner(), historicItem);
+        DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
 
         // Log file logs
         Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING EXPIRED] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",

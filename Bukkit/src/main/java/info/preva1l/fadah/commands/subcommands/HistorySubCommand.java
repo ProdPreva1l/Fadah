@@ -3,7 +3,9 @@ package info.preva1l.fadah.commands.subcommands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.guis.ExpiredListingsMenu;
+import info.preva1l.fadah.records.History;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
 import info.preva1l.fadah.utils.commands.SubCommandArguments;
@@ -12,9 +14,6 @@ import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 
 public class HistorySubCommand extends SubCommand {
-
-    private OfflinePlayer owner;
-
     public HistorySubCommand(Fadah plugin) {
         super(plugin);
     }
@@ -30,8 +29,8 @@ public class HistorySubCommand extends SubCommand {
         if (command.args().length >= 1 && command.sender().hasPermission("fadah.manage.history")) {
             owner = Bukkit.getOfflinePlayer(command.args()[0]);
             final OfflinePlayer finalOwner = owner;
-            Fadah.getINSTANCE().getDatabase().getHistory(owner.getUniqueId())
-                    .thenAccept(history -> HistoricItemsCache.update(finalOwner.getUniqueId(), history));
+            DatabaseManager.getInstance().get(History.class, owner.getUniqueId())
+                    .thenAccept(history -> history.ifPresent(items -> HistoricItemsCache.update(finalOwner.getUniqueId(), items.collectableItems())));
         }
         if (owner.getUniqueId() != command.getPlayer().getUniqueId() && !HistoricItemsCache.playerExists(owner.getUniqueId())) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));
