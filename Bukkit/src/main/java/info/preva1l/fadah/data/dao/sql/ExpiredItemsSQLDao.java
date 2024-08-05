@@ -1,4 +1,4 @@
-package info.preva1l.fadah.data.dao.sqlite;
+package info.preva1l.fadah.data.dao.sql;
 
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
@@ -21,7 +21,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
-public class ExpiredItemsSQLiteDao implements Dao<ExpiredItems> {
+public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
     private final HikariDataSource dataSource;
 
     /**

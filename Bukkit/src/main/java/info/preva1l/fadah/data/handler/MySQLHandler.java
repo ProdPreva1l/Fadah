@@ -5,6 +5,14 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.data.dao.Dao;
+import info.preva1l.fadah.data.dao.sql.CollectionBoxSQLDao;
+import info.preva1l.fadah.data.dao.sql.ExpiredItemsSQLDao;
+import info.preva1l.fadah.data.dao.sql.HistorySQLDao;
+import info.preva1l.fadah.data.dao.sql.ListingSQLDao;
+import info.preva1l.fadah.records.CollectionBox;
+import info.preva1l.fadah.records.ExpiredItems;
+import info.preva1l.fadah.records.History;
+import info.preva1l.fadah.records.Listing;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -87,6 +95,7 @@ public class MySQLHandler implements DatabaseHandler {
             throw new IllegalStateException("Failed to establish a connection to the MySQL database. " +
                     "Please check the supplied database credentials in the config file", e);
         }
+        registerDaos();
     }
 
     @Override
@@ -96,7 +105,10 @@ public class MySQLHandler implements DatabaseHandler {
 
     @Override
     public void registerDaos() {
-
+        daos.put(Listing.class, new ListingSQLDao(dataSource));
+        daos.put(CollectionBox.class, new CollectionBoxSQLDao(dataSource));
+        daos.put(ExpiredItems.class, new ExpiredItemsSQLDao(dataSource));
+        daos.put(History.class, new HistorySQLDao(dataSource));
     }
 
     @Override

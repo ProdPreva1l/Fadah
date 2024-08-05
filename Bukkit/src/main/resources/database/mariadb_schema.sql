@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS history (
     playerUUID VARCHAR(36) NOT NULL,
     loggedAction INT NOT NULL,
     loggedDate BIGINT NOT NULL,
-    itemStack VARCHAR(255) NOT NULL,
+    itemStack TEXT NOT NULL,
     price DOUBLE NULL,
     purchaserUUID VARCHAR(36) NULL
 ) CHARACTER SET utf8

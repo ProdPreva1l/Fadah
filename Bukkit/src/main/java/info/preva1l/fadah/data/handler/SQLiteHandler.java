@@ -5,10 +5,10 @@ import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.data.dao.Dao;
-import info.preva1l.fadah.data.dao.sqlite.CollectionBoxSQLiteDao;
-import info.preva1l.fadah.data.dao.sqlite.ExpiredItemsSQLiteDao;
-import info.preva1l.fadah.data.dao.sqlite.HistorySQLiteDao;
-import info.preva1l.fadah.data.dao.sqlite.ListingSQLiteDao;
+import info.preva1l.fadah.data.dao.sql.CollectionBoxSQLDao;
+import info.preva1l.fadah.data.dao.sql.ExpiredItemsSQLDao;
+import info.preva1l.fadah.data.dao.sql.HistorySQLDao;
+import info.preva1l.fadah.data.dao.sql.ListingSQLDao;
 import info.preva1l.fadah.records.CollectionBox;
 import info.preva1l.fadah.records.ExpiredItems;
 import info.preva1l.fadah.records.History;
@@ -106,10 +106,10 @@ public class SQLiteHandler implements DatabaseHandler {
 
     @Override
     public void registerDaos() {
-        daos.put(Listing.class, new ListingSQLiteDao(dataSource));
-        daos.put(CollectionBox.class, new CollectionBoxSQLiteDao(dataSource));
-        daos.put(ExpiredItems.class, new ExpiredItemsSQLiteDao(dataSource));
-        daos.put(History.class, new HistorySQLiteDao(dataSource));
+        daos.put(Listing.class, new ListingSQLDao(dataSource));
+        daos.put(CollectionBox.class, new CollectionBoxSQLDao(dataSource));
+        daos.put(ExpiredItems.class, new ExpiredItemsSQLDao(dataSource));
+        daos.put(History.class, new HistorySQLDao(dataSource));
     }
 
     @Override

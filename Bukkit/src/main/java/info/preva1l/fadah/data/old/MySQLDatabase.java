@@ -311,6 +311,7 @@ public class MySQLDatabase implements Database {
     }
 
     @Override
+    @Deprecated(forRemoval = true)
     public CompletableFuture<List<Listing>> getListings() {
         if (!isConnected()) {
             Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");

@@ -1,4 +1,4 @@
-package info.preva1l.fadah.data.dao.sqlite;
+package info.preva1l.fadah.data.dao.sql;
 
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
@@ -15,9 +15,10 @@ import java.sql.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Level;
 
 @RequiredArgsConstructor
-public class HistorySQLiteDao implements Dao<History> {
+public class HistorySQLDao implements Dao<History> {
     private final HikariDataSource dataSource;
 
     /**
@@ -95,8 +96,7 @@ public class HistorySQLiteDao implements Dao<History> {
                 }
             }
         } catch (SQLException e) {
-            Fadah.getConsole().severe("Failed to add item to collection box!");
-            throw new RuntimeException(e);
+            Fadah.getConsole().log(Level.SEVERE, "Failed to add item to history!", e);
         }
     }
 
