@@ -1,41 +1,29 @@
-[![CodeFactor](https://www.codefactor.io/repository/github/prodpreva1l/fadah/badge)](https://www.codefactor.io/repository/github/prodpreva1l/fadah)
-## Fadah (Finally a Decent Auction House) is the fast, modern and advanced auction house plugin that you have been looking for!
+---
+cover: .gitbook/assets/healbanner_ZoNHLori.jpg
+coverY: -149
+layout:
+  cover:
+    visible: true
+    size: full
+  title:
+    visible: true
+  description:
+    visible: false
+  tableOfContents:
+    visible: true
+  outline:
+    visible: true
+  pagination:
+    visible: true
+---
 
-Spigot/Download: https://www.spigotmc.org/resources/fadah-finally-a-decent-auction-house.116157/
+# Finally a Decent Developer? (jokes, im alright though!)
 
-#### Features:
-- Item Searching
-- Item Filtering
-- Infinite & Configurable Categories
-- Folia & ShreddedPaper Support
-- Multi Server Support
-- Multiple Databases Supported
-- Fast Bug Fixes
-- Used & battle tested in large production environments
-- Configurable Max Listings
-- Highly Configurable
-- Transaction Logs
+I'm preva1l, a semi-professional developer specialising in Java & Bukkit plugins!
 
-#### Commands
-----------------------------------------
-/ah | fadah.use
-/ah help | fadah.help
-/ah sell <amount> | fadah.use
-/ah toggle | fadah.toggle-status
-/ah reload | fadah.reload
-/ah profile | fadah.profile
-/ah expired | fadah.expired-items
-/ah redeem | fadah.collection-box
+Here you can find project information and docs!
 
-Permissions:
-- `fadah.max-listings.<amount>` - How many items the user can list on the auction house at any one time
-- `fadah.listing-tax.<percent>` - The percent a user should be taxed from the products price
-- `fadah.advert-price.<amount>` - How much an advert should cost
-- `fadah.manage.<command>` - Allows the user to manage other peoples profiles etc
+### My Projects
 
-Support: https://discord.gg/4KcF7S94HF
+<table data-view="cards"><thead><tr><th></th><th></th><th data-hidden data-card-cover data-type="files"></th><th data-hidden></th><th data-hidden data-card-target data-type="content-ref"></th></tr></thead><tbody><tr><td><strong>Fadah [Free]</strong></td><td>Finally a Decent Auction House</td><td><a href=".gitbook/assets/fadah.png">fadah.png</a></td><td></td><td><a href="fadah/fadah.md">fadah.md</a></td></tr><tr><td><strong>Fadsb (Soon) [$20 USD]</strong></td><td>Finally a Decent SkyBlock</td><td><a href=".gitbook/assets/2.png">2.png</a></td><td></td><td><a href="broken-reference">Broken link</a></td></tr><tr><td><strong>Fadcs (Soon) [Free]</strong></td><td>Finally a Decent Chest Shop</td><td><a href=".gitbook/assets/3.png">3.png</a></td><td></td><td><a href="fadah/api.md">api.md</a></td></tr></tbody></table>
 
-Requirements:
-- Vault & Compatible Economy Plugin
-- (Optional) A database (MySQL, MariaDB, MongoDB)
-- (Optional) Redis
