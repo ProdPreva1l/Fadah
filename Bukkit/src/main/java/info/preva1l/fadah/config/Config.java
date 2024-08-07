@@ -41,9 +41,6 @@ public enum Config {
     REDIS_PORT("broker.redis.port", 6379),
     REDIS_PASSWORD("broker.redis.password", "password"),
     REDIS_CHANNEL("broker.redis.channel", "auctionhouse.cache"),
-    SERVICE_HOST("broker.service.host", "127.0.0.1"),
-    SERVICE_PORT("broker.service.port", 8743),
-    SERVICE_TOKEN("broker.service.token", "Must Match token.yml from FadahService"),
     ;
 
     private final String path;
