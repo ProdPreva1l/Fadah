@@ -250,7 +250,7 @@ public class NewListingMenu extends FastInv {
 
             eco.withdrawPlayer(player, advertPrice);
 
-            String advertMessage = String.join("\n", Lang.NOTIFICATION_ADVERT.toLore(
+            String advertMessage = String.join("&r\n", Lang.NOTIFICATION_ADVERT.toStringList(
                     player.getName(), itemName,
                     new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice())));
 

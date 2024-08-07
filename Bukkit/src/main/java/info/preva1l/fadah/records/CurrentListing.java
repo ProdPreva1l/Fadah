@@ -49,9 +49,7 @@ public final class CurrentListing extends Listing {
         eco.depositPlayer(Bukkit.getOfflinePlayer(this.getOwner()), this.getPrice() - taxed);
 
         // Remove Listing
-        if (Fadah.getINSTANCE().getBroker() == null) {
-            ListingCache.removeListing(this);
-        }
+        ListingCache.removeListing(this);
         Message.builder()
                 .type(Message.Type.LISTING_REMOVE)
                 .payload(Payload.withUUID(this.getId()))
@@ -105,9 +103,8 @@ public final class CurrentListing extends Listing {
             return false;
         }
         canceller.sendMessage(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString());
-        if (Fadah.getINSTANCE().getBroker() == null) {
-            ListingCache.removeListing(this);
-        }
+
+        ListingCache.removeListing(this);
         Message.builder()
                 .type(Message.Type.LISTING_REMOVE)
                 .payload(Payload.withUUID(this.getId()))
