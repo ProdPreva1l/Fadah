@@ -56,33 +56,6 @@ subprojects {
     version rootProject.version
     archivesBaseName = "${rootProject.name}-${project.name.capitalize()}"
 
-    task generateJavadoc(type: Javadoc) {
-        sourceSets.main.java.srcDirs.each { dir ->
-            source(dir)
-        }
-        classpath += configurations.compileClasspath
-        options.addStringOption('Xdoclint:none', '-quiet')
-        destinationDir = file("$buildDir/docs/javadoc")
-    }
-
-    task javadocJar(type: Jar, dependsOn: generateJavadoc) {
-        dependsOn generateJavadoc
-        archiveFileName = "${rootProject.name}-${project.name.capitalize()}-javadoc.jar"
-        from generateJavadoc.destinationDir
-    }
-
-    javadoc {
-        if (JavaVersion.current().isJava9Compatible()) {
-            options.addBooleanOption('html5', true)
-        }
-    }
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        dependsOn classes
-        archiveFileName = "${rootProject.name}-${project.name.capitalize()}-sources.jar"
-        from sourceSets.main.allSource
-    }
-
     shadowJar {
         destinationDirectory.set(file("$rootDir/target"))
         archiveClassifier.set('')

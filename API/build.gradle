@@ -1,3 +1,7 @@
+plugins {
+    id 'maven-publish'
+}
+
 repositories {
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
 }
@@ -9,4 +13,24 @@ dependencies {
 shadowJar {
     destinationDirectory.set(file("$rootDir/target"))
     minimize()
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    archiveClassifier.set('sources')
+}
+
+task javadocJar(type: Jar) {
+    from javadoc
+    archiveClassifier.set('javadoc')
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact shadowJar
+            artifact(tasks.named('sourceJar'))
+            artifact(tasks.named('javadocJar'))
+        }
+    }
 }
