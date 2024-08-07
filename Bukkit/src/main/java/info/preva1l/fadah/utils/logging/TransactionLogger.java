@@ -3,7 +3,8 @@ package info.preva1l.fadah.utils.logging;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.data.DatabaseManager;
-import info.preva1l.fadah.multiserver.CacheSync;
+import info.preva1l.fadah.multiserver.Message;
+import info.preva1l.fadah.multiserver.Payload;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.records.History;
 import info.preva1l.fadah.records.Listing;
@@ -23,6 +24,11 @@ public class TransactionLogger {
         HistoricItemsCache.addLog(listing.getOwner(), historicItem);
         DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
 
+        Message.builder()
+                .type(Message.Type.HISTORY_UPDATE)
+                .payload(Payload.withUUID(listing.getOwner()))
+                .build().send(Fadah.getINSTANCE().getBroker());
+
         // Log file logs
         Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[NEW LISTING] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
                 Bukkit.getOfflinePlayer(listing.getOwner()).getName(), Bukkit.getOfflinePlayer(listing.getOwner()).getUniqueId().toString(),
@@ -37,7 +43,10 @@ public class TransactionLogger {
         HistoricItemsCache.addLog(listing.getOwner(), historicItemSeller);
         DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
 
-        CacheSync.send(CacheSync.CacheType.HISTORY, listing.getOwner());
+        Message.builder()
+                .type(Message.Type.HISTORY_UPDATE)
+                .payload(Payload.withUUID(listing.getOwner()))
+                .build().send(Fadah.getINSTANCE().getBroker());
 
         HistoricItem historicItemBuyer = new HistoricItem(buyer.getUniqueId(), Instant.now().toEpochMilli(),
                 HistoricItem.LoggedAction.LISTING_PURCHASED, listing.getItemStack(), listing.getPrice(), listing.getOwner());
@@ -45,7 +54,10 @@ public class TransactionLogger {
         HistoricItemsCache.addLog(buyer.getUniqueId(), historicItemBuyer);
         DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
 
-        CacheSync.send(CacheSync.CacheType.HISTORY, buyer.getUniqueId());
+        Message.builder()
+                .type(Message.Type.HISTORY_UPDATE)
+                .payload(Payload.withUUID(buyer.getUniqueId()))
+                .build().send(Fadah.getINSTANCE().getBroker());
 
         // Log file logs
         Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING SOLD] Seller: {0} ({1}), Buyer: {2} ({3}), Price: {4}, ItemStack: {5}",
@@ -60,6 +72,11 @@ public class TransactionLogger {
         HistoricItemsCache.addLog(listing.getOwner(), historicItem);
         DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
 
+        Message.builder()
+                .type(Message.Type.HISTORY_UPDATE)
+                .payload(Payload.withUUID(listing.getOwner()))
+                .build().send(Fadah.getINSTANCE().getBroker());
+
         // Log file logs
         Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING REMOVED] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
                 Bukkit.getOfflinePlayer(listing.getOwner()).getName(), Bukkit.getOfflinePlayer(listing.getOwner()).getUniqueId().toString(),
@@ -72,6 +89,11 @@ public class TransactionLogger {
                 listing.getItemStack(), null, null);
         HistoricItemsCache.addLog(listing.getOwner(), historicItem);
         DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
+
+        Message.builder()
+                .type(Message.Type.HISTORY_UPDATE)
+                .payload(Payload.withUUID(listing.getOwner()))
+                .build().send(Fadah.getINSTANCE().getBroker());
 
         // Log file logs
         Fadah.getINSTANCE().getTransactionLogger().info(StringUtils.formatPlaceholders("[LISTING EXPIRED] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",

@@ -10,7 +10,8 @@ import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
-import info.preva1l.fadah.multiserver.CacheSync;
+import info.preva1l.fadah.multiserver.Message;
+import info.preva1l.fadah.multiserver.Payload;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -37,7 +38,7 @@ public final class CurrentListing extends Listing {
             buyer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.TOO_EXPENSIVE.toFormattedString());
             return;
         }
-        if (ListingCache.getListing(this.getId()) == null) { // TODO: Readd strict check
+        if (ListingCache.getListing(this.getId()) == null) { // todo: readd strict checks
             buyer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
             return;
         }
@@ -48,10 +49,11 @@ public final class CurrentListing extends Listing {
         eco.depositPlayer(Bukkit.getOfflinePlayer(this.getOwner()), this.getPrice() - taxed);
 
         // Remove Listing
-        if (Fadah.getINSTANCE().getCacheSync() == null) {
-            ListingCache.removeListing(this);
-        }
-        CacheSync.send(this.getId(), true);
+        ListingCache.removeListing(this);
+        Message.builder()
+                .type(Message.Type.LISTING_REMOVE)
+                .payload(Payload.withUUID(this.getId()))
+                .build().send(Fadah.getINSTANCE().getBroker());
         DatabaseManager.getInstance().delete(Listing.class, this);
 
         // Add to collection box
@@ -61,8 +63,14 @@ public final class CurrentListing extends Listing {
         DatabaseManager.getInstance().save(CollectionBox.class, CollectionBox.of(buyer.getUniqueId()));
 
         // Send Cache Updates
-        CacheSync.send(CacheSync.CacheType.COLLECTION_BOX, buyer.getUniqueId());
-        CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, this.getOwner());
+        Message.builder()
+                .type(Message.Type.COLLECTION_BOX_UPDATE)
+                .payload(Payload.withUUID(buyer.getUniqueId()))
+                .build().send(Fadah.getINSTANCE().getBroker());
+        Message.builder()
+                .type(Message.Type.EXPIRED_LISTINGS_UPDATE)
+                .payload(Payload.withUUID(this.getOwner()))
+                .build().send(Fadah.getINSTANCE().getBroker());
 
         // Notify Both Players
         buyer.sendMessage(String.join("\n", Lang.NOTIFICATION_NEW_ITEM.toLore()));
@@ -76,7 +84,9 @@ public final class CurrentListing extends Listing {
         if (seller != null) {
             seller.sendMessage(message);
         } else {
-            CacheSync.send(this.getOwner(), message);
+            Message.builder()
+                    .type(Message.Type.NOTIFICATION)
+                    .payload(Payload.withNotification(this.getOwner(), message));
         }
 
         TransactionLogger.listingSold(this, buyer);
@@ -91,15 +101,19 @@ public final class CurrentListing extends Listing {
             return false;
         }
         canceller.sendMessage(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString());
-        if (Fadah.getINSTANCE().getCacheSync() == null) {
-            ListingCache.removeListing(this);
-        }
-        CacheSync.send(this.getId(), true);
+        ListingCache.removeListing(this);
+        Message.builder()
+                .type(Message.Type.LISTING_REMOVE)
+                .payload(Payload.withUUID(this.getId()))
+                .build().send(Fadah.getINSTANCE().getBroker());
         DatabaseManager.getInstance().delete(Listing.class, this);
 
         CollectableItem collectableItem = new CollectableItem(this.getItemStack(), Instant.now().toEpochMilli());
         ExpiredListingsCache.addItem(getOwner(), collectableItem);
-        CacheSync.send(CacheSync.CacheType.EXPIRED_LISTINGS, getOwner());
+        Message.builder()
+                .type(Message.Type.EXPIRED_LISTINGS_UPDATE)
+                .payload(Payload.withUUID(this.getOwner()))
+                .build().send(Fadah.getINSTANCE().getBroker());
         DatabaseManager.getInstance().save(ExpiredItems.class, ExpiredItems.of(getOwner()));
 
         boolean isAdmin = !this.isOwner(canceller);

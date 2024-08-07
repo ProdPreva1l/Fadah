@@ -19,7 +19,8 @@ import info.preva1l.fadah.listeners.PlayerListener;
 import info.preva1l.fadah.migrator.AuctionHouseMigrator;
 import info.preva1l.fadah.migrator.MigratorManager;
 import info.preva1l.fadah.migrator.zAuctionHouseMigrator;
-import info.preva1l.fadah.multiserver.CacheSync;
+import info.preva1l.fadah.multiserver.Broker;
+import info.preva1l.fadah.multiserver.RedisBroker;
 import info.preva1l.fadah.records.*;
 import info.preva1l.fadah.utils.Metrics;
 import info.preva1l.fadah.utils.StringUtils;
@@ -65,7 +66,7 @@ public final class Fadah extends JavaPlugin {
     @Getter private BasicConfig langFile;
     @Getter private BasicConfig menusFile;
 
-    @Getter @Setter private CacheSync cacheSync;
+    @Getter private Broker broker;
     @Getter private CommandManager commandManager;
     @Getter private Economy economy;
     @Getter private HookManager hookManager;
@@ -103,17 +104,7 @@ public final class Fadah extends JavaPlugin {
         TaskManager.Async.runTask(this, listingExpiryTask(), 10L);
         FastInvManager.register(this);
 
-        if (Config.REDIS_ENABLED.toBoolean()) {
-            if (Config.DATABASE_TYPE.toDBTypeEnum() == DatabaseType.SQLITE) {
-                getConsole().severe("------------------------------------------");
-                getConsole().severe("Redis has not been enabled as the selected");
-                getConsole().severe("       database is not compatible!");
-                getConsole().severe("------------------------------------------");
-                return;
-            }
-            cacheSync = new CacheSync();
-            cacheSync.start();
-        }
+        loadBroker();
 
         customItemKey = NamespacedKey.minecraft("auctionhouse");
 
@@ -137,9 +128,8 @@ public final class Fadah extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        //if (database != null) database.destroy();
         DatabaseManager.getInstance().shutdown();
-        if (cacheSync != null) cacheSync.destroy();
+        if (broker != null) broker.destroy();
         if (metrics != null) metrics.shutdown();
     }
 
@@ -239,6 +229,27 @@ public final class Fadah extends JavaPlugin {
         }
 
         getConsole().info("Hooked into %s plugins!".formatted(getHookManager().hookCount()));
+    }
+
+    private void loadBroker() {
+        if (Config.BROKER_ENABLED.toBoolean()) {
+            getConsole().info("Connecting to Broker...");
+            getConsole().info("Broker Type: %s".formatted(Config.BROKER_TYPE.toBrokerType().getDisplayName()));
+            if (Config.DATABASE_TYPE.toDBTypeEnum() == DatabaseType.SQLITE) {
+                getConsole().severe("------------------------------------------");
+                getConsole().severe("Broker has not been enabled as the selected");
+                getConsole().severe("       database is not compatible!");
+                getConsole().severe("------------------------------------------");
+                return;
+            }
+            broker = switch (Config.BROKER_TYPE.toBrokerType()) {
+                case REDIS -> new RedisBroker(this);
+            };
+            broker.connect();
+            getConsole().info("Successfully connected to broker!");
+            return;
+        }
+        getConsole().info("Not connecting to broker. (Not Enabled)");
     }
 
     private void loadMigrators() {

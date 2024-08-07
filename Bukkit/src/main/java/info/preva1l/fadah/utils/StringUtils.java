@@ -118,7 +118,6 @@ public class StringUtils {
         return result.toString();
     }
 
-
     private final Pattern HEX_PATTERN = Pattern.compile("&#(\\w{5}[0-9a-fA-F])");
 
     /**

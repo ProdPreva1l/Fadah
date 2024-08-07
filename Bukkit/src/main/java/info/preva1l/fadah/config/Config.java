@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
+import info.preva1l.fadah.multiserver.Broker;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.config.BasicConfig;
 import lombok.AllArgsConstructor;
@@ -45,11 +46,12 @@ public enum Config {
     DATABASE_URI("database.uri", "jdbc:mysql://username:password@127.0.0.1:3306/Fadah"),
     DATABASE("database.database", "Fadah"),
 
-    REDIS_ENABLED("redis.enabled", false),
-    REDIS_HOST("redis.host", "127.0.0.1"),
-    REDIS_PORT("redis.port", 6379),
-    REDIS_PASSWORD("redis.password", "password"),
-    REDIS_CHANNEL("redis.channel", "auctionhouse.cache"),
+    BROKER_ENABLED("broker.enabled", false),
+    BROKER_TYPE("broker.type", "REDIS"),
+    REDIS_HOST("broker.redis.host", "127.0.0.1"),
+    REDIS_PORT("broker.redis.port", 6379),
+    REDIS_PASSWORD("broker.redis.password", "password"),
+    REDIS_CHANNEL("broker.redis.channel", "auctionhouse.cache"),
     ;
 
     private final String path;
@@ -109,6 +111,17 @@ public enum Config {
             return DiscordHook.ImageLocation.SIDE;
         }
         return databaseType;
+    }
+
+    public Broker.Type toBrokerType() {
+        Broker.Type brokerType;
+        try {
+            brokerType = Broker.Type.valueOf(toString());
+        } catch (EnumConstantNotPresentException ex) {
+            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Broker Type \"{0}\" does not exist! \n Defaulting to Redis", toString()));
+            return Broker.Type.REDIS;
+        }
+        return brokerType;
     }
 
     public String toFormattedString() {

@@ -10,17 +10,14 @@ import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
-import info.preva1l.fadah.multiserver.CacheSync;
+import info.preva1l.fadah.multiserver.Message;
+import info.preva1l.fadah.multiserver.Payload;
 import info.preva1l.fadah.records.CurrentListing;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
-import info.preva1l.fadah.utils.TaskManager;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.event.ClickEvent;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -132,8 +129,8 @@ public class NewListingMenu extends FastInv {
                         : getLang().getStringFormatted("advert.options.not-selected", "&f{0}"),
                 Lang.ADVERT_DONT_POST.toFormattedString());
 
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT,-1));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT,-1),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT, -1));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT, -1),
                 new ItemBuilder(getLang().getAsMaterial("advert.icon", Material.OAK_SIGN))
                         .name(getLang().getStringFormatted("advert.name", "&eAdvertise Listing"))
                         .modelData(getLang().getInt("advert.model-data"))
@@ -159,8 +156,8 @@ public class NewListingMenu extends FastInv {
                         : getLang().getStringFormatted("mode.options.not-selected", "&f{0}"),
                 Lang.MODE_BUY_IT_NOW.toFormattedString());
 
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE,-1));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE,-1),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE, -1));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE, -1),
                 new ItemBuilder(getLang().getAsMaterial("mode.icon", Material.HOPPER))
                         .name(getLang().getStringFormatted("mode.name", "&bAuction Mode"))
                         .modelData(getLang().getInt("mode.model-data"))
@@ -197,11 +194,11 @@ public class NewListingMenu extends FastInv {
 
         DatabaseManager.getInstance().save(Listing.class, listing);
 
-        if (plugin.getCacheSync() != null) {
-            CacheSync.send(listing.getId(), false);
-        } else {
-            ListingCache.addListing(listing);
-        }
+        ListingCache.addListing(listing);
+        Message.builder()
+                .type(Message.Type.LISTING_ADD)
+                .payload(Payload.withUUID(listing.getId()))
+                .build().send(Fadah.getINSTANCE().getBroker());
 
         listingStarted = true;
 
@@ -213,7 +210,7 @@ public class NewListingMenu extends FastInv {
                 new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
                 TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
                 PermissionsData.getHighestInt(PermissionsData.PermissionType.MAX_LISTINGS, player),
-                taxAmount, new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format((taxAmount/100) * price)));
+                taxAmount, new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format((taxAmount / 100) * price)));
         player.sendMessage(message);
 
         TransactionLogger.listingCreated(listing);
@@ -234,22 +231,19 @@ public class NewListingMenu extends FastInv {
 
             eco.withdrawPlayer(player, advertPrice);
 
-            TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
-                String advertMessage = String.join("&r\n", Lang.NOTIFICATION_ADVERT.toStringList(
-                        player.getName(), itemName,
-                        new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice())));
+            String advertMessage = String.join("&r\n", Lang.NOTIFICATION_ADVERT.toStringList(
+                    player.getName(), itemName,
+                    new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice())));
 
-                Component textComponent = MiniMessage.miniMessage().deserialize(StringUtils.legacyToMiniMessage(advertMessage));
-                textComponent = textComponent.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/ah view-listing " + listing.getId()));
-                for (Player announce : Bukkit.getOnlinePlayers()) {
-                    Fadah.getINSTANCE().getAdventureAudience().player(announce).sendMessage(textComponent);
-                }
-            });
+            Message.builder()
+                    .type(Message.Type.BROADCAST)
+                    .payload(Payload.withBroadcast(advertMessage, "/ah view-listing " + listing.getId()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
         }
     }
 
     private void addNavigationButtons() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CLOSE, -1),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CLOSE, 49),
                 GuiHelper.constructButton(GuiButtonType.CLOSE), e -> e.getWhoClicked().closeInventory());
     }
 }
