@@ -2,4 +2,4 @@ jdk:
   - openjdk17
 
 install:
-  - ./gradlew :API:publishToMavenLocal
+  - ./gradlew :API:clean -Pgroup=com.github.ProdPreva1l -xtest assemble publishToMavenLocal
