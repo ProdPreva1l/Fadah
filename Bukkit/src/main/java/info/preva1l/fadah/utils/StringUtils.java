@@ -76,6 +76,46 @@ public class StringUtils {
         return message.replaceAll("<#[a-fA-F0-9]{6}>", code);
     }
 
+    /**
+     * Converts legacy colour codes to MiniMessage.
+     * @param message message with legacy codes
+     * @return string with mini modernMessage formatting (not colorized)
+     */
+    public String legacyToMiniMessage(String message) {
+        message = message.replace("&4", "<dark_red>");
+        message = message.replace("&c", "<red>");
+        message = message.replace("&6", "<gold>");
+        message = message.replace("&e", "<yellow>");
+        message = message.replace("&2", "<dark_green>");
+        message = message.replace("&a", "<green>");
+        message = message.replace("&b", "<aqua>");
+        message = message.replace("&3", "<dark_aqua>");
+        message = message.replace("&1", "<dark_blue>");
+        message = message.replace("&9", "<blue>");
+        message = message.replace("&d", "<light_purple>");
+        message = message.replace("&5", "<dark_purple>");
+        message = message.replace("&f", "<white>");
+        message = message.replace("&7", "<gray>");
+        message = message.replace("&8", "<dark_gray>");
+        message = message.replace("&0", "<black>");
+        message = message.replace("&l", "<b>");
+        message = message.replace("&k", "<obf>");
+        message = message.replace("&m", "<st>");
+        message = message.replace("&n", "<u>");
+        message = message.replace("&o", "<i>");
+        message = message.replace("&r", "<reset>");
+
+        Pattern pattern = Pattern.compile("&#[a-fA-F0-9]{6}");
+        Matcher match = pattern.matcher(message);
+        StringBuffer result = new StringBuffer();
+        while (match.find()) {
+            String code = match.group();
+            String replacement = code.replace("&", "<") + ">";
+            match.appendReplacement(result, replacement);
+        }
+        match.appendTail(result);
+        return result.toString();
+    }
 
     private final Pattern HEX_PATTERN = Pattern.compile("&#(\\w{5}[0-9a-fA-F])");
 

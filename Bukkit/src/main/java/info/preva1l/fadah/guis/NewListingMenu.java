@@ -16,8 +16,6 @@ import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -256,10 +254,10 @@ public class NewListingMenu extends FastInv {
                     player.getName(), itemName,
                     new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice())));
 
-            TextComponent textComponent = new TextComponent(advertMessage);
-            textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ah view-listing " + listing.getId()));
-
-            Bukkit.spigot().broadcast(textComponent);
+            Message.builder()
+                    .type(Message.Type.BROADCAST)
+                    .payload(Payload.withBroadcast(advertMessage, "/ah view-listing " + listing.getId()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
         }
     }
 

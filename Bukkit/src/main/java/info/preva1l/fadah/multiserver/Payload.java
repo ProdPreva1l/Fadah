@@ -16,6 +16,10 @@ public class Payload {
     @Expose
     private Notification notification;
 
+    @Nullable
+    @Expose
+    private Broadcast broadcast;
+
     /**
      * Returns an empty cross-server message payload.
      *
@@ -53,6 +57,19 @@ public class Payload {
         return payload;
     }
 
+    /**
+     * Returns a payload containing a message to send to the entire network.
+     *
+     * @param message the message to send
+     * @return a payload containing the message
+     */
+    @NotNull
+    public static Payload withBroadcast(@NotNull String message, @Nullable String clickCommand) {
+        final Payload payload = new Payload();
+        payload.broadcast = new Broadcast(message, clickCommand);
+        return payload;
+    }
+
     public Optional<UUID> getUUID() {
         return Optional.ofNullable(uuid);
     }
@@ -60,4 +77,6 @@ public class Payload {
     public Optional<Notification> getNotification() {
         return Optional.ofNullable(notification);
     }
+
+    public Optional<Broadcast> getBroadcast() { return Optional.ofNullable(broadcast); }
 }

@@ -9,9 +9,13 @@ import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
+import info.preva1l.fadah.utils.TaskManager;
 import info.preva1l.fadah.utils.guis.FastInvManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -78,6 +82,21 @@ public abstract class Broker {
                         player.sendMessage(StringUtils.colorize(notification.getMessage()));
                         }, () -> {
                         throw new IllegalStateException("Notification message received with no notification info!");
+                    });
+
+            case BROADCAST -> message.getPayload()
+                    .getBroadcast().ifPresentOrElse(broadcast -> {
+                        TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+                            Component textComponent = MiniMessage.miniMessage().deserialize(StringUtils.legacyToMiniMessage(broadcast.getMessage()));
+                            if (broadcast.getClickCommand() != null) {
+                                textComponent = textComponent.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, broadcast.getClickCommand()));
+                            }
+                            for (Player announce : Bukkit.getOnlinePlayers()) {
+                                Fadah.getINSTANCE().getAdventureAudience().player(announce).sendMessage(textComponent);
+                            }
+                        });
+                    }, () -> {
+                        throw new IllegalStateException("Broadcast message received with no broadcast info!");
                     });
 
             case RELOAD -> {

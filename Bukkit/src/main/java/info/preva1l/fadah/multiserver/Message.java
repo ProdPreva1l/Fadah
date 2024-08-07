@@ -25,6 +25,7 @@ public class Message {
         HISTORY_UPDATE,
 
         NOTIFICATION,
+        BROADCAST,
         RELOAD,
         TOGGLE,
     }
