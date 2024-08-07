@@ -4,15 +4,14 @@ import info.preva1l.fadah.api.AuctionHouseAPI;
 import info.preva1l.fadah.api.BukkitAuctionHouseAPI;
 import info.preva1l.fadah.api.ListingEndEvent;
 import info.preva1l.fadah.api.ListingEndReason;
-import info.preva1l.fadah.cache.CategoryCache;
-import info.preva1l.fadah.cache.ExpiredListingsCache;
-import info.preva1l.fadah.cache.ListingCache;
+import info.preva1l.fadah.cache.*;
 import info.preva1l.fadah.commands.AuctionHouseCommand;
 import info.preva1l.fadah.commands.MigrateCommand;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
-import info.preva1l.fadah.data.*;
+import info.preva1l.fadah.data.DatabaseManager;
+import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.hooks.HookManager;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
 import info.preva1l.fadah.hooks.impl.EcoItemsHook;
@@ -21,8 +20,7 @@ import info.preva1l.fadah.migrator.AuctionHouseMigrator;
 import info.preva1l.fadah.migrator.MigratorManager;
 import info.preva1l.fadah.migrator.zAuctionHouseMigrator;
 import info.preva1l.fadah.multiserver.CacheSync;
-import info.preva1l.fadah.records.CollectableItem;
-import info.preva1l.fadah.records.Listing;
+import info.preva1l.fadah.records.*;
 import info.preva1l.fadah.utils.Metrics;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TaskManager;
@@ -68,7 +66,6 @@ public final class Fadah extends JavaPlugin {
     @Getter private BasicConfig menusFile;
 
     @Getter @Setter private CacheSync cacheSync;
-    @Getter private Database database;
     @Getter private CommandManager commandManager;
     @Getter private Economy economy;
     @Getter private HookManager hookManager;
@@ -140,7 +137,8 @@ public final class Fadah extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (database != null) database.destroy();
+        //if (database != null) database.destroy();
+        DatabaseManager.getInstance().shutdown();
         if (cacheSync != null) cacheSync.destroy();
         if (metrics != null) metrics.shutdown();
     }
@@ -151,11 +149,11 @@ public final class Fadah extends JavaPlugin {
                 Listing listing = ListingCache.getListing(key);
                 if (Instant.now().toEpochMilli() >= listing.getDeletionDate()) {
                     ListingCache.removeListing(listing);
-                    getINSTANCE().getDatabase().removeListing(listing.getId());
+                    DatabaseManager.getInstance().delete(Listing.class, listing);
 
                     CollectableItem item = new CollectableItem(listing.getItemStack(), Instant.now().toEpochMilli());
                     ExpiredListingsCache.addItem(listing.getOwner(), item);
-                    getINSTANCE().getDatabase().addToExpiredItems(listing.getOwner(), item);
+                    DatabaseManager.getInstance().save(ExpiredItems.class, ExpiredItems.of(listing.getOwner()));
 
                     TransactionLogger.listingExpired(listing);
 
@@ -225,20 +223,8 @@ public final class Fadah extends JavaPlugin {
 
 
     private void loadDataAndPopulateCaches() {
-        getConsole().info("Connecting to Database and populating caches...");
-        getConsole().info("DB Type: %s".formatted(Config.DATABASE_TYPE.toDBTypeEnum().getFriendlyName()));
-
-        database = switch (Config.DATABASE_TYPE.toDBTypeEnum()) {
-            case MONGO -> new MongoDatabase();
-            case MYSQL, MARIADB -> new MySQLDatabase();
-            case SQLITE -> new SQLiteDatabase();
-        };
-
-        database.connect();
-
+        DatabaseManager.getInstance(); // Make the connection happen during startup
         CategoryCache.update();
-
-        getConsole().info("Connected to Database and populated caches!");
     }
 
     private void loadHooks() {
@@ -331,6 +317,20 @@ public final class Fadah extends JavaPlugin {
         });
     }
 
+    public void loadPlayerData(UUID uuid) {
+        DatabaseManager.getInstance().get(CollectionBox.class, uuid)
+                .thenAccept(collectableList -> collectableList
+                        .ifPresent(list -> CollectionBoxCache.update(uuid, list.collectableItems())));
+
+        DatabaseManager.getInstance().get(ExpiredItems.class, uuid)
+                .thenAccept(collectableList -> collectableList
+                        .ifPresent(list -> ExpiredListingsCache.update(uuid, list.collectableItems())));
+
+        DatabaseManager.getInstance().get(History.class, uuid)
+                .thenAccept(collectableList -> collectableList
+                        .ifPresent(list -> HistoricItemsCache.update(uuid, list.collectableItems())));
+    }
+
     public void reload() {
         FastInvManager.closeAll(this);
         Fadah.getINSTANCE().getConfigFile().load();
@@ -346,6 +346,6 @@ public final class Fadah extends JavaPlugin {
         Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.HISTORY);
         Fadah.getINSTANCE().getCategoriesFile().load();
         CategoryCache.update();
-        Fadah.getINSTANCE().getDatabase().loadListings();
+        ListingCache.update();
     }
 }

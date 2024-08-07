@@ -1,6 +1,6 @@
 package info.preva1l.fadah.cache;
 
-import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.records.Listing;
 import lombok.experimental.UtilityClass;
 import org.jetbrains.annotations.NotNull;
@@ -31,7 +31,7 @@ public final class ListingCache {
 
     public void update() {
         Map<UUID, Listing> temp = new ConcurrentHashMap<>();
-        Fadah.getINSTANCE().getDatabase().getListings().thenAccept(listings -> listings.forEach(listing -> temp.put(listing.getId(), listing)));
+        DatabaseManager.getInstance().getAll(Listing.class).thenAccept(listings -> listings.forEach(listing -> temp.put(listing.getId(), listing)));
         listings = temp;
     }
 

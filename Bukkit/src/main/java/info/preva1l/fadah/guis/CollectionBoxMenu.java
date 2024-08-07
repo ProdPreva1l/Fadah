@@ -5,8 +5,11 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.records.CollectableItem;
+import info.preva1l.fadah.records.CollectionBox;
 import info.preva1l.fadah.records.HistoricItem;
+import info.preva1l.fadah.records.History;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
@@ -62,7 +65,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
                         return;
                     }
                     CollectionBoxCache.removeItem(owner.getUniqueId(), collectableItem);
-                    Fadah.getINSTANCE().getDatabase().removeFromCollectionBox(owner.getUniqueId(), collectableItem);
+                    DatabaseManager.getInstance().deleteSpecific(CollectionBox.class, new CollectionBox(owner.getUniqueId(), collectionBox), collectableItem);
                     viewer.getInventory().setItem(slot, collectableItem.itemStack());
 
                     updatePagination();
@@ -74,7 +77,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
                                     : HistoricItem.LoggedAction.COLLECTION_BOX_CLAIM,
                             collectableItem.itemStack(), null, null);
                     HistoricItemsCache.addLog(owner.getUniqueId(), historicItem);
-                    Fadah.getINSTANCE().getDatabase().addToHistory(owner.getUniqueId(), historicItem);
+                    DatabaseManager.getInstance().save(History.class, History.of(owner.getUniqueId()));
                 }, null, 0L);
             }));
         }

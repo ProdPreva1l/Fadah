@@ -6,6 +6,7 @@ import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.utils.guis.InventoryEventHandler;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -17,16 +18,13 @@ import org.bukkit.scheduler.BukkitTask;
 public class PlayerListener implements Listener {
     @EventHandler
     public void joinListener(AsyncPlayerPreLoginEvent e) {
-        if (!Fadah.getINSTANCE().getDatabase().isConnected()) {
+        if (!DatabaseManager.getInstance().isConnected()) {
             e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
             e.setKickMessage(Lang.PREFIX.toFormattedString() + Lang.DATABASE_CONNECTING.toFormattedString());
             return;
         }
 
-        if (!Fadah.getINSTANCE().getDatabase().loadPlayerData(e.getUniqueId())) {
-            e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-            e.setKickMessage(Lang.PREFIX.toFormattedString() + Lang.DATABASE_CONNECTING.toFormattedString());
-        }
+        Fadah.getINSTANCE().loadPlayerData(e.getUniqueId());
     }
 
     @EventHandler
@@ -35,7 +33,6 @@ public class PlayerListener implements Listener {
         ExpiredListingsCache.invalidate(e.getPlayer().getUniqueId());
         HistoricItemsCache.invalidate(e.getPlayer().getUniqueId());
     }
-
 
     @EventHandler
     public void onClose(InventoryCloseEvent event) {

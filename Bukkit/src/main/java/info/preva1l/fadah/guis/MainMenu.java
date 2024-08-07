@@ -177,8 +177,7 @@ public class MainMenu extends ScrollBarFastInv {
                     return;
                 }
 
-                if (ListingCache.getListing(listing.getId()) == null
-                        || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(listing.getId()) == null)) {
+                if (ListingCache.getListing(listing.getId()) == null) { // todo: re-add strict checks
                     player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
                     return;
                 }

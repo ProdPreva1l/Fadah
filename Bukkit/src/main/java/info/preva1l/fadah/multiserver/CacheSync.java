@@ -7,6 +7,10 @@ import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.data.DatabaseManager;
+import info.preva1l.fadah.records.CollectionBox;
+import info.preva1l.fadah.records.ExpiredItems;
+import info.preva1l.fadah.records.History;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TaskManager;
@@ -140,8 +144,8 @@ public class CacheSync extends JedisPubSub {
                 long delay = Config.STRICT_CHECKS.toBoolean() ? 40L : 20L;
 
                 TaskManager.Sync.runLater(Fadah.getINSTANCE(), () ->
-                        Fadah.getINSTANCE().getDatabase().getListing(listingUUID)
-                                .thenAccept(ListingCache::addListing), delay);
+                        DatabaseManager.getInstance().get(Listing.class, listingUUID)
+                                .thenAccept(listing -> listing.ifPresent(ListingCache::addListing)), delay);
             }
         },
         LISTINGS_REMOVE {
@@ -159,8 +163,8 @@ public class CacheSync extends JedisPubSub {
             public void handleMessage(JSONObject obj) {
                 UUID playerUUID = UUID.fromString(obj.get("player_uuid").toString());
 
-                Fadah.getINSTANCE().getDatabase().getCollectionBox(playerUUID)
-                        .thenAccept(items -> CollectionBoxCache.update(playerUUID, items));
+                DatabaseManager.getInstance().get(CollectionBox.class, playerUUID)
+                        .thenAccept(var1 -> var1.ifPresent(list -> CollectionBoxCache.update(playerUUID, list.collectableItems())));
             }
         },
         EXPIRED_LISTINGS {
@@ -168,8 +172,8 @@ public class CacheSync extends JedisPubSub {
             public void handleMessage(JSONObject obj) {
                 UUID playerUUID = UUID.fromString(obj.get("player_uuid").toString());
 
-                Fadah.getINSTANCE().getDatabase().getExpiredItems(playerUUID)
-                        .thenAccept(items -> ExpiredListingsCache.update(playerUUID, items));
+                DatabaseManager.getInstance().get(ExpiredItems.class, playerUUID)
+                        .thenAccept(var1 -> var1.ifPresent(list -> ExpiredListingsCache.update(playerUUID, list.collectableItems())));
             }
         },
         NOTIFICATIONS {
@@ -208,8 +212,8 @@ public class CacheSync extends JedisPubSub {
             public void handleMessage(JSONObject obj) {
                 UUID playerUUID = UUID.fromString(obj.get("player_uuid").toString());
 
-                Fadah.getINSTANCE().getDatabase().getHistory(playerUUID)
-                        .thenAccept(items -> HistoricItemsCache.update(playerUUID, items));
+                DatabaseManager.getInstance().get(History.class, playerUUID)
+                        .thenAccept(history -> history.ifPresent(items -> HistoricItemsCache.update(playerUUID, items.collectableItems())));
             }
         };
 
