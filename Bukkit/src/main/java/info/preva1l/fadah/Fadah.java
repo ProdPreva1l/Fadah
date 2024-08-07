@@ -32,6 +32,7 @@ import info.preva1l.fadah.utils.logging.TransactionLogFormatter;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
 import lombok.Getter;
 import lombok.Setter;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.milkbowl.vault.economy.Economy;
 import net.william278.desertwell.util.UpdateChecker;
 import net.william278.desertwell.util.Version;
@@ -70,6 +71,7 @@ public final class Fadah extends JavaPlugin {
     @Getter private HookManager hookManager;
     @Getter private LayoutManager layoutManager;
 
+    @Getter private BukkitAudiences adventureAudience;
     @Getter private MigratorManager migratorManager;
 
     private Metrics metrics;
@@ -80,6 +82,7 @@ public final class Fadah extends JavaPlugin {
         pluginVersion = Version.fromString(getDescription().getVersion());
         console = getLogger();
         hookManager = new HookManager();
+        adventureAudience = BukkitAudiences.create(this);
 
         if (!hookIntoVault()) {
             getConsole().severe("------------------------------------------");
@@ -154,7 +157,7 @@ public final class Fadah extends JavaPlugin {
 
                     TransactionLogger.listingExpired(listing);
 
-                    getServer().getPluginManager().callEvent(new ListingEndEvent(ListingEndReason.EXPIRED));
+                    getServer().getPluginManager().callEvent(new ListingEndEvent(listing, ListingEndReason.EXPIRED));
                 }
             }
         };

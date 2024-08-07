@@ -14,11 +14,13 @@ import info.preva1l.fadah.multiserver.CacheSync;
 import info.preva1l.fadah.records.CurrentListing;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
+import info.preva1l.fadah.utils.TaskManager;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -172,13 +174,6 @@ public class NewListingMenu extends FastInv {
     }
 
     private void startListing(Instant deletionDate, double price) {
-        ListingCreateEvent createEvent = new ListingCreateEvent();
-        Bukkit.getServer().getPluginManager().callEvent(createEvent);
-        if (createEvent.isCancelled()) {
-            player.sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.message(createEvent.getCancelReason()));
-            return;
-        }
-
         String category = CategoryCache.getCategoryForItem(itemToSell);
 
         if (category == null) {
@@ -191,7 +186,17 @@ public class NewListingMenu extends FastInv {
         Listing listing = new CurrentListing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
                 itemToSell, category, price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli(), isBidding, Collections.emptyList());
 
+        ListingCreateEvent createEvent = new ListingCreateEvent(player, listing);
+        Bukkit.getServer().getPluginManager().callEvent(createEvent);
+
+        if (createEvent.isCancelled()) {
+            player.sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.message(createEvent.getCancelReason()));
+            player.closeInventory();
+            return;
+        }
+
         DatabaseManager.getInstance().save(Listing.class, listing);
+
         if (plugin.getCacheSync() != null) {
             CacheSync.send(listing.getId(), false);
         } else {
@@ -229,14 +234,17 @@ public class NewListingMenu extends FastInv {
 
             eco.withdrawPlayer(player, advertPrice);
 
-            String advertMessage = String.join("\n", Lang.NOTIFICATION_ADVERT.toLore(
-                    player.getName(), itemName,
-                    new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice())));
+            TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+                String advertMessage = String.join("&r\n", Lang.NOTIFICATION_ADVERT.toStringList(
+                        player.getName(), itemName,
+                        new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice())));
 
-            TextComponent textComponent = new TextComponent(advertMessage);
-            textComponent.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/ah view-listing " + listing.getId()));
-
-            Bukkit.spigot().broadcast(textComponent);
+                Component textComponent = MiniMessage.miniMessage().deserialize(StringUtils.legacyToMiniMessage(advertMessage));
+                textComponent = textComponent.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/ah view-listing " + listing.getId()));
+                for (Player announce : Bukkit.getOnlinePlayers()) {
+                    Fadah.getINSTANCE().getAdventureAudience().player(announce).sendMessage(textComponent);
+                }
+            });
         }
     }
 
