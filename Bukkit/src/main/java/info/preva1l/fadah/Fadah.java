@@ -159,7 +159,7 @@ public final class Fadah extends JavaPlugin {
 
                     TransactionLogger.listingExpired(listing);
 
-                    getServer().getPluginManager().callEvent(new ListingEndEvent(ListingEndReason.EXPIRED));
+                    getServer().getPluginManager().callEvent(new ListingEndEvent(listing, ListingEndReason.EXPIRED));
                 }
             }
         };

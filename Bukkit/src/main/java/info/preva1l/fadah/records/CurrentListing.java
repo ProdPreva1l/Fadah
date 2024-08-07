@@ -109,7 +109,7 @@ public final class CurrentListing extends Listing {
         TransactionLogger.listingRemoval(this, isAdmin);
         Bukkit.getScheduler().runTaskAsynchronously(Fadah.getINSTANCE(), () ->
                 Bukkit.getServer().getPluginManager().callEvent(
-                        new ListingEndEvent(isAdmin
+                        new ListingEndEvent(this, isAdmin
                                 ? ListingEndReason.CANCELLED_ADMIN
                                 : ListingEndReason.CANCELLED)
                 )

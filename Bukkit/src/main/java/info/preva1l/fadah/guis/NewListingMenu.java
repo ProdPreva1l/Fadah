@@ -173,13 +173,6 @@ public class NewListingMenu extends FastInv {
     }
 
     private void startListing(Instant deletionDate, double price) {
-        ListingCreateEvent createEvent = new ListingCreateEvent();
-        Bukkit.getServer().getPluginManager().callEvent(createEvent);
-        if (createEvent.isCancelled()) {
-            player.sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.message(createEvent.getCancelReason()));
-            return;
-        }
-
         String category = CategoryCache.getCategoryForItem(itemToSell);
 
         if (category == null) {
@@ -191,6 +184,15 @@ public class NewListingMenu extends FastInv {
 
         Listing listing = new CurrentListing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
                 itemToSell, category, price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli(), isBidding, Collections.emptyList());
+
+        ListingCreateEvent createEvent = new ListingCreateEvent(player, listing);
+        Bukkit.getServer().getPluginManager().callEvent(createEvent);
+
+        if (createEvent.isCancelled()) {
+            player.sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.message(createEvent.getCancelReason()));
+            player.closeInventory();
+            return;
+        }
 
         plugin.getDatabase().addListing(listing);
         if (plugin.getCacheSync() != null) {
