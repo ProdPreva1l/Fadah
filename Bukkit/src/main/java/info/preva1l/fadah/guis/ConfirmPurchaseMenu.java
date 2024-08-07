@@ -10,7 +10,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 public class ConfirmPurchaseMenu extends FastInv {
@@ -32,20 +31,20 @@ public class ConfirmPurchaseMenu extends FastInv {
                     GuiHelper.constructButton(GuiButtonType.BORDER));
         }
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CONFIRM, 24),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CONFIRM, -1),
                 new ItemBuilder(getLang().getAsMaterial("confirm.icon", Material.LIME_CONCRETE))
                         .name(getLang().getStringFormatted("confirm.name", "&a&lCONFIRM"))
                         .modelData(getLang().getInt("confirm.model-data"))
-                        .lore(getLang().getLore("confirm.lore", Collections.singletonList("&7Click to confirm"))).build(), e -> {
+                        .lore(getLang().getLore("confirm.lore")).build(), e -> {
             player.closeInventory();
             listing.purchase(((Player) e.getWhoClicked()));
         });
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CANCEL, 20),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CANCEL, -1),
                 new ItemBuilder(getLang().getAsMaterial("cancel.icon", Material.RED_CONCRETE))
                         .name(getLang().getStringFormatted("cancel.name", "&c&lCANCEL"))
                         .modelData(getLang().getInt("cancel.model-data"))
-                        .lore(getLang().getLore("cancel.lore", Collections.singletonList("&7Click to cancel"))).build(), e -> {
+                        .lore(getLang().getLore("cancel.lore")).build(), e -> {
             if (isViewListings) {
                 assert listingsPlayer != null;
                 new ViewListingsMenu(player, listingsPlayer).open(player);
@@ -54,7 +53,7 @@ public class ConfirmPurchaseMenu extends FastInv {
             new MainMenu(category, player, search, sortingMethod, sortingDirection).open(player);
         });
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.ITEM_TO_PURCHASE, 22),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.ITEM_TO_PURCHASE, -1),
                 listing.getItemStack().clone());
     }
 }

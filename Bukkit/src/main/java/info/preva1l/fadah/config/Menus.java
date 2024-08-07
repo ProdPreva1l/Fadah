@@ -25,37 +25,37 @@ public enum Menus {
     BACK_BUTTON_ICON("back.icon", "FEATHER"),
     BACK_BUTTON_MODEL_DATA("back.model-data", 0),
     BACK_BUTTON_NAME("back.name", "&cGo Back"),
-    BACK_BUTTON_LORE("back.lore", Collections.singletonList("&7Click to go back")),
+    BACK_BUTTON_LORE("back.lore", Collections.emptyList()),
 
     PREVIOUS_BUTTON_ICON("previous-page.icon", "ARROW"),
     PREVIOUS_BUTTON_MODEL_DATA("previous-page.model-data", 0),
     PREVIOUS_BUTTON_NAME("previous-page.name", "&c&lPrevious Page"),
-    PREVIOUS_BUTTON_LORE("previous-page.lore", Collections.singletonList("&7Click to go to the previous page")),
+    PREVIOUS_BUTTON_LORE("previous-page.lore", Collections.emptyList()),
 
     NEXT_BUTTON_ICON("next-page.icon", "ARROW"),
     NEXT_BUTTON_MODEL_DATA("next-page.model-data", 0),
     NEXT_BUTTON_NAME("next-page.name", "&a&lNext Page"),
-    NEXT_BUTTON_LORE("next-page.lore", Collections.singletonList("&7Click to go to the next page")),
+    NEXT_BUTTON_LORE("next-page.lore", Collections.emptyList()),
 
     SCROLL_NEXT_BUTTON_ICON("scroll-next.icon", "ARROW"),
     SCROLL_NEXT_BUTTON_MODEL_DATA("scroll-next.model-data", 0),
     SCROLL_NEXT_BUTTON_NAME("scroll-next.name", "&a&lScroll Categories Down"),
-    SCROLL_NEXT_BUTTON_LORE("scroll-next.lore", Collections.singletonList("&7Click to move the categories down")),
+    SCROLL_NEXT_BUTTON_LORE("scroll-next.lore", Collections.emptyList()),
 
     SCROLL_PREVIOUS_BUTTON_ICON("scroll-previous.icon", "ARROW"),
     SCROLL_PREVIOUS_BUTTON_MODEL_DATA("scroll-previous.model-data", 0),
     SCROLL_PREVIOUS_BUTTON_NAME("scroll-previous.name", "&a&lScroll Categories Up"),
-    SCROLL_PREVIOUS_BUTTON_LORE("scroll-previous.lore", Collections.singletonList("&7Click to move the categories up")),
+    SCROLL_PREVIOUS_BUTTON_LORE("scroll-previous.lore", Collections.emptyList()),
    
     CLOSE_BUTTON_ICON("close.icon", "BARRIER"),
     CLOSE_BUTTON_MODEL_DATA("close.model-data", 0),
     CLOSE_BUTTON_NAME("close.name", "&c&l✗ Close"),
-    CLOSE_BUTTON_LORE("close.lore", Collections.singletonList("&7Click to close the menu")),
+    CLOSE_BUTTON_LORE("close.lore", Collections.emptyList()),
     
     BORDER_ICON("filler.icon", "BLACK_STAINED_GLASS_PANE"),
     BORDER_MODEL_DATA("filler.model-data", 0),
     BORDER_NAME("filler.name", "&r "),
-    BORDER_LORE("filler.lore", Collections.singletonList("&8I <3 Fadah")),
+    BORDER_LORE("filler.lore", Collections.emptyList()),
     ;
 
     private final String path;
@@ -109,7 +109,7 @@ public enum Menus {
             return StringUtils.colorizeList(ret);
         }
         if (str.get(0).equals("null")) {
-            return ImmutableList.of();
+            return null;
         }
         List<String> ret = new ArrayList<>();
         for (String line : str) ret.add(StringUtils.formatPlaceholders(line));

@@ -4,7 +4,7 @@ plugins {
 }
 
 group = 'info.preva1l'
-version = "2.3.2"
+version = "2.4.1"
 
 allprojects {
     apply plugin: 'io.github.goooler.shadow'
@@ -56,37 +56,30 @@ subprojects {
     version rootProject.version
     archivesBaseName = "${rootProject.name}-${project.name.capitalize()}"
 
-    task generateJavadoc(type: Javadoc) {
-        sourceSets.main.java.srcDirs.each { dir ->
-            source(dir)
-        }
-        classpath += configurations.compileClasspath
-        options.addStringOption('Xdoclint:none', '-quiet')
-        destinationDir = file("$buildDir/docs/javadoc")
-    }
-
-    task javadocJar(type: Jar, dependsOn: generateJavadoc) {
-        dependsOn generateJavadoc
-        archiveFileName = "${rootProject.name}-${project.name.capitalize()}-javadoc.jar"
-        from generateJavadoc.destinationDir
-    }
-
-    javadoc {
-        if (JavaVersion.current().isJava9Compatible()) {
-            options.addBooleanOption('html5', true)
-        }
-    }
-
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        dependsOn classes
-        archiveFileName = "${rootProject.name}-${project.name.capitalize()}-sources.jar"
-        from sourceSets.main.allSource
-    }
-
     shadowJar {
         destinationDirectory.set(file("$rootDir/target"))
         archiveClassifier.set('')
         //minimize()
+    }
+
+    task sourceJar(type: Jar) {
+        from sourceSets.main.allSource
+        archiveClassifier.set('sources')
+    }
+
+    task javadocJar(type: Jar) {
+        from javadoc
+        archiveClassifier.set('javadoc')
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                artifact shadowJar
+                artifact(tasks.named('sourceJar'))
+                artifact(tasks.named('javadocJar'))
+            }
+        }
     }
 
     jar.dependsOn shadowJar

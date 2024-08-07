@@ -1,7 +1,5 @@
 package info.preva1l.fadah.cache;
 
-import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.records.CollectableItem;
 import lombok.experimental.UtilityClass;
 
@@ -53,14 +51,8 @@ public class CollectionBoxCache {
     }
 
     public boolean doesItemExist(UUID playerUUID, CollectableItem e) {
-        if (Config.STRICT_CHECKS.toBoolean()) {
-            for (CollectableItem item : Fadah.getINSTANCE().getDatabase().getCollectionBox(playerUUID).join()) {
-                if (item.equals(e)) return true;
-            }
-        } else {
-            for (CollectableItem item : getCollectionBox(playerUUID)) {
-                if (item.equals(e)) return true;
-            }
+        for (CollectableItem item : getCollectionBox(playerUUID)) { // todo: re-add strict checks
+            if (item.equals(e)) return true;
         }
         return false;
     }

@@ -26,7 +26,7 @@ public class ProfileSubCommand extends SubCommand {
         OfflinePlayer owner = command.getPlayer();
         if (command.args().length >= 1 && command.sender().hasPermission("fadah.manage.profiles")) {
             owner = Bukkit.getOfflinePlayer(command.args()[0]);
-            Fadah.getINSTANCE().getDatabase().loadPlayerData(owner.getUniqueId());
+            Fadah.getINSTANCE().loadPlayerData(owner.getUniqueId());
         }
         if (owner.getUniqueId() != command.getPlayer().getUniqueId() && !HistoricItemsCache.playerExists(owner.getUniqueId())) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));

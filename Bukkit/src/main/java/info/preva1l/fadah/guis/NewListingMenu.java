@@ -7,7 +7,9 @@ import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.PermissionsData;
+import info.preva1l.fadah.hooks.impl.DiscordHook;
 import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.multiserver.Payload;
 import info.preva1l.fadah.records.CurrentListing;
@@ -52,14 +54,11 @@ public class NewListingMenu extends FastInv {
                     GuiHelper.constructButton(GuiButtonType.BORDER));
         }
 
-        List<String> createDefLore = List.of(
-                "&cClicking this button will immediately post",
-                "&cyour item on the auction house for &a${0}");
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_START, 30),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_START, -1),
                 new ItemBuilder(getLang().getAsMaterial("create.icon", Material.EMERALD))
                         .name(getLang().getStringFormatted("create.name", "&aClick to create listing!"))
                         .modelData(getLang().getInt("create.model-data"))
-                        .addLore(getLang().getLore("create.lore", createDefLore,
+                        .addLore(getLang().getLore("create.lore",
                                 new DecimalFormat(Config.DECIMAL_FORMAT.toString())
                                         .format(price)))
                         .setAttributes(null)
@@ -74,7 +73,7 @@ public class NewListingMenu extends FastInv {
                 () -> player.getInventory().setItemInMainHand(new ItemStack(Material.AIR)),
                 () -> this.itemToSell = new ItemStack(Material.AIR),
                 0L);
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ITEM, 22), itemToSell);
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ITEM, -1), itemToSell);
     }
 
     @Override
@@ -84,59 +83,43 @@ public class NewListingMenu extends FastInv {
     }
 
     private void setClock() {
-        List<String> timeDefLore = List.of(
-                "&fCurrent: &6{0}",
-                "&7Left Click to Add 1 Hour",
-                "&7Right Click to Remove 1 Hour",
-                "&7Shift Left Click to Add 30 Minutes",
-                "&7Shift Right Click to Remove 30 Minutes"
-        );
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 11));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, 11),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, -1));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_TIME, -1),
                 new ItemBuilder(getLang().getAsMaterial("time.icon", Material.CLOCK))
                         .name(getLang().getStringFormatted("time.name", "&aTime for listing to be active"))
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
-                        .addLore(getLang().getLore("time.lore", timeDefLore, TimeUtil.formatTimeUntil(timeToDelete.toEpochMilli()))).build(), e -> {
-                    if (e.isRightClick()) {
-                        if (e.isShiftClick()) {
-                            if (timeToDelete.minus(30, ChronoUnit.MINUTES).toEpochMilli() <= Instant.now().toEpochMilli())
-                                return;
-                            timeToDelete = timeToDelete.minus(30, ChronoUnit.MINUTES);
-                            setClock();
-                            return;
-                        }
-                        if (timeToDelete.minus(1, ChronoUnit.HOURS).toEpochMilli() <= Instant.now().toEpochMilli())
-                            return;
-                        timeToDelete = timeToDelete.minus(1, ChronoUnit.HOURS);
-                        setClock();
-                    }
+                        .addLore(getLang().getLore("time.lore", TimeUtil.formatTimeUntil(timeToDelete.toEpochMilli()))).build(), e -> {
+            if (e.isRightClick()) {
+                if (e.isShiftClick()) {
+                    if (timeToDelete.minus(30, ChronoUnit.MINUTES).toEpochMilli() <= Instant.now().toEpochMilli())
+                        return;
+                    timeToDelete = timeToDelete.minus(30, ChronoUnit.MINUTES);
+                    setClock();
+                    return;
+                }
+                if (timeToDelete.minus(1, ChronoUnit.HOURS).toEpochMilli() <= Instant.now().toEpochMilli()) return;
+                timeToDelete = timeToDelete.minus(1, ChronoUnit.HOURS);
+                setClock();
+            }
 
-                    if (e.isLeftClick()) {
-                        if (e.isShiftClick()) {
-                            if (timeToDelete.plus(30, ChronoUnit.MINUTES).toEpochMilli() > Instant.now().plus(10, ChronoUnit.DAYS).toEpochMilli())
-                                return;
-                            timeToDelete = timeToDelete.plus(30, ChronoUnit.MINUTES);
-                            setClock();
-                            return;
-                        }
-                        if (timeToDelete.plus(1, ChronoUnit.HOURS).toEpochMilli() > Instant.now().plus(10, ChronoUnit.DAYS).toEpochMilli())
-                            return;
-                        timeToDelete = timeToDelete.plus(1, ChronoUnit.HOURS);
-                        setClock();
-                    }
-                });
+            if (e.isLeftClick()) {
+                if (e.isShiftClick()) {
+                    if (timeToDelete.plus(30, ChronoUnit.MINUTES).toEpochMilli() > Instant.now().plus(10, ChronoUnit.DAYS).toEpochMilli())
+                        return;
+                    timeToDelete = timeToDelete.plus(30, ChronoUnit.MINUTES);
+                    setClock();
+                    return;
+                }
+                if (timeToDelete.plus(1, ChronoUnit.HOURS).toEpochMilli() > Instant.now().plus(10, ChronoUnit.DAYS).toEpochMilli())
+                    return;
+                timeToDelete = timeToDelete.plus(1, ChronoUnit.HOURS);
+                setClock();
+            }
+        });
     }
 
     private void setAdvertButton() {
-        List<String> defModeLore = List.of(
-                "&fAdvert Price: &a${0}",
-                "&7Click To Toggle",
-                "&8-------------------------",
-                "{1}",
-                "{2}",
-                "&8-------------------------"
-        );
         String postAdvert = StringUtils.formatPlaceholders(advertise
                         ? getLang().getStringFormatted("advert.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("advert.options.not-selected", "&f{0}"),
@@ -146,14 +129,14 @@ public class NewListingMenu extends FastInv {
                         : getLang().getStringFormatted("advert.options.not-selected", "&f{0}"),
                 Lang.ADVERT_DONT_POST.toFormattedString());
 
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT, 29));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT, 29),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT, -1));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT, -1),
                 new ItemBuilder(getLang().getAsMaterial("advert.icon", Material.OAK_SIGN))
                         .name(getLang().getStringFormatted("advert.name", "&eAdvertise Listing"))
                         .modelData(getLang().getInt("advert.model-data"))
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
-                        .lore(getLang().getLore("advert.lore", defModeLore,
+                        .lore(getLang().getLore("advert.lore",
                                 new DecimalFormat(Config.DECIMAL_FORMAT.toString())
                                         .format(PermissionsData.getHighestDouble(PermissionsData.PermissionType.ADVERT_PRICE, player)),
                                 postAdvert, dontPost)).build(), e -> {
@@ -162,16 +145,8 @@ public class NewListingMenu extends FastInv {
                 }
         );
     }
-
     // Not Used (For future bidding update)
     private void setModeButton() {
-        List<String> defModeLore = List.of(
-                "&7Click To Toggle",
-                "&8-------------------------",
-                "{0}",
-                "{1}",
-                "&8-------------------------"
-        );
         String bidding = StringUtils.formatPlaceholders(isBidding
                         ? getLang().getStringFormatted("mode.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("mode.options.not-selected", "&f{0}"),
@@ -181,14 +156,14 @@ public class NewListingMenu extends FastInv {
                         : getLang().getStringFormatted("mode.options.not-selected", "&f{0}"),
                 Lang.MODE_BUY_IT_NOW.toFormattedString());
 
-        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE, 31));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE, 31),
+        removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE, -1));
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE, -1),
                 new ItemBuilder(getLang().getAsMaterial("mode.icon", Material.HOPPER))
                         .name(getLang().getStringFormatted("mode.name", "&bAuction Mode"))
                         .modelData(getLang().getInt("mode.model-data"))
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
-                        .lore(getLang().getLore("mode.lore", defModeLore, bidding, bin)).build(), e -> {
+                        .lore(getLang().getLore("mode.lore", bidding, bin)).build(), e -> {
                     this.isBidding = !isBidding;
                     setModeButton();
                 }
@@ -196,13 +171,6 @@ public class NewListingMenu extends FastInv {
     }
 
     private void startListing(Instant deletionDate, double price) {
-        ListingCreateEvent createEvent = new ListingCreateEvent();
-        Bukkit.getServer().getPluginManager().callEvent(createEvent);
-        if (createEvent.isCancelled()) {
-            player.sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.message(createEvent.getCancelReason()));
-            return;
-        }
-
         String category = CategoryCache.getCategoryForItem(itemToSell);
 
         if (category == null) {
@@ -215,22 +183,29 @@ public class NewListingMenu extends FastInv {
         Listing listing = new CurrentListing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
                 itemToSell, category, price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli(), isBidding, Collections.emptyList());
 
-        plugin.getDatabase().addListing(listing);
-        if (plugin.getBroker() != null) {
-            Message.builder()
-                    .type(Message.Type.LISTING_ADD)
-                    .payload(Payload.withUUID(listing.getId()))
-                    .build().send(Fadah.getINSTANCE().getBroker());
-        } else {
-            ListingCache.addListing(listing);
+        ListingCreateEvent createEvent = new ListingCreateEvent(player, listing);
+        Bukkit.getServer().getPluginManager().callEvent(createEvent);
+
+        if (createEvent.isCancelled()) {
+            player.sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.message(createEvent.getCancelReason()));
+            player.closeInventory();
+            return;
         }
+
+        DatabaseManager.getInstance().save(Listing.class, listing);
+
+        ListingCache.addListing(listing);
+        Message.builder()
+                .type(Message.Type.LISTING_ADD)
+                .payload(Payload.withUUID(listing.getId()))
+                .build().send(Fadah.getINSTANCE().getBroker());
 
         listingStarted = true;
 
         player.closeInventory();
 
         double taxAmount = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
-        String itemName = listing.getItemStack().getItemMeta().getDisplayName().isBlank() ? listing.getItemStack().getType().name() : listing.getItemStack().getItemMeta().getDisplayName();
+        String itemName = StringUtils.extractItemName(listing.getItemStack());
         String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemName,
                 new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
                 TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
@@ -239,6 +214,12 @@ public class NewListingMenu extends FastInv {
         player.sendMessage(message);
 
         TransactionLogger.listingCreated(listing);
+
+        if ((Config.HOOK_DISCORD_ENABLED.toBoolean() && plugin.getHookManager().getHook(DiscordHook.class).isPresent()) &&
+                ((Config.HOOK_DISCORD_ADVERT_ONLY.toBoolean() && advertise)
+                        || !Config.HOOK_DISCORD_ADVERT_ONLY.toBoolean())) {
+            plugin.getHookManager().getHook(DiscordHook.class).get().send(listing);
+        }
 
         if (advertise) {
             Economy eco = Fadah.getINSTANCE().getEconomy();

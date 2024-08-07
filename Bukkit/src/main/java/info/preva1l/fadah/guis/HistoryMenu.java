@@ -50,68 +50,30 @@ public class HistoryMenu extends PaginatedFastInv {
 
     @Override
     protected void fillPaginationItems() {
-        List<String> buyDefLore = List.of(
-                "&8&n---------------------------",
-                "&fAction: &e{0}",
-                "&r ",
-                "&fBuyer: &3{1}",
-                "&r",
-                "&fPrice: &6${2}",
-                "&r ",
-                "&fDate: &e{3}",
-                "&8&n---------------------------"
-        );
-        List<String> sellerDefLore = List.of(
-                "&8&n---------------------------",
-                "&fAction: &e{0}",
-                "&r ",
-                "&fSeller: &3{1}",
-                "&r",
-                "&fPrice: &6${2}",
-                "&r ",
-                "&fDate: &e{3}",
-                "&8&n---------------------------"
-        );
-        List<String> priceDefLore = List.of(
-                "&8&n---------------------------",
-                "&fAction: &e{0}",
-                "&r ",
-                "&fPrice: &6${1}",
-                "&r ",
-                "&fDate: &e{2}",
-                "&8&n---------------------------"
-        );
-        List<String> defLore = List.of(
-                "&8&n---------------------------",
-                "&fAction: &e{0}",
-                "&r ",
-                "&fDate: &e{1}",
-                "&8&n---------------------------"
-        );
         for (HistoricItem historicItem : historicItems) {
             ItemBuilder itemStack = new ItemBuilder(historicItem.itemStack().clone());
             if (historicItem.purchaserUUID() != null) {
                 itemStack.addLore(historicItem.action() == HistoricItem.LoggedAction.LISTING_SOLD
-                        ? getLang().getLore("lore-with-buyer", buyDefLore,
+                        ? getLang().getLore("lore-with-buyer",
                         historicItem.action().getLocaleActionName(),
                         Bukkit.getOfflinePlayer(historicItem.purchaserUUID()).getName(),
                         new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(historicItem.price()),
                         TimeUtil.formatTimeToVisualDate(historicItem.loggedDate()))
 
-                        : getLang().getLore("lore-with-seller", sellerDefLore,
+                        : getLang().getLore("lore-with-seller",
                         historicItem.action().getLocaleActionName(),
                         Bukkit.getOfflinePlayer(historicItem.purchaserUUID()).getName(),
                         new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(historicItem.price()),
                         TimeUtil.formatTimeToVisualDate(historicItem.loggedDate()))
                 );
             } else if (historicItem.price() != null && historicItem.price() != 0d) {
-                itemStack.addLore(getLang().getLore("lore-with-price", priceDefLore,
+                itemStack.addLore(getLang().getLore("lore-with-price",
                         historicItem.action().getLocaleActionName(),
                         new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(historicItem.price()),
                         TimeUtil.formatTimeToVisualDate(historicItem.loggedDate())
                 ));
             } else {
-                itemStack.addLore(getLang().getLore("lore", defLore,
+                itemStack.addLore(getLang().getLore("lore",
                         historicItem.action().getLocaleActionName(),
                         TimeUtil.formatTimeToVisualDate(historicItem.loggedDate())
                 ));
@@ -122,30 +84,30 @@ public class HistoryMenu extends PaginatedFastInv {
 
     @Override
     protected void addPaginationControls() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
         if (page > 0) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                     GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> previousPage());
         }
 
         if (historicItems != null && historicItems.size() >= index + 1) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                     GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> nextPage());
         }
     }
 
     private void addNavigationButtons() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, 36),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, -1),
                 GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
 
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SEARCH, 40),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SEARCH, -1),
                 new ItemBuilder(getLang().getAsMaterial("search.icon", Material.OAK_SIGN))
                         .name(getLang().getStringFormatted("search.name", "&eSearch Date"))
                         .modelData(getLang().getInt("search.model-datta"))
-                        .lore(getLang().getLore("search.lore", List.of("&fClick to search for a logs date & time!"))).build(), e ->
+                        .lore(getLang().getLore("search.lore")).build(), e ->
                         new SearchMenu(viewer, getLang().getString("search.placeholder", "Ex: 21/04/2024 22:26"),
                                 search -> new HistoryMenu(viewer, owner, search).open(viewer)));
     }

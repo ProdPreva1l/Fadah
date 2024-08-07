@@ -22,8 +22,10 @@ public class ToggleSubCommand extends SubCommand {
         }
         FastInvManager.closeAll(plugin);
         boolean enabled = Fadah.getINSTANCE().getConfigFile().getBoolean("enabled");
+        Fadah.getINSTANCE().getConfigFile().save();
         Fadah.getINSTANCE().getConfigFile().getConfiguration().set("enabled", !enabled);
         Fadah.getINSTANCE().getConfigFile().save();
+        Fadah.getINSTANCE().getConfigFile().load();
 
         String toggle = enabled ? Lang.ADMIN_TOGGLE_DISABLED.toFormattedString() : Lang.ADMIN_TOGGLE_ENABLED.toFormattedString();
         command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADMIN_TOGGLE_MESSAGE.toFormattedString(toggle));

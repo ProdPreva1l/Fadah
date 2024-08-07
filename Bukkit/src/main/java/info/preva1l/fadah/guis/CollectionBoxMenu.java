@@ -5,8 +5,11 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.records.CollectableItem;
+import info.preva1l.fadah.records.CollectionBox;
 import info.preva1l.fadah.records.HistoricItem;
+import info.preva1l.fadah.records.History;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
@@ -46,16 +49,9 @@ public class CollectionBoxMenu extends PaginatedFastInv {
 
     @Override
     protected void fillPaginationItems() {
-        List<String> defLore = List.of(
-                "&8&n---------------------------",
-                "&fAdded: &e{0} &fago",
-                "&r ",
-                "&eClick To Claim!",
-                "&8&n---------------------------"
-        );
         for (CollectableItem collectableItem : collectionBox) {
             ItemBuilder itemBuilder = new ItemBuilder(collectableItem.itemStack().clone())
-                    .lore(getLang().getLore("collectable-lore", defLore, TimeUtil.formatTimeSince(collectableItem.dateAdded())));
+                    .lore(getLang().getLore("lore", TimeUtil.formatTimeSince(collectableItem.dateAdded())));
 
             addPaginationItem(new PaginatedItem(itemBuilder.build(), e -> {
                 MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {
@@ -69,7 +65,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
                         return;
                     }
                     CollectionBoxCache.removeItem(owner.getUniqueId(), collectableItem);
-                    Fadah.getINSTANCE().getDatabase().removeFromCollectionBox(owner.getUniqueId(), collectableItem);
+                    DatabaseManager.getInstance().deleteSpecific(CollectionBox.class, new CollectionBox(owner.getUniqueId(), collectionBox), collectableItem);
                     viewer.getInventory().setItem(slot, collectableItem.itemStack());
 
                     updatePagination();
@@ -81,7 +77,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
                                     : HistoricItem.LoggedAction.COLLECTION_BOX_CLAIM,
                             collectableItem.itemStack(), null, null);
                     HistoricItemsCache.addLog(owner.getUniqueId(), historicItem);
-                    Fadah.getINSTANCE().getDatabase().addToHistory(owner.getUniqueId(), historicItem);
+                    DatabaseManager.getInstance().save(History.class, History.of(owner.getUniqueId()));
                 }, null, 0L);
             }));
         }
@@ -89,17 +85,17 @@ public class CollectionBoxMenu extends PaginatedFastInv {
 
     @Override
     protected void addPaginationControls() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
         if (page > 0) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                     GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> previousPage());
         }
 
         if (collectionBox != null && collectionBox.size() >= index + 1) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                     GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> nextPage());
         }
     }
@@ -112,7 +108,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
     }
 
     private void addNavigationButtons() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, 36),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, -1),
                 GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
     }
 }

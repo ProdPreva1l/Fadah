@@ -120,6 +120,7 @@ public class FastInv implements InventoryHolder {
      * @param handler The click handler for the item
      */
     public void setItem(int slot, ItemStack item, Consumer<InventoryClickEvent> handler) {
+        if (slot == -1) return;
         this.inventory.setItem(slot, item);
 
         if (handler != null) {
@@ -158,6 +159,7 @@ public class FastInv implements InventoryHolder {
      * @param slot The slot where to remove the item
      */
     public void removeItem(int slot) {
+        if (slot == -1) return;
         this.inventory.clear(slot);
         this.itemHandlers.remove(slot);
     }

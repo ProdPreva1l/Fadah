@@ -9,6 +9,7 @@ import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.multiserver.Payload;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
@@ -37,8 +38,7 @@ public final class CurrentListing extends Listing {
             buyer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.TOO_EXPENSIVE.toFormattedString());
             return;
         }
-        if (ListingCache.getListing(this.getId()) == null
-                || (Config.STRICT_CHECKS.toBoolean() && Fadah.getINSTANCE().getDatabase().getListing(this.getId()) == null)) {
+        if (ListingCache.getListing(this.getId()) == null) { // todo: readd strict checks
             buyer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
             return;
         }
@@ -54,13 +54,13 @@ public final class CurrentListing extends Listing {
                 .type(Message.Type.LISTING_REMOVE)
                 .payload(Payload.withUUID(this.getId()))
                 .build().send(Fadah.getINSTANCE().getBroker());
-        Fadah.getINSTANCE().getDatabase().removeListing(this.getId());
+        DatabaseManager.getInstance().delete(Listing.class, this);
 
         // Add to collection box
         ItemStack itemStack = this.getItemStack().clone();
         CollectableItem collectableItem = new CollectableItem(itemStack, Instant.now().toEpochMilli());
-        Fadah.getINSTANCE().getDatabase().addToCollectionBox(buyer.getUniqueId(), collectableItem);
         CollectionBoxCache.addItem(buyer.getUniqueId(), collectableItem);
+        DatabaseManager.getInstance().save(CollectionBox.class, CollectionBox.of(buyer.getUniqueId()));
 
         // Send Cache Updates
         Message.builder()
@@ -96,36 +96,31 @@ public final class CurrentListing extends Listing {
 
     @Override
     public boolean cancel(@NotNull Player canceller) {
-        if (ListingCache.getListing(this.getId()) == null
-                || (Config.STRICT_CHECKS.toBoolean()
-                && Fadah.getINSTANCE().getDatabase().getListing(this.getId()) == null)) {
+        if (ListingCache.getListing(this.getId()) == null) { // todo: re-add strict checks
             canceller.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
             return false;
         }
         canceller.sendMessage(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString());
-
         ListingCache.removeListing(this);
         Message.builder()
                 .type(Message.Type.LISTING_REMOVE)
                 .payload(Payload.withUUID(this.getId()))
                 .build().send(Fadah.getINSTANCE().getBroker());
-        Fadah.getINSTANCE().getDatabase().removeListing(this.getId());
+        DatabaseManager.getInstance().delete(Listing.class, this);
 
         CollectableItem collectableItem = new CollectableItem(this.getItemStack(), Instant.now().toEpochMilli());
         ExpiredListingsCache.addItem(getOwner(), collectableItem);
-
         Message.builder()
                 .type(Message.Type.EXPIRED_LISTINGS_UPDATE)
                 .payload(Payload.withUUID(this.getOwner()))
                 .build().send(Fadah.getINSTANCE().getBroker());
-
-        Fadah.getINSTANCE().getDatabase().addToExpiredItems(getOwner(), collectableItem);
+        DatabaseManager.getInstance().save(ExpiredItems.class, ExpiredItems.of(getOwner()));
 
         boolean isAdmin = !this.isOwner(canceller);
         TransactionLogger.listingRemoval(this, isAdmin);
         Bukkit.getScheduler().runTaskAsynchronously(Fadah.getINSTANCE(), () ->
                 Bukkit.getServer().getPluginManager().callEvent(
-                        new ListingEndEvent(isAdmin
+                        new ListingEndEvent(this, isAdmin
                                 ? ListingEndReason.CANCELLED_ADMIN
                                 : ListingEndReason.CANCELLED)
                 )

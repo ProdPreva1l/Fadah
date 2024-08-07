@@ -4,6 +4,7 @@ import info.preva1l.fadah.filters.SortingDirection;
 import info.preva1l.fadah.filters.SortingMethod;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
+import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -21,9 +22,7 @@ public class ShulkerBoxPreviewMenu extends FastInv {
                                  @Nullable SortingDirection sortingDirection,
                                  boolean isViewListings,
                                  @Nullable OfflinePlayer listingsPlayer) {
-        super(36, listing.getItemStack().getItemMeta().getDisplayName().isBlank()
-                ? listing.getItemStack().getItemMeta().getLocalizedName()
-                : listing.getItemStack().getItemMeta().getDisplayName(), LayoutManager.MenuType.SHULKER_PREVIEW);
+        super(36, StringUtils.extractItemName(listing.getItemStack()), LayoutManager.MenuType.SHULKER_PREVIEW);
         if (listing.getItemStack().getItemMeta() instanceof BlockStateMeta im) {
             if (im.getBlockState() instanceof ShulkerBox shulker) {
                 for (int i = 0; i < shulker.getInventory().getSize(); i++) {

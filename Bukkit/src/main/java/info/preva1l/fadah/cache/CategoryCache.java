@@ -26,6 +26,14 @@ public final class CategoryCache {
         return categories.stream().filter(category -> category.id().equals(id)).findFirst().orElse(null);
     }
 
+    public String getCatName(String id) {
+        Category category = getCategory(id);
+        if (category == null) {
+            return "Unknown";
+        }
+        return category.name();
+    }
+
     public List<Category> getCategories() {
         return Collections.unmodifiableList(categories);
     }

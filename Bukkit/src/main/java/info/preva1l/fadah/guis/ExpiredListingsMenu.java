@@ -5,8 +5,11 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.records.CollectableItem;
+import info.preva1l.fadah.records.ExpiredItems;
 import info.preva1l.fadah.records.HistoricItem;
+import info.preva1l.fadah.records.History;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
@@ -47,17 +50,9 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
 
     @Override
     protected void fillPaginationItems() {
-        List<String> defListLore = List.of(
-                "&8&n---------------------------",
-                "&fAdded: &e{0} &fago",
-                "&r ",
-                "&eClick To Re-Claim!",
-                "&8&n---------------------------"
-        );
-
         for (CollectableItem collectableItem : expiredItems) {
             ItemBuilder itemStack = new ItemBuilder(collectableItem.itemStack().clone())
-                    .addLore(getLang().getLore("lore", defListLore, TimeUtil.formatTimeSince(collectableItem.dateAdded())));
+                    .addLore(getLang().getLore("lore", TimeUtil.formatTimeSince(collectableItem.dateAdded())));
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
                 MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {
@@ -71,7 +66,7 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
                         return;
                     }
                     ExpiredListingsCache.removeItem(owner.getUniqueId(), collectableItem);
-                    Fadah.getINSTANCE().getDatabase().removeFromExpiredItems(owner.getUniqueId(), collectableItem);
+                    DatabaseManager.getInstance().deleteSpecific(ExpiredItems.class, ExpiredItems.of(owner.getUniqueId()), collectableItem);
                     viewer.getInventory().setItem(slot, collectableItem.itemStack());
 
                     updatePagination();
@@ -82,7 +77,7 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
                             isAdmin ? HistoricItem.LoggedAction.EXPIRED_ITEM_ADMIN_CLAIM : HistoricItem.LoggedAction.EXPIRED_ITEM_CLAIM,
                             collectableItem.itemStack(), null, null);
                     HistoricItemsCache.addLog(owner.getUniqueId(), historicItem);
-                    Fadah.getINSTANCE().getDatabase().addToHistory(owner.getUniqueId(), historicItem);
+                    DatabaseManager.getInstance().save(History.class, History.of(owner.getUniqueId()));
                 },null, 0L);
             }));
         }
@@ -90,17 +85,17 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
 
     @Override
     protected void addPaginationControls() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                 GuiHelper.constructButton(GuiButtonType.BORDER));
         if (page > 0) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, 39),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_ONE, -1),
                     GuiHelper.constructButton(GuiButtonType.PREVIOUS_PAGE), e -> previousPage());
         }
 
         if (expiredItems != null && expiredItems.size() >= index + 1) {
-            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,41),
+            setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PAGINATION_CONTROL_TWO,-1),
                     GuiHelper.constructButton(GuiButtonType.NEXT_PAGE), e -> nextPage());
         }
     }
@@ -113,7 +108,7 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
     }
 
     private void addNavigationButtons() {
-        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, 36),
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, -1),
                 GuiHelper.constructButton(GuiButtonType.BACK), e ->
                 new ProfileMenu(viewer, owner).open(viewer));
     }
