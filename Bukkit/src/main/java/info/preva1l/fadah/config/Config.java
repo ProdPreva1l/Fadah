@@ -36,7 +36,7 @@ public enum Config {
     DATABASE("database.database", "Fadah"),
 
     BROKER_ENABLED("broker.enabled", false),
-    BROKER_TYPE("broker.type", Broker.Type.REDIS),
+    BROKER_TYPE("broker.type", "REDIS"),
     REDIS_HOST("broker.redis.host", "127.0.0.1"),
     REDIS_PORT("broker.redis.port", 6379),
     REDIS_PASSWORD("broker.redis.password", "password"),
