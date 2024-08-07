@@ -4,6 +4,7 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.data.handler.DatabaseHandler;
+import info.preva1l.fadah.data.handler.MongoHandler;
 import info.preva1l.fadah.data.handler.MySQLHandler;
 import info.preva1l.fadah.data.handler.SQLiteHandler;
 
@@ -26,6 +27,7 @@ public final class DatabaseManager {
         databaseHandlers.put(DatabaseType.SQLITE, SQLiteHandler.class);
         databaseHandlers.put(DatabaseType.MARIADB, MySQLHandler.class);
         databaseHandlers.put(DatabaseType.MYSQL, MySQLHandler.class);
+        databaseHandlers.put(DatabaseType.MONGO, MongoHandler.class);
 
         this.handler = initHandler();
         Fadah.getConsole().info("Connected to Database and populated caches!");

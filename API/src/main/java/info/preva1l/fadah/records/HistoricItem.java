@@ -5,6 +5,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -24,6 +25,19 @@ public record HistoricItem(
         @Nullable Double price,
         @Nullable UUID purchaserUUID
 ) {
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        HistoricItem that = (HistoricItem) o;
+        return Objects.equals(price, that.price) && Objects.equals(ownerUUID, that.ownerUUID) && Objects.equals(loggedDate, that.loggedDate) && Objects.equals(purchaserUUID, that.purchaserUUID) && action == that.action && Objects.equals(itemStack, that.itemStack);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ownerUUID, loggedDate, action, itemStack, price, purchaserUUID);
+    }
+
     /**
      * The order must not change as ordinals are used.
      */
