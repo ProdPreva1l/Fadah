@@ -22,6 +22,8 @@ dependencies {
 
     implementation 'net.william278:desertwell:2.0.4' // Update Checker & About Page
 
+    compileOnly files('../libs/Floodgate-api-2.2.3.jar') // Bedrock
+
     // Cross Server Support
     compileOnly 'redis.clients:jedis:5.1.0'
     compileOnly 'org.apache.commons:commons-pool2:2.12.0'
