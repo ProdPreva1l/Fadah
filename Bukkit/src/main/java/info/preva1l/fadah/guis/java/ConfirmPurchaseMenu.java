@@ -2,6 +2,7 @@ package info.preva1l.fadah.guis.java;
 
 import info.preva1l.fadah.filters.SortingDirection;
 import info.preva1l.fadah.filters.SortingMethod;
+import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.guis.*;
@@ -47,10 +48,10 @@ public class ConfirmPurchaseMenu extends FastInv {
                         .lore(getLang().getLore("cancel.lore")).build(), e -> {
             if (isViewListings) {
                 assert listingsPlayer != null;
-                new ViewListingsMenu(player, listingsPlayer).open(player);
+                MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.VIEW_LISTINGS, listingsPlayer);
                 return;
             }
-            new MainMenu(player, category, search, sortingMethod, sortingDirection).open(player);
+            MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.MAIN, category, search, sortingMethod, sortingDirection);
         });
 
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.ITEM_TO_PURCHASE, -1),

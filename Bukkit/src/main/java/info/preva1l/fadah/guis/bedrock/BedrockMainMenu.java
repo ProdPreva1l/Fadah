@@ -9,9 +9,7 @@ import info.preva1l.fadah.filters.SortingDirection;
 import info.preva1l.fadah.filters.SortingMethod;
 import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.guis.java.ConfirmPurchaseMenu;
-import info.preva1l.fadah.guis.java.ProfileMenu;
 import info.preva1l.fadah.guis.java.SearchMenu;
-import info.preva1l.fadah.guis.java.ShulkerBoxPreviewMenu;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.CooldownManager;
@@ -168,8 +166,8 @@ public class BedrockMainMenu extends ScrollBarFastInv {
                 }
 
                 if (e.isRightClick() && listing.getItemStack().getType().name().toUpperCase().endsWith("SHULKER_BOX")) {
-                    new ShulkerBoxPreviewMenu(listing, player, category, search,
-                            sortingMethod, sortingDirection, false, null).open(player);
+                    MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.SHULKER_PREVIEW,
+                            listing, false, null, category, search, sortingMethod, sortingDirection);
                     return;
                 }
 
@@ -222,7 +220,7 @@ public class BedrockMainMenu extends ScrollBarFastInv {
                         .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile", StringUtils.capitalize(Lang.WORD_YOUR.toString())))
                         .addLore(getLang().getLore("profile-button.lore"))
                         .modelData(getLang().getInt("profile-button.model-data"))
-                        .build(), e -> new ProfileMenu(player, player).open(player));
+                        .build(), e -> MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.PROFILE, player));
     }
 
     private void addFilterButtons() {

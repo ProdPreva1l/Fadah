@@ -3,6 +3,7 @@ package info.preva1l.fadah.guis.java;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
@@ -101,7 +102,8 @@ public class HistoryMenu extends PaginatedFastInv {
 
     private void addNavigationButtons() {
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, -1),
-                GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
+                GuiHelper.constructButton(GuiButtonType.BACK), e ->
+                        MenuManager.getInstance().openMenu(viewer, LayoutManager.MenuType.PROFILE, owner));
 
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.SEARCH, -1),
                 new ItemBuilder(getLang().getAsMaterial("search.icon", Material.OAK_SIGN))

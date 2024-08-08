@@ -3,10 +3,11 @@ package info.preva1l.fadah.commands.subcommands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.guis.java.ProfileMenu;
+import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
 import info.preva1l.fadah.utils.commands.SubCommandArguments;
+import info.preva1l.fadah.utils.guis.LayoutManager;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,6 @@ public class ProfileSubCommand extends SubCommand {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));
             return;
         }
-        new ProfileMenu(command.getPlayer(), owner).open(command.getPlayer());
+        MenuManager.getInstance().openMenu(command.getPlayer(), LayoutManager.MenuType.PROFILE, owner);
     }
 }

@@ -5,6 +5,7 @@ import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
@@ -76,8 +77,7 @@ public class ViewListingsMenu extends PaginatedFastInv {
                 }
 
                 if (e.isRightClick() && listing.getItemStack().getType().name().toUpperCase().endsWith("SHULKER_BOX")) {
-                    new ShulkerBoxPreviewMenu(listing, player, null, null,
-                            null, null, true, owner).open(player);
+                    MenuManager.getInstance().openMenu(viewer, LayoutManager.MenuType.SHULKER_PREVIEW, listing, true, owner);
                     return;
                 }
 

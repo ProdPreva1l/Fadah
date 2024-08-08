@@ -163,8 +163,7 @@ public class MainMenu extends ScrollBarFastInv {
                 }
 
                 if (e.isRightClick() && listing.getItemStack().getType().name().toUpperCase().endsWith("SHULKER_BOX")) {
-                    new ShulkerBoxPreviewMenu(listing, player, category, search,
-                            sortingMethod, sortingDirection, false, null).open(player);
+                    MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.SHULKER_PREVIEW, listing, true, null, category, search, sortingMethod, sortingDirection);
                     return;
                 }
 
@@ -217,7 +216,7 @@ public class MainMenu extends ScrollBarFastInv {
                         .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile", StringUtils.capitalize(Lang.WORD_YOUR.toString())))
                         .addLore(getLang().getLore("profile-button.lore"))
                         .modelData(getLang().getInt("profile-button.model-data"))
-                        .build(), e -> new ProfileMenu(player, player).open(player));
+                        .build(), e -> MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.PROFILE, player));
     }
 
     private void addFilterButtons() {

@@ -1,6 +1,7 @@
 package info.preva1l.fadah.guis.java;
 
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -30,7 +31,7 @@ public class ProfileMenu extends FastInv {
 
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, -1),
                 GuiHelper.constructButton(GuiButtonType.BACK),
-                e -> new MainMenu(viewer, null, null, null, null).open(viewer));
+                e -> MenuManager.getInstance().openMenu(viewer, LayoutManager.MenuType.MAIN));
 
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_SUMMARY, -1),
                 new ItemBuilder(Material.PLAYER_HEAD).skullOwner(owner)

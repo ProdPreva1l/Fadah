@@ -6,6 +6,7 @@ import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
+import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.ExpiredItems;
 import info.preva1l.fadah.records.HistoricItem;
@@ -110,6 +111,6 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
     private void addNavigationButtons() {
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, -1),
                 GuiHelper.constructButton(GuiButtonType.BACK), e ->
-                new ProfileMenu(viewer, owner).open(viewer));
+                        MenuManager.getInstance().openMenu(viewer, LayoutManager.MenuType.PROFILE, owner));
     }
 }

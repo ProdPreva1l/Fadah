@@ -4,6 +4,7 @@ import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
@@ -85,6 +86,6 @@ public class ActiveListingsMenu extends PaginatedFastInv {
     private void addNavigationButtons() {
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, -1),
                 GuiHelper.constructButton(GuiButtonType.BACK), e ->
-                        new ProfileMenu(viewer, owner).open(viewer));
+                        MenuManager.getInstance().openMenu(viewer, LayoutManager.MenuType.PROFILE, owner));
     }
 }

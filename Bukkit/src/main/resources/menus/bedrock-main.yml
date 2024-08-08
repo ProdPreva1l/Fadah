@@ -35,31 +35,12 @@ lang:
       name: '&3&lSearch'
       lore:
         - '&fClick to search for an item name/type!'
-    change-type:
+    change-filters:
       icon: PUFFERFISH
       model-data: 0
       name: '&eListing Filter'
       lore:
-        - '&7Left Click to cycle up'
-        - '&7Right Click to cycle down'
-        - '&8-------------------------'
-        - '&f{0}'
-        - '&8> &e{1}'
-        - '&f{2}'
-        - '&8-------------------------'
-    change-direction:
-      icon: CLOCK
-      model-data: 0
-      name: '&eFilter Direction'
-      lore:
-        - '&7Click To Toggle'
-        - '&8-------------------------'
-        - '{0}'
-        - '{1}'
-        - '&8-------------------------'
-      options:
-        selected: '&8> &e{0}'
-        not-selected: '&f{0}'
+        - '&7Click to edit the current filters'
 
 size: 6
 
@@ -111,10 +92,10 @@ layout:
   '44': "FILLER"
   '45': "SCROLLBAR_CONTROL_TWO"
   '46': "FILLER"
-  '47': "FILTER"
-  '48': "PAGINATION_CONTROL_ONE"
+  '47': "PAGINATION_CONTROL_ONE"
+  '48': "FILTER"
   '49': "SEARCH"
   '50': "PAGINATION_CONTROL_TWO"
-  '51': "FILTER_DIRECTION"
+  '51': "FILLER"
   '52': "FILLER"
   '53': "PROFILE"

@@ -16,13 +16,14 @@ import org.bukkit.inventory.meta.BlockStateMeta;
 import org.jetbrains.annotations.Nullable;
 
 public class ShulkerBoxPreviewMenu extends FastInv {
-    public ShulkerBoxPreviewMenu(Listing listing, Player player,
+    public ShulkerBoxPreviewMenu(Player player,
+                                 Listing listing,
+                                 boolean isViewListings,
+                                 @Nullable OfflinePlayer listingsPlayer,
                                  @Nullable Category category,
                                  @Nullable String search,
                                  @Nullable SortingMethod sortingMethod,
-                                 @Nullable SortingDirection sortingDirection,
-                                 boolean isViewListings,
-                                 @Nullable OfflinePlayer listingsPlayer) {
+                                 @Nullable SortingDirection sortingDirection) {
         super(36, StringUtils.extractItemName(listing.getItemStack()), LayoutManager.MenuType.SHULKER_PREVIEW);
         if (listing.getItemStack().getItemMeta() instanceof BlockStateMeta im) {
             if (im.getBlockState() instanceof ShulkerBox shulker) {

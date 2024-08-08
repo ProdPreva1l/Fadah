@@ -6,6 +6,7 @@ import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
+import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.CollectionBox;
 import info.preva1l.fadah.records.HistoricItem;
@@ -109,6 +110,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
 
     private void addNavigationButtons() {
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, -1),
-                GuiHelper.constructButton(GuiButtonType.BACK), e -> new ProfileMenu(viewer, owner).open(viewer));
+                GuiHelper.constructButton(GuiButtonType.BACK), e ->
+                        MenuManager.getInstance().openMenu(viewer, LayoutManager.MenuType.PROFILE, owner));
     }
 }
