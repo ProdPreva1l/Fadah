@@ -1,7 +1,8 @@
-package info.preva1l.fadah.guis;
+package info.preva1l.fadah.guis.java;
 
 import info.preva1l.fadah.filters.SortingDirection;
 import info.preva1l.fadah.filters.SortingMethod;
+import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
@@ -38,10 +39,10 @@ public class ShulkerBoxPreviewMenu extends FastInv {
         setItem(31, GuiHelper.constructButton(GuiButtonType.CLOSE), e -> {
             if (isViewListings) {
                 assert listingsPlayer != null;
-                new ViewListingsMenu(player, listingsPlayer).open(player);
+                MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.VIEW_LISTINGS, listingsPlayer);
                 return;
             }
-            new MainMenu(category, player, search, sortingMethod, sortingDirection).open(player);
+            MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.MAIN, category, search, sortingMethod, sortingDirection);
         });
         setItems(new int[]{27, 28, 29, 30, 32, 33, 34, 35}, GuiHelper.constructButton(GuiButtonType.BORDER));
     }

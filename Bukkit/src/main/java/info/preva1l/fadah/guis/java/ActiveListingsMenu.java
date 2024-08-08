@@ -1,4 +1,4 @@
-package info.preva1l.fadah.guis;
+package info.preva1l.fadah.guis.java;
 
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;

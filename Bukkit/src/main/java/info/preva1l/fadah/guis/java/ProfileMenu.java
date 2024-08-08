@@ -1,4 +1,4 @@
-package info.preva1l.fadah.guis;
+package info.preva1l.fadah.guis.java;
 
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.utils.guis.*;
@@ -30,7 +30,7 @@ public class ProfileMenu extends FastInv {
 
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.BACK, -1),
                 GuiHelper.constructButton(GuiButtonType.BACK),
-                e -> new MainMenu(null, viewer, null, null, null).open(viewer));
+                e -> new MainMenu(viewer, null, null, null, null).open(viewer));
 
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE_SUMMARY, -1),
                 new ItemBuilder(Material.PLAYER_HEAD).skullOwner(owner)

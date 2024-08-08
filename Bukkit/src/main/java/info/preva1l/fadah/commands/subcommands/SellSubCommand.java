@@ -4,11 +4,12 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.PermissionsData;
-import info.preva1l.fadah.guis.NewListingMenu;
+import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
 import info.preva1l.fadah.utils.commands.SubCommandArguments;
+import info.preva1l.fadah.utils.guis.LayoutManager;
 import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
@@ -66,7 +67,7 @@ public class SellSubCommand extends SubCommand {
                 command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MAX_LISTINGS.toFormattedString(currentListings, maxListings)));
                 return;
             }
-            new NewListingMenu(command.getPlayer(), Double.parseDouble(priceString) * multi).open(command.getPlayer());
+            MenuManager.getInstance().openMenu(command.getPlayer(), LayoutManager.MenuType.NEW_LISTING,Double.parseDouble(priceString) * multi);
         } catch (NumberFormatException e) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.MUST_BE_NUMBER.toFormattedString());
         }

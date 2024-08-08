@@ -17,8 +17,8 @@ listing-adverts:
   price: 100.0
 
 hooks:
+  bedrock: false
   eco-items: false
-
   discord:
     enabled: false
     webhook-url: "INSERT WEBHOOK URL HERE"

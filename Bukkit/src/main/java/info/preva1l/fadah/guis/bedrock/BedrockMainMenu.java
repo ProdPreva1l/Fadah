@@ -7,7 +7,11 @@ import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.filters.SortingDirection;
 import info.preva1l.fadah.filters.SortingMethod;
-import info.preva1l.fadah.guis.*;
+import info.preva1l.fadah.guis.MenuManager;
+import info.preva1l.fadah.guis.java.ConfirmPurchaseMenu;
+import info.preva1l.fadah.guis.java.ProfileMenu;
+import info.preva1l.fadah.guis.java.SearchMenu;
+import info.preva1l.fadah.guis.java.ShulkerBoxPreviewMenu;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.CooldownManager;
@@ -35,7 +39,7 @@ public class BedrockMainMenu extends ScrollBarFastInv {
     private SortingMethod sortingMethod;
     private SortingDirection sortingDirection;
 
-    public BedrockMainMenu(@Nullable Category category, @NotNull Player player, @Nullable String search,
+    public BedrockMainMenu(@NotNull Player player, @Nullable Category category, @Nullable String search,
                     @Nullable SortingMethod sortingMethod, @Nullable SortingDirection sortingDirection) {
         super(LayoutManager.MenuType.MAIN.getLayout().guiSize(), LayoutManager.MenuType.MAIN.getLayout().guiTitle(), player, LayoutManager.MenuType.MAIN);
         this.category = category;
@@ -261,7 +265,7 @@ public class BedrockMainMenu extends ScrollBarFastInv {
                         .modelData(getLang().getInt("filter.search.model-data"))
                         .lore(getLang().getLore("filter.search.lore")).build(), e ->
                         new SearchMenu(player, getLang().getString("filter.search.placeholder", "Search Query..."), search ->
-                                new MainMenu(category, player, search, sortingMethod, sortingDirection).open(player)));
+                                MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.MAIN, category, search, sortingMethod, sortingDirection)));
 
         // Filter Direction Toggle
         String asc = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.ASCENDING

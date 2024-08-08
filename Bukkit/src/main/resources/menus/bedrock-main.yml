@@ -1,0 +1,120 @@
+title: '&9&lAuction House'
+
+lang:
+  listing:
+    lore-body:
+      - '&8&n---------------------------'
+      - '&fSeller: &e{0}'
+      - '&fCategory: &e{1}'
+      - '&r '
+      - '&f{2}: &6${3}'
+      - '&r '
+      - '&fExpires In: &e{4}'
+      - '&8&n---------------------------'
+    lore-buy:
+      buy-it-now: "Buy Now"
+      bidding: "Current Bid"
+    lore-footer:
+      buy: '&aClick to buy now!'
+      too-expensive: '&cYou cannot afford this item!'
+      own-listing: '&cYou cannot buy your own listing! &8(Shift Click to Cancel)'
+      is-shulker: '&fRight Click to Preview!'
+
+  profile-button:
+    icon: PLAYER_HEAD
+    model-data: 0
+    name: '&e&lYour Profile'
+    lore:
+      - '&fClick to view your profile!'
+
+  filter:
+    search:
+      icon: OAK_SIGN
+      model-data: 0
+      placeholder: 'Search Query...'
+      name: '&3&lSearch'
+      lore:
+        - '&fClick to search for an item name/type!'
+    change-type:
+      icon: PUFFERFISH
+      model-data: 0
+      name: '&eListing Filter'
+      lore:
+        - '&7Left Click to cycle up'
+        - '&7Right Click to cycle down'
+        - '&8-------------------------'
+        - '&f{0}'
+        - '&8> &e{1}'
+        - '&f{2}'
+        - '&8-------------------------'
+    change-direction:
+      icon: CLOCK
+      model-data: 0
+      name: '&eFilter Direction'
+      lore:
+        - '&7Click To Toggle'
+        - '&8-------------------------'
+        - '{0}'
+        - '{1}'
+        - '&8-------------------------'
+      options:
+        selected: '&8> &e{0}'
+        not-selected: '&f{0}'
+
+size: 6
+
+layout:
+  '0': "SCROLLBAR_CONTROL_ONE"
+  '1': "FILLER"
+  '2': "FILLER"
+  '3': "FILLER"
+  '4': "FILLER"
+  '5': "FILLER"
+  '6': "FILLER"
+  '7': "FILLER"
+  '8': "FILLER"
+  '9': "SCROLLBAR_ITEM"
+  '10': "FILLER"
+  '11': "PAGINATION_ITEM"
+  '12': "PAGINATION_ITEM"
+  '13': "PAGINATION_ITEM"
+  '14': "PAGINATION_ITEM"
+  '15': "PAGINATION_ITEM"
+  '16': "PAGINATION_ITEM"
+  '17': "FILLER"
+  '18': "SCROLLBAR_ITEM"
+  '19': "FILLER"
+  '20': "PAGINATION_ITEM"
+  '21': "PAGINATION_ITEM"
+  '22': "NO_ITEMS"
+  '23': "NO_ITEMS"
+  '24': "PAGINATION_ITEM"
+  '25': "PAGINATION_ITEM"
+  '26': "FILLER"
+  '27': "SCROLLBAR_ITEM"
+  '28': "FILLER"
+  '29': "PAGINATION_ITEM"
+  '30': "PAGINATION_ITEM"
+  '31': "NO_ITEMS"
+  '32': "NO_ITEMS"
+  '33': "PAGINATION_ITEM"
+  '34': "PAGINATION_ITEM"
+  '35': "FILLER"
+  '36': "SCROLLBAR_ITEM"
+  '37': "FILLER"
+  '38': "PAGINATION_ITEM"
+  '39': "PAGINATION_ITEM"
+  '40': "PAGINATION_ITEM"
+  '41': "PAGINATION_ITEM"
+  '42': "PAGINATION_ITEM"
+  '43': "PAGINATION_ITEM"
+  '44': "FILLER"
+  '45': "SCROLLBAR_CONTROL_TWO"
+  '46': "FILLER"
+  '47': "FILTER"
+  '48': "PAGINATION_CONTROL_ONE"
+  '49': "SEARCH"
+  '50': "PAGINATION_CONTROL_TWO"
+  '51': "FILTER_DIRECTION"
+  '52': "FILLER"
+  '53': "PROFILE"

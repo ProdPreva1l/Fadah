@@ -5,7 +5,7 @@ import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
-import info.preva1l.fadah.guis.CollectionBoxMenu;
+import info.preva1l.fadah.guis.java.CollectionBoxMenu;
 import info.preva1l.fadah.records.CollectionBox;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;

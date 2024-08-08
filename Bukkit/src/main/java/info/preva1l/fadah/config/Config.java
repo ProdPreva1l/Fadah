@@ -26,6 +26,8 @@ public enum Config {
 
     STRICT_CHECKS("strict-checks", false),
 
+    HOOK_BEDROCK("hooks.bedrock", false),
+
     HOOK_ECO_ITEMS("hooks.eco-items", false),
 
     HOOK_DISCORD_ENABLED("hooks.discord.enabled", false),

@@ -1,4 +1,4 @@
-package info.preva1l.fadah.guis;
+package info.preva1l.fadah.guis.java;
 
 import info.preva1l.fadah.filters.SortingDirection;
 import info.preva1l.fadah.filters.SortingMethod;
@@ -50,7 +50,7 @@ public class ConfirmPurchaseMenu extends FastInv {
                 new ViewListingsMenu(player, listingsPlayer).open(player);
                 return;
             }
-            new MainMenu(category, player, search, sortingMethod, sortingDirection).open(player);
+            new MainMenu(player, category, search, sortingMethod, sortingDirection).open(player);
         });
 
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.ITEM_TO_PURCHASE, -1),

@@ -3,11 +3,12 @@ package info.preva1l.fadah.commands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.commands.subcommands.*;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.guis.MainMenu;
+import info.preva1l.fadah.guis.MenuManager;
 import info.preva1l.fadah.utils.commands.Command;
 import info.preva1l.fadah.utils.commands.CommandArgs;
 import info.preva1l.fadah.utils.commands.CommandArguments;
 import info.preva1l.fadah.utils.commands.SubCommand;
+import info.preva1l.fadah.utils.guis.LayoutManager;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -51,7 +52,7 @@ public class AuctionHouseCommand extends Command {
             return;
         }
 
-        new MainMenu(null, command.getPlayer(), null, null, null).open(command.getPlayer());
+        MenuManager.getInstance().openMenu(command.getPlayer(), LayoutManager.MenuType.MAIN);
     }
 
     @Override

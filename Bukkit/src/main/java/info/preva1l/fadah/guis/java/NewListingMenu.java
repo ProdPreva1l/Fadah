@@ -1,4 +1,4 @@
-package info.preva1l.fadah.guis;
+package info.preva1l.fadah.guis.java;
 
 import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;

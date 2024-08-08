@@ -6,7 +6,7 @@ import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
-import info.preva1l.fadah.guis.ExpiredListingsMenu;
+import info.preva1l.fadah.guis.java.ExpiredListingsMenu;
 import info.preva1l.fadah.records.ExpiredItems;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;

@@ -138,6 +138,11 @@ public class LayoutManager {
          * Guis without layouts
          */
         SHULKER_PREVIEW,
+        /**
+         * Bedrock Menus
+         */
+        LISTING_OPTIONS,
+        FILTERS
         ;
 
         public GuiLayout getLayout() {
