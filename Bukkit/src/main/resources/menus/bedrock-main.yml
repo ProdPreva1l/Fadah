@@ -14,11 +14,7 @@ lang:
     lore-buy:
       buy-it-now: "Buy Now"
       bidding: "Current Bid"
-    lore-footer:
-      buy: '&aClick to buy now!'
-      too-expensive: '&cYou cannot afford this item!'
-      own-listing: '&cYou cannot buy your own listing! &8(Shift Click to Cancel)'
-      is-shulker: '&fRight Click to Preview!'
+    lore-footer: "&fClick to view options"
 
   profile-button:
     icon: PLAYER_HEAD

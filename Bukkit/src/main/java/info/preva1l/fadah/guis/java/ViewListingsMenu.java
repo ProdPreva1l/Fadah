@@ -96,8 +96,7 @@ public class ViewListingsMenu extends PaginatedFastInv {
                     return;
                 }
 
-                new ConfirmPurchaseMenu(listing, player, null, null,
-                        null, null, true, owner).open(player);
+                new ConfirmPurchaseMenu(listing, player, null, this.getMenuType()).open(player);
             }));
         }
     }

@@ -1,6 +1,5 @@
 package info.preva1l.fadah.guis.bedrock;
 
-import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
@@ -8,7 +7,6 @@ import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.filters.SortingDirection;
 import info.preva1l.fadah.filters.SortingMethod;
 import info.preva1l.fadah.guis.MenuManager;
-import info.preva1l.fadah.guis.java.ConfirmPurchaseMenu;
 import info.preva1l.fadah.guis.java.SearchMenu;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.Listing;
@@ -29,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BedrockMainMenu extends ScrollBarFastInv {
-    private Category category;
     private final List<Listing> listings;
 
     // Filters
@@ -37,10 +34,9 @@ public class BedrockMainMenu extends ScrollBarFastInv {
     private SortingMethod sortingMethod;
     private SortingDirection sortingDirection;
 
-    public BedrockMainMenu(@NotNull Player player, @Nullable Category category, @Nullable String search,
-                    @Nullable SortingMethod sortingMethod, @Nullable SortingDirection sortingDirection) {
+    public BedrockMainMenu(@NotNull Player player,
+                           @Nullable String search) {
         super(LayoutManager.MenuType.MAIN.getLayout().guiSize(), LayoutManager.MenuType.MAIN.getLayout().guiTitle(), player, LayoutManager.MenuType.MAIN);
-        this.category = category;
         this.listings = new ArrayList<>(ListingCache.getListings().values());
 
         this.search = search;
@@ -49,6 +45,7 @@ public class BedrockMainMenu extends ScrollBarFastInv {
 
         listings.sort(this.sortingMethod.getSorter(this.sortingDirection));
 
+        Category category = MenuManager.getInstance().getCategory(player);
         if (category != null) {
             listings.removeIf(listing -> !listing.getCategoryID().equals(category.id()));
         }
@@ -114,17 +111,17 @@ public class BedrockMainMenu extends ScrollBarFastInv {
                             ItemFlag.HIDE_PLACED_ON,
                             ItemFlag.HIDE_DYE,
                             ItemFlag.HIDE_POTION_EFFECTS);
-            if (category == cat) {
+            if (MenuManager.getInstance().getCategory(player) == cat) {
                 itemBuilder.name(StringUtils.colorize(cat.name() + "&r " + Lang.CATEGORY_SELECTED.toFormattedString()))
                         .enchant(Enchantment.DURABILITY);
                 itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             }
 
             addScrollbarItem(new PaginatedItem(itemBuilder.build(), e -> {
-                if (category != cat) {
-                    this.category = cat;
+                if (MenuManager.getInstance().getCategory(player) != cat) {
+                    MenuManager.getInstance().setCategory(player, cat);
                 } else {
-                    this.category = null;
+                    MenuManager.getInstance().setCategory(player, null);
                 }
 
                 updatePagination();
@@ -143,52 +140,12 @@ public class BedrockMainMenu extends ScrollBarFastInv {
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
                     .addLore(getLang().getLore("listing.lore-body",
                             listing.getOwnerName(), StringUtils.removeColorCodes(CategoryCache.getCatName(listing.getCategoryID())), buyMode, new DecimalFormat(Config.DECIMAL_FORMAT.toString())
-                                    .format(listing.getPrice()), TimeUtil.formatTimeUntil(listing.getDeletionDate())));
+                                    .format(listing.getPrice()), TimeUtil.formatTimeUntil(listing.getDeletionDate())))
+                    .addLore(getLang().getStringFormatted("listing.lore-footer"));
 
-            if (player.getUniqueId().equals(listing.getOwner())) {
-                itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.own-listing"));
-            } else if (Fadah.getINSTANCE().getEconomy().has(player, listing.getPrice())) {
-                itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.buy"));
-            } else {
-                itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.too-expensive"));
-            }
-            if (listing.getItemStack().getType().name().toUpperCase().endsWith("SHULKER_BOX")) {
-                itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.is-shulker"));
-            }
-
-            addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
-                // TODO split this out into the BedrockListingOptionsMenu
-                if (e.isShiftClick() && e.getWhoClicked().hasPermission("fadah.manage.active-listings")) {
-                    if (listing.cancel(((Player) e.getWhoClicked()))) {
-                        updatePagination();
-                    }
-                    return;
-                }
-
-                if (e.isRightClick() && listing.getItemStack().getType().name().toUpperCase().endsWith("SHULKER_BOX")) {
-                    MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.SHULKER_PREVIEW,
-                            listing, false, null, category, search, sortingMethod, sortingDirection);
-                    return;
-                }
-
-                if (listing.isOwner(player)) {
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.OWN_LISTING.toFormattedString());
-                    return;
-                }
-
-                if (!Fadah.getINSTANCE().getEconomy().has(player, listing.getPrice())) {
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.TOO_EXPENSIVE.toFormattedString());
-                    return;
-                }
-
-                if (ListingCache.getListing(listing.getId()) == null) { // todo: re-add strict checks
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
-                    return;
-                }
-
-                new ConfirmPurchaseMenu(listing, player, category, search,
-                        sortingMethod, sortingDirection, false, null).open(player);
-            }));
+            addPaginationItem(new PaginatedItem(itemStack.build(), e ->
+                    MenuManager.getInstance().openMenu(((Player) e.getWhoClicked()),
+                            LayoutManager.MenuType.LISTING_OPTIONS, listing)));
         }
     }
 
@@ -263,7 +220,7 @@ public class BedrockMainMenu extends ScrollBarFastInv {
                         .modelData(getLang().getInt("filter.search.model-data"))
                         .lore(getLang().getLore("filter.search.lore")).build(), e ->
                         new SearchMenu(player, getLang().getString("filter.search.placeholder", "Search Query..."), search ->
-                                MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.MAIN, category, search, sortingMethod, sortingDirection)));
+                                MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.MAIN, search)));
 
         // Filter Direction Toggle
         String asc = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.ASCENDING

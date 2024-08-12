@@ -10,7 +10,8 @@ import java.util.List;
 
 public class BedrockFiltersMenu extends FastInv {
     public BedrockFiltersMenu(@NotNull Player player) {
-        super(LayoutManager.MenuType.FILTERS.getLayout().guiSize(), LayoutManager.MenuType.MAIN.getLayout().guiTitle(), LayoutManager.MenuType.FILTERS);
+        super(LayoutManager.MenuType.FILTERS.getLayout().guiSize(),
+                LayoutManager.MenuType.LISTING_OPTIONS.getLayout().guiTitle(), LayoutManager.MenuType.FILTERS);
 
         List<Integer> fillerSlots = getLayout().fillerSlots();
         if (!fillerSlots.isEmpty()) {

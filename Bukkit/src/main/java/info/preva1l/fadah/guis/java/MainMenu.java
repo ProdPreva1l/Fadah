@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainMenu extends ScrollBarFastInv {
-    private Category category;
     private final List<Listing> listings;
 
     // Filters
@@ -35,10 +34,9 @@ public class MainMenu extends ScrollBarFastInv {
     private SortingMethod sortingMethod;
     private SortingDirection sortingDirection;
 
-    public MainMenu(@NotNull Player player, @Nullable Category category,  @Nullable String search,
-                    @Nullable SortingMethod sortingMethod, @Nullable SortingDirection sortingDirection) {
+    public MainMenu(@NotNull Player player,
+                    @Nullable String search) {
         super(LayoutManager.MenuType.MAIN.getLayout().guiSize(), LayoutManager.MenuType.MAIN.getLayout().guiTitle(), player, LayoutManager.MenuType.MAIN);
-        this.category = category;
         this.listings = new ArrayList<>(ListingCache.getListings().values());
 
         this.search = search;
@@ -47,6 +45,7 @@ public class MainMenu extends ScrollBarFastInv {
 
         listings.sort(this.sortingMethod.getSorter(this.sortingDirection));
 
+        Category category = MenuManager.getInstance().getCategory(player);
         if (category != null) {
             listings.removeIf(listing -> !listing.getCategoryID().equals(category.id()));
         }
@@ -112,17 +111,17 @@ public class MainMenu extends ScrollBarFastInv {
                             ItemFlag.HIDE_PLACED_ON,
                             ItemFlag.HIDE_DYE,
                             ItemFlag.HIDE_POTION_EFFECTS);
-            if (category == cat) {
+            if (MenuManager.getInstance().getCategory(player) == cat) {
                 itemBuilder.name(StringUtils.colorize(cat.name() + "&r " + Lang.CATEGORY_SELECTED.toFormattedString()))
                         .enchant(Enchantment.DURABILITY);
                 itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             }
 
             addScrollbarItem(new PaginatedItem(itemBuilder.build(), e -> {
-                if (category != cat) {
-                    this.category = cat;
+                if (MenuManager.getInstance().getCategory(player) != cat) {
+                    MenuManager.getInstance().setCategory(player, cat);
                 } else {
-                    this.category = null;
+                    MenuManager.getInstance().setCategory(player, null);
                 }
 
                 updatePagination();
@@ -163,7 +162,7 @@ public class MainMenu extends ScrollBarFastInv {
                 }
 
                 if (e.isRightClick() && listing.getItemStack().getType().name().toUpperCase().endsWith("SHULKER_BOX")) {
-                    MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.SHULKER_PREVIEW, listing, true, null, category, search, sortingMethod, sortingDirection);
+                    MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.SHULKER_PREVIEW, listing, true, null);
                     return;
                 }
 
@@ -258,7 +257,7 @@ public class MainMenu extends ScrollBarFastInv {
                 .modelData(getLang().getInt("filter.search.model-data"))
                 .lore(getLang().getLore("filter.search.lore")).build(), e ->
                 new SearchMenu(player, getLang().getString("filter.search.placeholder", "Search Query..."), search ->
-                        MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.MAIN, category, search, sortingMethod, sortingDirection)));
+                        MenuManager.getInstance().openMenu(player, LayoutManager.MenuType.MAIN, search)));
 
         // Filter Direction Toggle
         String asc = StringUtils.formatPlaceholders(sortingDirection == SortingDirection.ASCENDING
@@ -297,6 +296,7 @@ public class MainMenu extends ScrollBarFastInv {
 
         listings.sort(this.sortingMethod.getSorter(this.sortingDirection));
 
+        Category category = MenuManager.getInstance().getCategory(player);
         if (category != null) {
             listings.removeIf(listing -> !listing.getCategoryID().equals(category.id()));
         }

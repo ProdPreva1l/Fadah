@@ -115,8 +115,8 @@ public class ItemBuilder {
         return meta(meta -> meta.setLore(lore));
     }
 
-    public void addLore(String line) {
-        meta(meta -> {
+    public ItemBuilder addLore(String line) {
+        return meta(meta -> {
             List<String> lore = meta.getLore();
 
             if (lore == null) {
