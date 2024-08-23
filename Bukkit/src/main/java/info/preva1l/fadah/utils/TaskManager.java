@@ -1,7 +1,10 @@
 package info.preva1l.fadah.utils;
 
+import info.preva1l.fadah.Fadah;
 import lombok.experimental.UtilityClass;
-import org.bukkit.plugin.java.JavaPlugin;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 
 /**
  * Easy creation of Bukkit Tasks
@@ -20,7 +23,7 @@ public class TaskManager {
          * @param plugin   The current plugin typeof JavaPlugin. (Not Commons)
          * @param runnable The runnable, lambda supported yeh
          */
-        public void run(JavaPlugin plugin, Runnable runnable) {
+        public void run(Fadah plugin, Runnable runnable) {
             plugin.getServer().getScheduler().runTask(plugin, runnable);
         }
 
@@ -31,7 +34,7 @@ public class TaskManager {
          * @param runnable The runnable, lambda supported yeh
          * @param interval Time between each run
          */
-        public void runTask(JavaPlugin plugin, Runnable runnable, long interval) {
+        public void runTask(Fadah plugin, Runnable runnable, long interval) {
             plugin.getServer().getScheduler().runTaskTimer(plugin, runnable, 0L, interval);
         }
 
@@ -42,7 +45,7 @@ public class TaskManager {
          * @param runnable The runnable, lambda supported yeh
          * @param delay    Time before running.
          */
-        public void runLater(JavaPlugin plugin, Runnable runnable, long delay) {
+        public void runLater(Fadah plugin, Runnable runnable, long delay) {
             plugin.getServer().getScheduler().runTaskLater(plugin, runnable, delay);
         }
     }
@@ -58,8 +61,8 @@ public class TaskManager {
          * @param plugin   The current plugin typeof JavaPlugin. (Not Commons)
          * @param runnable The runnable, lambda supported yeh
          */
-        public static void run(JavaPlugin plugin, Runnable runnable) {
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, runnable);
+        public static void run(Fadah plugin, Runnable runnable) {
+            plugin.getPaperLib().scheduling().asyncScheduler().run(runnable);
         }
 
         /**
@@ -69,8 +72,8 @@ public class TaskManager {
          * @param runnable The runnable, lambda supported yeh
          * @param interval Time between each run
          */
-        public void runTask(JavaPlugin plugin, Runnable runnable, long interval) {
-            plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0L, interval);
+        public void runTask(Fadah plugin, Runnable runnable, long interval) {
+            plugin.getPaperLib().scheduling().asyncScheduler().runAtFixedRate(runnable, Duration.of(0, ChronoUnit.MILLIS), Duration.of(interval * 20, ChronoUnit.SECONDS));
         }
 
         /**
@@ -80,8 +83,8 @@ public class TaskManager {
          * @param runnable The runnable, lambda supported yeh
          * @param delay    Time before running.
          */
-        public void runLater(JavaPlugin plugin, Runnable runnable, long delay) {
-            plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, runnable, delay);
+        public void runLater(Fadah plugin, Runnable runnable, long delay) {
+            plugin.getPaperLib().scheduling().asyncScheduler().runDelayed(runnable, Duration.of(delay * 20, ChronoUnit.SECONDS));
         }
     }
 }

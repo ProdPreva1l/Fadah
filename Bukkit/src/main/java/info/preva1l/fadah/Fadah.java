@@ -41,6 +41,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+import space.arim.morepaperlib.MorePaperLib;
 
 import java.io.File;
 import java.io.IOException;
@@ -73,6 +74,7 @@ public final class Fadah extends JavaPlugin {
     @Getter private LayoutManager layoutManager;
 
     @Getter private BukkitAudiences adventureAudience;
+    @Getter private MorePaperLib paperLib;
     @Getter private MigratorManager migratorManager;
 
     private Metrics metrics;
@@ -84,6 +86,7 @@ public final class Fadah extends JavaPlugin {
         console = getLogger();
         hookManager = new HookManager();
         adventureAudience = BukkitAudiences.create(this);
+        paperLib = new MorePaperLib(this);
 
         if (!hookIntoVault()) {
             getConsole().severe("------------------------------------------");
