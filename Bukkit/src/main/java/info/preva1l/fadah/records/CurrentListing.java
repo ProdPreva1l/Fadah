@@ -12,6 +12,7 @@ import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.multiserver.Payload;
+import info.preva1l.fadah.utils.TaskManager;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
@@ -118,7 +119,7 @@ public final class CurrentListing extends Listing {
 
         boolean isAdmin = !this.isOwner(canceller);
         TransactionLogger.listingRemoval(this, isAdmin);
-        Bukkit.getScheduler().runTaskAsynchronously(Fadah.getINSTANCE(), () ->
+        TaskManager.Async.run(Fadah.getINSTANCE(), () ->
                 Bukkit.getServer().getPluginManager().callEvent(
                         new ListingEndEvent(this, isAdmin
                                 ? ListingEndReason.CANCELLED_ADMIN
