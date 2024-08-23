@@ -19,7 +19,8 @@ dependencies {
     compileOnly 'net.kyori:adventure-api:4.17.0'
     compileOnly 'net.kyori:adventure-platform-bukkit:4.3.3'
 
-    implementation "com.github.puregero:multilib:1.2.3" // Folia & ShreddedPaper Support
+    // Folia & Shreddedpaper support
+    implementation "com.github.puregero:multilib:1.2.3"
     implementation 'space.arim.morepaperlib:morepaperlib:0.4.3'
 
     implementation 'net.william278:desertwell:2.0.4' // Update Checker & About Page
@@ -58,6 +59,7 @@ shadowJar {
     relocate 'com.zaxxer', 'info.preva1l.fadah.libs'
     relocate 'net.wesjd', 'info.preva1l.fadah.libs'
     relocate 'com.github.puregero.multilib', 'info.preva1l.fadah.libs.multilib'
+    relocate 'space.arim.morepaperlib', 'info.preva1l.fadah.libs'
 
     archiveClassifier.set('')
     //minimize()

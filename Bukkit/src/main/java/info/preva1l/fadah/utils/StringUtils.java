@@ -16,6 +16,10 @@ import java.util.regex.Pattern;
  */
 @UtilityClass
 public class StringUtils {
+    private final Pattern HEX_PATTERN = Pattern.compile("&#(\\w{5}[0-9a-fA-F])");
+    private final Pattern SECTION_SYMBOL_PATTERN = Pattern.compile("§[0-9a-fA-Fk-orK-OR]");
+    private final Pattern AMPERSAND_PATTERN = Pattern.compile("&[0-9a-fA-Fk-orK-OR]");
+
     /**
      * Colorize a list. (Useful for lore)
      *
@@ -118,8 +122,6 @@ public class StringUtils {
         return result.toString();
     }
 
-    private final Pattern HEX_PATTERN = Pattern.compile("&#(\\w{5}[0-9a-fA-F])");
-
     /**
      * Colorize  a string.
      * @param text String with color codes or hex codes.
@@ -141,13 +143,20 @@ public class StringUtils {
     }
 
     /**
-     * Strip color codes from a string. (Doesn't remove hex codes)
+     * Strip color codes from a string, including hex codes, codes starting with the section symbol (§),
+     * and codes starting with an ampersand (&).
      *
      * @param str String with color codes.
      * @return String without color codes.
      */
     public String removeColorCodes(String str) {
-        return str.replaceAll("&(?! ).", "");
+        // Remove hex codes
+        String result = HEX_PATTERN.matcher(str).replaceAll("");
+        // Remove section symbol codes
+        result = SECTION_SYMBOL_PATTERN.matcher(result).replaceAll("");
+        // Remove ampersand codes
+        result = AMPERSAND_PATTERN.matcher(result).replaceAll("");
+        return result;
     }
 
     /**

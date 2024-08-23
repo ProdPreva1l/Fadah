@@ -40,11 +40,11 @@ public class DiscordHook implements Hook {
         final DiscordWebhook.EmbedObject.EmbedObjectBuilder embed = DiscordWebhook.EmbedObject.builder()
                 .title(StringUtils.colorize(Config.HOOK_DISCORD_EMBED_TITLE.toString()
                         .replace("%player%", listing.getOwnerName())
-                        .replace("%item%", StringUtils.extractItemName(listing.getItemStack()))
+                        .replace("%item%", StringUtils.removeColorCodes(StringUtils.extractItemName(listing.getItemStack())))
                         .replace("%price%", new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()))))
                 .description(StringUtils.colorize(Config.HOOK_DISCORD_EMBED_CONTENT.toString()
                                 .replace("%player%", listing.getOwnerName())
-                                .replace("%item%", StringUtils.extractItemName(listing.getItemStack()))
+                                .replace("%item%", StringUtils.removeColorCodes(StringUtils.extractItemName(listing.getItemStack())))
                                 .replace("%price%", new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()))));
 
         switch (Config.HOOK_DISCORD_EMBED_IMAGE.toImageLocationEnum()) {
@@ -69,7 +69,7 @@ public class DiscordHook implements Hook {
         final DiscordWebhook webhook = new DiscordWebhook(Config.HOOK_DISCORD_URL.toString());
         webhook.setContent(StringUtils.colorize(Config.HOOK_DISCORD_PLAIN.toString()
                 .replace("%player%", listing.getOwnerName())
-                .replace("%item%", StringUtils.extractItemName(listing.getItemStack()))
+                .replace("%item%", StringUtils.removeColorCodes(StringUtils.extractItemName(listing.getItemStack())))
                 .replace("%price%", new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()))));
         try {
             webhook.execute();
