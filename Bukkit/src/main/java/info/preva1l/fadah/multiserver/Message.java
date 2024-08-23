@@ -4,7 +4,6 @@ import com.google.gson.annotations.Expose;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.jetbrains.annotations.NotNull;
 
 @Getter
 @AllArgsConstructor
@@ -13,7 +12,8 @@ public class Message {
     @Expose private Type type;
     @Expose private Payload payload;
 
-    public void send(@NotNull Broker broker) {
+    public void send(Broker broker) {
+        if (broker == null) return;
         broker.send(this);
     }
 
