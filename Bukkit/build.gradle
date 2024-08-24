@@ -19,9 +19,8 @@ dependencies {
     compileOnly 'net.kyori:adventure-api:4.17.0'
     compileOnly 'net.kyori:adventure-platform-bukkit:4.3.3'
 
-    // Folia & Shreddedpaper support
-    implementation "com.github.puregero:multilib:1.2.3"
-    implementation 'space.arim.morepaperlib:morepaperlib:0.4.3'
+
+    implementation "com.github.puregero:multilib:1.2.4" // Folia & Shreddedpaper support
 
     implementation 'net.william278:desertwell:2.0.4' // Update Checker & About Page
 

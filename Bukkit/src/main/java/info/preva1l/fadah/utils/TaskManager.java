@@ -1,10 +1,8 @@
 package info.preva1l.fadah.utils;
 
+import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;
 import lombok.experimental.UtilityClass;
-
-import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
 /**
  * Easy creation of Bukkit Tasks
@@ -62,7 +60,7 @@ public class TaskManager {
          * @param runnable The runnable, lambda supported yeh
          */
         public static void run(Fadah plugin, Runnable runnable) {
-            plugin.getPaperLib().scheduling().asyncScheduler().run(runnable);
+            MultiLib.getAsyncScheduler().runNow(plugin, task -> runnable.run());
         }
 
         /**
@@ -73,7 +71,7 @@ public class TaskManager {
          * @param interval Time between each run
          */
         public void runTask(Fadah plugin, Runnable runnable, long interval) {
-            plugin.getPaperLib().scheduling().asyncScheduler().runAtFixedRate(runnable, Duration.of(0, ChronoUnit.MILLIS), Duration.of(interval * 20, ChronoUnit.SECONDS));
+            MultiLib.getAsyncScheduler().runAtFixedRate(plugin, task -> runnable.run(), 0L, interval);
         }
 
         /**
@@ -84,7 +82,7 @@ public class TaskManager {
          * @param delay    Time before running.
          */
         public void runLater(Fadah plugin, Runnable runnable, long delay) {
-            plugin.getPaperLib().scheduling().asyncScheduler().runDelayed(runnable, Duration.of(delay * 20, ChronoUnit.SECONDS));
+            MultiLib.getAsyncScheduler().runDelayed(plugin, task -> runnable.run(), delay);
         }
     }
 }
