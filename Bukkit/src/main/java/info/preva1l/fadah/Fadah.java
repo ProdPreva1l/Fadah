@@ -15,6 +15,7 @@ import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.hooks.HookManager;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
 import info.preva1l.fadah.hooks.impl.EcoItemsHook;
+import info.preva1l.fadah.hooks.impl.InfluxDBHook;
 import info.preva1l.fadah.listeners.PlayerListener;
 import info.preva1l.fadah.migrator.AuctionHouseMigrator;
 import info.preva1l.fadah.migrator.MigratorManager;
@@ -45,6 +46,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
@@ -131,6 +133,10 @@ public final class Fadah extends JavaPlugin {
         DatabaseManager.getInstance().shutdown();
         if (broker != null) broker.destroy();
         if (metrics != null) metrics.shutdown();
+        Optional<InfluxDBHook> hook = Fadah.getINSTANCE().getHookManager().getHook(InfluxDBHook.class);
+        if (Config.HOOK_INFLUX_ENABLED.toBoolean() && hook.isPresent() && hook.get().isEnabled()) {
+            hook.get().destroy();
+        }
     }
 
     private Runnable listingExpiryTask() {

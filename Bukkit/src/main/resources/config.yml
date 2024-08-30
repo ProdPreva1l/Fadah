@@ -36,6 +36,13 @@ hooks:
     # If mode is PLAIN
     plain-text: "%player% just listed %item% for $%price% on the auction house!"
 
+  influxdb:
+    enabled: false
+    uri: "http://localhost:8086"
+    token: "MyToken"
+    org: "MyServer"
+    bucket: "Fadah"
+
 migrators:
   z-auction-house:
     categories-to-migrate:
