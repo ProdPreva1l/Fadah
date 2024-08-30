@@ -65,17 +65,18 @@ public abstract class PaginatedFastInv extends FastInv {
     protected void populatePage() {
         int maxItemsPerPage = paginationMappings.size();
         boolean empty = paginatedItems == null || paginatedItems.isEmpty();
+        if (empty) {
+            paginationEmpty();
+        }
+        
         for (int i = 0; i < maxItemsPerPage; i++) {
             removeItem(paginationMappings.get(i));
-            if (empty) continue;
             index = maxItemsPerPage * page + i;
             if (index >= paginatedItems.size()) continue;
             PaginatedItem item = paginatedItems.get(index);
             setItem(paginationMappings.get(i), item.itemStack(), item.eventConsumer());
         }
-        if (empty) {
-            paginationEmpty();
-        }
+
     }
 
     protected void updatePagination() {
