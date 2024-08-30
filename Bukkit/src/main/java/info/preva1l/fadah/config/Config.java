@@ -38,6 +38,12 @@ public enum Config {
     HOOK_DISCORD_EMBED_FOOTER("hooks.discord.embed.footer", "Powered by Finally a Decent Auction House"),
     HOOK_DISCORD_PLAIN("hooks.discord.plain-text", ""),
 
+    HOOK_INFLUX_ENABLED("hooks.influxdb.enabled", false),
+    HOOK_INFLUX_URI("hooks.influxdb.uri", "http://localhost:8086"),
+    HOOK_INFLUX_TOKEN("hooks.influxdb.token", "MyToken"),
+    HOOK_INFLUX_ORG("hooks.influxdb.org", "MyOrg"),
+    HOOK_INFLUX_BUCKET("hooks.influxdb.bucket", "Fadah"),
+
     MIGRATOR_ZAUCTIONHOUSE_CATEGORIES("migrators.z-auction-house.categories-to-migrate", List.of("Blocks", "Tools", "Weapons", "Potions", "Misc")),
 
     LOG_TO_FILE("log-to-file", true),
