@@ -1,7 +1,7 @@
 package info.preva1l.fadah.data.handler;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.config.old.Config;
 import info.preva1l.fadah.data.dao.Dao;
 import info.preva1l.fadah.data.dao.mongo.CollectionBoxMongoDao;
 import info.preva1l.fadah.data.dao.mongo.ExpiredItemsMongoDao;

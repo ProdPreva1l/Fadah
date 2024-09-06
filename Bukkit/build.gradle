@@ -19,6 +19,7 @@ dependencies {
     compileOnly 'net.kyori:adventure-api:4.17.0'
     compileOnly 'net.kyori:adventure-platform-bukkit:4.3.3'
 
+    implementation 'de.exlll:configlib-yaml:4.5.0' // Configs
 
     implementation "com.github.puregero:multilib:1.2.4" // Folia & Shreddedpaper support
 

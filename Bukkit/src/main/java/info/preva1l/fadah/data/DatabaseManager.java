@@ -2,7 +2,7 @@ package info.preva1l.fadah.data;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.ListingCache;
-import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.config.old.Config;
 import info.preva1l.fadah.data.handler.DatabaseHandler;
 import info.preva1l.fadah.data.handler.MongoHandler;
 import info.preva1l.fadah.data.handler.MySQLHandler;

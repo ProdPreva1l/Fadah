@@ -1,8 +1,8 @@
 package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.cache.HistoricItemsCache;
-import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.old.Config;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;

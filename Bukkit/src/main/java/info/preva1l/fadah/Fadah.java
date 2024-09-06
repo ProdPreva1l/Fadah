@@ -63,7 +63,6 @@ public final class Fadah extends JavaPlugin {
     @Getter private static Logger console;
     @Getter private final Logger transactionLogger = Logger.getLogger("AuctionHouse-Transactions");
 
-    @Getter private BasicConfig configFile;
     @Getter private BasicConfig categoriesFile;
     @Getter private BasicConfig langFile;
     @Getter private BasicConfig menusFile;
@@ -134,7 +133,7 @@ public final class Fadah extends JavaPlugin {
         if (broker != null) broker.destroy();
         if (metrics != null) metrics.shutdown();
         Optional<InfluxDBHook> hook = Fadah.getINSTANCE().getHookManager().getHook(InfluxDBHook.class);
-        if (Config.HOOK_INFLUX_ENABLED.toBoolean() && hook.isPresent() && hook.get().isEnabled()) {
+        if (info.preva1l.fadah.config.old.Config.HOOK_INFLUX_ENABLED.toBoolean() && hook.isPresent() && hook.get().isEnabled()) {
             hook.get().destroy();
         }
     }
@@ -169,11 +168,10 @@ public final class Fadah extends JavaPlugin {
 
     private void loadFiles() {
         getConsole().info("Loading Configuration Files...");
-        configFile = new BasicConfig(this, "config.yml");
         categoriesFile = new BasicConfig(this, "categories.yml");
         langFile = new BasicConfig(this, "lang.yml");
 
-        Config.loadDefault();
+        Config.i();
         Lang.loadDefault();
 
         categoriesFile.save();
@@ -226,11 +224,11 @@ public final class Fadah extends JavaPlugin {
     private void loadHooks() {
         getConsole().info("Configuring Hooks...");
 
-        if (Config.HOOK_ECO_ITEMS.toBoolean()) {
+        if (info.preva1l.fadah.config.old.Config.HOOK_ECO_ITEMS.toBoolean()) {
             getHookManager().registerHook(new EcoItemsHook());
         }
 
-        if (Config.HOOK_DISCORD_ENABLED.toBoolean()) {
+        if (info.preva1l.fadah.config.old.Config.HOOK_DISCORD_ENABLED.toBoolean()) {
             getHookManager().registerHook(new DiscordHook());
         }
 
@@ -238,17 +236,18 @@ public final class Fadah extends JavaPlugin {
     }
 
     private void loadBroker() {
-        if (Config.BROKER_ENABLED.toBoolean()) {
+        Config.Broker settings = Config.i().getBroker();
+        if (settings.isEnabled()) {
             getConsole().info("Connecting to Broker...");
-            getConsole().info("Broker Type: %s".formatted(Config.BROKER_TYPE.toBrokerType().getDisplayName()));
-            if (Config.DATABASE_TYPE.toDBTypeEnum() == DatabaseType.SQLITE) {
+            getConsole().info("Broker Type: %s".formatted(settings.getType().getDisplayName()));
+            if (info.preva1l.fadah.config.old.Config.DATABASE_TYPE.toDBTypeEnum() == DatabaseType.SQLITE) {
                 getConsole().severe("------------------------------------------");
                 getConsole().severe("Broker has not been enabled as the selected");
                 getConsole().severe("       database is not compatible!");
                 getConsole().severe("------------------------------------------");
                 return;
             }
-            broker = switch (Config.BROKER_TYPE.toBrokerType()) {
+            broker = switch (settings.getType()) {
                 case REDIS -> new RedisBroker(this);
             };
             broker.connect();
@@ -286,7 +285,7 @@ public final class Fadah extends JavaPlugin {
     private void initLogger() {
         getConsole().info("Initialising transaction logger...");
 
-        if (!Config.LOG_TO_FILE.toBoolean()) {
+        if (!info.preva1l.fadah.config.old.Config.LOG_TO_FILE.toBoolean()) {
             return;
         }
         try {
@@ -350,7 +349,7 @@ public final class Fadah extends JavaPlugin {
 
     public void reload() {
         FastInvManager.closeAll(this);
-        Fadah.getINSTANCE().getConfigFile().load();
+        Config.reload();
         Fadah.getINSTANCE().getLangFile().load();
         Fadah.getINSTANCE().getMenusFile().load();
         Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.MAIN);

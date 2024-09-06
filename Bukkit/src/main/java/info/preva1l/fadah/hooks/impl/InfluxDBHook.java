@@ -5,7 +5,7 @@ import com.influxdb.client.InfluxDBClientFactory;
 import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
-import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.config.old.Config;
 import info.preva1l.fadah.hooks.Hook;
 import lombok.Getter;
 import lombok.Setter;

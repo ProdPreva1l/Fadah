@@ -1,7 +1,7 @@
 package info.preva1l.fadah.multiserver;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.config.old.Config;
 import info.preva1l.fadah.utils.TaskManager;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Blocking;

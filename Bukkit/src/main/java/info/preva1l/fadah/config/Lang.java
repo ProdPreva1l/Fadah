@@ -14,7 +14,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public enum Lang {
-    PREFIX("prefix", "&#9555FF&lDXTRUS"),
+    PREFIX("prefix", "&#9555FF&lAuction House"),
 
     OWN_LISTING("errors.own-listing", "&cYou cannot buy your own listing!"),
     TOO_EXPENSIVE("errors.too-expensive", "&cYou cannot afford this item!"),

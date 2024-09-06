@@ -7,7 +7,7 @@ import fr.maxlego08.zauctionhouse.api.category.Category;
 import fr.maxlego08.zauctionhouse.api.category.CategoryManager;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
-import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.config.old.Config;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.CurrentListing;
 import info.preva1l.fadah.records.Listing;
