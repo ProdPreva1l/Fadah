@@ -2,7 +2,7 @@ package info.preva1l.fadah.data;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.ListingCache;
-import info.preva1l.fadah.config.old.Config;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.data.handler.DatabaseHandler;
 import info.preva1l.fadah.data.handler.MongoHandler;
 import info.preva1l.fadah.data.handler.MySQLHandler;
@@ -102,7 +102,7 @@ public final class DatabaseManager {
     }
 
     private DatabaseHandler initHandler() {
-        DatabaseType type = Config.DATABASE_TYPE.toDBTypeEnum();
+        DatabaseType type = Config.i().getDatabase().getType();
         Fadah.getConsole().info("DB Type: %s".formatted(type.getFriendlyName()));
         try {
             Class<? extends DatabaseHandler> handlerClass = databaseHandlers.get(type);

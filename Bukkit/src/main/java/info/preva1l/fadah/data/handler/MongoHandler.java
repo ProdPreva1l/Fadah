@@ -1,7 +1,7 @@
 package info.preva1l.fadah.data.handler;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.old.Config;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.data.dao.Dao;
 import info.preva1l.fadah.data.dao.mongo.CollectionBoxMongoDao;
 import info.preva1l.fadah.data.dao.mongo.ExpiredItemsMongoDao;
@@ -29,9 +29,10 @@ public class MongoHandler implements DatabaseHandler {
 
     @Override
     public void connect() {
+        Config.Database conf = Config.i().getDatabase();
         try {
-            @NotNull String connectionURI = Config.DATABASE_URI.toString();
-            @NotNull String database = Config.DATABASE.toString();
+            @NotNull String connectionURI = conf.getUri();
+            @NotNull String database = conf.getDatabase();
             Fadah.getConsole().info("Connecting to: " + connectionURI);
             connectionHandler = new MongoConnectionHandler(connectionURI, database);
             CacheHandler cacheHandler = new CacheHandler(connectionHandler);

@@ -2,6 +2,7 @@ package info.preva1l.fadah.commands.subcommands;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.HistoricItemsCache;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.guis.ProfileMenu;
 import info.preva1l.fadah.utils.commands.SubCommand;
@@ -18,7 +19,7 @@ public class ProfileSubCommand extends SubCommand {
 
     @SubCommandArgs(name = "profile", permission = "fadah.profile", description = "View your Auction Profile!")
     public void execute(@NotNull SubCommandArguments command) {
-        if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
+        if (!Config.i().isEnabled()) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
             return;
         }

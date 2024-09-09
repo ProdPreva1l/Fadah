@@ -16,27 +16,27 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 public enum Config {
-    MAX_LISTING_PRICE("listing-price.max", 1000000000d),
-    MIN_LISTING_PRICE("listing-price.min", 1),
-    DEFAULT_MAX_LISTINGS("default-max-listings", 3),
-    DECIMAL_FORMAT("decimal-format", "#,###.00"),
+//    MAX_LISTING_PRICE("listing-price.max", 1000000000d),
+//    MIN_LISTING_PRICE("listing-price.min", 1),
+//    DEFAULT_MAX_LISTINGS("default-max-listings", 3),
+//    DECIMAL_FORMAT("decimal-format", "#,###.00"),
 
-    ADVERT_DEFAULT("listing-adverts.default", false),
-    ADVERT_DEFAULT_PRICE("listing-adverts.price", 100.0),
+//    ADVERT_DEFAULT("listing-adverts.default", false),
+//    ADVERT_DEFAULT_PRICE("listing-adverts.price", 100.0),
 
-    STRICT_CHECKS("strict-checks", false),
+//    STRICT_CHECKS("strict-checks", false),
 
     HOOK_ECO_ITEMS("hooks.eco-items", false),
 
-    HOOK_DISCORD_ENABLED("hooks.discord.enabled", false),
-    HOOK_DISCORD_URL("hooks.discord.webhook-url", "INSERT WEBHOOK URL"),
-    HOOK_DISCORD_ADVERT_ONLY("hooks.discord.only-send-on-advert", false),
-    HOOK_DISCORD_MODE("hooks.discord.mode", "EMBED"),
-    HOOK_DISCORD_EMBED_IMAGE("hooks.discord.embed.image-location", "SIDE"),
-    HOOK_DISCORD_EMBED_TITLE("hooks.discord.embed.title", "New Listing by %player%!"),
-    HOOK_DISCORD_EMBED_CONTENT("hooks.discord.embed.content", "%player% just listed %item% for %price% on the auction house!"),
-    HOOK_DISCORD_EMBED_FOOTER("hooks.discord.embed.footer", "Powered by Finally a Decent Auction House"),
-    HOOK_DISCORD_PLAIN("hooks.discord.plain-text", ""),
+//    HOOK_DISCORD_ENABLED("hooks.discord.enabled", false),
+//    HOOK_DISCORD_URL("hooks.discord.webhook-url", "INSERT WEBHOOK URL"),
+//    HOOK_DISCORD_ADVERT_ONLY("hooks.discord.only-send-on-advert", false),
+//    HOOK_DISCORD_MODE("hooks.discord.mode", "EMBED"),
+//    HOOK_DISCORD_EMBED_IMAGE("hooks.discord.embed.image-location", "SIDE"),
+//    HOOK_DISCORD_EMBED_TITLE("hooks.discord.embed.title", "New Listing by %player%!"),
+//    HOOK_DISCORD_EMBED_CONTENT("hooks.discord.embed.content", "%player% just listed %item% for %price% on the auction house!"),
+//    HOOK_DISCORD_EMBED_FOOTER("hooks.discord.embed.footer", "Powered by Finally a Decent Auction House"),
+//    HOOK_DISCORD_PLAIN("hooks.discord.plain-text", ""),
 
     HOOK_INFLUX_ENABLED("hooks.influxdb.enabled", false),
     HOOK_INFLUX_URI("hooks.influxdb.uri", "http://localhost:8086"),
@@ -45,12 +45,12 @@ public enum Config {
     HOOK_INFLUX_BUCKET("hooks.influxdb.bucket", "Fadah"),
 
     MIGRATOR_ZAUCTIONHOUSE_CATEGORIES("migrators.z-auction-house.categories-to-migrate", List.of("Blocks", "Tools", "Weapons", "Potions", "Misc")),
+//
+//    LOG_TO_FILE("log-to-file", true),
 
-    LOG_TO_FILE("log-to-file", true),
-
-    DATABASE_TYPE("database.type", "SQLITE"),
-    DATABASE_URI("database.uri", "jdbc:mysql://username:password@127.0.0.1:3306/Fadah"),
-    DATABASE("database.database", "Fadah"),
+//    DATABASE_TYPE("database.type", "SQLITE"),
+//    DATABASE_URI("database.uri", "jdbc:mysql://username:password@127.0.0.1:3306/Fadah"),
+//    DATABASE("database.database", "Fadah"),
 
 //    BROKER_ENABLED("broker.enabled", false),
 //    BROKER_TYPE("broker.type", "REDIS"),

@@ -2,6 +2,7 @@ package info.preva1l.fadah.commands.subcommands;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.HistoricItemsCache;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.guis.ViewListingsMenu;
 import info.preva1l.fadah.utils.StringUtils;
@@ -19,7 +20,7 @@ public class ViewSubCommand extends SubCommand {
 
     @SubCommandArgs(name = "view", aliases = "visit", permission = "fadah.view", description = "View another players active listings")
     public void execute(@NotNull SubCommandArguments command) {
-        if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
+        if (!Config.i().isEnabled()) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
             return;
         }

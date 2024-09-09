@@ -2,7 +2,7 @@ package info.preva1l.fadah.data.handler;
 
 import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.old.Config;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.data.dao.Dao;
 import info.preva1l.fadah.data.dao.sql.CollectionBoxSQLDao;
@@ -31,8 +31,10 @@ public class MySQLHandler implements DatabaseHandler {
     private final String driverClass;
     private HikariDataSource dataSource;
 
+    private final Config.Database conf = Config.i().getDatabase();
+
     public MySQLHandler() {
-        this.driverClass = Config.DATABASE_TYPE.toDBTypeEnum() == DatabaseType.MARIADB ? "org.mariadb.jdbc.Driver" : "com.mysql.cj.jdbc.Driver";
+        this.driverClass = conf.getType() == DatabaseType.MARIADB ? "org.mariadb.jdbc.Driver" : "com.mysql.cj.jdbc.Driver";
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -50,7 +52,7 @@ public class MySQLHandler implements DatabaseHandler {
     public void connect() {
         dataSource = new HikariDataSource();
         dataSource.setDriverClassName(driverClass);
-        dataSource.setJdbcUrl(Config.DATABASE_URI.toString());
+        dataSource.setJdbcUrl(conf.getUri());
 
         dataSource.setMaximumPoolSize(10);
         dataSource.setMinimumIdle(10);
@@ -79,7 +81,7 @@ public class MySQLHandler implements DatabaseHandler {
         dataSource.setDataSourceProperties(properties);
 
         try (Connection connection = dataSource.getConnection()) {
-            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
+            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", conf.getType().getId()));
             try (Statement statement = connection.createStatement()) {
                 for (String tableCreationStatement : databaseSchema) {
                     statement.execute(tableCreationStatement);

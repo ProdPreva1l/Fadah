@@ -3,6 +3,7 @@ package info.preva1l.fadah.commands.subcommands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.guis.CollectionBoxMenu;
@@ -21,7 +22,7 @@ public class CollectionBoxSubCommand extends SubCommand {
 
     @SubCommandArgs(name = "collectionbox", aliases = {"collection-box", "redeem"}, permission = "fadah.collection-box", description = "View your Collection Box!")
     public void execute(@NotNull SubCommandArguments command) {
-        if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
+        if (!Config.i().isEnabled()) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
             return;
         }

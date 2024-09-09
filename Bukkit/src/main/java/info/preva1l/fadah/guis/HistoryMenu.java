@@ -1,8 +1,8 @@
 package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.cache.HistoricItemsCache;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.config.old.Config;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
@@ -57,19 +57,19 @@ public class HistoryMenu extends PaginatedFastInv {
                         ? getLang().getLore("lore-with-buyer",
                         historicItem.action().getLocaleActionName(),
                         Bukkit.getOfflinePlayer(historicItem.purchaserUUID()).getName(),
-                        new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(historicItem.price()),
+                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.price()),
                         TimeUtil.formatTimeToVisualDate(historicItem.loggedDate()))
 
                         : getLang().getLore("lore-with-seller",
                         historicItem.action().getLocaleActionName(),
                         Bukkit.getOfflinePlayer(historicItem.purchaserUUID()).getName(),
-                        new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(historicItem.price()),
+                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.price()),
                         TimeUtil.formatTimeToVisualDate(historicItem.loggedDate()))
                 );
             } else if (historicItem.price() != null && historicItem.price() != 0d) {
                 itemStack.addLore(getLang().getLore("lore-with-price",
                         historicItem.action().getLocaleActionName(),
-                        new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(historicItem.price()),
+                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.price()),
                         TimeUtil.formatTimeToVisualDate(historicItem.loggedDate())
                 ));
             } else {

@@ -3,6 +3,7 @@ package info.preva1l.fadah.config;
 import de.exlll.configlib.*;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.data.DatabaseType;
+import info.preva1l.fadah.hooks.impl.DiscordHook;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,42 @@ public class Config {
             .charset(StandardCharsets.UTF_8)
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
             .header(CONFIG_HEADER).build();
+
+    @Comment("Toggle with /ah toggle")
+    private boolean enabled = true;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        save();
+    }
+
+    private int defaultMaxListings = 3;
+    private String decimalFormat = "#,###.00";
+    private boolean logToFile = true;
+
+    @Comment("Enable this if you are having de-sync issues with multi-server.")
+    private boolean strictChecks = false;
+
+    private ListingPrice listingPrice = new ListingPrice();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ListingPrice {
+        private double min = 100;
+        private double max = 1000000000;
+    }
+
+    private ListingAdverts listingAdverts = new ListingAdverts();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ListingAdverts {
+        @Comment("Whether or not a listing advert should be made by default.")
+        private boolean enabledByDefault = false;
+        @Comment({"How much it costs to advertise the listing by default.", "Overridden by the `fadah.advert-price.<amount>` permission."})
+        private double defaultPrice = 500;
+    }
 
     private Commands commands = new Commands();
 
@@ -55,6 +92,44 @@ public class Config {
         }
     }
 
+    private Hooks hooks = new Hooks();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Hooks {
+        private Discord discord = new Discord();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Discord {
+            private boolean enabled = false;
+            private String webhookUrl = "INSERT WEBHOOK URL HERE";
+
+            @Comment("If this is true the webhook will only send a message when the listing has been advertised.")
+            private boolean onlySendOnAdvert = false;
+
+            @Comment("Allowed: EMBED, PLAIN_TEXT")
+            private DiscordHook.Mode messageMode = DiscordHook.Mode.EMBED;
+
+            private Embed embed = new Embed();
+
+            @Getter
+            @Configuration
+            @NoArgsConstructor(access = AccessLevel.PRIVATE)
+            public static class Embed {
+                @Comment("Allowed: SIDE, BOTTOM")
+                private DiscordHook.ImageLocation imageLocation = DiscordHook.ImageLocation.SIDE;
+                private String title = "New Listing by %player%!";
+                private String content = "%player% just listed %item% for $%price% on the auction house!";
+                private String footer = "Powered by Finally a Decent Auction House";
+            }
+
+            private String plainText = "%player% just listed %item% for $%price% on the auction house!";
+        }
+    }
+
     private Database database = new Database();
 
     @Getter
@@ -63,12 +138,8 @@ public class Config {
     public static class Database {
         @Comment("Allowed: MYSQL, MARIADB")
         private DatabaseType type = DatabaseType.MARIADB;
-
-        private String host = "localhost";
-        private int port = 3306;
-        private String database = "PrisonCore";
-        private String username = "root";
-        private String password = "";
+        private String uri = "jdbc:mysql://username:password@127.0.0.1:3306/Fadah";
+        private String database = "Fadah";
         private boolean useSsl = false;
     }
 
@@ -85,6 +156,10 @@ public class Config {
         private int port = 6379;
         private String password = "myAwesomePassword";
         private String channel = "fadah.cache";
+    }
+
+    public void save() {
+        YamlConfigurations.save(new File(Fadah.getINSTANCE().getDataFolder(), "config.yml").toPath(), Config.class, this);
     }
 
     public static void reload() {

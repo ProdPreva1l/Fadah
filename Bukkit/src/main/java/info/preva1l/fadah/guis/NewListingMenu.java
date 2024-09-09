@@ -5,8 +5,8 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.api.ListingCreateEvent;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.config.old.Config;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
@@ -39,7 +39,7 @@ public class NewListingMenu extends FastInv {
     private ItemStack itemToSell;
     private Instant timeToDelete;
     private boolean listingStarted = false;
-    private boolean advertise = Config.ADVERT_DEFAULT.toBoolean();
+    private boolean advertise = Config.i().getListingAdverts().isEnabledByDefault();
     private boolean isBidding = false;
 
     public NewListingMenu(Player player, double price) {
@@ -59,7 +59,7 @@ public class NewListingMenu extends FastInv {
                         .name(getLang().getStringFormatted("create.name", "&aClick to create listing!"))
                         .modelData(getLang().getInt("create.model-data"))
                         .addLore(getLang().getLore("create.lore",
-                                new DecimalFormat(Config.DECIMAL_FORMAT.toString())
+                                new DecimalFormat(Config.i().getDecimalFormat())
                                         .format(price)))
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
@@ -137,7 +137,7 @@ public class NewListingMenu extends FastInv {
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .lore(getLang().getLore("advert.lore",
-                                new DecimalFormat(Config.DECIMAL_FORMAT.toString())
+                                new DecimalFormat(Config.i().getDecimalFormat())
                                         .format(PermissionsData.getHighestDouble(PermissionsData.PermissionType.ADVERT_PRICE, player)),
                                 postAdvert, dontPost)).build(), e -> {
                     this.advertise = !advertise;
@@ -207,17 +207,18 @@ public class NewListingMenu extends FastInv {
         double taxAmount = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
         String itemName = StringUtils.extractItemName(listing.getItemStack());
         String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemName,
-                new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
+                new DecimalFormat(Config.i().getDecimalFormat()).format(listing.getPrice()),
                 TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
                 PermissionsData.getHighestInt(PermissionsData.PermissionType.MAX_LISTINGS, player),
-                taxAmount, new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format((taxAmount / 100) * price)));
+                taxAmount, new DecimalFormat(Config.i().getDecimalFormat()).format((taxAmount / 100) * price)));
         player.sendMessage(message);
 
         TransactionLogger.listingCreated(listing);
 
-        if ((Config.HOOK_DISCORD_ENABLED.toBoolean() && plugin.getHookManager().getHook(DiscordHook.class).isPresent()) &&
-                ((Config.HOOK_DISCORD_ADVERT_ONLY.toBoolean() && advertise)
-                        || !Config.HOOK_DISCORD_ADVERT_ONLY.toBoolean())) {
+        Config.Hooks.Discord discConf = Config.i().getHooks().getDiscord();
+        if ((discConf.isEnabled() && plugin.getHookManager().getHook(DiscordHook.class).isPresent()) &&
+                ((discConf.isEnabled() && advertise)
+                        || !discConf.isOnlySendOnAdvert())) {
             plugin.getHookManager().getHook(DiscordHook.class).get().send(listing);
         }
 
@@ -233,7 +234,7 @@ public class NewListingMenu extends FastInv {
 
             String advertMessage = String.join("&r\n", Lang.NOTIFICATION_ADVERT.toStringList(
                     player.getName(), itemName,
-                    new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice())));
+                    new DecimalFormat(Config.i().getDecimalFormat()).format(listing.getPrice())));
 
             Message.builder()
                     .type(Message.Type.BROADCAST)

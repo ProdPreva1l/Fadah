@@ -1,8 +1,8 @@
 package info.preva1l.fadah.commands.subcommands;
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.config.old.Config;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.guis.NewListingMenu;
 import info.preva1l.fadah.utils.StringUtils;
@@ -19,7 +19,7 @@ public class SellSubCommand extends SubCommand {
 
     @SubCommandArgs(name = "sell", aliases = {"new-listing", "create-listing"}, permission = "fadah.use", description = "Create a new listing on the auction house!")
     public void execute(@NotNull SubCommandArguments command) {
-        if (!Fadah.getINSTANCE().getConfigFile().getBoolean("enabled")) {
+        if (!Config.i().isEnabled()) {
             command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
             return;
         }
@@ -52,12 +52,12 @@ public class SellSubCommand extends SubCommand {
         }
 
         try {
-            if (Double.parseDouble(priceString) * multi < Config.MIN_LISTING_PRICE.toDouble()) {
-                command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MIN_LISTING_PRICE.toFormattedString(Config.MIN_LISTING_PRICE.toString())));
+            if (Double.parseDouble(priceString) * multi < Config.i().getListingPrice().getMin()) {
+                command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MIN_LISTING_PRICE.toFormattedString(Config.i().getListingPrice().getMin())));
                 return;
             }
-            if (Double.parseDouble(priceString) * multi > Config.MAX_LISTING_PRICE.toDouble()) {
-                command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MAX_LISTING_PRICE.toFormattedString(Config.MAX_LISTING_PRICE.toString())));
+            if (Double.parseDouble(priceString) * multi > Config.i().getListingPrice().getMax()) {
+                command.sender().sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.MAX_LISTING_PRICE.toFormattedString(Config.i().getListingPrice().getMax())));
                 return;
             }
             int currentListings = PermissionsData.getCurrentListings(command.getPlayer());

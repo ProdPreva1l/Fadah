@@ -228,7 +228,7 @@ public final class Fadah extends JavaPlugin {
             getHookManager().registerHook(new EcoItemsHook());
         }
 
-        if (info.preva1l.fadah.config.old.Config.HOOK_DISCORD_ENABLED.toBoolean()) {
+        if (Config.i().getHooks().getDiscord().isEnabled()) {
             getHookManager().registerHook(new DiscordHook());
         }
 
@@ -240,7 +240,7 @@ public final class Fadah extends JavaPlugin {
         if (settings.isEnabled()) {
             getConsole().info("Connecting to Broker...");
             getConsole().info("Broker Type: %s".formatted(settings.getType().getDisplayName()));
-            if (info.preva1l.fadah.config.old.Config.DATABASE_TYPE.toDBTypeEnum() == DatabaseType.SQLITE) {
+            if (Config.i().getDatabase().getType() == DatabaseType.SQLITE) {
                 getConsole().severe("------------------------------------------");
                 getConsole().severe("Broker has not been enabled as the selected");
                 getConsole().severe("       database is not compatible!");
@@ -285,7 +285,7 @@ public final class Fadah extends JavaPlugin {
     private void initLogger() {
         getConsole().info("Initialising transaction logger...");
 
-        if (!info.preva1l.fadah.config.old.Config.LOG_TO_FILE.toBoolean()) {
+        if (!Config.i().isLogToFile()) {
             return;
         }
         try {

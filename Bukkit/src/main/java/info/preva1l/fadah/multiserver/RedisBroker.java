@@ -1,7 +1,7 @@
 package info.preva1l.fadah.multiserver;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.old.Config;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.utils.TaskManager;
 import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Blocking;
@@ -21,6 +21,7 @@ import java.util.logging.Level;
  */
 public final class RedisBroker extends Broker {
     private final Subscriber subscriber;
+    private static String CHANNEL = "NONE";
 
     public RedisBroker(@NotNull Fadah plugin) {
         super(plugin);
@@ -39,7 +40,9 @@ public final class RedisBroker extends Broker {
         }
 
         subscriber.enable(jedisPool);
-        new Thread(subscriber::subscribe, "fadah:redis_subscriber").start();
+        Thread thread = new Thread(subscriber::subscribe, "fadah:redis_subscriber");
+        thread.setDaemon(true);
+        thread.start();
     }
 
 
@@ -56,9 +59,11 @@ public final class RedisBroker extends Broker {
 
     @NotNull
     private static Pool<Jedis> getJedisPool() {
-        final String password = Config.REDIS_PASSWORD.toString();
-        final String host = Config.REDIS_HOST.toString();
-        final int port = Config.REDIS_PORT.toInteger();
+        Config.Broker conf = Config.i().getBroker();
+        final String password = conf.getPassword();
+        final String host = conf.getHost();
+        final int port = conf.getPort();
+        CHANNEL = conf.getChannel();
 
         final JedisPoolConfig config = new JedisPoolConfig();
         config.setMaxIdle(0);
@@ -101,7 +106,7 @@ public final class RedisBroker extends Broker {
         @Blocking
         public void send(@NotNull Message message) {
             try (Jedis jedis = jedisPool.getResource()) {
-                jedis.publish(Config.REDIS_CHANNEL.toString(), broker.gson.toJson(message));
+                jedis.publish(CHANNEL, broker.gson.toJson(message));
             }
         }
 
@@ -113,7 +118,7 @@ public final class RedisBroker extends Broker {
                         Fadah.getConsole().info("Redis connection is alive again");
                     }
 
-                    jedis.subscribe(this, Config.REDIS_CHANNEL.toString());
+                    jedis.subscribe(this, CHANNEL);
                 } catch (Throwable t) {
                     onThreadUnlock(t);
                 }
@@ -147,7 +152,7 @@ public final class RedisBroker extends Broker {
 
         @Override
         public void onMessage(@NotNull String channel, @NotNull String encoded) {
-            if (!channel.equals(Config.REDIS_CHANNEL.toString())) {
+            if (!channel.equals(CHANNEL)) {
                 return;
             }
             final Message message;

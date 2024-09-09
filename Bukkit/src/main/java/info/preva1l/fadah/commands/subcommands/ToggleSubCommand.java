@@ -1,6 +1,7 @@
 package info.preva1l.fadah.commands.subcommands;
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.utils.commands.SubCommand;
@@ -21,11 +22,8 @@ public class ToggleSubCommand extends SubCommand {
             return;
         }
         FastInvManager.closeAll(plugin);
-        boolean enabled = Fadah.getINSTANCE().getConfigFile().getBoolean("enabled");
-        Fadah.getINSTANCE().getConfigFile().save();
-        Fadah.getINSTANCE().getConfigFile().getConfiguration().set("enabled", !enabled);
-        Fadah.getINSTANCE().getConfigFile().save();
-        Fadah.getINSTANCE().getConfigFile().load();
+        boolean enabled = Config.i().isEnabled();
+        Config.i().setEnabled(!enabled);
 
         String toggle = enabled ? Lang.ADMIN_TOGGLE_DISABLED.toFormattedString() : Lang.ADMIN_TOGGLE_ENABLED.toFormattedString();
         command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADMIN_TOGGLE_MESSAGE.toFormattedString(toggle));

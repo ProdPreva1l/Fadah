@@ -14,7 +14,7 @@ public class EcoItemsHook implements Hook {
 
     public boolean isEcoItem(ItemStack item) {
         for (EcoItem ecoItem : EcoItems.INSTANCE.values()) {
-            if (item.getItemMeta().getPersistentDataContainer().getKeys().contains(ecoItem.getId())) return true;
+            if (ecoItem.getItemStack().equals(item)) return true;
         }
         return false;
     }

@@ -3,7 +3,7 @@ package info.preva1l.fadah.data.handler;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.old.Config;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.data.dao.Dao;
 import info.preva1l.fadah.data.dao.sql.CollectionBoxSQLDao;
 import info.preva1l.fadah.data.dao.sql.ExpiredItemsSQLDao;
@@ -57,7 +57,7 @@ public class SQLiteHandler implements DatabaseHandler {
             dataSource = new HikariDataSource(config);
             this.backupFlatFile(databaseFile);
 
-            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
+            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.i().getDatabase().getType().getId()));
             try (Statement statement = dataSource.getConnection().createStatement()) {
                 for (String tableCreationStatement : databaseSchema) {
                     statement.execute(tableCreationStatement);

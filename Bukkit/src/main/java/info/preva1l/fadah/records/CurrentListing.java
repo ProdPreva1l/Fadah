@@ -7,8 +7,8 @@ import info.preva1l.fadah.api.ListingPurchaseEvent;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.ListingCache;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
-import info.preva1l.fadah.config.old.Config;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.multiserver.Payload;
@@ -78,7 +78,7 @@ public final class CurrentListing extends Listing {
 
         String itemName = this.getItemStack().getItemMeta().getDisplayName().isBlank() ?
                 this.getItemStack().getType().name() : this.getItemStack().getItemMeta().getDisplayName();
-        String formattedPrice = new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(this.getPrice() - taxed);
+        String formattedPrice = new DecimalFormat(Config.i().getDecimalFormat()).format(this.getPrice() - taxed);
         String message = String.join("\n", Lang.NOTIFICATION_NEW_SELL.toLore(itemName, formattedPrice));
 
         Player seller = Bukkit.getPlayer(this.getOwner());
