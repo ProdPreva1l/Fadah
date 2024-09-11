@@ -5,7 +5,7 @@ import com.influxdb.client.InfluxDBClientFactory;
 import com.influxdb.client.WriteApiBlocking;
 import com.influxdb.client.domain.WritePrecision;
 import com.influxdb.client.write.Point;
-import info.preva1l.fadah.config.old.Config;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.hooks.Hook;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,11 +21,12 @@ public class InfluxDBHook implements Hook {
     private final WriteApiBlocking writeApi;
 
     public InfluxDBHook() {
+        Config.Hooks.InfluxDB conf = Config.i().getHooks().getInfluxdb();
         try {
-            String url = Config.HOOK_INFLUX_URI.toString();
-            String token = Config.HOOK_INFLUX_TOKEN.toString();
-            String org = Config.HOOK_INFLUX_ORG.toString();
-            String bucket = Config.HOOK_INFLUX_BUCKET.toString();
+            String url = conf.getUri();
+            String token = conf.getToken();
+            String org = conf.getOrg();
+            String bucket = conf.getBucket();
             this.client = InfluxDBClientFactory.create(url, token.toCharArray(), org, bucket);
             this.writeApi = client.getWriteApiBlocking();
             this.enabled = true;
@@ -36,7 +37,7 @@ public class InfluxDBHook implements Hook {
     }
 
     public void log(String message) {
-        Point point = Point.measurement("Fadah")
+        Point point = Point.measurement("Transaction-Logs")
                 .time(Instant.now(), WritePrecision.MS)
                 .addField("message", message);
         writeApi.writePoint(point);

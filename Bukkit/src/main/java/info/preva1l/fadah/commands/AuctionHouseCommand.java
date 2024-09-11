@@ -3,7 +3,7 @@ package info.preva1l.fadah.commands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.commands.subcommands.*;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.old.Lang;
 import info.preva1l.fadah.guis.MainMenu;
 import info.preva1l.fadah.utils.commands.Command;
 import info.preva1l.fadah.utils.commands.CommandArgs;

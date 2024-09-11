@@ -4,7 +4,7 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.old.Lang;
 import info.preva1l.fadah.filters.SortingDirection;
 import info.preva1l.fadah.filters.SortingMethod;
 import info.preva1l.fadah.records.Category;

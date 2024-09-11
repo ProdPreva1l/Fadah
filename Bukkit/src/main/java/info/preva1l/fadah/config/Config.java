@@ -22,6 +22,7 @@ public class Config {
     private static final String CONFIG_HEADER = """
             #########################################
             #                  Fadah                #
+            #    Finally a Decent Auction House     #
             #########################################
             """;
 
@@ -98,6 +99,8 @@ public class Config {
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Hooks {
+        private boolean ecoItems = false;
+
         private Discord discord = new Discord();
 
         @Getter
@@ -128,6 +131,35 @@ public class Config {
 
             private String plainText = "%player% just listed %item% for $%price% on the auction house!";
         }
+
+        private InfluxDB influxdb = new InfluxDB();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class InfluxDB {
+            private boolean enabled = false;
+            private String uri = "http://localhost:8086";
+            private String token = "MyToken";
+            private String org = "MyOrg";
+            private String bucket = "Fadah";
+        }
+    }
+
+    private Migrators migrators = new Migrators();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Migrators {
+        private ZAuctionHouse zAuctionHouse = new ZAuctionHouse();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class ZAuctionHouse {
+            private List<String> categoriesToMigrate = List.of("Blocks", "Tools", "Weapons", "Potions", "Misc");
+        }
     }
 
     private Database database = new Database();
@@ -143,6 +175,8 @@ public class Config {
         private boolean useSsl = false;
     }
 
+    @Comment({"A message broker is only required for x-server environments.",
+            "This is not compatible with SQLITE database"})
     private Broker broker = new Broker();
 
     @Getter

@@ -2,7 +2,7 @@ package info.preva1l.fadah.commands.subcommands;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.ListingCache;
-import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.old.Lang;
 import info.preva1l.fadah.guis.ConfirmPurchaseMenu;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;

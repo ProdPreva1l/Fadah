@@ -1,7 +1,7 @@
 package info.preva1l.fadah.cache;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.old.Config;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.hooks.impl.EcoItemsHook;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.utils.SetHelper;
@@ -42,9 +42,9 @@ public final class CategoryCache {
     public String getCategoryForItem(ItemStack itemStack) {
         for (Category category : getCategories()) {
             if (category.isCustomItems()) {
-                if (Config.HOOK_ECO_ITEMS.toBoolean()
+                if (Config.i().getHooks().isEcoItems()
                         && Fadah.getINSTANCE().getHookManager().getHook(EcoItemsHook.class).isPresent()) {
-                    EcoItemsHook ecoItemsHook = (EcoItemsHook) Fadah.getINSTANCE().getHookManager().getHook(EcoItemsHook.class).get();
+                    EcoItemsHook ecoItemsHook = Fadah.getINSTANCE().getHookManager().getHook(EcoItemsHook.class).get();
                     if (ecoItemsHook.isEcoItem(itemStack)) return category.id();
                 }
             }

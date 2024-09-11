@@ -1,7 +1,7 @@
 package info.preva1l.fadah.utils.commands;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.old.Lang;
 import info.preva1l.fadah.utils.TaskManager;
 import lombok.Getter;
 import org.bukkit.Bukkit;

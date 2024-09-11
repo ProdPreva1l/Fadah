@@ -2,7 +2,7 @@ package info.preva1l.fadah.api;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.*;
-import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.old.Lang;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.HistoricItem;

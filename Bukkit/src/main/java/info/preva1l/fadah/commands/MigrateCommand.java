@@ -1,7 +1,7 @@
 package info.preva1l.fadah.commands;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.old.Lang;
 import info.preva1l.fadah.migrator.Migrator;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.commands.Command;

@@ -1,7 +1,7 @@
 package info.preva1l.fadah.commands.subcommands;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.old.Lang;
 import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;

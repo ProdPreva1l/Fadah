@@ -2,7 +2,7 @@ package info.preva1l.fadah.utils.logging;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.HistoricItemsCache;
-import info.preva1l.fadah.config.old.Config;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.hooks.impl.InfluxDBHook;
 import info.preva1l.fadah.multiserver.Message;
@@ -39,7 +39,7 @@ public class TransactionLogger {
 
         Fadah.getINSTANCE().getTransactionLogger().info(logMessage);
         Optional<InfluxDBHook> hook = Fadah.getINSTANCE().getHookManager().getHook(InfluxDBHook.class);
-        if (Config.HOOK_INFLUX_ENABLED.toBoolean() && hook.isPresent() && hook.get().isEnabled()) {
+        if (Config.i().getHooks().getInfluxdb().isEnabled() && hook.isPresent() && hook.get().isEnabled()) {
             hook.get().log(logMessage);
         }
     }
@@ -73,7 +73,7 @@ public class TransactionLogger {
                 listing.getOwnerName(), listing.getOwner(), buyer.getName(), buyer.getUniqueId(), listing.getPrice(), listing.getItemStack());
         Fadah.getINSTANCE().getTransactionLogger().info(logMessage);
         Optional<InfluxDBHook> hook = Fadah.getINSTANCE().getHookManager().getHook(InfluxDBHook.class);
-        if (Config.HOOK_INFLUX_ENABLED.toBoolean() && hook.isPresent() && hook.get().isEnabled()) {
+        if (Config.i().getHooks().getInfluxdb().isEnabled() && hook.isPresent() && hook.get().isEnabled()) {
             hook.get().log(logMessage);
         }
     }
@@ -97,7 +97,7 @@ public class TransactionLogger {
                 listing.getPrice(), listing.getItemStack().toString());
         Fadah.getINSTANCE().getTransactionLogger().info(logMessage);
         Optional<InfluxDBHook> hook = Fadah.getINSTANCE().getHookManager().getHook(InfluxDBHook.class);
-        if (Config.HOOK_INFLUX_ENABLED.toBoolean() && hook.isPresent() && hook.get().isEnabled()) {
+        if (Config.i().getHooks().getInfluxdb().isEnabled() && hook.isPresent() && hook.get().isEnabled()) {
             hook.get().log(logMessage);
         }
     }
@@ -120,7 +120,7 @@ public class TransactionLogger {
                 listing.getPrice(), listing.getItemStack().toString());
         Fadah.getINSTANCE().getTransactionLogger().info(logMessage);
         Optional<InfluxDBHook> hook = Fadah.getINSTANCE().getHookManager().getHook(InfluxDBHook.class);
-        if (Config.HOOK_INFLUX_ENABLED.toBoolean() && hook.isPresent() && hook.get().isEnabled()) {
+        if (Config.i().getHooks().getInfluxdb().isEnabled() && hook.isPresent() && hook.get().isEnabled()) {
             hook.get().log(logMessage);
         }
     }

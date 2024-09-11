@@ -8,8 +8,8 @@ import info.preva1l.fadah.cache.*;
 import info.preva1l.fadah.commands.AuctionHouseCommand;
 import info.preva1l.fadah.commands.MigrateCommand;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
+import info.preva1l.fadah.config.old.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.hooks.HookManager;
@@ -133,7 +133,7 @@ public final class Fadah extends JavaPlugin {
         if (broker != null) broker.destroy();
         if (metrics != null) metrics.shutdown();
         Optional<InfluxDBHook> hook = Fadah.getINSTANCE().getHookManager().getHook(InfluxDBHook.class);
-        if (info.preva1l.fadah.config.old.Config.HOOK_INFLUX_ENABLED.toBoolean() && hook.isPresent() && hook.get().isEnabled()) {
+        if (Config.i().getHooks().getInfluxdb().isEnabled() && hook.isPresent() && hook.get().isEnabled()) {
             hook.get().destroy();
         }
     }
@@ -224,7 +224,7 @@ public final class Fadah extends JavaPlugin {
     private void loadHooks() {
         getConsole().info("Configuring Hooks...");
 
-        if (info.preva1l.fadah.config.old.Config.HOOK_ECO_ITEMS.toBoolean()) {
+        if (Config.i().getHooks().isEcoItems()) {
             getHookManager().registerHook(new EcoItemsHook());
         }
 

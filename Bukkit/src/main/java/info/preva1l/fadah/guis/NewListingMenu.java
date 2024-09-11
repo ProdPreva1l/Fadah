@@ -6,7 +6,7 @@ import info.preva1l.fadah.api.ListingCreateEvent;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.old.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.hooks.impl.DiscordHook;

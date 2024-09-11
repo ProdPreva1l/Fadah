@@ -1,6 +1,6 @@
 package info.preva1l.fadah.guis;
 
-import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.old.Lang;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;

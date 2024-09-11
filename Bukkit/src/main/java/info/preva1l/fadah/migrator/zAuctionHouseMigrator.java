@@ -7,7 +7,7 @@ import fr.maxlego08.zauctionhouse.api.category.Category;
 import fr.maxlego08.zauctionhouse.api.category.CategoryManager;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
-import info.preva1l.fadah.config.old.Config;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.CurrentListing;
 import info.preva1l.fadah.records.Listing;
@@ -40,7 +40,7 @@ public final class zAuctionHouseMigrator implements Migrator {
     @Override
     public List<Listing> migrateListings() {
         List<Listing> listings = new ArrayList<>();
-        for (String categoryName : Config.MIGRATOR_ZAUCTIONHOUSE_CATEGORIES.toStringList()) {
+        for (String categoryName : Config.i().getMigrators().getZAuctionHouse().getCategoriesToMigrate()) {
             Optional<Category> zCategory = categoryManager.getByName(categoryName);
             zCategory.ifPresentOrElse((category) -> {
                 List<AuctionItem> zListings = auctionManager.getItems(category);
