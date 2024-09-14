@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -333,18 +334,19 @@ public final class Fadah extends JavaPlugin {
         });
     }
 
-    public void loadPlayerData(UUID uuid) {
-        DatabaseManager.getInstance().get(CollectionBox.class, uuid)
-                .thenAccept(collectableList -> collectableList
-                        .ifPresent(list -> CollectionBoxCache.update(uuid, list.collectableItems())));
+    public CompletableFuture<Void> loadPlayerData(UUID uuid) {
+        return CompletableFuture.supplyAsync(() -> {
+            Optional<CollectionBox> collectionBox = DatabaseManager.getInstance().get(CollectionBox.class, uuid).join();
+            collectionBox.ifPresent(list -> CollectionBoxCache.update(uuid, list.collectableItems()));
 
-        DatabaseManager.getInstance().get(ExpiredItems.class, uuid)
-                .thenAccept(collectableList -> collectableList
-                        .ifPresent(list -> ExpiredListingsCache.update(uuid, list.collectableItems())));
+            Optional<ExpiredItems> expiredItems = DatabaseManager.getInstance().get(ExpiredItems.class, uuid).join();
+            expiredItems.ifPresent(list -> ExpiredListingsCache.update(uuid, list.collectableItems()));
 
-        DatabaseManager.getInstance().get(History.class, uuid)
-                .thenAccept(collectableList -> collectableList
-                        .ifPresent(list -> HistoricItemsCache.update(uuid, list.collectableItems())));
+            Optional<History> history = DatabaseManager.getInstance().get(History.class, uuid).join();
+            history.ifPresent(list -> HistoricItemsCache.update(uuid, list.collectableItems()));
+
+            return null;
+        });
     }
 
     public void reload() {

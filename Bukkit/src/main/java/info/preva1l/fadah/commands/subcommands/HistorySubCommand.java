@@ -3,7 +3,7 @@ package info.preva1l.fadah.commands.subcommands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.guis.ExpiredListingsMenu;
 import info.preva1l.fadah.records.History;
@@ -16,13 +16,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class HistorySubCommand extends SubCommand {
     public HistorySubCommand(Fadah plugin) {
-        super(plugin);
+        super(plugin, Lang.i().getCommands().getHistory().getAliases(), Lang.i().getCommands().getHistory().getDescription());
     }
 
-    @SubCommandArgs(name = "history", aliases = {"expireditems", "expired"}, permission = "fadah.expired-items", description = "View your Expired Items!")
+    @SubCommandArgs(name = "history", permission = "fadah.history")
     public void execute(@NotNull SubCommandArguments command) {
         if (!Config.i().isEnabled()) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
+            command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getDisabled());
             return;
         }
         assert command.getPlayer() != null;
@@ -34,7 +34,8 @@ public class HistorySubCommand extends SubCommand {
                     .thenAccept(history -> history.ifPresent(items -> HistoricItemsCache.update(finalOwner.getUniqueId(), items.collectableItems())));
         }
         if (owner.getUniqueId() != command.getPlayer().getUniqueId() && !HistoricItemsCache.playerExists(owner.getUniqueId())) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));
+            command.sender().sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getPlayerNotFound()
+                    .replace("%player%", command.args()[0]));
             return;
         }
         new ExpiredListingsMenu(command.getPlayer(), owner, 0).open(command.getPlayer());

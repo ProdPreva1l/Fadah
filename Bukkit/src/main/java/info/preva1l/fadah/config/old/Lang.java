@@ -14,31 +14,31 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 public enum Lang {
-    PREFIX("prefix", "&#9555FF&lAuction House"),
+    //PREFIX("prefix", "&#9555FF&lAuction House"),
 
-    OWN_LISTING("errors.own-listing", "&cYou cannot buy your own listing!"),
+    //OWN_LISTING("errors.own-listing", "&cYou cannot buy your own listing!"),
     TOO_EXPENSIVE("errors.too-expensive", "&cYou cannot afford this item!"),
     INVENTORY_FULL("errors.inventory-full", "&cYou don't have any free room in your inventory!"),
-    DOES_NOT_EXIST("errors.does-not-exist", "&cThis listing is no longer for sale!"),
-    MUST_BE_PLAYER("errors.must-be-player", "&cOnly players can run this command!"),
-    PLAYER_NOT_FOUND("errors.player-not-found", "&c{0} has not joined before!"),
-    NO_PERMISSION("errors.no-permission", "&cYou do not have permission to execute this command!"),
+    //DOES_NOT_EXIST("errors.does-not-exist", "&cThis listing is no longer for sale!"),
+    //MUST_BE_PLAYER("errors.must-be-player", "&cOnly players can run this command!"),
+    //PLAYER_NOT_FOUND("errors.player-not-found", "&c{0} has not joined before!"),
+    //NO_PERMISSION("errors.no-permission", "&cYou do not have permission to execute this command!"),
     DATABASE_CONNECTING("errors.database-connecting", "&cDatabase not connected! Please Wait"),
-    BAD_USAGE("errors.bad-usage", "&cUsage: /{0}"),
-    NO_COMMAND("errors.no-command", "&cThis command does not exist!"),
+    //BAD_USAGE("errors.bad-usage", "&cUsage: /{0}"),
+    //NO_COMMAND("errors.no-command", "&cThis command does not exist!"),
     CANT_SELL("errors.cant-sell", "&cYou cannot sell this item!"),
 
-    AUCTION_DISABLED("fail.disabled", "&cThe Auction House is currently disabled!"),
-    MAX_LISTINGS("fail.max-listings", "&cYou have reached your max listings! ({0}/{1})"),
-    MAX_LISTING_PRICE("fail.listing-price.max", "&fPrice must be less than &a${0}"),
-    MIN_LISTING_PRICE("fail.listing-price.min", "&fPrice must be at least &a${0}"),
-    MUST_BE_NUMBER("fail.must-be-number", "&cThe price must be a number!"),
-    MUST_HOLD_ITEM("fail.must-hold-item", "&fYou must have an item in your hand to sell!"),
+    //AUCTION_DISABLED("fail.disabled", "&cThe Auction House is currently disabled!"),
+    //MAX_LISTINGS("fail.max-listings", "&cYou have reached your max listings! ({0}/{1})"),
+    //MAX_LISTING_PRICE("fail.listing-price.max", "&fPrice must be less than &a${0}"),
+    //MIN_LISTING_PRICE("fail.listing-price.min", "&fPrice must be at least &a${0}"),
+    //MUST_BE_NUMBER("fail.must-be-number", "&cThe price must be a number!"),
+    //MUST_HOLD_ITEM("fail.must-hold-item", "&fYou must have an item in your hand to sell!"),
     ADVERT_EXPENSE("fail.advert-too-expensive", "&cYour advert failed to post because you did not have enough money!"),
     COOLDOWN("fail.cooldown", "&cPlease wait &f{0}&c!"),
 
-    HELP_COMMAND_HEADER("help-command.header", "&#9555FF&lAuctionHouse &eHelp"),
-    HELP_COMMAND_FORMAT("help-command.format", "&b/{0} &8&l| &f{1}"),
+    //HELP_COMMAND_HEADER("help-command.header", "&#9555FF&lAuctionHouse &eHelp"),
+    //HELP_COMMAND_FORMAT("help-command.format", "&b/{0} &8&l| &f{1}"),
 
     NOTIFICATION_NEW_LISTING("notifications.listed", List.of(
             "&f------------------------------------------------",
@@ -73,7 +73,7 @@ public enum Lang {
             "&f--------------------------------------------------"
     )),
 
-    CATEGORY_SELECTED("category-selected", "&e&lSELECTED"),
+    //CATEGORY_SELECTED("category-selected", "&e&lSELECTED"),
 
     SORT_ASCENDING("sort.direction.ascending.normal", "Ascending (A-Z)"),
     SORT_ASCENDING_AGE("sort.direction.ascending.age", "Newest First"),
@@ -102,12 +102,12 @@ public enum Lang {
     ACTIONS_COLLECTION_BOX_CLAIM("logging-actions.collection-box-claimed", "Collection Box Item Claimed"),
     ACTIONS_COLLECTION_BOX_ADMIN_CLAIM("logging-actions.collection-box-claimed-admin", "Collection Box Item Claimed by Admins"),
 
-    ADMIN_RELOAD("admin.reload.message", "&aConfigs reloaded!"),
-    ADMIN_RELOAD_REMOTE("admin.reload.remote", "&aConfigs reloaded from remote server!"),
-    ADMIN_TOGGLE_MESSAGE("admin.toggle.message", "&fAuction House has been {0}&r&f!"),
-    ADMIN_TOGGLE_REMOTE("admin.toggle.remote", "&fAuction House has been {0}&r&f from a remote server!"),
-    ADMIN_TOGGLE_ENABLED("admin.toggle.enabled", "&a&lEnabled"),
-    ADMIN_TOGGLE_DISABLED("admin.toggle.disabled", "&c&lDisabled"),
+//    ADMIN_RELOAD("admin.reload.message", "&aConfigs reloaded!"),
+//    ADMIN_RELOAD_REMOTE("admin.reload.remote", "&aConfigs reloaded from remote server!"),
+//    ADMIN_TOGGLE_MESSAGE("admin.toggle.message", "&fAuction House has been {0}&r&f!"),
+//    ADMIN_TOGGLE_REMOTE("admin.toggle.remote", "&fAuction House has been {0}&r&f from a remote server!"),
+//    ADMIN_TOGGLE_ENABLED("admin.toggle.enabled", "&a&lEnabled"),
+//    ADMIN_TOGGLE_DISABLED("admin.toggle.disabled", "&c&lDisabled"),
 
     WORD_YOU("words.you", "you"),
     WORD_YOUR("words.your", "your"),

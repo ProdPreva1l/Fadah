@@ -67,32 +67,6 @@ public class Config {
         private double defaultPrice = 500;
     }
 
-    private Commands commands = new Commands();
-
-    @Getter
-    @Configuration
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Commands {
-        private Main main = new Main();
-
-        @Getter
-        @Configuration
-        @NoArgsConstructor(access = AccessLevel.PRIVATE)
-        public static class Main {
-            private List<String> aliases = List.of("ah", "auctions", "auction");
-        }
-
-        private Sell Sell = new Sell();
-
-        @Getter
-        @Configuration
-        @NoArgsConstructor(access = AccessLevel.PRIVATE)
-        public static class Sell {
-            private String description = "Create a new listing on the auction house!";
-            private List<String> aliases = List.of("new-listing", "create-listing");
-        }
-    }
-
     private Hooks hooks = new Hooks();
 
     @Getter

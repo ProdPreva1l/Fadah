@@ -12,10 +12,9 @@ import lombok.Setter;
 
 import java.time.Instant;
 
-@Getter
 @Setter
 public class InfluxDBHook implements Hook {
-    private boolean enabled;
+    @Getter private boolean enabled;
 
     private final InfluxDBClient client;
     private final WriteApiBlocking writeApi;

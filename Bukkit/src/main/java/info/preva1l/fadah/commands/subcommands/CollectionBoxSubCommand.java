@@ -4,7 +4,7 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.guis.CollectionBoxMenu;
 import info.preva1l.fadah.records.CollectionBox;
@@ -17,13 +17,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class CollectionBoxSubCommand extends SubCommand {
     public CollectionBoxSubCommand(Fadah plugin) {
-        super(plugin);
+        super(plugin, Lang.i().getCommands().getCollectionBox().getAliases(), Lang.i().getCommands().getCollectionBox().getDescription());
     }
 
-    @SubCommandArgs(name = "collectionbox", aliases = {"collection-box", "redeem"}, permission = "fadah.collection-box", description = "View your Collection Box!")
+    @SubCommandArgs(name = "collection-box", permission = "fadah.collection-box")
     public void execute(@NotNull SubCommandArguments command) {
         if (!Config.i().isEnabled()) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
+            command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getDisabled());
             return;
         }
         assert command.getPlayer() != null;
@@ -35,7 +35,8 @@ public class CollectionBoxSubCommand extends SubCommand {
                     .thenAccept(var1 -> var1.ifPresent(list -> CollectionBoxCache.update(finalOwner.getUniqueId(), list.collectableItems())));
         }
         if (owner.getUniqueId() != command.getPlayer().getUniqueId() && !HistoricItemsCache.playerExists(owner.getUniqueId())) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.PLAYER_NOT_FOUND.toFormattedString(command.args()[0]));
+            command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getPlayerNotFound()
+                    .replace("%player%", command.args()[0]));
             return;
         }
         new CollectionBoxMenu(command.getPlayer(), owner).open(command.getPlayer());

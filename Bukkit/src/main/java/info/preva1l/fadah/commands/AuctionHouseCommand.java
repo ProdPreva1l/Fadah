@@ -3,7 +3,7 @@ package info.preva1l.fadah.commands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.commands.subcommands.*;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.guis.MainMenu;
 import info.preva1l.fadah.utils.commands.Command;
 import info.preva1l.fadah.utils.commands.CommandArgs;
@@ -20,8 +20,7 @@ public class AuctionHouseCommand extends Command {
     private static final List<SubCommand> subCommands = new ArrayList<>();
 
     public AuctionHouseCommand(Fadah plugin) {
-        super(plugin);
-        subCommands.add(new DevSubCommand(plugin));
+        super(plugin, Lang.i().getCommands().getMain().getAliases());
         subCommands.add(new ReloadSubCommand(plugin));
         subCommands.add(new SellSubCommand(plugin));
         subCommands.add(new ProfileSubCommand(plugin));
@@ -36,19 +35,19 @@ public class AuctionHouseCommand extends Command {
         subCommands.add(new ViewSubCommand(plugin));
     }
 
-    @CommandArgs(name = "auctionhouse", aliases = {"ah", "auctions", "auction"}, inGameOnly = false, permission = "fadah.use")
+    @CommandArgs(name = "fadah", inGameOnly = false, permission = "fadah.use")
     public void execute(@NotNull CommandArguments command) {
         if (command.args().length >= 1) {
             if (subCommandExecutor(command, subCommands)) return;
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.NO_COMMAND.toFormattedString());
+            command.sender().sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getCommandNotFound());
             return;
         }
         if (!Config.i().isEnabled()) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.AUCTION_DISABLED.toFormattedString());
+            command.sender().sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getDisabled());
             return;
         }
         if (command.getPlayer() == null) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.MUST_BE_PLAYER.toFormattedString());
+            command.sender().sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getMustBePlayer());
             return;
         }
 

@@ -1,7 +1,7 @@
 package info.preva1l.fadah.commands.subcommands;
 
 import info.preva1l.fadah.Fadah;
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
@@ -10,16 +10,21 @@ import org.jetbrains.annotations.NotNull;
 
 public class ReloadSubCommand extends SubCommand {
     public ReloadSubCommand(Fadah plugin) {
-        super(plugin);
+        super(plugin, Lang.i().getCommands().getReload().getAliases(), Lang.i().getCommands().getReload().getDescription());
     }
 
-    @SubCommandArgs(name = "reload", aliases = {"rl"}, permission = "fadah.reload", inGameOnly = false, description = "Reloads the plugin!")
+    @SubCommandArgs(name = "reload", permission = "fadah.reload", inGameOnly = false)
     public void execute(@NotNull SubCommandArguments command) {
         if (Fadah.getINSTANCE().getBroker() != null) {
             Message.builder().type(Message.Type.RELOAD).build().send(Fadah.getINSTANCE().getBroker());
             return;
         }
-        plugin.reload();
-        command.sender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADMIN_RELOAD.toFormattedString());
+        try {
+            plugin.reload();
+            command.reply(Lang.i().getPrefix() + Lang.i().getCommands().getReload().getSuccess());
+        } catch (Exception e) {
+            command.reply(Lang.i().getPrefix() + Lang.i().getCommands().getReload().getFail());
+            throw new RuntimeException(e);
+        }
     }
 }

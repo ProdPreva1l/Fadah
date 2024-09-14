@@ -1,6 +1,7 @@
 package info.preva1l.fadah.commands.subcommands;
 
 import info.preva1l.fadah.Fadah;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.utils.commands.SubCommand;
 import info.preva1l.fadah.utils.commands.SubCommandArgs;
 import info.preva1l.fadah.utils.commands.SubCommandArguments;
@@ -13,11 +14,11 @@ import org.jetbrains.annotations.NotNull;
 public class AboutSubCommand extends SubCommand {
     private final BukkitAudiences bukkitAudiences;
     public AboutSubCommand(Fadah plugin) {
-        super(plugin);
+        super(plugin, Lang.i().getCommands().getAbout().getAliases(), Lang.i().getCommands().getAbout().getDescription());
         this.bukkitAudiences = BukkitAudiences.builder(plugin).build();
     }
 
-    @SubCommandArgs(name = "about", inGameOnly = false, description = "Get information on the plugin")
+    @SubCommandArgs(name = "about", inGameOnly = false)
     public void execute(@NotNull SubCommandArguments command) {
         final AboutMenu aboutMenu = AboutMenu.builder()
                 .title(Component.text("Finally a Decent Auction House"))
@@ -25,7 +26,8 @@ public class AboutSubCommand extends SubCommand {
                 .credits("Author",
                         AboutMenu.Credit.of("Preva1l")
                                 .description("Click to visit website").url("https://please.vote-preva1l.today/"))
-                .credits("Contributors")
+                .credits("Contributors",
+                        AboutMenu.Credit.of("WuzzyLV"))
                 .buttons(AboutMenu.Link.of("https://discord.gg/4KcF7S94HF").text("Discord Support").icon("⭐"))
                 .themeColor(TextColor.fromHexString("#9555FF"))
                 .secondaryColor(TextColor.fromHexString("#bba4e0"))
