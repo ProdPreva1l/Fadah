@@ -17,8 +17,8 @@ public enum Lang {
     //PREFIX("prefix", "&#9555FF&lAuction House"),
 
     //OWN_LISTING("errors.own-listing", "&cYou cannot buy your own listing!"),
-    TOO_EXPENSIVE("errors.too-expensive", "&cYou cannot afford this item!"),
-    INVENTORY_FULL("errors.inventory-full", "&cYou don't have any free room in your inventory!"),
+    //TOO_EXPENSIVE("errors.too-expensive", "&cYou cannot afford this item!"),
+    //INVENTORY_FULL("errors.inventory-full", "&cYou don't have any free room in your inventory!"),
     //DOES_NOT_EXIST("errors.does-not-exist", "&cThis listing is no longer for sale!"),
     //MUST_BE_PLAYER("errors.must-be-player", "&cOnly players can run this command!"),
     //PLAYER_NOT_FOUND("errors.player-not-found", "&c{0} has not joined before!"),
@@ -85,8 +85,8 @@ public enum Lang {
     SORT_ALPHABETICAL_NAME("sort.type.alphabetical", "Sort Alphabetically By Name"),
     SORT_PRICE_NAME("sort.type.price", "Sort By Listing Price"),
 
-    ADVERT_POST("listing-advert.post", "Post Advert"),
-    ADVERT_DONT_POST("listing-advert.dont-post", "No Advert"),
+//    ADVERT_POST("listing-advert.post", "Post Advert"),
+//    ADVERT_DONT_POST("listing-advert.dont-post", "No Advert"),
 
     MODE_BUY_IT_NOW("modes.buy-it-now", "BIN"),
     MODE_BIDDING("modes.biddable", "Bidding"),
@@ -109,9 +109,9 @@ public enum Lang {
 //    ADMIN_TOGGLE_ENABLED("admin.toggle.enabled", "&a&lEnabled"),
 //    ADMIN_TOGGLE_DISABLED("admin.toggle.disabled", "&c&lDisabled"),
 
-    WORD_YOU("words.you", "you"),
-    WORD_YOUR("words.your", "your"),
-    WORD_NONE("words.none", "None"),
+//    WORD_YOU("words.you", "you"),
+//    WORD_YOUR("words.your", "your"),
+//    WORD_NONE("words.none", "None"),
     ;
 
     private final String path;

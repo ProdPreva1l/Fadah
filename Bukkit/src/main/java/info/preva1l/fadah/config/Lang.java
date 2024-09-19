@@ -214,6 +214,19 @@ public class Lang {
         private String invalidUsage = "&cUsage: /%command%";
         private String doesNotExist = "&cThis listing does not exist!";
         private String ownListings = "&cYou cannot buy your own listing!";
+        private String tooExpensive = "&cYou cannot afford this item!";
+        private String inventoryFull = "&cYou don't have any free room in your inventory!";
+    }
+
+    private Words words = new Words();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Words {
+        private String your = "your";
+        private String you = "you";
+        private String none = "None";
     }
 
     public static void sendMessage(CommandSender sender, String message) {

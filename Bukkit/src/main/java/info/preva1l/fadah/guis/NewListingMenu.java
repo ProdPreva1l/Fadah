@@ -6,7 +6,7 @@ import info.preva1l.fadah.api.ListingCreateEvent;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
@@ -187,7 +187,7 @@ public class NewListingMenu extends FastInv {
         Bukkit.getServer().getPluginManager().callEvent(createEvent);
 
         if (createEvent.isCancelled()) {
-            player.sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.message(createEvent.getCancelReason()));
+            Lang.sendMessage(player, Lang.i().getPrefix() + createEvent.getCancelReason());
             player.closeInventory();
             return;
         }
