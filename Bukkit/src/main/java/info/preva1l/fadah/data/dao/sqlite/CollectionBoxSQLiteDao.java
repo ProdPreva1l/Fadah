@@ -1,11 +1,11 @@
-package info.preva1l.fadah.data.dao.sql;
+package info.preva1l.fadah.data.dao.sqlite;
 
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.data.dao.Dao;
 import info.preva1l.fadah.records.CollectableItem;
-import info.preva1l.fadah.records.ExpiredItems;
+import info.preva1l.fadah.records.CollectionBox;
 import info.preva1l.fadah.utils.ItemSerializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
@@ -21,7 +21,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
-public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
+public class CollectionBoxSQLiteDao implements Dao<CollectionBox> {
     private final HikariDataSource dataSource;
 
     /**
@@ -31,12 +31,12 @@ public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
      * @return an optional containing the object if it exists, or an empty optional if it does not.
      */
     @Override
-    public Optional<ExpiredItems> get(UUID id) {
+    public Optional<CollectionBox> get(UUID id) {
         final List<CollectableItem> retrievedData = Lists.newArrayList();
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("""
                         SELECT `itemStack`,  `dateAdded`
-                        FROM `expired_items`
+                        FROM `collection_box`
                         WHERE `playerUUID`=?;""")) {
                 statement.setString(1, id.toString());
                 final ResultSet resultSet = statement.executeQuery();
@@ -45,7 +45,7 @@ public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
                     final long dateAdded = resultSet.getLong("dateAdded");
                     retrievedData.add(new CollectableItem(itemStack, dateAdded));
                 }
-                return Optional.of(new ExpiredItems(id, retrievedData));
+                return Optional.of(new CollectionBox(id, retrievedData));
             }
         } catch (SQLException e) {
             Fadah.getConsole().severe("Failed to get items from collection box!");
@@ -59,7 +59,7 @@ public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
      * @return a list of all objects of type T in the database.
      */
     @Override
-    public List<ExpiredItems> getAll() {
+    public List<CollectionBox> getAll() {
         throw new NotImplementedException();
     }
 
@@ -69,12 +69,13 @@ public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
      * @param collectableList the object to save.
      */
     @Override
-    public void save(ExpiredItems collectableList) {
+    public void save(CollectionBox collectableList) {
         try (Connection connection = getConnection()) {
             for (CollectableItem item : collectableList.collectableItems()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        INSERT IGNORE INTO `expired_items` (`playerUUID`, `itemStack`, `dateAdded`)
-                        VALUES (?, ?, ?);""")) {
+                        INSERT INTO `collection_box` (`playerUUID`, `itemStack`, `dateAdded`)
+                        SELECT ?, ?, ?
+                        WHERE NOT EXISTS ( SELECT 1 FROM `collection_box` WHERE `dateAdded` = ?);""")) {
                     statement.setString(1, collectableList.owner().toString());
                     statement.setString(2, ItemSerializer.serialize(item.itemStack()));
                     statement.setLong(3, item.dateAdded());
@@ -95,7 +96,7 @@ public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
      * @param params          the parameters to update the object with.
      */
     @Override
-    public void update(ExpiredItems collectableItem, String[] params) {
+    public void update(CollectionBox collectableItem, String[] params) {
         throw new NotImplementedException();
     }
 
@@ -105,16 +106,16 @@ public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
      * @param collectableItem the object to delete.
      */
     @Override
-    public void delete(ExpiredItems collectableItem) {
+    public void delete(CollectionBox collectableItem) {
         throw new NotImplementedException();
     }
 
     @Override
-    public void deleteSpecific(ExpiredItems collectableList, Object o) {
+    public void deleteSpecific(CollectionBox collectableList, Object o) {
         if (!(o instanceof CollectableItem item)) throw new IllegalStateException("Specific object must be a collectable item");
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("""
-                        DELETE FROM `expired_items`
+                        DELETE FROM `collection_box`
                         WHERE `playerUUID`=? AND `itemStack`=? AND `dateAdded` =?;""")) {
                 statement.setString(1, collectableList.owner().toString());
                 statement.setString(2, ItemSerializer.serialize(item.itemStack()));
