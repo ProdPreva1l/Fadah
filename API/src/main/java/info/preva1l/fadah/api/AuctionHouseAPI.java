@@ -106,6 +106,7 @@ public abstract class AuctionHouseAPI {
      * @param action action
      * @return the locale
      */
+    @ApiStatus.Internal
     public abstract String getLoggedActionLocale(HistoricItem.LoggedAction action);
 
     /**

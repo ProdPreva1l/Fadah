@@ -150,11 +150,11 @@ public class NewListingMenu extends FastInv {
         String bidding = StringUtils.formatPlaceholders(isBidding
                         ? getLang().getStringFormatted("mode.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("mode.options.not-selected", "&f{0}"),
-                Lang.MODE_BIDDING.toFormattedString());
+                Lang.i().getWords().getModes().getBidding());
         String bin = StringUtils.formatPlaceholders(!isBidding
                         ? getLang().getStringFormatted("mode.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("mode.options.not-selected", "&f{0}"),
-                Lang.MODE_BUY_IT_NOW.toFormattedString());
+                Lang.i().getWords().getModes().getBuyItNow());
 
         removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE, -1));
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE, -1),

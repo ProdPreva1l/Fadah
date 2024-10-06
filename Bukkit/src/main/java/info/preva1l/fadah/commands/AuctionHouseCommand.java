@@ -39,15 +39,15 @@ public class AuctionHouseCommand extends Command {
     public void execute(@NotNull CommandArguments command) {
         if (command.args().length >= 1) {
             if (subCommandExecutor(command, subCommands)) return;
-            command.sender().sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getCommandNotFound());
+            command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getCommandNotFound());
             return;
         }
         if (!Config.i().isEnabled()) {
-            command.sender().sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getDisabled());
+            command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getDisabled());
             return;
         }
         if (command.getPlayer() == null) {
-            command.sender().sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getMustBePlayer());
+            command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getMustBePlayer());
             return;
         }
 

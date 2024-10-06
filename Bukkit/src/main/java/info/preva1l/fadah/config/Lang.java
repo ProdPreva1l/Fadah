@@ -36,6 +36,8 @@ public class Lang {
 
     private String prefix = "&#9555FFAuctions &r";
 
+    private String categorySelected = "&e&lSELECTED";
+
     private Commands commands = new Commands();
 
     @Getter
@@ -200,6 +202,24 @@ public class Lang {
         }
     }
 
+    private LogActions logActions = new LogActions();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class LogActions {
+        private String listingStarted = "Listing Started";
+        private String listingPurchased = "Listing Purchased";
+        private String listingSold = "Listing Sold";
+        private String listingCancelled = "Listing Cancelled";
+        private String listingExpired = "Listing Expired";
+        private String expiredItemClaimed = "Expired Listing Claimed";
+        private String collectionBoxClaimed = "Collection Box Item Claimed";
+        private String listingCancelledAdmin = "Listing Cancelled by Admins";
+        private String expiredItemClaimedAdmin = "Expired Listing Claimed by Admins";
+        private String collectionBoxClaimedAdmin = "Collection Box Item Claimed by Admins";
+    }
+
     private Errors errors = new Errors();
 
     @Getter
@@ -227,6 +247,15 @@ public class Lang {
         private String your = "your";
         private String you = "you";
         private String none = "None";
+        private Modes modes = new Modes();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Modes {
+            private String buyItNow = "BIN";
+            private String bidding = "Bidding";
+        }
     }
 
     public static void sendMessage(CommandSender sender, String message) {

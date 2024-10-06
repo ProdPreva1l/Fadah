@@ -4,7 +4,7 @@ import com.github.puregero.multilib.MultiLib;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.CollectionBox;
@@ -27,7 +27,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
     public CollectionBoxMenu(Player viewer, OfflinePlayer owner) {
         super(LayoutManager.MenuType.COLLECTION_BOX.getLayout().guiSize(),
                 LayoutManager.MenuType.COLLECTION_BOX.getLayout().formattedTitle(viewer.getUniqueId() == owner.getUniqueId()
-                        ? Lang.WORD_YOUR.toCapital()
+                        ? StringUtils.capitalize(Lang.i().getWords().getYour())
                         : owner.getName()+"'s", owner.getName()+"'s"), viewer, LayoutManager.MenuType.COLLECTION_BOX,
                 List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34));
         this.viewer = viewer;
@@ -57,11 +57,11 @@ public class CollectionBoxMenu extends PaginatedFastInv {
                 MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {
                     int slot = viewer.getInventory().firstEmpty();
                     if (slot == -1) {
-                        viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
+                        Lang.sendMessage(viewer, Lang.i().getPrefix() + Lang.i().getErrors().getInventoryFull());
                         return;
                     }
                     if (!CollectionBoxCache.doesItemExist(player.getUniqueId(), collectableItem)) {
-                        viewer.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+                        Lang.sendMessage(viewer, Lang.i().getPrefix() + Lang.i().getErrors().getDoesNotExist());
                         return;
                     }
                     CollectionBoxCache.removeItem(owner.getUniqueId(), collectableItem);

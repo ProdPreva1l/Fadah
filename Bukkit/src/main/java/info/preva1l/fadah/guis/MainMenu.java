@@ -4,7 +4,7 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.filters.SortingDirection;
 import info.preva1l.fadah.filters.SortingMethod;
 import info.preva1l.fadah.records.Category;
@@ -112,7 +112,7 @@ public class MainMenu extends ScrollBarFastInv {
                             ItemFlag.HIDE_DYE,
                             ItemFlag.HIDE_POTION_EFFECTS);
             if (category == cat) {
-                itemBuilder.name(StringUtils.colorize(cat.name() + "&r " + Lang.CATEGORY_SELECTED.toFormattedString()))
+                itemBuilder.name(StringUtils.colorize(cat.name() + "&r " + Lang.i().getCategorySelected()))
                         .enchant(Enchantment.DURABILITY);
                 itemBuilder.flags(ItemFlag.HIDE_ENCHANTS);
             }
@@ -170,17 +170,17 @@ public class MainMenu extends ScrollBarFastInv {
                 }
 
                 if (listing.isOwner(player)) {
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.OWN_LISTING.toFormattedString());
+                    Lang.sendMessage(player, Lang.i().getPrefix() + Lang.i().getErrors().getOwnListings());
                     return;
                 }
 
                 if (!Fadah.getINSTANCE().getEconomy().has(player, listing.getPrice())) {
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.TOO_EXPENSIVE.toFormattedString());
+                    Lang.sendMessage(player, Lang.i().getPrefix() + Lang.i().getErrors().getTooExpensive());
                     return;
                 }
 
                 if (ListingCache.getListing(listing.getId()) == null) { // todo: re-add strict checks
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
+                    Lang.sendMessage(player, Lang.i().getPrefix() + Lang.i().getErrors().getDoesNotExist());
                     return;
                 }
 
@@ -215,7 +215,7 @@ public class MainMenu extends ScrollBarFastInv {
 
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.PROFILE,-1),
                 new ItemBuilder(getLang().getAsMaterial("profile-button.icon", Material.PLAYER_HEAD)).skullOwner(player)
-                        .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile", StringUtils.capitalize(Lang.WORD_YOUR.toString())))
+                        .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile", StringUtils.capitalize(Lang.i().getWords().getYour())))
                         .addLore(getLang().getLore("profile-button.lore"))
                         .modelData(getLang().getInt("profile-button.model-data"))
                         .build(), e -> new ProfileMenu(player, player).open(player));
@@ -230,11 +230,11 @@ public class MainMenu extends ScrollBarFastInv {
                 new ItemBuilder(getLang().getAsMaterial("filter.change-type.icon", Material.PUFFERFISH))
                 .name(getLang().getStringFormatted("filter.change-type.name", "&eListing Filter"))
                 .modelData(getLang().getInt("filter.change-type.model-data"))
-                .addLore(getLang().getLore("filter.change-type.lore", (prev == null ? Lang.WORD_NONE.toString() : prev.getFriendlyName()),
-                        sortingMethod.getFriendlyName(), (next == null ? Lang.WORD_NONE.toString() : next.getFriendlyName())))
+                .addLore(getLang().getLore("filter.change-type.lore", (prev == null ? Lang.i().getWords().getNone() : prev.getFriendlyName()),
+                        sortingMethod.getFriendlyName(), (next == null ? Lang.i().getWords().getYour() : next.getFriendlyName())))
                 .build(), e -> {
                     if (CooldownManager.hasCooldown(CooldownManager.Cooldown.SORT, player)) {
-                        player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.COOLDOWN.toFormattedString(CooldownManager.getCooldownString(CooldownManager.Cooldown.SORT, player)));
+                        player.sendMessage(Lang.i().getPrefix() + info.preva1l.fadah.config.old.Lang.COOLDOWN.toFormattedString(CooldownManager.getCooldownString(CooldownManager.Cooldown.SORT, player)));
                         return;
                     }
                     CooldownManager.startCooldown(CooldownManager.Cooldown.SORT, player);
@@ -279,7 +279,7 @@ public class MainMenu extends ScrollBarFastInv {
                         .modelData(getLang().getInt("filter.change-direction.model-data"))
                         .lore(getLang().getLore("filter.change-direction.lore", asc, desc)).build(), e -> {
                     if (CooldownManager.hasCooldown(CooldownManager.Cooldown.SORT, player)) {
-                        player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.COOLDOWN.toFormattedString(CooldownManager.getCooldownString(CooldownManager.Cooldown.SORT, player)));
+                        Lang.sendMessage(player, Lang.i().getPrefix() + info.preva1l.fadah.config.old.Lang.COOLDOWN.toFormattedString(CooldownManager.getCooldownString(CooldownManager.Cooldown.SORT, player)));
                         return;
                     }
                     CooldownManager.startCooldown(CooldownManager.Cooldown.SORT, player);

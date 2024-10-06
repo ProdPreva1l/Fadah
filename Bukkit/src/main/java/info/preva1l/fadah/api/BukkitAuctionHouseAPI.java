@@ -2,7 +2,7 @@ package info.preva1l.fadah.api;
 
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.*;
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.Category;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.HistoricItem;
@@ -66,17 +66,18 @@ public final class BukkitAuctionHouseAPI extends AuctionHouseAPI {
 
     @Override
     public String getLoggedActionLocale(HistoricItem.LoggedAction action) {
+        Lang.LogActions actions = Lang.i().getLogActions();
         return switch (action) {
-            case LISTING_SOLD -> Lang.ACTIONS_LISTING_SOLD.toFormattedString();
-            case LISTING_CANCEL -> Lang.ACTIONS_LISTING_CANCEL.toFormattedString();
-            case LISTING_START -> Lang.ACTIONS_LISTING_START.toFormattedString();
-            case LISTING_EXPIRE -> Lang.ACTIONS_LISTING_EXPIRE.toFormattedString();
-            case LISTING_PURCHASED -> Lang.ACTIONS_LISTING_PURCHASED.toFormattedString();
-            case EXPIRED_ITEM_CLAIM -> Lang.ACTIONS_EXPIRED_ITEM_CLAIM.toFormattedString();
-            case COLLECTION_BOX_CLAIM -> Lang.ACTIONS_COLLECTION_BOX_CLAIM.toFormattedString();
-            case LISTING_ADMIN_CANCEL -> Lang.ACTIONS_LISTING_ADMIN_CANCEL.toFormattedString();
-            case EXPIRED_ITEM_ADMIN_CLAIM -> Lang.ACTIONS_EXPIRED_ITEM_ADMIN_CLAIM.toFormattedString();
-            case COLLECTION_BOX_ADMIN_CLAIM -> Lang.ACTIONS_COLLECTION_BOX_ADMIN_CLAIM.toFormattedString();
+            case LISTING_SOLD -> actions.getListingSold();
+            case LISTING_CANCEL -> actions.getListingCancelled();
+            case LISTING_START -> actions.getListingStarted();
+            case LISTING_EXPIRE -> actions.getListingExpired();
+            case LISTING_PURCHASED -> actions.getListingPurchased();
+            case EXPIRED_ITEM_CLAIM -> actions.getExpiredItemClaimed();
+            case COLLECTION_BOX_CLAIM -> actions.getCollectionBoxClaimed();
+            case LISTING_ADMIN_CANCEL -> actions.getListingCancelledAdmin();
+            case EXPIRED_ITEM_ADMIN_CLAIM -> actions.getExpiredItemClaimedAdmin();
+            case COLLECTION_BOX_ADMIN_CLAIM -> actions.getCollectionBoxClaimedAdmin();
         };
     }
 }

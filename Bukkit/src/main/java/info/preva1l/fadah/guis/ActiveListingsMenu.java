@@ -3,7 +3,7 @@ package info.preva1l.fadah.guis;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
@@ -23,7 +23,7 @@ public class ActiveListingsMenu extends PaginatedFastInv {
     public ActiveListingsMenu(Player viewer, OfflinePlayer owner) {
         super(LayoutManager.MenuType.ACTIVE_LISTINGS.getLayout().guiSize(),
                 LayoutManager.MenuType.ACTIVE_LISTINGS.getLayout().formattedTitle(viewer.getUniqueId() == owner.getUniqueId()
-                ? Lang.WORD_YOUR.toCapital()
+                ? StringUtils.capitalize(Lang.i().getWords().getYour())
                 : owner.getName()+"'s", owner.getName()+"'s"), viewer, LayoutManager.MenuType.ACTIVE_LISTINGS,
                 List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34));
         this.viewer = viewer;
