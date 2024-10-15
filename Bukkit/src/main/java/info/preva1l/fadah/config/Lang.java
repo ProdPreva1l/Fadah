@@ -38,6 +38,15 @@ public class Lang {
 
     private String categorySelected = "&e&lSELECTED";
 
+    private Messages messages = new Messages();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Messages {
+        private String messages = "";
+    }
+
     private Commands commands = new Commands();
 
     @Getter
@@ -162,7 +171,7 @@ public class Lang {
 
             private String success = "&aAll configuration files reloaded successfully!";
             private String fail = "&cSome configuration files failed to reload! &7(Check console)";
-            private String remote = "&aA global configuration reload has been triggered!";
+            private String remote = "&aA global configuration reload has been received!";
         }
 
         private Toggle toggle = new Toggle();
@@ -202,6 +211,16 @@ public class Lang {
         }
     }
 
+    private AdvertActions advertActions = new AdvertActions();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class AdvertActions {
+        private String post = "Post Advert";
+        private String silent = "No Advert";
+    }
+
     private LogActions logActions = new LogActions();
 
     @Getter
@@ -229,6 +248,7 @@ public class Lang {
         private String disabled = "&cThe Auction House is currently disabled!";
         private String commandNotFound = "&cThis command does not exist!";
         private String mustBePlayer = "&cOnly players can run this command!";
+        private String restricted = "&cYou cannot sell this item!";
         private String noPermission = "&cYou do not have permission to execute this command!";
         private String playerNotFound = "&c%player% was not found!";
         private String invalidUsage = "&cUsage: /%command%";

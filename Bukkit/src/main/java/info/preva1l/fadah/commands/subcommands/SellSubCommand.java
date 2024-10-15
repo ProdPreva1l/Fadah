@@ -24,7 +24,7 @@ public class SellSubCommand extends SubCommand {
         }
         assert command.getPlayer() != null;
         if (command.getPlayer().getInventory().getItemInMainHand().getType() == Material.AIR) {
-            command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getMustHoldItem());
+            command.reply(Lang.i().getPrefix() + Lang.i().getCommands().getSell().getMustHoldItem());
             return;
         }
         if (command.args().length == 0) {
@@ -35,7 +35,7 @@ public class SellSubCommand extends SubCommand {
         String priceString = command.args()[0];
 
         if (priceString.toLowerCase().contains("nan")) {
-            command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getMustBeNumber());
+            command.reply(Lang.i().getPrefix() + Lang.i().getCommands().getSell().getMustBeNumber());
             return;
         }
 
@@ -57,26 +57,26 @@ public class SellSubCommand extends SubCommand {
 
         try {
             if (Double.parseDouble(priceString) * multi < Config.i().getListingPrice().getMin()) {
-                command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getListingPrice().getMin()
+                command.reply(Lang.i().getPrefix() + Lang.i().getCommands().getSell().getListingPrice().getMin()
                         .replace("%price%", Config.i().getListingPrice().getMin() + ""));
                 return;
             }
             if (Double.parseDouble(priceString) * multi > Config.i().getListingPrice().getMax()) {
-                command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getListingPrice().getMax()
+                command.reply(Lang.i().getPrefix() + Lang.i().getCommands().getSell().getListingPrice().getMax()
                         .replace("%price%", Config.i().getListingPrice().getMax() + ""));
                 return;
             }
             int currentListings = PermissionsData.getCurrentListings(command.getPlayer());
             int maxListings = PermissionsData.getHighestInt(PermissionsData.PermissionType.MAX_LISTINGS, command.getPlayer());
             if (currentListings >= maxListings) {
-                command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getMaxListings()
+                command.reply(Lang.i().getPrefix() + Lang.i().getCommands().getSell().getMaxListings()
                         .replace("%current%", currentListings + "")
                         .replace("%max%", maxListings + ""));
                 return;
             }
             new NewListingMenu(command.getPlayer(), Double.parseDouble(priceString) * multi).open(command.getPlayer());
         } catch (NumberFormatException e) {
-            command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getMustBeNumber());
+            command.reply(Lang.i().getPrefix() + Lang.i().getCommands().getSell().getMustBeNumber());
         }
     }
 }

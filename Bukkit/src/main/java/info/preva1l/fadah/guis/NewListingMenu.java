@@ -123,11 +123,11 @@ public class NewListingMenu extends FastInv {
         String postAdvert = StringUtils.formatPlaceholders(advertise
                         ? getLang().getStringFormatted("advert.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("advert.options.not-selected", "&f{0}"),
-                Lang.ADVERT_POST.toFormattedString());
+                Lang.i().getAdvertActions().getPost());
         String dontPost = StringUtils.formatPlaceholders(!advertise
                         ? getLang().getStringFormatted("advert.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("advert.options.not-selected", "&f{0}"),
-                Lang.ADVERT_DONT_POST.toFormattedString());
+                Lang.i().getAdvertActions().getSilent());
 
         removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT, -1));
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT, -1),
@@ -174,7 +174,7 @@ public class NewListingMenu extends FastInv {
         String category = CategoryCache.getCategoryForItem(itemToSell);
 
         if (category == null) {
-            player.sendMessage(Lang.CANT_SELL.toFormattedString());
+            Lang.sendMessage(player, Lang.i().getErrors().getRestricted());
             return;
         }
 
@@ -211,7 +211,7 @@ public class NewListingMenu extends FastInv {
                 TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
                 PermissionsData.getHighestInt(PermissionsData.PermissionType.MAX_LISTINGS, player),
                 taxAmount, new DecimalFormat(Config.i().getDecimalFormat()).format((taxAmount / 100) * price)));
-        player.sendMessage(message);
+        Lang.sendMessage(player, message);
 
         TransactionLogger.listingCreated(listing);
 
@@ -226,7 +226,7 @@ public class NewListingMenu extends FastInv {
             Economy eco = Fadah.getINSTANCE().getEconomy();
             double advertPrice = PermissionsData.getHighestDouble(PermissionsData.PermissionType.ADVERT_PRICE, player);
             if (!eco.has(player, advertPrice)) {
-                player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADVERT_EXPENSE.toFormattedString());
+                player.sendMessage(Lang.i().getPrefix() + Lang.ADVERT_EXPENSE.toFormattedString());
                 return;
             }
 
