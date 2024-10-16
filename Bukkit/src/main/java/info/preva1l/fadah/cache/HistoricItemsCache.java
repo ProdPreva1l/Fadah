@@ -17,13 +17,13 @@ public class HistoricItemsCache {
             }
             items.add(item);
 
-            items.sort(Comparator.comparingLong(HistoricItem::loggedDate).reversed());
+            items.sort(Comparator.comparingLong(HistoricItem::getLoggedDate).reversed());
             return items;
         });
     }
 
     public void update(UUID playerUUID, List<HistoricItem> list) {
-        list.sort(Comparator.comparingLong(HistoricItem::loggedDate).reversed());
+        list.sort(Comparator.comparingLong(HistoricItem::getLoggedDate).reversed());
         historicItems.put(playerUUID, list);
     }
 

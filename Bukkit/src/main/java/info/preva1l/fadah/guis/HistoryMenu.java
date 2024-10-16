@@ -4,6 +4,7 @@ import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.HistoricItem;
+import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Bukkit;
@@ -23,7 +24,7 @@ public class HistoryMenu extends PaginatedFastInv {
     public HistoryMenu(Player viewer, OfflinePlayer owner, @Nullable String dateSearch) {
         super(LayoutManager.MenuType.HISTORY.getLayout().guiSize(), LayoutManager.MenuType.HISTORY.getLayout().formattedTitle(
                         viewer.getUniqueId() == owner.getUniqueId()
-                                ? Lang.i().getWords().getYour()
+                                ? StringUtils.capitalize(Lang.i().getWords().getYour())
                                 : owner.getName() + "'s", owner.getName() + "'s"),
                 viewer, LayoutManager.MenuType.HISTORY,
                 List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34));
@@ -32,7 +33,7 @@ public class HistoryMenu extends PaginatedFastInv {
         this.historicItems = HistoricItemsCache.getHistory(owner.getUniqueId());
 
         if (dateSearch != null) {
-            this.historicItems.removeIf(historicItem -> !TimeUtil.formatTimeToVisualDate(historicItem.loggedDate()).contains(dateSearch));
+            this.historicItems.removeIf(historicItem -> !TimeUtil.formatTimeToVisualDate(historicItem.getLoggedDate()).contains(dateSearch));
         }
 
         List<Integer> fillerSlots = getLayout().fillerSlots();
@@ -51,31 +52,31 @@ public class HistoryMenu extends PaginatedFastInv {
     @Override
     protected void fillPaginationItems() {
         for (HistoricItem historicItem : historicItems) {
-            ItemBuilder itemStack = new ItemBuilder(historicItem.itemStack().clone());
-            if (historicItem.purchaserUUID() != null) {
-                itemStack.addLore(historicItem.action() == HistoricItem.LoggedAction.LISTING_SOLD
+            ItemBuilder itemStack = new ItemBuilder(historicItem.getItemStack().clone());
+            if (historicItem.getPurchaserUUID() != null) {
+                itemStack.addLore(historicItem.getAction() == HistoricItem.LoggedAction.LISTING_SOLD
                         ? getLang().getLore("lore-with-buyer",
-                        historicItem.action().getLocaleActionName(),
-                        Bukkit.getOfflinePlayer(historicItem.purchaserUUID()).getName(),
-                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.price()),
-                        TimeUtil.formatTimeToVisualDate(historicItem.loggedDate()))
+                        historicItem.getAction().getLocaleActionName(),
+                        Bukkit.getOfflinePlayer(historicItem.getPurchaserUUID()).getName(),
+                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.getPrice()),
+                        TimeUtil.formatTimeToVisualDate(historicItem.getLoggedDate()))
 
                         : getLang().getLore("lore-with-seller",
-                        historicItem.action().getLocaleActionName(),
-                        Bukkit.getOfflinePlayer(historicItem.purchaserUUID()).getName(),
-                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.price()),
-                        TimeUtil.formatTimeToVisualDate(historicItem.loggedDate()))
+                        historicItem.getAction().getLocaleActionName(),
+                        Bukkit.getOfflinePlayer(historicItem.getPurchaserUUID()).getName(),
+                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.getPrice()),
+                        TimeUtil.formatTimeToVisualDate(historicItem.getLoggedDate()))
                 );
-            } else if (historicItem.price() != null && historicItem.price() != 0d) {
+            } else if (historicItem.getPrice() != null && historicItem.getPrice() != 0d) {
                 itemStack.addLore(getLang().getLore("lore-with-price",
-                        historicItem.action().getLocaleActionName(),
-                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.price()),
-                        TimeUtil.formatTimeToVisualDate(historicItem.loggedDate())
+                        historicItem.getAction().getLocaleActionName(),
+                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.getPrice()),
+                        TimeUtil.formatTimeToVisualDate(historicItem.getLoggedDate())
                 ));
             } else {
                 itemStack.addLore(getLang().getLore("lore",
-                        historicItem.action().getLocaleActionName(),
-                        TimeUtil.formatTimeToVisualDate(historicItem.loggedDate())
+                        historicItem.getAction().getLocaleActionName(),
+                        TimeUtil.formatTimeToVisualDate(historicItem.getLoggedDate())
                 ));
             }
             addPaginationItem(new PaginatedItem(itemStack.build(), (e) -> {}));

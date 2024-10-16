@@ -1,6 +1,7 @@
 package info.preva1l.fadah.guis;
 
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -37,7 +38,7 @@ public class ProfileMenu extends FastInv {
                         .modelData(getLang().getInt("profile-button.model-data"))
                         .name(getLang().getStringFormatted("profile-button.name", "&e&l{0} Profile",
                                 viewer.getUniqueId() == owner.getUniqueId()
-                                        ? Lang.i().getWords().getYour() : owner.getName() + "'s", owner.getName() + "'s"))
+                                        ? StringUtils.capitalize(Lang.i().getWords().getYour()) : owner.getName() + "'s", owner.getName() + "'s"))
                         .addLore(getLang().getLore("profile-button.lore",
                                 viewer.getUniqueId() == owner.getUniqueId() ? Lang.i().getWords().getYour() : owner.getName(),
                                 viewer.getUniqueId() == owner.getUniqueId() ? Lang.i().getWords().getYou() : owner.getName(), owner.getName())).build());
@@ -53,7 +54,7 @@ public class ProfileMenu extends FastInv {
                 new ItemBuilder(getLang().getAsMaterial("your-listings.icon", Material.EMERALD))
                         .name(getLang().getStringFormatted("your-listings.name", "&1{0} listings",
                                 viewer.getUniqueId() == owner.getUniqueId()
-                                        ? Lang.i().getWords().getYour()
+                                        ? StringUtils.capitalize(Lang.i().getWords().getYour())
                                         : owner.getName() + "'s", owner.getName() + "'s"))
                         .modelData(getLang().getInt("your-listings.model-data"))
                         .setAttributes(null)
@@ -72,7 +73,7 @@ public class ProfileMenu extends FastInv {
                 new ItemBuilder(getLang().getAsMaterial("collection-box.icon", Material.CHEST_MINECART))
                         .name(getLang().getStringFormatted("collection-box.name", "&e{0} Collection Box",
                                 viewer.getUniqueId() == owner.getUniqueId()
-                                        ? Lang.i().getWords().getYour()
+                                        ? StringUtils.capitalize(Lang.i().getWords().getYour())
                                         : owner.getName() + "'s", owner.getName() + "'s"))
                         .modelData(getLang().getInt("collection-box.model-data"))
                         .setAttributes(null)
@@ -91,7 +92,7 @@ public class ProfileMenu extends FastInv {
                 new ItemBuilder(getLang().getAsMaterial("expired-items.icon", Material.ENDER_CHEST))
                         .name(getLang().getStringFormatted("expired-items.name", "&c{0} Expired Listings",
                                 viewer.getUniqueId() == owner.getUniqueId()
-                                        ? Lang.i().getWords().getYour()
+                                        ? StringUtils.capitalize(Lang.i().getWords().getYour())
                                         : owner.getName() + "'s", owner.getName() + "'s"))
                         .modelData(getLang().getInt("expired-items.model-data"))
                         .setAttributes(null)
@@ -110,7 +111,7 @@ public class ProfileMenu extends FastInv {
                 new ItemBuilder(getLang().getAsMaterial("historic-items.icon", Material.ENDER_CHEST))
                         .name(getLang().getStringFormatted("historic-items.name", "&c{0} History",
                                 viewer.getUniqueId() == owner.getUniqueId()
-                                        ? Lang.i().getWords().getYour()
+                                        ? StringUtils.capitalize(Lang.i().getWords().getYour())
                                         : owner.getName() + "'s", owner.getName() + "'s"))
                         .modelData(getLang().getInt("historic-items.model-data"))
                         .setAttributes(null)
