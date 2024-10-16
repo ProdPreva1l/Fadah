@@ -6,10 +6,12 @@ import com.google.gson.reflect.TypeToken;
 import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.data.dao.Dao;
+import info.preva1l.fadah.data.gson.ConfigurationSerializableAdapter;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.records.History;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.lang.reflect.Type;
 import java.sql.Connection;
@@ -26,7 +28,7 @@ import java.util.logging.Level;
 public class HistorySQLiteDao implements Dao<History> {
     private final HikariDataSource dataSource;
     private static final Gson GSON = new GsonBuilder()
-            //.registerTypeAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
+            .registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
             .serializeNulls().create();
     private static final Type HISTORY_LIST_TYPE = new TypeToken<ArrayList<HistoricItem>>(){}.getType();
 
