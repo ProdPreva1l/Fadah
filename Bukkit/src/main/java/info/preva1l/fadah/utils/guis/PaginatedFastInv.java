@@ -67,6 +67,7 @@ public abstract class PaginatedFastInv extends FastInv {
         boolean empty = paginatedItems == null || paginatedItems.isEmpty();
         if (empty) {
             paginationEmpty();
+            return;
         }
         
         for (int i = 0; i < maxItemsPerPage; i++) {
@@ -76,7 +77,6 @@ public abstract class PaginatedFastInv extends FastInv {
             PaginatedItem item = paginatedItems.get(index);
             setItem(paginationMappings.get(i), item.itemStack(), item.eventConsumer());
         }
-
     }
 
     protected void updatePagination() {

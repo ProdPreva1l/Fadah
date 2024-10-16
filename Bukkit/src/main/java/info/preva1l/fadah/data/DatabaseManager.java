@@ -102,7 +102,7 @@ public final class DatabaseManager {
     }
 
     private DatabaseHandler initHandler() {
-        DatabaseType type = Config.DATABASE_TYPE.toDBTypeEnum();
+        DatabaseType type = Config.i().getDatabase().getType();
         Fadah.getConsole().info("DB Type: %s".formatted(type.getFriendlyName()));
         try {
             Class<? extends DatabaseHandler> handlerClass = databaseHandlers.get(type);

@@ -10,16 +10,18 @@ import org.jetbrains.annotations.NotNull;
 
 public class HelpSubCommand extends SubCommand {
     public HelpSubCommand(Fadah plugin) {
-        super(plugin);
+        super(plugin, Lang.i().getCommands().getHelp().getAliases(), Lang.i().getCommands().getHelp().getDescription());
     }
 
-    @SubCommandArgs(name = "help", permission = "fadah.help", inGameOnly = false, description = "This Command!")
+    @SubCommandArgs(name = "help", permission = "fadah.help", inGameOnly = false)
     public void execute(@NotNull SubCommandArguments command) {
-        StringBuilder message = new StringBuilder(Lang.HELP_COMMAND_HEADER.toFormattedString());
+        StringBuilder message = new StringBuilder(Lang.i().getCommands().getHelp().getHeader());
         for (SubCommand subCommand : AuctionHouseCommand.getSubCommands()) {
             if (!command.sender().hasPermission(subCommand.getAssigned().permission())) continue;
-            message.append("\n").append(Lang.HELP_COMMAND_FORMAT.toFormattedString("ah " + subCommand.getAssigned().name(), subCommand.getAssigned().description()));
+            message.append("\n").append(Lang.i().getCommands().getHelp().getDescription()
+                    .replace("%command%", subCommand.getAssigned().name())
+                    .replace("%description%", subCommand.getDescription()));
         }
-        command.sender().sendMessage(message.toString());
+        command.reply(message.toString());
     }
 }

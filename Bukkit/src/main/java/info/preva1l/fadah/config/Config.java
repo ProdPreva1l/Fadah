@@ -1,203 +1,184 @@
 package info.preva1l.fadah.config;
 
-import com.google.common.collect.ImmutableList;
+import de.exlll.configlib.*;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
-import info.preva1l.fadah.multiserver.Broker;
-import info.preva1l.fadah.utils.StringUtils;
-import info.preva1l.fadah.utils.config.BasicConfig;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-@AllArgsConstructor
 @Getter
-public enum Config {
-    MAX_LISTING_PRICE("listing-price.max", 1000000000d),
-    MIN_LISTING_PRICE("listing-price.min", 1),
-    DEFAULT_MAX_LISTINGS("default-max-listings", 3),
-    DECIMAL_FORMAT("decimal-format", "#,###.00"),
+@Configuration
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@SuppressWarnings("FieldMayBeFinal")
+public class Config {
+    private static Config instance;
 
-    ADVERT_DEFAULT("listing-adverts.default", false),
-    ADVERT_DEFAULT_PRICE("listing-adverts.price", 100.0),
+    private static final String CONFIG_HEADER = """
+            #########################################
+            #                  Fadah                #
+            #    Finally a Decent Auction House     #
+            #########################################
+            """;
 
-    STRICT_CHECKS("strict-checks", false),
+    private static final YamlConfigurationProperties PROPERTIES = YamlConfigurationProperties.newBuilder()
+            .charset(StandardCharsets.UTF_8)
+            .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
+            .header(CONFIG_HEADER).build();
 
-    HOOK_ECO_ITEMS("hooks.eco-items", false),
+    @Comment("Toggle with /ah toggle")
+    private boolean enabled = true;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        save();
+    }
 
-    HOOK_DISCORD_ENABLED("hooks.discord.enabled", false),
-    HOOK_DISCORD_URL("hooks.discord.webhook-url", "INSERT WEBHOOK URL"),
-    HOOK_DISCORD_ADVERT_ONLY("hooks.discord.only-send-on-advert", false),
-    HOOK_DISCORD_MODE("hooks.discord.mode", "EMBED"),
-    HOOK_DISCORD_EMBED_IMAGE("hooks.discord.embed.image-location", "SIDE"),
-    HOOK_DISCORD_EMBED_TITLE("hooks.discord.embed.title", "New Listing by %player%!"),
-    HOOK_DISCORD_EMBED_CONTENT("hooks.discord.embed.content", "%player% just listed %item% for %price% on the auction house!"),
-    HOOK_DISCORD_EMBED_FOOTER("hooks.discord.embed.footer", "Powered by Finally a Decent Auction House"),
-    HOOK_DISCORD_PLAIN("hooks.discord.plain-text", ""),
+    private int defaultMaxListings = 3;
+    private String decimalFormat = "#,###.00";
+    private boolean logToFile = true;
 
-    HOOK_INFLUX_ENABLED("hooks.influxdb.enabled", false),
-    HOOK_INFLUX_URI("hooks.influxdb.uri", "http://localhost:8086"),
-    HOOK_INFLUX_TOKEN("hooks.influxdb.token", "MyToken"),
-    HOOK_INFLUX_ORG("hooks.influxdb.org", "MyOrg"),
-    HOOK_INFLUX_BUCKET("hooks.influxdb.bucket", "Fadah"),
+    @Comment("Enable this if you are having de-sync issues with multi-server.")
+    private boolean strictChecks = false;
 
-    MIGRATOR_ZAUCTIONHOUSE_CATEGORIES("migrators.z-auction-house.categories-to-migrate", List.of("Blocks", "Tools", "Weapons", "Potions", "Misc")),
+    private ListingPrice listingPrice = new ListingPrice();
 
-    LOG_TO_FILE("log-to-file", true),
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ListingPrice {
+        private double min = 100;
+        private double max = 1000000000;
+    }
 
-    DATABASE_TYPE("database.type", "SQLITE"),
-    DATABASE_URI("database.uri", "jdbc:mysql://username:password@127.0.0.1:3306/Fadah"),
-    DATABASE("database.database", "Fadah"),
+    private ListingAdverts listingAdverts = new ListingAdverts();
 
-    BROKER_ENABLED("broker.enabled", false),
-    BROKER_TYPE("broker.type", "REDIS"),
-    REDIS_HOST("broker.redis.host", "127.0.0.1"),
-    REDIS_PORT("broker.redis.port", 6379),
-    REDIS_PASSWORD("broker.redis.password", "password"),
-    REDIS_CHANNEL("broker.redis.channel", "auctionhouse.cache"),
-    ;
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class ListingAdverts {
+        @Comment("Whether or not a listing advert should be made by default.")
+        private boolean enabledByDefault = false;
+        @Comment({"How much it costs to advertise the listing by default.", "Overridden by the `fadah.advert-price.<amount>` permission."})
+        private double defaultPrice = 500;
+    }
 
-    private final String path;
-    private final Object defaultValue;
+    private Hooks hooks = new Hooks();
 
-    public static void loadDefault() {
-        BasicConfig configFile = Fadah.getINSTANCE().getConfigFile();
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Hooks {
+        private boolean ecoItems = false;
 
-        for (Config config : Config.values()) {
-            String path = config.getPath();
-            String str = configFile.getString(path);
-            if (str.equals(path)) {
-                configFile.getConfiguration().set(path, config.getDefaultValue());
+        private Discord discord = new Discord();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Discord {
+            private boolean enabled = false;
+            private String webhookUrl = "INSERT WEBHOOK URL HERE";
+
+            @Comment("If this is true the webhook will only send a message when the listing has been advertised.")
+            private boolean onlySendOnAdvert = false;
+
+            @Comment("Allowed: EMBED, PLAIN_TEXT")
+            private DiscordHook.Mode messageMode = DiscordHook.Mode.EMBED;
+
+            private Embed embed = new Embed();
+
+            @Getter
+            @Configuration
+            @NoArgsConstructor(access = AccessLevel.PRIVATE)
+            public static class Embed {
+                @Comment("Allowed: SIDE, BOTTOM")
+                private DiscordHook.ImageLocation imageLocation = DiscordHook.ImageLocation.SIDE;
+                private String title = "New Listing by %player%!";
+                private String content = "%player% just listed %item% for $%price% on the auction house!";
+                private String footer = "Powered by Finally a Decent Auction House";
             }
+
+            private String plainText = "%player% just listed %item% for $%price% on the auction house!";
         }
 
-        configFile.save();
-        configFile.load();
+        private InfluxDB influxdb = new InfluxDB();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class InfluxDB {
+            private boolean enabled = false;
+            private String uri = "http://localhost:8086";
+            private String token = "MyToken";
+            private String org = "MyOrg";
+            private String bucket = "Fadah";
+        }
     }
 
-    public String toString() {
-        String str = Fadah.getINSTANCE().getConfigFile().getString(path);
-        if (str.equals(path)) {
-            return defaultValue.toString();
+    private Migrators migrators = new Migrators();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Migrators {
+        private ZAuctionHouse zAuctionHouse = new ZAuctionHouse();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class ZAuctionHouse {
+            private List<String> categoriesToMigrate = List.of("Blocks", "Tools", "Weapons", "Potions", "Misc");
         }
-        return str;
     }
 
-    public DatabaseType toDBTypeEnum() {
-        DatabaseType databaseType;
-        try {
-            databaseType = DatabaseType.valueOf(toString());
-        } catch (EnumConstantNotPresentException ex) {
-            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Database Type \"{0}\" does not exist! \n Defaulting to SQLite", toString()));
-            return DatabaseType.SQLITE;
-        }
-        return databaseType;
+    private Database database = new Database();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Database {
+        @Comment("Allowed: SQLITE, MYSQL, MARIADB, MONGO")
+        private DatabaseType type = DatabaseType.SQLITE;
+        private String uri = "jdbc:mysql://username:password@127.0.0.1:3306/Fadah";
+        private String database = "Fadah";
+        private boolean useSsl = false;
     }
 
-    public DiscordHook.Mode toModeEnum() {
-        DiscordHook.Mode databaseType;
-        try {
-            databaseType = DiscordHook.Mode.valueOf(toString());
-        } catch (EnumConstantNotPresentException ex) {
-            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Discord hook mode \"{0}\" does not exist! \n Defaulting to EMBED", toString()));
-            return DiscordHook.Mode.EMBED;
-        }
-        return databaseType;
+    @Comment({"A message broker is only required for x-server environments.",
+            "This is not compatible with SQLITE database"})
+    private Broker broker = new Broker();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Broker {
+        private boolean enabled = false;
+        @Comment("Allowed: REDIS")
+        private info.preva1l.fadah.multiserver.Broker.Type type = info.preva1l.fadah.multiserver.Broker.Type.REDIS;
+        private String host = "localhost";
+        private int port = 6379;
+        private String password = "myAwesomePassword";
+        private String channel = "fadah.cache";
     }
 
-    public DiscordHook.ImageLocation toImageLocationEnum() {
-        DiscordHook.ImageLocation databaseType;
-        try {
-            databaseType = DiscordHook.ImageLocation.valueOf(toString());
-        } catch (EnumConstantNotPresentException ex) {
-            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Discord hook image location \"{0}\" does not exist! \n Defaulting to SIDE", toString()));
-            return DiscordHook.ImageLocation.SIDE;
-        }
-        return databaseType;
+    public void save() {
+        YamlConfigurations.save(new File(Fadah.getINSTANCE().getDataFolder(), "config.yml").toPath(), Config.class, this);
     }
 
-    public Broker.Type toBrokerType() {
-        Broker.Type brokerType;
-        try {
-            brokerType = Broker.Type.valueOf(toString());
-        } catch (EnumConstantNotPresentException ex) {
-            Fadah.getConsole().warning(StringUtils.formatPlaceholders("Broker Type \"{0}\" does not exist! \n Defaulting to Redis", toString()));
-            return Broker.Type.REDIS;
-        }
-        return brokerType;
+    public static void reload() {
+        instance = YamlConfigurations.load(new File(Fadah.getINSTANCE().getDataFolder(), "config.yml").toPath(), Config.class, PROPERTIES);
     }
 
-    public String toFormattedString() {
-        String str = Fadah.getINSTANCE().getConfigFile().getString(path);
-        if (str.equals(path)) {
-            return StringUtils.colorize(defaultValue.toString());
+    public static Config i() {
+        if (instance != null) {
+            return instance;
         }
-        return StringUtils.colorize(str);
-    }
 
-    public String toFormattedString(Object... replacements) {
-        String str = Fadah.getINSTANCE().getConfigFile().getString(path);
-        if (str.equals(path)) {
-            return StringUtils.formatPlaceholders(StringUtils.colorize(defaultValue.toString()), replacements);
-        }
-        return StringUtils.colorize(StringUtils.formatPlaceholders(str, replacements));
-    }
-
-    public List<String> toStringList() {
-        List<String> str = Fadah.getINSTANCE().getConfigFile().getStringList(path);
-        if (str.isEmpty() || str.get(0).equals(path)) {
-            return (List<String>) defaultValue;
-        }
-        if (str.get(0).equals("null")) {
-            return ImmutableList.of();
-        }
-        return str;
-    }
-
-    public List<String> toLore() {
-        List<String> str = Fadah.getINSTANCE().getConfigFile().getStringList(path);
-        if (str.isEmpty() || str.get(0).equals(path)) {
-            List<String> ret = new ArrayList<>();
-            for (String line : (List<String>) defaultValue) ret.add(StringUtils.formatPlaceholders(line));
-            return StringUtils.colorizeList(ret);
-        }
-        if (str.get(0).equals("null")) {
-            return ImmutableList.of();
-        }
-        List<String> ret = new ArrayList<>();
-        for (String line : str) ret.add(StringUtils.formatPlaceholders(line));
-        return StringUtils.colorizeList(ret);
-    }
-
-    public List<String> toLore(Object... replacements) {
-        List<String> str = Fadah.getINSTANCE().getConfigFile().getStringList(path);
-        if (str.isEmpty() || str.get(0).equals(path)) {
-            List<String> ret = new ArrayList<>();
-            for (String line : (List<String>) defaultValue) ret.add(StringUtils.formatPlaceholders(line, replacements));
-            return StringUtils.colorizeList(ret);
-        }
-        if (str.get(0).equals("null")) {
-            return ImmutableList.of();
-        }
-        List<String> ret = new ArrayList<>();
-        for (String line : str) {
-            ret.add(StringUtils.formatPlaceholders(line, replacements));
-        }
-        return StringUtils.colorizeList(ret);
-    }
-
-    public boolean toBoolean() {
-        return Boolean.parseBoolean(toString());
-    }
-
-    public int toInteger() {
-        return Integer.parseInt(toString());
-    }
-
-    public double toDouble() {
-        return Double.parseDouble(toString());
+        return instance = YamlConfigurations.update(new File(Fadah.getINSTANCE().getDataFolder(), "config.yml").toPath(), Config.class, PROPERTIES);
     }
 }

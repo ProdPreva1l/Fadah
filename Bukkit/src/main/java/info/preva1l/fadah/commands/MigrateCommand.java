@@ -3,7 +3,6 @@ package info.preva1l.fadah.commands;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.migrator.Migrator;
-import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.commands.Command;
 import info.preva1l.fadah.utils.commands.CommandArgs;
 import info.preva1l.fadah.utils.commands.CommandArguments;
@@ -16,18 +15,18 @@ import java.util.List;
 
 public class MigrateCommand extends Command {
     public MigrateCommand(Fadah plugin) {
-        super(plugin);
+        super(plugin, List.of("ah-migrate"));
     }
 
     @CommandArgs(name = "fadah-migrate", permission = "fadah.migrate", inGameOnly = false)
     public void execute(@NotNull CommandArguments command) {
         if (command.args().length == 0) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.colorize("&cUsage: &f/fadah-migrate <plugin>"));
+            command.reply(Lang.i().getPrefix() + "&cUsage: &f/fadah-migrate <plugin>");
             return;
         }
 
         if (!plugin.getMigratorManager().migratorExists(command.args()[0])) {
-            command.sender().sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.colorize("&cMigrator does not exist!"));
+            command.reply(Lang.i().getPrefix() + "&cMigrator does not exist!");
             return;
         }
 
@@ -35,9 +34,9 @@ public class MigrateCommand extends Command {
         assert migrator != null;
 
         long start = Instant.now().toEpochMilli();
-        Fadah.getConsole().info("Starting migration from %s...".formatted(migrator.getMigratorName()));
+        command.reply(Lang.i().getPrefix() + "&fStarting migration from %s...".formatted(migrator.getMigratorName()));
         migrator.startMigration(plugin).thenRun(() -> {
-            Fadah.getConsole().info("Migration from %s complete! (Took: %sms)"
+            command.reply(Lang.i().getPrefix() + "&aMigration from %s complete! &7(Took: %sms)"
                     .formatted(migrator.getMigratorName(), Instant.now().toEpochMilli() - start));
         });
     }

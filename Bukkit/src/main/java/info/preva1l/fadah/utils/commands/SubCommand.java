@@ -21,9 +21,13 @@ public abstract class SubCommand {
     public Fadah plugin;
     private SubCommandArguments executeArguments;
     private boolean senderHasPermission = false;
+    private final List<String> aliases;
+    private final String description;
 
-    public SubCommand(Fadah plugin) {
+    public SubCommand(Fadah plugin, List<String> aliases, String description) {
         this.plugin = plugin;
+        this.description = description;
+        this.aliases = aliases;
         this.assigned = Arrays.stream(this.getClass().getMethods()).filter(method -> method.getAnnotation(SubCommandArgs.class) != null).map(method -> method.getAnnotation(SubCommandArgs.class)).findFirst().orElse(null);
     }
 
@@ -31,12 +35,12 @@ public abstract class SubCommand {
 
     public final void executor(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
         if (this.assigned.inGameOnly() && sender instanceof ConsoleCommandSender) {
-            sender.sendMessage(Lang.PREFIX.toFormattedString() + Lang.MUST_BE_PLAYER.toFormattedString());
+            Lang.sendMessage(sender, Lang.i().getPrefix() + Lang.i().getErrors().getMustBePlayer());
             return;
         }
         if (this.assigned.permission() != null && !sender.hasPermission(this.assigned.permission())) {
             senderHasPermission = false;
-            sender.sendMessage(Lang.PREFIX.toFormattedString() + Lang.NO_PERMISSION.toFormattedString());
+            Lang.sendMessage(sender, Lang.i().getPrefix() + Lang.i().getErrors().getNoPermission());
             return;
         }
 

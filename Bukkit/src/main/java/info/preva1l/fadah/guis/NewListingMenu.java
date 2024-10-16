@@ -7,6 +7,8 @@ import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.ListHelper;
+import info.preva1l.fadah.config.Tuple;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
@@ -39,7 +41,7 @@ public class NewListingMenu extends FastInv {
     private ItemStack itemToSell;
     private Instant timeToDelete;
     private boolean listingStarted = false;
-    private boolean advertise = Config.ADVERT_DEFAULT.toBoolean();
+    private boolean advertise = Config.i().getListingAdverts().isEnabledByDefault();
     private boolean isBidding = false;
 
     public NewListingMenu(Player player, double price) {
@@ -59,7 +61,7 @@ public class NewListingMenu extends FastInv {
                         .name(getLang().getStringFormatted("create.name", "&aClick to create listing!"))
                         .modelData(getLang().getInt("create.model-data"))
                         .addLore(getLang().getLore("create.lore",
-                                new DecimalFormat(Config.DECIMAL_FORMAT.toString())
+                                new DecimalFormat(Config.i().getDecimalFormat())
                                         .format(price)))
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
@@ -123,11 +125,11 @@ public class NewListingMenu extends FastInv {
         String postAdvert = StringUtils.formatPlaceholders(advertise
                         ? getLang().getStringFormatted("advert.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("advert.options.not-selected", "&f{0}"),
-                Lang.ADVERT_POST.toFormattedString());
+                Lang.i().getAdvertActions().getPost());
         String dontPost = StringUtils.formatPlaceholders(!advertise
                         ? getLang().getStringFormatted("advert.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("advert.options.not-selected", "&f{0}"),
-                Lang.ADVERT_DONT_POST.toFormattedString());
+                Lang.i().getAdvertActions().getSilent());
 
         removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT, -1));
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_ADVERT, -1),
@@ -137,7 +139,7 @@ public class NewListingMenu extends FastInv {
                         .setAttributes(null)
                         .flags(ItemFlag.HIDE_ATTRIBUTES)
                         .lore(getLang().getLore("advert.lore",
-                                new DecimalFormat(Config.DECIMAL_FORMAT.toString())
+                                new DecimalFormat(Config.i().getDecimalFormat())
                                         .format(PermissionsData.getHighestDouble(PermissionsData.PermissionType.ADVERT_PRICE, player)),
                                 postAdvert, dontPost)).build(), e -> {
                     this.advertise = !advertise;
@@ -150,11 +152,11 @@ public class NewListingMenu extends FastInv {
         String bidding = StringUtils.formatPlaceholders(isBidding
                         ? getLang().getStringFormatted("mode.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("mode.options.not-selected", "&f{0}"),
-                Lang.MODE_BIDDING.toFormattedString());
+                Lang.i().getWords().getModes().getBidding());
         String bin = StringUtils.formatPlaceholders(!isBidding
                         ? getLang().getStringFormatted("mode.options.selected", "&8> &e{0}")
                         : getLang().getStringFormatted("mode.options.not-selected", "&f{0}"),
-                Lang.MODE_BUY_IT_NOW.toFormattedString());
+                Lang.i().getWords().getModes().getBuyItNow());
 
         removeItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE, -1));
         setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.LISTING_MODE, -1),
@@ -174,7 +176,7 @@ public class NewListingMenu extends FastInv {
         String category = CategoryCache.getCategoryForItem(itemToSell);
 
         if (category == null) {
-            player.sendMessage(Lang.CANT_SELL.toFormattedString());
+            Lang.sendMessage(player, Lang.i().getErrors().getRestricted());
             return;
         }
 
@@ -187,7 +189,7 @@ public class NewListingMenu extends FastInv {
         Bukkit.getServer().getPluginManager().callEvent(createEvent);
 
         if (createEvent.isCancelled()) {
-            player.sendMessage(Lang.PREFIX.toFormattedString() + StringUtils.message(createEvent.getCancelReason()));
+            Lang.sendMessage(player, Lang.i().getPrefix() + createEvent.getCancelReason());
             player.closeInventory();
             return;
         }
@@ -206,18 +208,23 @@ public class NewListingMenu extends FastInv {
 
         double taxAmount = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
         String itemName = StringUtils.extractItemName(listing.getItemStack());
-        String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemName,
-                new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()),
-                TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
-                PermissionsData.getHighestInt(PermissionsData.PermissionType.MAX_LISTINGS, player),
-                taxAmount, new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format((taxAmount / 100) * price)));
-        player.sendMessage(message);
+        String message = String.join("\n", ListHelper.replace(Lang.i().getNotifications().getNewListing(),
+                Tuple.of("%item%", itemName),
+                Tuple.of("%price%", new DecimalFormat(Config.i().getDecimalFormat()).format(listing.getPrice())),
+                Tuple.of("%time%", TimeUtil.formatTimeUntil(listing.getDeletionDate())),
+                Tuple.of("%current_listings%", PermissionsData.getCurrentListings(player) + ""),
+                Tuple.of("%max_listings%", PermissionsData.getHighestInt(PermissionsData.PermissionType.MAX_LISTINGS, player) + ""),
+                Tuple.of("%tax%", taxAmount + ""),
+                Tuple.of("%price_after_tax%", new DecimalFormat(Config.i().getDecimalFormat()).format((taxAmount / 100) * price))
+        ));
+        Lang.sendMessage(player, message);
 
         TransactionLogger.listingCreated(listing);
 
-        if ((Config.HOOK_DISCORD_ENABLED.toBoolean() && plugin.getHookManager().getHook(DiscordHook.class).isPresent()) &&
-                ((Config.HOOK_DISCORD_ADVERT_ONLY.toBoolean() && advertise)
-                        || !Config.HOOK_DISCORD_ADVERT_ONLY.toBoolean())) {
+        Config.Hooks.Discord discConf = Config.i().getHooks().getDiscord();
+        if ((discConf.isEnabled() && plugin.getHookManager().getHook(DiscordHook.class).isPresent()) &&
+                ((discConf.isEnabled() && advertise)
+                        || !discConf.isOnlySendOnAdvert())) {
             plugin.getHookManager().getHook(DiscordHook.class).get().send(listing);
         }
 
@@ -225,15 +232,17 @@ public class NewListingMenu extends FastInv {
             Economy eco = Fadah.getINSTANCE().getEconomy();
             double advertPrice = PermissionsData.getHighestDouble(PermissionsData.PermissionType.ADVERT_PRICE, player);
             if (!eco.has(player, advertPrice)) {
-                player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADVERT_EXPENSE.toFormattedString());
+                Lang.sendMessage(player,Lang.i().getPrefix() + Lang.i().getErrors().getAdvertExpense());
                 return;
             }
 
             eco.withdrawPlayer(player, advertPrice);
 
-            String advertMessage = String.join("&r\n", Lang.NOTIFICATION_ADVERT.toStringList(
-                    player.getName(), itemName,
-                    new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice())));
+            String advertMessage = String.join("&r\n", ListHelper.replace(Lang.i().getNotifications().getAdvert(),
+                    Tuple.of("%player%", player.getName()),
+                    Tuple.of("%item%", itemName),
+                    Tuple.of("%price%", new DecimalFormat(Config.i().getDecimalFormat()).format(listing.getPrice()))
+            ));
 
             Message.builder()
                     .type(Message.Type.BROADCAST)

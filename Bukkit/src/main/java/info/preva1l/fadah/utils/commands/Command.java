@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Getter
@@ -24,9 +23,11 @@ public abstract class Command {
     private CommandExecutor executor;
     private CommandArgs assigned;
     private boolean senderHasPermission = false;
+    private final List<String> aliases;
 
-    public Command(Fadah plugin) {
+    public Command(Fadah plugin, List<String> aliases) {
         this.plugin = plugin;
+        this.aliases = aliases;
         this.register();
     }
 
@@ -34,7 +35,7 @@ public abstract class Command {
         this.assigned = Arrays.stream(this.getClass().getMethods()).filter(method -> method.getAnnotation(CommandArgs.class) != null).map(method -> method.getAnnotation(CommandArgs.class)).findFirst().orElse(null);
 
         if (assigned != null) {
-            this.executor = new CommandExecutor(assigned.name(), assigned);
+            this.executor = new CommandExecutor(assigned.name(), assigned, this.aliases);
             plugin.getCommandManager().registerCommand(this, executor);
         }
     }
@@ -74,7 +75,7 @@ public abstract class Command {
         for (SubCommand subCommand : subCommands) {
             if (!command.sender().hasPermission(subCommand.getAssigned().permission())) continue;
             ret.add(subCommand.getAssigned().name());
-            Collections.addAll(ret, subCommand.getAssigned().aliases());
+            ret.addAll(subCommand.getAliases());
         }
         StringUtil.copyPartialMatches(command.args()[0], ret, completions);
         return completions;
@@ -82,7 +83,7 @@ public abstract class Command {
 
     public boolean subCommandExecutor(@NotNull CommandArguments command, List<SubCommand> subCommands2) {
         for (SubCommand subCommand : subCommands2) {
-            if (command.args()[0].equalsIgnoreCase(subCommand.getAssigned().name()) || Arrays.stream(subCommand.getAssigned().aliases()).toList().contains(command.args()[0])) {
+            if (command.args()[0].equalsIgnoreCase(subCommand.getAssigned().name()) || subCommand.getAliases().contains(command.args()[0])) {
                 subCommand.executor(command.sender(), command.label(), command.args());
                 return true;
             }
@@ -96,9 +97,9 @@ public abstract class Command {
         private final boolean async;
         private CommandArguments executeArguments;
 
-        public CommandExecutor(String name, CommandArgs assigned) {
+        public CommandExecutor(String name, CommandArgs assigned, List<String> aliases) {
             super(name);
-            this.setAliases(Arrays.asList(assigned.aliases()));
+            this.setAliases(aliases);
             this.setPermission(assigned.permission());
             this.inGameOnly = assigned.inGameOnly();
             this.async = assigned.async();
@@ -107,12 +108,12 @@ public abstract class Command {
         @Override
         public boolean execute(@NotNull CommandSender sender, @NotNull String label, @NotNull String[] args) {
             if (this.inGameOnly && sender instanceof ConsoleCommandSender) {
-                sender.sendMessage(Lang.PREFIX.toFormattedString() + Lang.MUST_BE_PLAYER.toFormattedString());
+                Lang.sendMessage(sender, Lang.i().getPrefix() + Lang.i().getErrors().getMustBePlayer());
                 return false;
             }
             if (this.getPermission() != null && !sender.hasPermission(this.getPermission())) {
                 senderHasPermission = false;
-                sender.sendMessage(Lang.PREFIX.toFormattedString() + Lang.NO_PERMISSION.toFormattedString());
+                Lang.sendMessage(sender, Lang.i().getPrefix() + Lang.i().getErrors().getNoPermission());
                 return false;
             }
 

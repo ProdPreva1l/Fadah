@@ -12,11 +12,7 @@ public @interface SubCommandArgs {
 
     String permission() default "";
 
-    String[] aliases() default {};
-
     boolean inGameOnly() default true;
 
     boolean async() default false;
-
-    String description() default "";
 }

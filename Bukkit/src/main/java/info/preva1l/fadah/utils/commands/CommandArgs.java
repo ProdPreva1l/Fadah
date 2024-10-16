@@ -12,8 +12,6 @@ public @interface CommandArgs {
 
     String permission() default "";
 
-    String[] aliases() default {};
-
     boolean inGameOnly() default true;
 
     boolean async() default false;

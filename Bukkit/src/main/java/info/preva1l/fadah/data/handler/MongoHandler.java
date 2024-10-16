@@ -29,9 +29,10 @@ public class MongoHandler implements DatabaseHandler {
 
     @Override
     public void connect() {
+        Config.Database conf = Config.i().getDatabase();
         try {
-            @NotNull String connectionURI = Config.DATABASE_URI.toString();
-            @NotNull String database = Config.DATABASE.toString();
+            @NotNull String connectionURI = conf.getUri();
+            @NotNull String database = conf.getDatabase();
             Fadah.getConsole().info("Connecting to: " + connectionURI);
             connectionHandler = new MongoConnectionHandler(connectionURI, database);
             CacheHandler cacheHandler = new CacheHandler(connectionHandler);

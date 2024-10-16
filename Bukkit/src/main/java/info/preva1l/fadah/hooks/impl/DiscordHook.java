@@ -25,38 +25,34 @@ import java.util.List;
 @Setter
 @Getter
 public class DiscordHook implements Hook {
+    private Config.Hooks.Discord conf = Config.i().getHooks().getDiscord();
     private boolean enabled = false;
 
     public void send(Listing listing) {
         TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
-            switch (Config.HOOK_DISCORD_MODE.toModeEnum()) {
+            switch (conf.getMessageMode()) {
                 case EMBED -> sendEmbed(listing);
-                case PLAIN -> sendPlain(listing);
+                case PLAIN_TEXT -> sendPlain(listing);
             }
         });
     }
 
     private void sendEmbed(Listing listing) {
+        Config.Hooks.Discord.Embed embedConf = conf.getEmbed();
         final DiscordWebhook.EmbedObject.EmbedObjectBuilder embed = DiscordWebhook.EmbedObject.builder()
-                .title(StringUtils.colorize(Config.HOOK_DISCORD_EMBED_TITLE.toString()
-                        .replace("%player%", listing.getOwnerName())
-                        .replace("%item%", StringUtils.removeColorCodes(StringUtils.extractItemName(listing.getItemStack())))
-                        .replace("%price%", new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()))))
-                .description(StringUtils.colorize(Config.HOOK_DISCORD_EMBED_CONTENT.toString()
-                                .replace("%player%", listing.getOwnerName())
-                                .replace("%item%", StringUtils.removeColorCodes(StringUtils.extractItemName(listing.getItemStack())))
-                                .replace("%price%", new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()))));
+                .title(formatString(embedConf.getTitle(), listing))
+                .description(formatString(embedConf.getContent(), listing));
 
-        switch (Config.HOOK_DISCORD_EMBED_IMAGE.toImageLocationEnum()) {
+        switch (embedConf.getImageLocation()) {
             case SIDE -> embed.thumbnail(new DiscordWebhook.EmbedObject.Thumbnail(getImageUrlForItem(listing.getItemStack().getType())));
             case BOTTOM -> embed.image(new DiscordWebhook.EmbedObject.Image(getImageUrlForItem(listing.getItemStack().getType())));
         }
 
-        if (!Config.HOOK_DISCORD_EMBED_FOOTER.toString().isEmpty()) {
-                embed.footer(new DiscordWebhook.EmbedObject.Footer(Config.HOOK_DISCORD_EMBED_FOOTER.toString(), ""));
+        if (!embedConf.getFooter().isEmpty()) {
+                embed.footer(new DiscordWebhook.EmbedObject.Footer(embedConf.getFooter(), ""));
         }
 
-        final DiscordWebhook webhook = new DiscordWebhook(Config.HOOK_DISCORD_URL.toString());
+        final DiscordWebhook webhook = new DiscordWebhook(conf.getWebhookUrl());
         webhook.addEmbed(embed.build());
         try {
             webhook.execute();
@@ -66,16 +62,20 @@ public class DiscordHook implements Hook {
     }
 
     private void sendPlain(Listing listing) {
-        final DiscordWebhook webhook = new DiscordWebhook(Config.HOOK_DISCORD_URL.toString());
-        webhook.setContent(StringUtils.colorize(Config.HOOK_DISCORD_PLAIN.toString()
-                .replace("%player%", listing.getOwnerName())
-                .replace("%item%", StringUtils.removeColorCodes(StringUtils.extractItemName(listing.getItemStack())))
-                .replace("%price%", new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(listing.getPrice()))));
+        final DiscordWebhook webhook = new DiscordWebhook(conf.getWebhookUrl());
+        webhook.setContent(formatString(conf.getPlainText(), listing));
         try {
             webhook.execute();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String formatString(String str, Listing listing) {
+        return StringUtils.colorize(str
+                .replace("%player%", listing.getOwnerName())
+                .replace("%item%", StringUtils.removeColorCodes(StringUtils.extractItemName(listing.getItemStack())))
+                .replace("%price%", new DecimalFormat(Config.i().getDecimalFormat()).format(listing.getPrice())));
     }
 
     private String getImageUrlForItem(Material material) {
@@ -84,7 +84,7 @@ public class DiscordHook implements Hook {
 
     public enum Mode {
         EMBED,
-        PLAIN
+        PLAIN_TEXT
     }
 
     public enum ImageLocation {

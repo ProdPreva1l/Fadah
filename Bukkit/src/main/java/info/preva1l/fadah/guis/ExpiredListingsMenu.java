@@ -27,7 +27,7 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
     public ExpiredListingsMenu(Player viewer, OfflinePlayer owner, int page) {
         super(LayoutManager.MenuType.EXPIRED_LISTINGS.getLayout().guiSize(),
                 LayoutManager.MenuType.EXPIRED_LISTINGS.getLayout().formattedTitle(viewer.getUniqueId() == owner.getUniqueId()
-                        ? Lang.WORD_YOUR.toCapital()
+                        ? Lang.i().getWords().getYour()
                         : owner.getName()+"'s", owner.getName()+"'s"), viewer, LayoutManager.MenuType.EXPIRED_LISTINGS,
                 List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34));
         this.viewer = viewer;
@@ -58,11 +58,12 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
                 MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {
                     int slot = viewer.getInventory().firstEmpty();
                     if (slot == -1) {
-                        viewer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.INVENTORY_FULL.toFormattedString());
+
+                        Lang.sendMessage(viewer, Lang.i().getPrefix() + Lang.i().getErrors().getInventoryFull());
                         return;
                     }
                     if (!ExpiredListingsCache.doesItemExist(player.getUniqueId(), collectableItem)) {
-                        viewer.sendMessage(StringUtils.colorize(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString()));
+                        Lang.sendMessage(viewer, StringUtils.colorize(Lang.i().getPrefix() + Lang.i().getErrors().getDoesNotExist()));
                         return;
                     }
                     ExpiredListingsCache.removeItem(owner.getUniqueId(), collectableItem);

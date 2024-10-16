@@ -12,20 +12,20 @@ import lombok.Setter;
 
 import java.time.Instant;
 
-@Getter
 @Setter
 public class InfluxDBHook implements Hook {
-    private boolean enabled;
+    @Getter private boolean enabled;
 
     private final InfluxDBClient client;
     private final WriteApiBlocking writeApi;
 
     public InfluxDBHook() {
+        Config.Hooks.InfluxDB conf = Config.i().getHooks().getInfluxdb();
         try {
-            String url = Config.HOOK_INFLUX_URI.toString();
-            String token = Config.HOOK_INFLUX_TOKEN.toString();
-            String org = Config.HOOK_INFLUX_ORG.toString();
-            String bucket = Config.HOOK_INFLUX_BUCKET.toString();
+            String url = conf.getUri();
+            String token = conf.getToken();
+            String org = conf.getOrg();
+            String bucket = conf.getBucket();
             this.client = InfluxDBClientFactory.create(url, token.toCharArray(), org, bucket);
             this.writeApi = client.getWriteApiBlocking();
             this.enabled = true;
@@ -36,7 +36,7 @@ public class InfluxDBHook implements Hook {
     }
 
     public void log(String message) {
-        Point point = Point.measurement("Fadah")
+        Point point = Point.measurement("Transaction-Logs")
                 .time(Instant.now(), WritePrecision.MS)
                 .addField("message", message);
         writeApi.writePoint(point);

@@ -1,234 +1,374 @@
 package info.preva1l.fadah.config;
 
-import com.google.common.collect.ImmutableList;
+import de.exlll.configlib.Configuration;
+import de.exlll.configlib.NameFormatters;
+import de.exlll.configlib.YamlConfigurationProperties;
+import de.exlll.configlib.YamlConfigurations;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.utils.StringUtils;
-import info.preva1l.fadah.utils.config.BasicConfig;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import org.bukkit.command.CommandSender;
 
-import java.util.ArrayList;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-@SuppressWarnings({"unchecked", "unused"})
 @Getter
-@AllArgsConstructor
-public enum Lang {
-    PREFIX("prefix", "&#9555FF&lDXTRUS"),
+@Configuration
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@SuppressWarnings("FieldMayBeFinal")
+public class Lang {
+    private static Lang instance;
 
-    OWN_LISTING("errors.own-listing", "&cYou cannot buy your own listing!"),
-    TOO_EXPENSIVE("errors.too-expensive", "&cYou cannot afford this item!"),
-    INVENTORY_FULL("errors.inventory-full", "&cYou don't have any free room in your inventory!"),
-    DOES_NOT_EXIST("errors.does-not-exist", "&cThis listing is no longer for sale!"),
-    MUST_BE_PLAYER("errors.must-be-player", "&cOnly players can run this command!"),
-    PLAYER_NOT_FOUND("errors.player-not-found", "&c{0} has not joined before!"),
-    NO_PERMISSION("errors.no-permission", "&cYou do not have permission to execute this command!"),
-    DATABASE_CONNECTING("errors.database-connecting", "&cDatabase not connected! Please Wait"),
-    BAD_USAGE("errors.bad-usage", "&cUsage: /{0}"),
-    NO_COMMAND("errors.no-command", "&cThis command does not exist!"),
-    CANT_SELL("errors.cant-sell", "&cYou cannot sell this item!"),
+    private static final String CONFIG_HEADER = """
+            #########################################
+            #                  Fadah                #
+            #          Language Configuration       #
+            #########################################
+            """;
 
-    AUCTION_DISABLED("fail.disabled", "&cThe Auction House is currently disabled!"),
-    MAX_LISTINGS("fail.max-listings", "&cYou have reached your max listings! ({0}/{1})"),
-    MAX_LISTING_PRICE("fail.listing-price.max", "&fPrice must be less than &a${0}"),
-    MIN_LISTING_PRICE("fail.listing-price.min", "&fPrice must be at least &a${0}"),
-    MUST_BE_NUMBER("fail.must-be-number", "&cThe price must be a number!"),
-    MUST_HOLD_ITEM("fail.must-hold-item", "&fYou must have an item in your hand to sell!"),
-    ADVERT_EXPENSE("fail.advert-too-expensive", "&cYour advert failed to post because you did not have enough money!"),
-    COOLDOWN("fail.cooldown", "&cPlease wait &f{0}&c!"),
+    private static final YamlConfigurationProperties PROPERTIES = YamlConfigurationProperties.newBuilder()
+            .charset(StandardCharsets.UTF_8)
+            .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
+            .header(CONFIG_HEADER).build();
 
-    HELP_COMMAND_HEADER("help-command.header", "&#9555FF&lAuctionHouse &eHelp"),
-    HELP_COMMAND_FORMAT("help-command.format", "&b/{0} &8&l| &f{1}"),
+    private String prefix = "&#9555FF&lFadah &r";
 
-    NOTIFICATION_NEW_LISTING("notifications.listed", List.of(
-            "&f------------------------------------------------",
-            "&eYou have a successfully listed an item for sale!",
-            "&fItem: &e{0}",
-            "&fPrice: &a${1}",
-            "&fExpires in: &6{2}",
-            "&fActive Listings: &d{3}&f/&5{4}",
-            "&fYou have been taxed: &9{5}% &7(&a${6}&7)",
-            "&f------------------------------------------------"
-    )),
-    CANCELLED("notifications.cancelled", "&cListing Cancelled!"),
-    NOTIFICATION_NEW_SELL("notifications.new-sell", List.of(
-            "&f----------------------------------------------",
-            "&eYou have sold an item on the Auction House!",
-            "&fItem: &e{0}",
-            "&fMoney Made: &a${1}",
-            "&f----------------------------------------------"
-    )),
-    NOTIFICATION_NEW_ITEM("notifications.new-item", List.of(
-            "&f------------------------------------------",
-            "&eYou have a new item in your collection box!",
-            "&f             /ah redeem!",
-            "&f------------------------------------------"
-    )),
-    NOTIFICATION_ADVERT("notifications.advert", List.of(
-            "&f--------------------------------------------------",
-            "&f{0} &ehas just made a new listing on the auction house!",
-            "&fItem: &e{1}",
-            "&fPrice: &a${2}",
-            "&7(Click this message to view the listing!)",
-            "&f--------------------------------------------------"
-    )),
+    private String categorySelected = "&e&lSELECTED";
 
-    CATEGORY_SELECTED("category-selected", "&e&lSELECTED"),
+    private Notifications notifications = new Notifications();
 
-    SORT_ASCENDING("sort.direction.ascending.normal", "Ascending (A-Z)"),
-    SORT_ASCENDING_AGE("sort.direction.ascending.age", "Newest First"),
-    SORT_ASCENDING_PRICE("sort.direction.ascending.price", "Most Expensive First"),
-    SORT_DESCENDING("sort.direction.descending.normal", "Descending (Z-A)"),
-    SORT_DESCENDING_AGE("sort.direction.descending.age", "Oldest First"),
-    SORT_DESCENDING_PRICE("sort.direction.descending.price", "Cheapest First"),
-    SORT_AGE_NAME("sort.type.age", "Sort By Listing Age"),
-    SORT_ALPHABETICAL_NAME("sort.type.alphabetical", "Sort Alphabetically By Name"),
-    SORT_PRICE_NAME("sort.type.price", "Sort By Listing Price"),
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Notifications {
+        private List<String> advert = List.of(
+                "&f--------------------------------------------------",
+                "&f%player% &ehas just made a new listing on the auction house!",
+                "&fItem: &e%item%",
+                "&fPrice: &a$%price%",
+                "&7(Click this message to view the listing!)",
+                "&f--------------------------------------------------"
+        );
+        private List<String> newListing = List.of(
+                "&f------------------------------------------------",
+                "&eYou have a successfully listed an item for sale!",
+                "&fItem: &e%item%",
+                "&fPrice: &a$%price%",
+                "&fExpires in: &6%time%",
+                "&fActive Listings: &d%current_listings%&f/&5%max_listings%",
+                "&fYou have been taxed: &9%tax%% &7(&a$%price_after_tax%&7)",
+                "&f------------------------------------------------"
+        );
+        private List<String> newItem = List.of(
+                "&f------------------------------------------",
+                "&eYou have a new item in your collection box!",
+                "&f             /ah redeem!",
+                "&f------------------------------------------"
+        );
+        private List<String> sale = List.of(
+                "&f----------------------------------------------",
+                "&eYou have sold an item on the Auction House!",
+                "&fItem: &e%item%",
+                "&fMoney Made: &a$%price%",
+                "&f----------------------------------------------"
+        );
+        private String cancelled = "&cListing Cancelled!";
+    }
 
-    ADVERT_POST("listing-advert.post", "Post Advert"),
-    ADVERT_DONT_POST("listing-advert.dont-post", "No Advert"),
+    private Commands commands = new Commands();
 
-    MODE_BUY_IT_NOW("modes.buy-it-now", "BIN"),
-    MODE_BIDDING("modes.biddable", "Bidding"),
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Commands {
+        private Main main = new Main();
 
-    ACTIONS_LISTING_START("logging-actions.listing-start", "Listing Started"),
-    ACTIONS_LISTING_PURCHASED("logging-actions.listing-purchased", "Listing Purchased"),
-    ACTIONS_LISTING_SOLD("logging-actions.listing-sold", "Listing Sold"),
-    ACTIONS_LISTING_CANCEL("logging-actions.listing-cancelled", "Listing Cancelled"),
-    ACTIONS_LISTING_EXPIRE("logging-actions.listing-expired", "Listing Expired"),
-    ACTIONS_LISTING_ADMIN_CANCEL("logging-actions.listing-cancelled-admin", "Listing Cancelled by Admins"),
-    ACTIONS_EXPIRED_ITEM_CLAIM("logging-actions.expired-item-claimed", "Expired Listing Claimed"),
-    ACTIONS_EXPIRED_ITEM_ADMIN_CLAIM("logging-actions.expired-item-claimed-admin", "Expired Listing Claimed by Admins"),
-    ACTIONS_COLLECTION_BOX_CLAIM("logging-actions.collection-box-claimed", "Collection Box Item Claimed"),
-    ACTIONS_COLLECTION_BOX_ADMIN_CLAIM("logging-actions.collection-box-claimed-admin", "Collection Box Item Claimed by Admins"),
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Main {
+            private List<String> aliases = List.of("auctionhouse", "ah", "auctions", "auction");
+        }
 
-    ADMIN_RELOAD("admin.reload.message", "&aConfigs reloaded!"),
-    ADMIN_RELOAD_REMOTE("admin.reload.remote", "&aConfigs reloaded from remote server!"),
-    ADMIN_TOGGLE_MESSAGE("admin.toggle.message", "&fAuction House has been {0}&r&f!"),
-    ADMIN_TOGGLE_REMOTE("admin.toggle.remote", "&fAuction House has been {0}&r&f from a remote server!"),
-    ADMIN_TOGGLE_ENABLED("admin.toggle.enabled", "&a&lEnabled"),
-    ADMIN_TOGGLE_DISABLED("admin.toggle.disabled", "&c&lDisabled"),
+        private Sell Sell = new Sell();
 
-    WORD_YOU("words.you", "you"),
-    WORD_YOUR("words.your", "your"),
-    WORD_NONE("words.none", "None"),
-    ;
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Sell {
+            private String description = "Create a new listing on the auction house";
+            private String usage = "ah sell <price>";
+            private List<String> aliases = List.of("new-listing", "create-listing");
 
-    private final String path;
-    private final Object defaultValue;
+            private String mustHoldItem = "&cYou must have an item in your hand to sell!";
+            private String mustBeNumber = "&cThe price must be a number!";
+            private String maxListings = "&cYou have reached your max listings! (%current%/%max%)";
+            private ListingPrice listingPrice = new ListingPrice();
 
-    public static void loadDefault() {
-        BasicConfig configFile = Fadah.getINSTANCE().getLangFile();
-
-        for (Lang config : Lang.values()) {
-            String path = config.getPath();
-            String str = configFile.getString(path);
-            if (str.equals(path)) {
-                configFile.getConfiguration().set(path, config.getDefaultValue());
+            @Getter
+            @Configuration
+            @NoArgsConstructor(access = AccessLevel.PRIVATE)
+            public static class ListingPrice {
+                private String max = "&fPrice must be less than &a$%price%";
+                private String min = "&fPrice must be at least &a$%price%";
             }
         }
 
-        configFile.save();
-        configFile.load();
+        private View view = new View();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class View {
+            private String description = "View another players active listings";
+            private String usage = "ah view <player>";
+            private List<String> aliases = List.of("visit");
+        }
+
+        private Profile profile = new Profile();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Profile {
+            private String description = "View your auction profile";
+            private List<String> aliases = List.of();
+        }
+
+        private ActiveListings activeListings = new ActiveListings();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class ActiveListings {
+            private String description = "View your active listings";
+            private List<String> aliases = List.of("active");
+        }
+
+        private ExpiredItems expiredItems = new ExpiredItems();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class ExpiredItems {
+            private String description = "View your expired items";
+            private List<String> aliases = List.of("expired");
+        }
+
+        private CollectionBox collectionBox = new CollectionBox();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class CollectionBox {
+            private String description = "View your collection box";
+            private List<String> aliases = List.of("redeem");
+        }
+
+        private History history = new History();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class History {
+            private String description = "View your listing history";
+            private List<String> aliases = List.of("hist");
+        }
+
+        private Help help = new Help();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Help {
+            private String description = "This command!";
+            private List<String> aliases = List.of();
+
+            private String header = "&#9555FF&lAuctionHouse &eHelp";
+            private String format = "&b/ah %command% &8&l| &f%description%";
+        }
+
+        private Reload reload = new Reload();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Reload {
+            private String description = "Reload fadah";
+            private List<String> aliases = List.of("rl");
+
+            private String success = "&aAll configuration files reloaded successfully!";
+            private String fail = "&cSome configuration files failed to reload! &7(Check console)";
+            private String remote = "&aA global configuration reload has been received!";
+        }
+
+        private Toggle toggle = new Toggle();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Toggle {
+            private String description = "Toggle whether people can use the auction house";
+            private List<String> aliases = List.of();
+
+            private String message = "&fFadah has been %status%&r&f!";
+            private String remote = "&fAuction House has been %status%&r&f from a remote server!";
+            private String enabled = "&a&lENABLED";
+            private String disabled = "&c&lDISABLED";
+        }
+
+        private About about = new About();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class About {
+            private String description = "Get information about fadah";
+            private List<String> aliases = List.of();
+        }
+
+        private ViewListing viewListing = new ViewListing();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class ViewListing {
+            private String description = "View a specific listing";
+            private String usage = "ah view-listing <uuid>";
+            private List<String> aliases = List.of();
+        }
     }
 
-    public String toString() {
-        String str = Fadah.getINSTANCE().getLangFile().getString(path);
-        if (str.equals(path)) {
-            return defaultValue.toString();
-        }
-        return str;
+    private AdvertActions advertActions = new AdvertActions();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class AdvertActions {
+        private String post = "Post Advert";
+        private String silent = "No Advert";
     }
 
-    public String toFormattedString() {
-        String str = Fadah.getINSTANCE().getLangFile().getString(path);
-        if (str.equals(path)) {
-            return StringUtils.colorize(defaultValue.toString());
-        }
-        return StringUtils.colorize(str);
+    private LogActions logActions = new LogActions();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class LogActions {
+        private String listingStarted = "Listing Started";
+        private String listingPurchased = "Listing Purchased";
+        private String listingSold = "Listing Sold";
+        private String listingCancelled = "Listing Cancelled";
+        private String listingExpired = "Listing Expired";
+        private String expiredItemClaimed = "Expired Listing Claimed";
+        private String collectionBoxClaimed = "Collection Box Item Claimed";
+        private String listingCancelledAdmin = "Listing Cancelled by Admins";
+        private String expiredItemClaimedAdmin = "Expired Listing Claimed by Admins";
+        private String collectionBoxClaimedAdmin = "Collection Box Item Claimed by Admins";
     }
 
-    public String toFormattedString(Object... replacements) {
-        String str = Fadah.getINSTANCE().getLangFile().getString(path);
-        if (str.equals(path)) {
-            return StringUtils.formatPlaceholders(StringUtils.colorize(defaultValue.toString()), replacements);
+    private Sort sort = new Sort();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Sort {
+        private Age age = new Age();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Age {
+            private String name = "Sort By Listing Age";
+            private String descending = "Oldest First";
+            private String ascending = "Newest First";
         }
-        return StringUtils.colorize(StringUtils.formatPlaceholders(str, replacements));
+
+        private Name name = new Name();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Name {
+            private String name = "Sort Alphabetically By Name";
+            private String descending = "Descending (Z-A)";
+            private String ascending = "Ascending (A-Z)";
+        }
+
+        private Price price = new Price();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Price {
+            private String name = "Sort By Listing Price";
+            private String descending = "Cheapest First (Low to High)";
+            private String ascending = "Most Expensive First (High to Low)";
+        }
     }
 
-    public List<String> toStringList() {
-        List<String> str = Fadah.getINSTANCE().getLangFile().getStringList(path);
-        if (str.isEmpty() || str.get(0).equals(path)) {
-            return (List<String>) defaultValue;
-        }
-        if (str.get(0).equals("null")) {
-            return ImmutableList.of();
-        }
-        return str;
+    private Errors errors = new Errors();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Errors {
+        private String disabled = "&cThe Auction House is currently disabled!";
+        private String commandNotFound = "&cThis command does not exist!";
+        private String mustBePlayer = "&cOnly players can run this command!";
+        private String restricted = "&cYou cannot sell this item!";
+        private String noPermission = "&cYou do not have permission to execute this command!";
+        private String playerNotFound = "&c%player% was not found!";
+        private String invalidUsage = "&cUsage: /%command%";
+        private String doesNotExist = "&cThis listing does not exist!";
+        private String ownListings = "&cYou cannot buy your own listing!";
+        private String tooExpensive = "&cYou cannot afford this item!";
+        private String inventoryFull = "&cYou don't have any free room in your inventory!";
+        private String advertExpense = "&cYour advert failed to post because you did not have enough money!";
+        private String databaseLoading = "&cDatabase not connected! Please Wait";
+        private String cooldown = "&cPlease wait &f%time%&c!";
     }
 
-    public List<String> toStringList(Object... replacements) {
-        List<String> str = Fadah.getINSTANCE().getLangFile().getStringList(path);
-        if (str.isEmpty() || str.get(0).equals(path)) {
-            List<String> ret = new ArrayList<>();
-            for (String line : (List<String>) defaultValue) ret.add(StringUtils.formatPlaceholders(line, replacements));
-            return ret;
+    private Words words = new Words();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Words {
+        private String your = "your";
+        private String you = "you";
+        private String none = "None";
+        private Modes modes = new Modes();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Modes {
+            private String buyItNow = "BIN";
+            private String bidding = "Bidding";
         }
-        if (str.get(0).equals("null")) {
-            return ImmutableList.of();
-        }
-        List<String> ret = new ArrayList<>();
-        for (String line : str) {
-            ret.add(StringUtils.formatPlaceholders(line, replacements));
-        }
-        return ret;
     }
 
-    public List<String> toLore() {
-        List<String> str = Fadah.getINSTANCE().getLangFile().getStringList(path);
-        if (str.isEmpty() || str.get(0).equals(path)) {
-            List<String> ret = new ArrayList<>();
-            for (String line : (List<String>) defaultValue) ret.add(StringUtils.formatPlaceholders(line));
-            return StringUtils.colorizeList(ret);
-        }
-        if (str.get(0).equals("null")) {
-            return ImmutableList.of();
-        }
-        List<String> ret = new ArrayList<>();
-        for (String line : str) ret.add(StringUtils.formatPlaceholders(line));
-        return StringUtils.colorizeList(ret);
+    public static void sendMessage(CommandSender sender, String message) {
+        sender.sendMessage(StringUtils.colorize(message));
     }
 
-    public List<String> toLore(Object... replacements) {
-        List<String> str = Fadah.getINSTANCE().getLangFile().getStringList(path);
-        if (str.isEmpty() || str.get(0).equals(path)) {
-            List<String> ret = new ArrayList<>();
-            for (String line : (List<String>) defaultValue) ret.add(StringUtils.formatPlaceholders(line, replacements));
-            return StringUtils.colorizeList(ret);
+    public void save() {
+        YamlConfigurations.save(new File(Fadah.getINSTANCE().getDataFolder(), "lang.yml").toPath(), Lang.class, this);
+    }
+
+    public static void reload() {
+        instance = YamlConfigurations.load(new File(Fadah.getINSTANCE().getDataFolder(), "lang.yml").toPath(), Lang.class, PROPERTIES);
+    }
+
+    public static Lang i() {
+        if (instance != null) {
+            return instance;
         }
-        if (str.get(0).equals("null")) {
-            return ImmutableList.of();
-        }
-        List<String> ret = new ArrayList<>();
-        for (String line : str) {
-            ret.add(StringUtils.formatPlaceholders(line, replacements));
-        }
-        return StringUtils.colorizeList(ret);
-    }
 
-    public String toCapital() {
-        return StringUtils.capitalize(toString());
-    }
-
-    public boolean toBoolean() {
-        return Boolean.parseBoolean(toString());
-    }
-
-    public int toInteger() {
-        return Integer.parseInt(toString());
-    }
-
-    public double toDouble() {
-        return Double.parseDouble(toString());
+        return instance = YamlConfigurations.update(new File(Fadah.getINSTANCE().getDataFolder(), "lang.yml").toPath(), Lang.class, PROPERTIES);
     }
 }

@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.logging.FileHandler;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
@@ -63,9 +64,7 @@ public final class Fadah extends JavaPlugin {
     @Getter private static Logger console;
     @Getter private final Logger transactionLogger = Logger.getLogger("AuctionHouse-Transactions");
 
-    @Getter private BasicConfig configFile;
     @Getter private BasicConfig categoriesFile;
-    @Getter private BasicConfig langFile;
     @Getter private BasicConfig menusFile;
 
     @Getter private Broker broker;
@@ -134,7 +133,7 @@ public final class Fadah extends JavaPlugin {
         if (broker != null) broker.destroy();
         if (metrics != null) metrics.shutdown();
         Optional<InfluxDBHook> hook = Fadah.getINSTANCE().getHookManager().getHook(InfluxDBHook.class);
-        if (Config.HOOK_INFLUX_ENABLED.toBoolean() && hook.isPresent() && hook.get().isEnabled()) {
+        if (Config.i().getHooks().getInfluxdb().isEnabled() && hook.isPresent() && hook.get().isEnabled()) {
             hook.get().destroy();
         }
     }
@@ -169,12 +168,10 @@ public final class Fadah extends JavaPlugin {
 
     private void loadFiles() {
         getConsole().info("Loading Configuration Files...");
-        configFile = new BasicConfig(this, "config.yml");
         categoriesFile = new BasicConfig(this, "categories.yml");
-        langFile = new BasicConfig(this, "lang.yml");
 
-        Config.loadDefault();
-        Lang.loadDefault();
+        Config.i();
+        Lang.i();
 
         categoriesFile.save();
         categoriesFile.load();
@@ -226,11 +223,11 @@ public final class Fadah extends JavaPlugin {
     private void loadHooks() {
         getConsole().info("Configuring Hooks...");
 
-        if (Config.HOOK_ECO_ITEMS.toBoolean()) {
+        if (Config.i().getHooks().isEcoItems()) {
             getHookManager().registerHook(new EcoItemsHook());
         }
 
-        if (Config.HOOK_DISCORD_ENABLED.toBoolean()) {
+        if (Config.i().getHooks().getDiscord().isEnabled()) {
             getHookManager().registerHook(new DiscordHook());
         }
 
@@ -238,17 +235,18 @@ public final class Fadah extends JavaPlugin {
     }
 
     private void loadBroker() {
-        if (Config.BROKER_ENABLED.toBoolean()) {
+        Config.Broker settings = Config.i().getBroker();
+        if (settings.isEnabled()) {
             getConsole().info("Connecting to Broker...");
-            getConsole().info("Broker Type: %s".formatted(Config.BROKER_TYPE.toBrokerType().getDisplayName()));
-            if (Config.DATABASE_TYPE.toDBTypeEnum() == DatabaseType.SQLITE) {
+            getConsole().info("Broker Type: %s".formatted(settings.getType().getDisplayName()));
+            if (Config.i().getDatabase().getType() == DatabaseType.SQLITE) {
                 getConsole().severe("------------------------------------------");
                 getConsole().severe("Broker has not been enabled as the selected");
                 getConsole().severe("       database is not compatible!");
                 getConsole().severe("------------------------------------------");
                 return;
             }
-            broker = switch (Config.BROKER_TYPE.toBrokerType()) {
+            broker = switch (settings.getType()) {
                 case REDIS -> new RedisBroker(this);
             };
             broker.connect();
@@ -286,7 +284,7 @@ public final class Fadah extends JavaPlugin {
     private void initLogger() {
         getConsole().info("Initialising transaction logger...");
 
-        if (!Config.LOG_TO_FILE.toBoolean()) {
+        if (!Config.i().isLogToFile()) {
             return;
         }
         try {
@@ -334,24 +332,25 @@ public final class Fadah extends JavaPlugin {
         });
     }
 
-    public void loadPlayerData(UUID uuid) {
-        DatabaseManager.getInstance().get(CollectionBox.class, uuid)
-                .thenAccept(collectableList -> collectableList
-                        .ifPresent(list -> CollectionBoxCache.update(uuid, list.collectableItems())));
+    public CompletableFuture<Void> loadPlayerData(UUID uuid) {
+        return CompletableFuture.supplyAsync(() -> {
+            Optional<CollectionBox> collectionBox = DatabaseManager.getInstance().get(CollectionBox.class, uuid).join();
+            collectionBox.ifPresent(list -> CollectionBoxCache.update(uuid, list.collectableItems()));
 
-        DatabaseManager.getInstance().get(ExpiredItems.class, uuid)
-                .thenAccept(collectableList -> collectableList
-                        .ifPresent(list -> ExpiredListingsCache.update(uuid, list.collectableItems())));
+            Optional<ExpiredItems> expiredItems = DatabaseManager.getInstance().get(ExpiredItems.class, uuid).join();
+            expiredItems.ifPresent(list -> ExpiredListingsCache.update(uuid, list.collectableItems()));
 
-        DatabaseManager.getInstance().get(History.class, uuid)
-                .thenAccept(collectableList -> collectableList
-                        .ifPresent(list -> HistoricItemsCache.update(uuid, list.collectableItems())));
+            Optional<History> history = DatabaseManager.getInstance().get(History.class, uuid).join();
+            history.ifPresent(list -> HistoricItemsCache.update(uuid, list.collectableItems()));
+
+            return null;
+        });
     }
 
     public void reload() {
         FastInvManager.closeAll(this);
-        Fadah.getINSTANCE().getConfigFile().load();
-        Fadah.getINSTANCE().getLangFile().load();
+        Config.reload();
+        Lang.reload();
         Fadah.getINSTANCE().getMenusFile().load();
         Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.MAIN);
         Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.NEW_LISTING);

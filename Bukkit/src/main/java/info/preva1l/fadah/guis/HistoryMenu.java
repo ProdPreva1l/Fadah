@@ -23,7 +23,7 @@ public class HistoryMenu extends PaginatedFastInv {
     public HistoryMenu(Player viewer, OfflinePlayer owner, @Nullable String dateSearch) {
         super(LayoutManager.MenuType.HISTORY.getLayout().guiSize(), LayoutManager.MenuType.HISTORY.getLayout().formattedTitle(
                         viewer.getUniqueId() == owner.getUniqueId()
-                                ? Lang.WORD_YOUR.toCapital()
+                                ? Lang.i().getWords().getYour()
                                 : owner.getName() + "'s", owner.getName() + "'s"),
                 viewer, LayoutManager.MenuType.HISTORY,
                 List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34));
@@ -57,19 +57,19 @@ public class HistoryMenu extends PaginatedFastInv {
                         ? getLang().getLore("lore-with-buyer",
                         historicItem.action().getLocaleActionName(),
                         Bukkit.getOfflinePlayer(historicItem.purchaserUUID()).getName(),
-                        new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(historicItem.price()),
+                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.price()),
                         TimeUtil.formatTimeToVisualDate(historicItem.loggedDate()))
 
                         : getLang().getLore("lore-with-seller",
                         historicItem.action().getLocaleActionName(),
                         Bukkit.getOfflinePlayer(historicItem.purchaserUUID()).getName(),
-                        new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(historicItem.price()),
+                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.price()),
                         TimeUtil.formatTimeToVisualDate(historicItem.loggedDate()))
                 );
             } else if (historicItem.price() != null && historicItem.price() != 0d) {
                 itemStack.addLore(getLang().getLore("lore-with-price",
                         historicItem.action().getLocaleActionName(),
-                        new DecimalFormat(Config.DECIMAL_FORMAT.toString()).format(historicItem.price()),
+                        new DecimalFormat(Config.i().getDecimalFormat()).format(historicItem.price()),
                         TimeUtil.formatTimeToVisualDate(historicItem.loggedDate())
                 ));
             } else {

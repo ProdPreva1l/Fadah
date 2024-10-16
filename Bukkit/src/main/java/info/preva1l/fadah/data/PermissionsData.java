@@ -60,11 +60,11 @@ public class PermissionsData {
 
     @AllArgsConstructor
     public enum PermissionType {
-        MAX_LISTINGS("fadah.max-listings.", Config.DEFAULT_MAX_LISTINGS.toInteger()),
+        MAX_LISTINGS("fadah.max-listings.", Config.i().getDefaultMaxListings()),
         LISTING_TAX("fadah.listing-tax.", 0.00D),
-        ADVERT_PRICE("fadah.advert-price.", Config.ADVERT_DEFAULT_PRICE.toDouble()),
+        ADVERT_PRICE("fadah.advert-price.", Config.i().getListingAdverts().getDefaultPrice()),
         ;
         private final String permissionString;
-        private final Object def;
+        private final Number def;
     }
 }

@@ -6,6 +6,7 @@ import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.cache.ListingCache;
+import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.records.CollectionBox;
@@ -105,17 +106,17 @@ public abstract class Broker {
 
             case RELOAD -> {
                 Fadah.getINSTANCE().reload();
-                Bukkit.getConsoleSender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADMIN_RELOAD_REMOTE.toFormattedString());
+                Bukkit.getConsoleSender().sendMessage(Lang.i().getPrefix() + Lang.i().getCommands().getReload().getRemote());
             }
 
             case TOGGLE -> {
                 FastInvManager.closeAll(Fadah.getINSTANCE());
-                boolean enabled = Fadah.getINSTANCE().getConfigFile().getBoolean("enabled");
-                Fadah.getINSTANCE().getConfigFile().getConfiguration().set("enabled", !enabled);
-                Fadah.getINSTANCE().getConfigFile().save();
+                boolean enabled = Config.i().isEnabled();
+                Config.i().setEnabled(!enabled);
 
-                String toggle = enabled ? Lang.ADMIN_TOGGLE_DISABLED.toFormattedString() : Lang.ADMIN_TOGGLE_ENABLED.toFormattedString();
-                Bukkit.getConsoleSender().sendMessage(Lang.PREFIX.toFormattedString() + Lang.ADMIN_TOGGLE_REMOTE.toFormattedString(toggle));
+                String toggle = enabled ? Lang.i().getCommands().getToggle().getDisabled() : Lang.i().getCommands().getToggle().getEnabled();
+                Lang.sendMessage(Bukkit.getConsoleSender(), Lang.i().getPrefix() + Lang.i().getCommands().getToggle().getRemote()
+                        .replace("%status%", toggle));
             }
 
             default -> throw new IllegalStateException("Unexpected value: " + message.getType());

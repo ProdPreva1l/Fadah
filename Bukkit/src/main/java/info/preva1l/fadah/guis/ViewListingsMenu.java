@@ -17,17 +17,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ViewListingsMenu extends PaginatedFastInv {
-    private final Player viewer;
     private final OfflinePlayer owner;
     private final List<Listing> listings;
 
     public ViewListingsMenu(Player viewer, OfflinePlayer owner) {
         super(LayoutManager.MenuType.VIEW_LISTINGS.getLayout().guiSize(),
                 LayoutManager.MenuType.VIEW_LISTINGS.getLayout().formattedTitle(viewer.getUniqueId() == owner.getUniqueId()
-                        ? Lang.WORD_YOUR.toCapital()
+                        ? StringUtils.capitalize(Lang.i().getWords().getYour())
                         : owner.getName()+"'s", owner.getName()+"'s"), viewer, LayoutManager.MenuType.VIEW_LISTINGS,
                 List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34));
-        this.viewer = viewer;
         this.owner = owner;
         this.listings = new ArrayList<>(ListingCache.getListings().values());
         listings.removeIf(listing -> !listing.isOwner(owner.getUniqueId()));
@@ -53,7 +51,9 @@ public class ViewListingsMenu extends PaginatedFastInv {
 
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
                     .addLore(getLang().getLore("listing.lore-body",
-                            listing.getOwnerName(), StringUtils.removeColorCodes(CategoryCache.getCatName(listing.getCategoryID())), buyMode, new DecimalFormat(Config.DECIMAL_FORMAT.toString())
+                            listing.getOwnerName(),
+                            StringUtils.removeColorCodes(CategoryCache.getCatName(listing.getCategoryID())), buyMode,
+                            new DecimalFormat(Config.i().getDecimalFormat())
                                     .format(listing.getPrice()), TimeUtil.formatTimeUntil(listing.getDeletionDate())));
 
             if (player.getUniqueId().equals(listing.getOwner())) {
@@ -82,17 +82,17 @@ public class ViewListingsMenu extends PaginatedFastInv {
                 }
 
                 if (listing.isOwner(player)) {
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.OWN_LISTING.toFormattedString());
+                    Lang.sendMessage(player, Lang.i().getPrefix() + Lang.i().getErrors().getOwnListings());
                     return;
                 }
 
                 if (!Fadah.getINSTANCE().getEconomy().has(player, listing.getPrice())) {
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.TOO_EXPENSIVE.toFormattedString());
+                    Lang.sendMessage(player, Lang.i().getPrefix() + Lang.i().getErrors().getTooExpensive());
                     return;
                 }
 
                 if (ListingCache.getListing(listing.getId()) == null) { // todo: re-add strict checks
-                    player.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
+                    Lang.sendMessage(player, Lang.i().getPrefix() + Lang.i().getErrors().getDoesNotExist());
                     return;
                 }
 

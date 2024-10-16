@@ -40,7 +40,7 @@ public final class zAuctionHouseMigrator implements Migrator {
     @Override
     public List<Listing> migrateListings() {
         List<Listing> listings = new ArrayList<>();
-        for (String categoryName : Config.MIGRATOR_ZAUCTIONHOUSE_CATEGORIES.toStringList()) {
+        for (String categoryName : Config.i().getMigrators().getZAuctionHouse().getCategoriesToMigrate()) {
             Optional<Category> zCategory = categoryManager.getByName(categoryName);
             zCategory.ifPresentOrElse((category) -> {
                 List<AuctionItem> zListings = auctionManager.getItems(category);

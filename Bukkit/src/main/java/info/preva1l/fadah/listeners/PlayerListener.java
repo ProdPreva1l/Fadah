@@ -1,6 +1,5 @@
 package info.preva1l.fadah.listeners;
 
-
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
@@ -20,7 +19,7 @@ public class PlayerListener implements Listener {
     public void joinListener(AsyncPlayerPreLoginEvent e) {
         if (!DatabaseManager.getInstance().isConnected()) {
             e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-            e.setKickMessage(Lang.PREFIX.toFormattedString() + Lang.DATABASE_CONNECTING.toFormattedString());
+            e.setKickMessage(Lang.i().getPrefix() + Lang.i().getErrors().getDatabaseLoading());
             return;
         }
 

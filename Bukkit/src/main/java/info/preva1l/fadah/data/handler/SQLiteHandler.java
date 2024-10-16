@@ -57,7 +57,7 @@ public class SQLiteHandler implements DatabaseHandler {
             dataSource = new HikariDataSource(config);
             this.backupFlatFile(databaseFile);
 
-            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.DATABASE_TYPE.toDBTypeEnum().getId()));
+            final String[] databaseSchema = getSchemaStatements(String.format("database/%s_schema.sql", Config.i().getDatabase().getType().getId()));
             try (Statement statement = dataSource.getConnection().createStatement()) {
                 for (String tableCreationStatement : databaseSchema) {
                     statement.execute(tableCreationStatement);
