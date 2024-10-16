@@ -1,11 +1,10 @@
 package info.preva1l.fadah.listeners;
 
-
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.HistoricItemsCache;
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.utils.guis.InventoryEventHandler;
 import org.bukkit.event.EventHandler;
@@ -20,7 +19,7 @@ public class PlayerListener implements Listener {
     public void joinListener(AsyncPlayerPreLoginEvent e) {
         if (!DatabaseManager.getInstance().isConnected()) {
             e.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
-            e.setKickMessage(Lang.PREFIX.toFormattedString() + Lang.DATABASE_CONNECTING.toFormattedString());
+            e.setKickMessage(Lang.i().getPrefix() + Lang.i().getErrors().getDatabaseLoading());
             return;
         }
 

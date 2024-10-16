@@ -34,7 +34,7 @@ public class HistorySubCommand extends SubCommand {
                     .thenAccept(history -> history.ifPresent(items -> HistoricItemsCache.update(finalOwner.getUniqueId(), items.collectableItems())));
         }
         if (owner.getUniqueId() != command.getPlayer().getUniqueId() && !HistoricItemsCache.playerExists(owner.getUniqueId())) {
-            command.sender().sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getPlayerNotFound()
+            command.reply(Lang.i().getPrefix() + Lang.i().getErrors().getPlayerNotFound()
                     .replace("%player%", command.args()[0]));
             return;
         }

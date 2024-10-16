@@ -234,7 +234,8 @@ public class MainMenu extends ScrollBarFastInv {
                         sortingMethod.getFriendlyName(), (next == null ? Lang.i().getWords().getYour() : next.getFriendlyName())))
                 .build(), e -> {
                     if (CooldownManager.hasCooldown(CooldownManager.Cooldown.SORT, player)) {
-                        player.sendMessage(Lang.i().getPrefix() + info.preva1l.fadah.config.old.Lang.COOLDOWN.toFormattedString(CooldownManager.getCooldownString(CooldownManager.Cooldown.SORT, player)));
+                        Lang.sendMessage(player, Lang.i().getPrefix() + Lang.i().getErrors().getCooldown()
+                                .replace("%time%", CooldownManager.getCooldownString(CooldownManager.Cooldown.SORT, player)));
                         return;
                     }
                     CooldownManager.startCooldown(CooldownManager.Cooldown.SORT, player);
@@ -279,7 +280,8 @@ public class MainMenu extends ScrollBarFastInv {
                         .modelData(getLang().getInt("filter.change-direction.model-data"))
                         .lore(getLang().getLore("filter.change-direction.lore", asc, desc)).build(), e -> {
                     if (CooldownManager.hasCooldown(CooldownManager.Cooldown.SORT, player)) {
-                        Lang.sendMessage(player, Lang.i().getPrefix() + info.preva1l.fadah.config.old.Lang.COOLDOWN.toFormattedString(CooldownManager.getCooldownString(CooldownManager.Cooldown.SORT, player)));
+                        Lang.sendMessage(player, Lang.i().getPrefix() + Lang.i().getErrors().getCooldown()
+                                .replace("%time%", CooldownManager.getCooldownString(CooldownManager.Cooldown.SORT, player)));
                         return;
                     }
                     CooldownManager.startCooldown(CooldownManager.Cooldown.SORT, player);

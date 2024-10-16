@@ -115,7 +115,7 @@ public abstract class Broker {
                 Config.i().setEnabled(!enabled);
 
                 String toggle = enabled ? Lang.i().getCommands().getToggle().getDisabled() : Lang.i().getCommands().getToggle().getEnabled();
-                Bukkit.getConsoleSender().sendMessage(Lang.i().getPrefix() + Lang.i().getCommands().getToggle().getRemote()
+                Lang.sendMessage(Bukkit.getConsoleSender(), Lang.i().getPrefix() + Lang.i().getCommands().getToggle().getRemote()
                         .replace("%status%", toggle));
             }
 

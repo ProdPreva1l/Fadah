@@ -58,11 +58,12 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
                 MultiLib.getEntityScheduler(viewer).execute(Fadah.getINSTANCE(), () -> {
                     int slot = viewer.getInventory().firstEmpty();
                     if (slot == -1) {
-                        viewer.sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getInventoryFull());
+
+                        Lang.sendMessage(viewer, Lang.i().getPrefix() + Lang.i().getErrors().getInventoryFull());
                         return;
                     }
                     if (!ExpiredListingsCache.doesItemExist(player.getUniqueId(), collectableItem)) {
-                        viewer.sendMessage(StringUtils.colorize(Lang.i().getPrefix() + Lang.i().getErrors().getDoesNotExist()));
+                        Lang.sendMessage(viewer, StringUtils.colorize(Lang.i().getPrefix() + Lang.i().getErrors().getDoesNotExist()));
                         return;
                     }
                     ExpiredListingsCache.removeItem(owner.getUniqueId(), collectableItem);

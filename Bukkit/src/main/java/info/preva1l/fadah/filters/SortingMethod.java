@@ -1,6 +1,6 @@
 package info.preva1l.fadah.filters;
 
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
 import lombok.AllArgsConstructor;
@@ -13,17 +13,17 @@ import java.util.Comparator;
 @AllArgsConstructor
 public enum SortingMethod {
     AGE(
-            Lang.SORT_AGE_NAME.toFormattedString(),
+            Lang.i().getSort().getAge().getName(),
             Comparator.comparingLong(Listing::getCreationDate).reversed(),
             Comparator.comparingLong(Listing::getCreationDate)
     ),
     ALPHABETICAL(
-            Lang.SORT_ALPHABETICAL_NAME.toFormattedString(),
+            Lang.i().getSort().getName().getName(),
             new AlphabeticalComparator(),
             new AlphabeticalComparator().reversed()
     ),
     PRICE(
-            Lang.SORT_PRICE_NAME.toFormattedString(),
+            Lang.i().getSort().getPrice().getName(),
             Comparator.comparingDouble(Listing::getPrice).reversed(),
             Comparator.comparingDouble(Listing::getPrice)
     );
@@ -31,6 +31,10 @@ public enum SortingMethod {
     private final String friendlyName;
     private final Comparator<Listing> normalSorter;
     private final Comparator<Listing> reversedSorter;
+
+    public String getFriendlyName() {
+        return StringUtils.colorize(friendlyName);
+    }
 
     public Comparator<Listing> getSorter(@NotNull SortingDirection direction) {
         return switch (direction) {
@@ -42,7 +46,7 @@ public enum SortingMethod {
     public String getLang(@NotNull SortingDirection direction) {
         return switch (this) {
             case AGE -> direction.getAgeName();
-            case ALPHABETICAL -> direction.getFriendlyName();
+            case ALPHABETICAL -> direction.getAlphaName();
             case PRICE -> direction.getPriceName();
         };
     }

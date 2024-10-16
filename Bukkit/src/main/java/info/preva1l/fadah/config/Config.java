@@ -142,8 +142,8 @@ public class Config {
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Database {
-        @Comment("Allowed: MYSQL, MARIADB")
-        private DatabaseType type = DatabaseType.MARIADB;
+        @Comment("Allowed: SQLITE, MYSQL, MARIADB, MONGO")
+        private DatabaseType type = DatabaseType.SQLITE;
         private String uri = "jdbc:mysql://username:password@127.0.0.1:3306/Fadah";
         private String database = "Fadah";
         private boolean useSsl = false;

@@ -34,17 +34,48 @@ public class Lang {
             .setNameFormatter(NameFormatters.LOWER_KEBAB_CASE)
             .header(CONFIG_HEADER).build();
 
-    private String prefix = "&#9555FFAuctions &r";
+    private String prefix = "&#9555FF&lFadah &r";
 
     private String categorySelected = "&e&lSELECTED";
 
-    private Messages messages = new Messages();
+    private Notifications notifications = new Notifications();
 
     @Getter
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Messages {
-        private String messages = "";
+    public static class Notifications {
+        private List<String> advert = List.of(
+                "&f--------------------------------------------------",
+                "&f%player% &ehas just made a new listing on the auction house!",
+                "&fItem: &e%item%",
+                "&fPrice: &a$%price%",
+                "&7(Click this message to view the listing!)",
+                "&f--------------------------------------------------"
+        );
+        private List<String> newListing = List.of(
+                "&f------------------------------------------------",
+                "&eYou have a successfully listed an item for sale!",
+                "&fItem: &e%item%",
+                "&fPrice: &a$%price%",
+                "&fExpires in: &6%time%",
+                "&fActive Listings: &d%current_listings%&f/&5%max_listings%",
+                "&fYou have been taxed: &9%tax%% &7(&a$%price_after_tax%&7)",
+                "&f------------------------------------------------"
+        );
+        private List<String> newItem = List.of(
+                "&f------------------------------------------",
+                "&eYou have a new item in your collection box!",
+                "&f             /ah redeem!",
+                "&f------------------------------------------"
+        );
+        private List<String> sale = List.of(
+                "&f----------------------------------------------",
+                "&eYou have sold an item on the Auction House!",
+                "&fItem: &e%item%",
+                "&fMoney Made: &a$%price%",
+                "&f----------------------------------------------"
+        );
+        private String cancelled = "&cListing Cancelled!";
     }
 
     private Commands commands = new Commands();
@@ -239,6 +270,46 @@ public class Lang {
         private String collectionBoxClaimedAdmin = "Collection Box Item Claimed by Admins";
     }
 
+    private Sort sort = new Sort();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Sort {
+        private Age age = new Age();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Age {
+            private String name = "Sort By Listing Age";
+            private String descending = "Oldest First";
+            private String ascending = "Newest First";
+        }
+
+        private Name name = new Name();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Name {
+            private String name = "Sort Alphabetically By Name";
+            private String descending = "Descending (Z-A)";
+            private String ascending = "Ascending (A-Z)";
+        }
+
+        private Price price = new Price();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Price {
+            private String name = "Sort By Listing Price";
+            private String descending = "Cheapest First (Low to High)";
+            private String ascending = "Most Expensive First (High to Low)";
+        }
+    }
+
     private Errors errors = new Errors();
 
     @Getter
@@ -256,6 +327,9 @@ public class Lang {
         private String ownListings = "&cYou cannot buy your own listing!";
         private String tooExpensive = "&cYou cannot afford this item!";
         private String inventoryFull = "&cYou don't have any free room in your inventory!";
+        private String advertExpense = "&cYour advert failed to post because you did not have enough money!";
+        private String databaseLoading = "&cDatabase not connected! Please Wait";
+        private String cooldown = "&cPlease wait &f%time%&c!";
     }
 
     private Words words = new Words();

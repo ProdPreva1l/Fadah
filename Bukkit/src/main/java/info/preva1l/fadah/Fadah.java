@@ -8,8 +8,8 @@ import info.preva1l.fadah.cache.*;
 import info.preva1l.fadah.commands.AuctionHouseCommand;
 import info.preva1l.fadah.commands.MigrateCommand;
 import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
-import info.preva1l.fadah.config.old.Lang;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.hooks.HookManager;
@@ -65,7 +65,6 @@ public final class Fadah extends JavaPlugin {
     @Getter private final Logger transactionLogger = Logger.getLogger("AuctionHouse-Transactions");
 
     @Getter private BasicConfig categoriesFile;
-    @Getter private BasicConfig langFile;
     @Getter private BasicConfig menusFile;
 
     @Getter private Broker broker;
@@ -170,10 +169,9 @@ public final class Fadah extends JavaPlugin {
     private void loadFiles() {
         getConsole().info("Loading Configuration Files...");
         categoriesFile = new BasicConfig(this, "categories.yml");
-        langFile = new BasicConfig(this, "lang.yml");
 
         Config.i();
-        Lang.loadDefault();
+        Lang.i();
 
         categoriesFile.save();
         categoriesFile.load();
@@ -352,7 +350,7 @@ public final class Fadah extends JavaPlugin {
     public void reload() {
         FastInvManager.closeAll(this);
         Config.reload();
-        Fadah.getINSTANCE().getLangFile().load();
+        Lang.reload();
         Fadah.getINSTANCE().getMenusFile().load();
         Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.MAIN);
         Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.NEW_LISTING);

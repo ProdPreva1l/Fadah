@@ -7,6 +7,8 @@ import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.ListHelper;
+import info.preva1l.fadah.config.Tuple;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
@@ -206,11 +208,15 @@ public class NewListingMenu extends FastInv {
 
         double taxAmount = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
         String itemName = StringUtils.extractItemName(listing.getItemStack());
-        String message = String.join("\n", Lang.NOTIFICATION_NEW_LISTING.toLore(itemName,
-                new DecimalFormat(Config.i().getDecimalFormat()).format(listing.getPrice()),
-                TimeUtil.formatTimeUntil(listing.getDeletionDate()), PermissionsData.getCurrentListings(player),
-                PermissionsData.getHighestInt(PermissionsData.PermissionType.MAX_LISTINGS, player),
-                taxAmount, new DecimalFormat(Config.i().getDecimalFormat()).format((taxAmount / 100) * price)));
+        String message = String.join("\n", ListHelper.replace(Lang.i().getNotifications().getNewListing(),
+                Tuple.of("%item%", itemName),
+                Tuple.of("%price%", new DecimalFormat(Config.i().getDecimalFormat()).format(listing.getPrice())),
+                Tuple.of("%time%", TimeUtil.formatTimeUntil(listing.getDeletionDate())),
+                Tuple.of("%current_listings%", PermissionsData.getCurrentListings(player) + ""),
+                Tuple.of("%max_listings%", PermissionsData.getHighestInt(PermissionsData.PermissionType.MAX_LISTINGS, player) + ""),
+                Tuple.of("%tax%", taxAmount + ""),
+                Tuple.of("%price_after_tax%", new DecimalFormat(Config.i().getDecimalFormat()).format((taxAmount / 100) * price))
+        ));
         Lang.sendMessage(player, message);
 
         TransactionLogger.listingCreated(listing);
@@ -226,15 +232,17 @@ public class NewListingMenu extends FastInv {
             Economy eco = Fadah.getINSTANCE().getEconomy();
             double advertPrice = PermissionsData.getHighestDouble(PermissionsData.PermissionType.ADVERT_PRICE, player);
             if (!eco.has(player, advertPrice)) {
-                player.sendMessage(Lang.i().getPrefix() + Lang.ADVERT_EXPENSE.toFormattedString());
+                Lang.sendMessage(player,Lang.i().getPrefix() + Lang.i().getErrors().getAdvertExpense());
                 return;
             }
 
             eco.withdrawPlayer(player, advertPrice);
 
-            String advertMessage = String.join("&r\n", Lang.NOTIFICATION_ADVERT.toStringList(
-                    player.getName(), itemName,
-                    new DecimalFormat(Config.i().getDecimalFormat()).format(listing.getPrice())));
+            String advertMessage = String.join("&r\n", ListHelper.replace(Lang.i().getNotifications().getAdvert(),
+                    Tuple.of("%player%", player.getName()),
+                    Tuple.of("%item%", itemName),
+                    Tuple.of("%price%", new DecimalFormat(Config.i().getDecimalFormat()).format(listing.getPrice()))
+            ));
 
             Message.builder()
                     .type(Message.Type.BROADCAST)

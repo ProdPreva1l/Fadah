@@ -8,7 +8,9 @@ import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
-import info.preva1l.fadah.config.old.Lang;
+import info.preva1l.fadah.config.Lang;
+import info.preva1l.fadah.config.ListHelper;
+import info.preva1l.fadah.config.Tuple;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.multiserver.Payload;
@@ -36,11 +38,11 @@ public final class CurrentListing extends Listing {
     @Override
     public void purchase(@NotNull Player buyer) {
         if (!Fadah.getINSTANCE().getEconomy().has(buyer, this.getPrice())) {
-            buyer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.TOO_EXPENSIVE.toFormattedString());
+            buyer.sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getTooExpensive());
             return;
         }
         if (ListingCache.getListing(this.getId()) == null) { // todo: readd strict checks
-            buyer.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
+            buyer.sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getDoesNotExist());
             return;
         }
         // Money Transfer
@@ -74,12 +76,14 @@ public final class CurrentListing extends Listing {
                 .build().send(Fadah.getINSTANCE().getBroker());
 
         // Notify Both Players
-        buyer.sendMessage(String.join("\n", Lang.NOTIFICATION_NEW_ITEM.toLore()));
+        Lang.sendMessage(buyer, String.join("\n", Lang.i().getNotifications().getNewItem()));
 
         String itemName = this.getItemStack().getItemMeta().getDisplayName().isBlank() ?
                 this.getItemStack().getType().name() : this.getItemStack().getItemMeta().getDisplayName();
         String formattedPrice = new DecimalFormat(Config.i().getDecimalFormat()).format(this.getPrice() - taxed);
-        String message = String.join("\n", Lang.NOTIFICATION_NEW_SELL.toLore(itemName, formattedPrice));
+        String message = String.join("\n", ListHelper.replace(Lang.i().getNotifications().getSale(),
+                Tuple.of("%item%", itemName),
+                Tuple.of("%price%", formattedPrice)));
 
         Player seller = Bukkit.getPlayer(this.getOwner());
         if (seller != null) {
@@ -98,10 +102,10 @@ public final class CurrentListing extends Listing {
     @Override
     public boolean cancel(@NotNull Player canceller) {
         if (ListingCache.getListing(this.getId()) == null) { // todo: re-add strict checks
-            canceller.sendMessage(Lang.PREFIX.toFormattedString() + Lang.DOES_NOT_EXIST.toFormattedString());
+            Lang.sendMessage(canceller, Lang.i().getPrefix() + Lang.i().getErrors().getDoesNotExist());
             return false;
         }
-        canceller.sendMessage(Lang.PREFIX.toFormattedString() + Lang.CANCELLED.toFormattedString());
+        Lang.sendMessage(canceller, Lang.i().getPrefix() + Lang.i().getNotifications().getCancelled());
         ListingCache.removeListing(this);
         Message.builder()
                 .type(Message.Type.LISTING_REMOVE)
