@@ -77,20 +77,20 @@ public class HistorySQLDao implements Dao<History> {
                         (`playerUUID`, `itemStack`, `loggedDate`, `loggedAction`, `price`, `purchaserUUID`)
                         VALUES (?, ?, ?, ?, ?, ?);""")) {
                     statement.setString(1, history.owner().toString());
-                    statement.setString(2, ItemSerializer.serialize(historicItem.itemStack()));
-                    statement.setLong(3, historicItem.loggedDate());
-                    statement.setInt(4, historicItem.action().ordinal());
-                    if (historicItem.price() != null) {
-                        statement.setDouble(5, historicItem.price());
+                    statement.setString(2, ItemSerializer.serialize(historicItem.getItemStack()));
+                    statement.setLong(3, historicItem.getLoggedDate());
+                    statement.setInt(4, historicItem.getAction().ordinal());
+                    if (historicItem.getPrice() != null) {
+                        statement.setDouble(5, historicItem.getPrice());
                     } else {
                         statement.setNull(5, Types.DOUBLE);
                     }
-                    if (historicItem.purchaserUUID() != null) {
-                        statement.setString(6, historicItem.purchaserUUID().toString());
+                    if (historicItem.getPurchaserUUID() != null) {
+                        statement.setString(6, historicItem.getPurchaserUUID().toString());
                     } else {
                         statement.setNull(6, Types.VARCHAR);
                     }
-                    statement.setLong(7, historicItem.loggedDate());
+                    statement.setLong(7, historicItem.getLoggedDate());
                     statement.execute();
                 }
             }

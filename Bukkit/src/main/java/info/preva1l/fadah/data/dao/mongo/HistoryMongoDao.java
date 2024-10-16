@@ -67,14 +67,14 @@ public class HistoryMongoDao implements Dao<History> {
     public void save(History history) {
         for (HistoricItem item : history.collectableItems()) {
             try {
-                Optional<History> current = get(item.ownerUUID());
+                Optional<History> current = get(item.getOwnerUUID());
                 if (current.isPresent() && current.get().collectableItems().contains(item)) continue;
                 Document document = new Document("playerUUID", history.owner())
-                        .append("itemStack", ItemSerializer.serialize(item.itemStack()))
-                        .append("loggedDate", item.loggedDate())
-                        .append("loggedAction", item.action().ordinal())
-                        .append("price", item.price())
-                        .append("purchaserUUID", item.purchaserUUID());
+                        .append("itemStack", ItemSerializer.serialize(item.getItemStack()))
+                        .append("loggedDate", item.getLoggedDate())
+                        .append("loggedAction", item.getAction().ordinal())
+                        .append("price", item.getPrice())
+                        .append("purchaserUUID", item.getPurchaserUUID());
                 collectionHelper.insertDocument("history", document);
             } catch (Exception e) {
                 e.printStackTrace();
