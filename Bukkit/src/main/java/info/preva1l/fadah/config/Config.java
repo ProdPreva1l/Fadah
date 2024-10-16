@@ -149,6 +149,18 @@ public class Config {
         private String uri = "jdbc:mysql://username:password@127.0.0.1:3306/Fadah";
         private String database = "Fadah";
         private boolean useSsl = false;
+        private Advanced advanced = new Advanced();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Advanced {
+            private int poolSize = 10;
+            private int minIdle = 10;
+            private int maxLifetime = 1800000;
+            private int keepaliveTime = 0;
+            private int connectionTimeout = 5000;
+        }
     }
 
     @Comment({"A message broker is only required for x-server environments.",

@@ -54,11 +54,11 @@ public class MySQLHandler implements DatabaseHandler {
         dataSource.setDriverClassName(driverClass);
         dataSource.setJdbcUrl(conf.getUri());
 
-        dataSource.setMaximumPoolSize(10);
-        dataSource.setMinimumIdle(10);
-        dataSource.setMaxLifetime(1800000);
-        dataSource.setKeepaliveTime(0);
-        dataSource.setConnectionTimeout(5000);
+        dataSource.setMaximumPoolSize(conf.getAdvanced().getPoolSize());
+        dataSource.setMinimumIdle(conf.getAdvanced().getMinIdle());
+        dataSource.setMaxLifetime(conf.getAdvanced().getMaxLifetime());
+        dataSource.setKeepaliveTime(conf.getAdvanced().getKeepaliveTime());
+        dataSource.setConnectionTimeout(conf.getAdvanced().getConnectionTimeout());
         dataSource.setPoolName("FadahHikariPool");
 
         final Properties properties = new Properties();
