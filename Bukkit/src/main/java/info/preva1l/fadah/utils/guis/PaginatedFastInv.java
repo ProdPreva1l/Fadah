@@ -17,6 +17,7 @@ public abstract class PaginatedFastInv extends FastInv {
     protected int index = 0;
     private List<Integer> paginationMappings;
     private final List<PaginatedItem> paginatedItems = new ArrayList<>();
+    protected boolean needsClearing = false;
 
     protected PaginatedFastInv(int size, @NotNull String title, @NotNull Player player, LayoutManager.MenuType menuType) {
         super(size, title, menuType);
@@ -66,12 +67,17 @@ public abstract class PaginatedFastInv extends FastInv {
         int maxItemsPerPage = paginationMappings.size();
         boolean empty = paginatedItems == null || paginatedItems.isEmpty();
         if (empty) {
+            if (needsClearing) {
+                for (Integer paginationMapping : paginationMappings) removeItem(paginationMapping);
+                needsClearing = false;
+            }
             paginationEmpty();
             return;
         }
+
+        needsClearing = true;
         
         for (int i = 0; i < maxItemsPerPage; i++) {
-            removeItem(paginationMappings.get(i));
             index = maxItemsPerPage * page + i;
             if (index >= paginatedItems.size()) continue;
             PaginatedItem item = paginatedItems.get(index);
