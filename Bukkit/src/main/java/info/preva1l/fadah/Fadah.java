@@ -362,6 +362,5 @@ public final class Fadah extends JavaPlugin {
         Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.HISTORY);
         Fadah.getINSTANCE().getCategoriesFile().load();
         CategoryCache.update();
-        ListingCache.update();
     }
 }
