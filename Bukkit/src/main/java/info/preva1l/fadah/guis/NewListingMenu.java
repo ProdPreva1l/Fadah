@@ -11,6 +11,7 @@ import info.preva1l.fadah.config.ListHelper;
 import info.preva1l.fadah.config.Tuple;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.PermissionsData;
+import info.preva1l.fadah.filters.Restrictions;
 import info.preva1l.fadah.hooks.impl.DiscordHook;
 import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.multiserver.Payload;
@@ -175,8 +176,8 @@ public class NewListingMenu extends FastInv {
     private void startListing(Instant deletionDate, double price) {
         String category = CategoryCache.getCategoryForItem(itemToSell);
 
-        if (category == null) {
-            Lang.sendMessage(player, Lang.i().getErrors().getRestricted());
+        if (category == null || Restrictions.isRestrictedItem(itemToSell)) {
+            Lang.sendMessage(player, Lang.i().getPrefix() + Lang.i().getErrors().getRestricted());
             return;
         }
 

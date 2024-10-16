@@ -67,6 +67,8 @@ public class Config {
         private double defaultPrice = 500;
     }
 
+    private List<String> blacklists = List.of("%material% == \"BEDROCK\"", "%material% == \"NETHER_STAR\" && %name%.includes(\"Menu\")");
+
     private Hooks hooks = new Hooks();
 
     @Getter
