@@ -42,6 +42,7 @@ dependencies {
 
     implementation 'net.wesjd:anvilgui:1.10.2-SNAPSHOT' // Search Menu
 
+
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7' // Economy Hook
 
     // Extra Hooks

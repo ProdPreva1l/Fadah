@@ -1,4 +1,4 @@
-package info.preva1l.fadah.data.dao.sql;
+package info.preva1l.fadah.data.dao.sqlite;
 
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
@@ -18,7 +18,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
-public class HistorySQLDao implements Dao<History> {
+public class HistorySQLiteDao implements Dao<History> {
     private final HikariDataSource dataSource;
 
     /**
@@ -73,9 +73,10 @@ public class HistorySQLDao implements Dao<History> {
         try (Connection connection = getConnection()) {
             for (HistoricItem historicItem : history.collectableItems()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        INSERT IGNORE INTO `history`
+                        INSERT INTO `history`
                         (`playerUUID`, `itemStack`, `loggedDate`, `loggedAction`, `price`, `purchaserUUID`)
-                        VALUES (?, ?, ?, ?, ?, ?);""")) {
+                        SELECT ?,?,?,?,?,? 
+                        WHERE NOT EXISTS ( SELECT 1 FROM `history` WHERE `loggedDate` = ? );""")) {
                     statement.setString(1, history.owner().toString());
                     statement.setString(2, ItemSerializer.serialize(historicItem.itemStack()));
                     statement.setLong(3, historicItem.loggedDate());

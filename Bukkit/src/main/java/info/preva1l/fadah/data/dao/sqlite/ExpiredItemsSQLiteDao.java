@@ -1,4 +1,4 @@
-package info.preva1l.fadah.data.dao.sql;
+package info.preva1l.fadah.data.dao.sqlite;
 
 import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariDataSource;
@@ -21,7 +21,7 @@ import java.util.UUID;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
-public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
+public class ExpiredItemsSQLiteDao implements Dao<ExpiredItems> {
     private final HikariDataSource dataSource;
 
     /**
@@ -73,8 +73,10 @@ public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
         try (Connection connection = getConnection()) {
             for (CollectableItem item : collectableList.collectableItems()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        INSERT IGNORE INTO `expired_items` (`playerUUID`, `itemStack`, `dateAdded`)
-                        VALUES (?, ?, ?);""")) {
+                        INSERT INTO `expired_items` (`playerUUID`, `itemStack`, `dateAdded`)
+                        SELECT ?, ?, ?
+                        WHERE NOT EXISTS ( SELECT 1 FROM `expired_items` WHERE `dateAdded` = ?
+                        );""")) {
                     statement.setString(1, collectableList.owner().toString());
                     statement.setString(2, ItemSerializer.serialize(item.itemStack()));
                     statement.setLong(3, item.dateAdded());

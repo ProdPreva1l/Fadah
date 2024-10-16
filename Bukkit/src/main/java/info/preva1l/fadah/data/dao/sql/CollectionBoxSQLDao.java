@@ -73,9 +73,8 @@ public class CollectionBoxSQLDao implements Dao<CollectionBox> {
         try (Connection connection = getConnection()) {
             for (CollectableItem item : collectableList.collectableItems()) {
                 try (PreparedStatement statement = connection.prepareStatement("""
-                        INSERT INTO `collection_box` (`playerUUID`, `itemStack`, `dateAdded`)
-                        SELECT ?, ?, ?
-                        WHERE NOT EXISTS ( SELECT 1 FROM `collection_box` WHERE `dateAdded` = ?);""")) {
+                        INSERT IGNORE INTO `collection_box` (`playerUUID`, `itemStack`, `dateAdded`)
+                        VALUES (?, ?, ?);""")) {
                     statement.setString(1, collectableList.owner().toString());
                     statement.setString(2, ItemSerializer.serialize(item.itemStack()));
                     statement.setLong(3, item.dateAdded());
