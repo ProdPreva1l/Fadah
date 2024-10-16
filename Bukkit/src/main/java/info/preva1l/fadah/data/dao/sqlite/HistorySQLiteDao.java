@@ -1,17 +1,24 @@
 package info.preva1l.fadah.data.dao.sqlite;
 
-import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.data.dao.Dao;
+import info.preva1l.fadah.data.gson.ConfigurationSerializableAdapter;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.records.History;
-import info.preva1l.fadah.utils.ItemSerializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
-import java.sql.*;
+import java.lang.reflect.Type;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -20,6 +27,10 @@ import java.util.logging.Level;
 @RequiredArgsConstructor
 public class HistorySQLiteDao implements Dao<History> {
     private final HikariDataSource dataSource;
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
+            .serializeNulls().create();
+    private static final Type HISTORY_LIST_TYPE = new TypeToken<ArrayList<HistoricItem>>(){}.getType();
 
     /**
      * Get an object from the database by its id.
@@ -29,26 +40,20 @@ public class HistorySQLiteDao implements Dao<History> {
      */
     @Override
     public Optional<History> get(UUID id) {
-        final List<HistoricItem> retrievedData = Lists.newArrayList();
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT `itemStack`, `loggedDate`, `loggedAction`, `price`, `purchaserUUID`
-                        FROM `history`
+                        SELECT `items`
+                        FROM `historyV2`
                         WHERE `playerUUID`=?;""")) {
                 statement.setString(1, id.toString());
                 final ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    final long loggedDate = resultSet.getLong("loggedDate");
-                    final double price = resultSet.getDouble("price");
-                    final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
-                    final HistoricItem.LoggedAction loggedAction = HistoricItem.LoggedAction.values()[resultSet.getInt("loggedAction")];
-                    final UUID purchaserUUID = resultSet.getString("purchaserUUID") == null ? null : UUID.fromString(resultSet.getString("purchaserUUID"));
-                    retrievedData.add(new HistoricItem(id, loggedDate, loggedAction, itemStack, price, purchaserUUID));
+                if (resultSet.next()) {
+                    final List<HistoricItem> items = GSON.fromJson(resultSet.getString("items"), HISTORY_LIST_TYPE);
+                    return Optional.of(new History(id, items));
                 }
-                return Optional.of(new History(id, retrievedData));
             }
         } catch (SQLException e) {
-            Fadah.getConsole().severe("Failed to get items from collection box!");
+            Fadah.getConsole().log(Level.SEVERE, "Failed to get item from history!", e);
         }
         return Optional.empty();
     }
@@ -71,29 +76,17 @@ public class HistorySQLiteDao implements Dao<History> {
     @Override
     public void save(History history) {
         try (Connection connection = getConnection()) {
-            for (HistoricItem historicItem : history.collectableItems()) {
-                try (PreparedStatement statement = connection.prepareStatement("""
-                        INSERT INTO `history`
-                        (`playerUUID`, `itemStack`, `loggedDate`, `loggedAction`, `price`, `purchaserUUID`)
-                        SELECT ?,?,?,?,?,? 
-                        WHERE NOT EXISTS ( SELECT 1 FROM `history` WHERE `loggedDate` = ? );""")) {
-                    statement.setString(1, history.owner().toString());
-                    statement.setString(2, ItemSerializer.serialize(historicItem.itemStack()));
-                    statement.setLong(3, historicItem.loggedDate());
-                    statement.setInt(4, historicItem.action().ordinal());
-                    if (historicItem.price() != null) {
-                        statement.setDouble(5, historicItem.price());
-                    } else {
-                        statement.setNull(5, Types.DOUBLE);
-                    }
-                    if (historicItem.purchaserUUID() != null) {
-                        statement.setString(6, historicItem.purchaserUUID().toString());
-                    } else {
-                        statement.setNull(6, Types.VARCHAR);
-                    }
-                    statement.setLong(7, historicItem.loggedDate());
-                    statement.execute();
-                }
+            try (PreparedStatement statement = connection.prepareStatement("""
+                    INSERT INTO `historyV2`
+                    (`playerUUID`,`items`)
+                    VALUES (?,?)
+                    ON CONFLICT(`playerUUID`) DO UPDATE SET
+                        `items` = excluded.`items`;""")) {
+                statement.setString(1, history.owner().toString());
+                statement.setString(2, GSON.toJson(history.collectableItems(), HISTORY_LIST_TYPE));
+                statement.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             Fadah.getConsole().log(Level.SEVERE, "Failed to add item to history!", e);
