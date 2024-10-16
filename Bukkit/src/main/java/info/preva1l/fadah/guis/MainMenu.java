@@ -231,7 +231,7 @@ public class MainMenu extends ScrollBarFastInv {
                 .name(getLang().getStringFormatted("filter.change-type.name", "&eListing Filter"))
                 .modelData(getLang().getInt("filter.change-type.model-data"))
                 .addLore(getLang().getLore("filter.change-type.lore", (prev == null ? Lang.i().getWords().getNone() : prev.getFriendlyName()),
-                        sortingMethod.getFriendlyName(), (next == null ? Lang.i().getWords().getYour() : next.getFriendlyName())))
+                        sortingMethod.getFriendlyName(), (next == null ? Lang.i().getWords().getNone() : next.getFriendlyName())))
                 .build(), e -> {
                     if (CooldownManager.hasCooldown(CooldownManager.Cooldown.SORT, player)) {
                         Lang.sendMessage(player, Lang.i().getPrefix() + Lang.i().getErrors().getCooldown()

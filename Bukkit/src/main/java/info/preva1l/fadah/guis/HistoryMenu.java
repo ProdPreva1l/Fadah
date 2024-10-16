@@ -4,6 +4,7 @@ import info.preva1l.fadah.cache.HistoricItemsCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.records.HistoricItem;
+import info.preva1l.fadah.utils.StringUtils;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import org.bukkit.Bukkit;
@@ -23,7 +24,7 @@ public class HistoryMenu extends PaginatedFastInv {
     public HistoryMenu(Player viewer, OfflinePlayer owner, @Nullable String dateSearch) {
         super(LayoutManager.MenuType.HISTORY.getLayout().guiSize(), LayoutManager.MenuType.HISTORY.getLayout().formattedTitle(
                         viewer.getUniqueId() == owner.getUniqueId()
-                                ? Lang.i().getWords().getYour()
+                                ? StringUtils.capitalize(Lang.i().getWords().getYour())
                                 : owner.getName() + "'s", owner.getName() + "'s"),
                 viewer, LayoutManager.MenuType.HISTORY,
                 List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34));
