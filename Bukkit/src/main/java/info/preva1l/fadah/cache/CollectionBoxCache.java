@@ -40,7 +40,7 @@ public class CollectionBoxCache {
 
     public List<CollectableItem> getCollectionBox(UUID playerUUID) {
         if (collectionbox.get(playerUUID) == null) {
-            return List.of();
+            return new ArrayList<>();
         }
         List<CollectableItem> ret = new ArrayList<>();
         collectionbox.computeIfPresent(playerUUID, (uuid, items) -> {

@@ -79,7 +79,6 @@ public class CollectionBoxSQLiteDao implements Dao<CollectionBox> {
                     statement.setString(1, collectableList.owner().toString());
                     statement.setString(2, ItemSerializer.serialize(item.itemStack()));
                     statement.setLong(3, item.dateAdded());
-                    statement.setLong(4, item.dateAdded());
                     statement.execute();
                 }
             }

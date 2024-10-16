@@ -40,7 +40,7 @@ public class ExpiredListingsCache {
 
     public List<CollectableItem> getExpiredListings(UUID playerUUID) {
         if (expiredListings.get(playerUUID) == null) {
-            return List.of();
+            return new ArrayList<>();
         }
         List<CollectableItem> ret = new ArrayList<>();
         expiredListings.computeIfPresent(playerUUID, (uuid, items) -> {
