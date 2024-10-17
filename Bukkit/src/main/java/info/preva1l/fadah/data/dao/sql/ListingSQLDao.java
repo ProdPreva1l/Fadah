@@ -42,14 +42,24 @@ public class ListingSQLDao implements Dao<Listing> {
                 if (resultSet.next()) {
                     final UUID ownerUUID = UUID.fromString(resultSet.getString("ownerUUID"));
                     final String ownerName = resultSet.getString("ownerName");
-                    final String categoryID = resultSet.getString("category");
+                    String temp = resultSet.getString("category");
+                    String currency;
+                    String categoryID;
+                    if (temp.contains("~")) {
+                        String[] t2 = temp.split("~");
+                        currency = t2[1];
+                        categoryID = t2[0];
+                    } else {
+                        currency = "vault";
+                        categoryID = temp;
+                    }
                     final long creationDate = resultSet.getLong("creationDate");
                     final long deletionDate = resultSet.getLong("deletionDate");
                     final double price = resultSet.getDouble("price");
                     final double tax = resultSet.getDouble("tax");
                     final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
                     final boolean biddable = resultSet.getBoolean("biddable");
-                    return Optional.of(new CurrentListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, List.of()));
+                    return Optional.of(new CurrentListing(id, ownerUUID, ownerName, itemStack, categoryID, currency, price, tax, creationDate, deletionDate, biddable, List.of()));
                 }
             }
         } catch (SQLException e) {
@@ -75,14 +85,24 @@ public class ListingSQLDao implements Dao<Listing> {
                     final UUID id = UUID.fromString(resultSet.getString("uuid"));
                     final UUID ownerUUID = UUID.fromString(resultSet.getString("ownerUUID"));
                     final String ownerName = resultSet.getString("ownerName");
-                    final String categoryID = resultSet.getString("category");
+                    String temp = resultSet.getString("category");
+                    String currency;
+                    String categoryID;
+                    if (temp.contains("~")) {
+                        String[] t2 = temp.split("~");
+                        currency = t2[1];
+                        categoryID = t2[0];
+                    } else {
+                        currency = "vault";
+                        categoryID = temp;
+                    }
                     final long creationDate = resultSet.getLong("creationDate");
                     final long deletionDate = resultSet.getLong("deletionDate");
                     final double price = resultSet.getDouble("price");
                     final double tax = resultSet.getDouble("tax");
                     final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
                     final boolean biddable = resultSet.getBoolean("biddable");
-                    retrievedData.add(new CurrentListing(id, ownerUUID, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, List.of()));
+                    retrievedData.add(new CurrentListing(id, ownerUUID, ownerName, itemStack, categoryID, currency, price, tax, creationDate, deletionDate, biddable, List.of()));
                 }
                 return retrievedData;
             }
@@ -107,7 +127,7 @@ public class ListingSQLDao implements Dao<Listing> {
                 statement.setString(1, listing.getId().toString());
                 statement.setString(2, listing.getOwner().toString());
                 statement.setString(3, listing.getOwnerName());
-                statement.setString(4, listing.getCategoryID());
+                statement.setString(4, listing.getCategoryID() + "~" + listing.getCategoryID());
                 statement.setLong(5, listing.getCreationDate());
                 statement.setLong(6, listing.getDeletionDate());
                 statement.setDouble(7, listing.getPrice());

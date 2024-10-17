@@ -8,6 +8,7 @@ import fr.maxlego08.zauctionhouse.api.category.CategoryManager;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.config.Config;
+import info.preva1l.fadah.currency.CurrencyRegistry;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.CurrentListing;
 import info.preva1l.fadah.records.Listing;
@@ -53,10 +54,12 @@ public final class zAuctionHouseMigrator implements Migrator {
                     long expiry = auctionItem.getExpireAt();
                     String categoryId = CategoryCache.getCategoryForItem(itemStack);
                     if (categoryId == null) {
-                        categoryId = CategoryCache.getCategories().get(0).id();
+                        categoryId = CategoryCache.getCategories().getFirst().id();
                     }
-                    listings.add(new CurrentListing(id, owner, ownerName, itemStack, categoryId, price, 0,
-                            Instant.now().toEpochMilli(), expiry, false, List.of()));
+                    String currency = auctionItem.getEconomy().getCurrency();
+                    if (CurrencyRegistry.get(currency) == null) currency = "vault";
+                    listings.add(new CurrentListing(id, owner, ownerName, itemStack, categoryId, currency, price, 0,
+                            Instant.now().toEpochMilli(), expiry,false, List.of()));
                 }
             }, () -> Fadah.getConsole().warning("Not migrating category %s! (Not found on zAuctionHouse)".formatted(categoryName)));
         }

@@ -16,7 +16,6 @@ import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.multiserver.Payload;
 import info.preva1l.fadah.utils.TaskManager;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
-import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,14 +29,14 @@ import java.util.UUID;
 public final class CurrentListing extends Listing {
 
     public CurrentListing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName,
-                          @NotNull ItemStack itemStack, @NotNull String categoryID, double price,
+                          @NotNull ItemStack itemStack, @NotNull String categoryID, @NotNull String currency, double price,
                           double tax, long creationDate, long deletionDate, boolean biddable, List<Bid> bids) {
-        super(id, owner, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids);
+        super(id, owner, ownerName, itemStack, categoryID, currency, price, tax, creationDate, deletionDate, biddable, bids);
     }
 
     @Override
     public void purchase(@NotNull Player buyer) {
-        if (!Fadah.getINSTANCE().getEconomy().has(buyer, this.getPrice())) {
+        if (!getCurrency().canAfford(buyer, this.getPrice())) {
             buyer.sendMessage(Lang.i().getPrefix() + Lang.i().getErrors().getTooExpensive());
             return;
         }
@@ -46,10 +45,9 @@ public final class CurrentListing extends Listing {
             return;
         }
         // Money Transfer
-        Economy eco = Fadah.getINSTANCE().getEconomy();
-        eco.withdrawPlayer(buyer, this.getPrice());
+        getCurrency().withdraw(buyer, this.getPrice());
         double taxed = (this.getTax()/100) * this.getPrice();
-        eco.depositPlayer(Bukkit.getOfflinePlayer(this.getOwner()), this.getPrice() - taxed);
+        getCurrency().add(Bukkit.getOfflinePlayer(this.getOwner()), this.getPrice() - taxed);
 
         // Remove Listing
         ListingCache.removeListing(this);
@@ -134,6 +132,6 @@ public final class CurrentListing extends Listing {
     }
 
     public StaleListing getAsStale() {
-        return new StaleListing(id, owner, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids);
+        return new StaleListing(id, owner, ownerName, itemStack, categoryID, currencyId, price, tax, creationDate, deletionDate, biddable, bids);
     }
 }

@@ -9,9 +9,9 @@ import java.util.UUID;
 
 public final class StaleListing extends Listing {
     public StaleListing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName,
-                         @NotNull ItemStack itemStack, @NotNull String categoryID, double price, double tax,
+                         @NotNull ItemStack itemStack, @NotNull String categoryID, @NotNull String currency, double price, double tax,
                          long creationDate, long deletionDate, boolean biddable, List<Bid> bids) {
-        super(id, owner, ownerName, itemStack, categoryID, price, tax, creationDate, deletionDate, biddable, bids);
+        super(id, owner, ownerName, itemStack, categoryID, currency, price, tax, creationDate, deletionDate, biddable, bids);
     }
 
     @Override

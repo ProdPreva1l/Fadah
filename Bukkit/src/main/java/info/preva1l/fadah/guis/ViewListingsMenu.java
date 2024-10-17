@@ -1,6 +1,5 @@
 package info.preva1l.fadah.guis;
 
-import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
@@ -58,7 +57,7 @@ public class ViewListingsMenu extends PaginatedFastInv {
 
             if (player.getUniqueId().equals(listing.getOwner())) {
                 itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.own-listing"));
-            } else if (Fadah.getINSTANCE().getEconomy().has(player, listing.getPrice())) {
+            } else if (listing.getCurrency().canAfford(player, listing.getPrice())) {
                 itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.buy"));
             } else {
                 itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.too-expensive"));
@@ -86,7 +85,7 @@ public class ViewListingsMenu extends PaginatedFastInv {
                     return;
                 }
 
-                if (!Fadah.getINSTANCE().getEconomy().has(player, listing.getPrice())) {
+                if (!listing.getCurrency().canAfford(player, listing.getPrice())) {
                     Lang.sendMessage(player, Lang.i().getPrefix() + Lang.i().getErrors().getTooExpensive());
                     return;
                 }
