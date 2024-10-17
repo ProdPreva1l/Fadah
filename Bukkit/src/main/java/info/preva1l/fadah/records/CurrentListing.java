@@ -87,7 +87,7 @@ public final class CurrentListing extends Listing {
 
         Player seller = Bukkit.getPlayer(this.getOwner());
         if (seller != null) {
-            seller.sendMessage(message);
+            Lang.sendMessage(seller, message);
         } else {
             Message.builder()
                     .type(Message.Type.NOTIFICATION)
