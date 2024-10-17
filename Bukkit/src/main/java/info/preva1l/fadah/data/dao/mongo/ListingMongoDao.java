@@ -113,7 +113,7 @@ public class ListingMongoDao implements Dao<Listing> {
             Document document = new Document("uuid", listing.getId())
                     .append("ownerUUID", listing.getOwner())
                     .append("ownerName", listing.getOwnerName())
-                    .append("category", listing.getCategoryID() + "~" + listing.getCategoryID())
+                    .append("category", listing.getCategoryID() + "~" + listing.getCurrencyId())
                     .append("creationDate", listing.getCreationDate())
                     .append("deletionDate", listing.getDeletionDate())
                     .append("price", listing.getPrice())

@@ -31,7 +31,7 @@ public final class CurrencyRegistry {
 
         currency.preloadChecks();
 
-        values.put(currency.getId(), currency);
+        values.put(currency.getId().toLowerCase(), currency);
     }
 
     public static Currency get(String currencyCode) {

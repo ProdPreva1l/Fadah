@@ -127,7 +127,7 @@ public class ListingSQLDao implements Dao<Listing> {
                 statement.setString(1, listing.getId().toString());
                 statement.setString(2, listing.getOwner().toString());
                 statement.setString(3, listing.getOwnerName());
-                statement.setString(4, listing.getCategoryID() + "~" + listing.getCategoryID());
+                statement.setString(4, listing.getCategoryID() + "~" + listing.getCurrencyId());
                 statement.setLong(5, listing.getCreationDate());
                 statement.setLong(6, listing.getDeletionDate());
                 statement.setDouble(7, listing.getPrice());
