@@ -53,6 +53,10 @@ public class MySQLHandler implements DatabaseHandler {
         dataSource = new HikariDataSource();
         dataSource.setDriverClassName(driverClass);
         dataSource.setJdbcUrl(conf.getUri());
+        if (!conf.getUri().contains("@")) {
+            dataSource.setUsername(conf.getUsername());
+            dataSource.setPassword(conf.getPassword());
+        }
 
         dataSource.setMaximumPoolSize(conf.getAdvanced().getPoolSize());
         dataSource.setMinimumIdle(conf.getAdvanced().getMinIdle());
