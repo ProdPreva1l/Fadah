@@ -52,11 +52,14 @@ public final class CurrentListing extends Listing {
         eco.depositPlayer(Bukkit.getOfflinePlayer(this.getOwner()), this.getPrice() - taxed);
 
         // Remove Listing
-        ListingCache.removeListing(this);
-        Message.builder()
-                .type(Message.Type.LISTING_REMOVE)
-                .payload(Payload.withUUID(this.getId()))
-                .build().send(Fadah.getINSTANCE().getBroker());
+        if (!Config.i().getBroker().isEnabled()) {
+            ListingCache.removeListing(this);
+        } else {
+            Message.builder()
+                    .type(Message.Type.LISTING_REMOVE)
+                    .payload(Payload.withUUID(this.getId()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
+        }
         DatabaseManager.getInstance().delete(Listing.class, this);
 
         // Add to collection box
@@ -106,11 +109,14 @@ public final class CurrentListing extends Listing {
             return false;
         }
         Lang.sendMessage(canceller, Lang.i().getPrefix() + Lang.i().getNotifications().getCancelled());
-        ListingCache.removeListing(this);
-        Message.builder()
-                .type(Message.Type.LISTING_REMOVE)
-                .payload(Payload.withUUID(this.getId()))
-                .build().send(Fadah.getINSTANCE().getBroker());
+        if (!Config.i().getBroker().isEnabled()) {
+            ListingCache.removeListing(this);
+        } else {
+            Message.builder()
+                    .type(Message.Type.LISTING_REMOVE)
+                    .payload(Payload.withUUID(this.getId()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
+        }
         DatabaseManager.getInstance().delete(Listing.class, this);
 
         CollectableItem collectableItem = new CollectableItem(this.getItemStack(), Instant.now().toEpochMilli());

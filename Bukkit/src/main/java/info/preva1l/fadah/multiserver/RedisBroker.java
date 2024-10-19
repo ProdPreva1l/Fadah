@@ -163,7 +163,11 @@ public final class RedisBroker extends Broker {
                 return;
             }
 
-            broker.handle(message);
+            try {
+                broker.handle(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
