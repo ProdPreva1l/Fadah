@@ -43,7 +43,7 @@ public class ViewListingsMenu extends PaginatedFastInv {
 
 
     @Override
-    protected void fillPaginationItems() {
+    protected synchronized void fillPaginationItems() {
         for (Listing listing : listings) {
             String buyMode = listing.isBiddable()
                     ? getLang().getStringFormatted("listing.lore-buy.bidding")

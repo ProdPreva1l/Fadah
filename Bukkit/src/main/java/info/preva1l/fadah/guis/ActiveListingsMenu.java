@@ -43,7 +43,7 @@ public class ActiveListingsMenu extends PaginatedFastInv {
     }
 
     @Override
-    protected void fillPaginationItems() {
+    protected synchronized void fillPaginationItems() {
         for (Listing listing : listings) {
             ItemBuilder itemStack = new ItemBuilder(listing.getItemStack().clone())
                     .addLore(getLang().getLore("lore", StringUtils.removeColorCodes(CategoryCache.getCatName(listing.getCategoryID())),

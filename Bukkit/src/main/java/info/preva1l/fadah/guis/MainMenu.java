@@ -131,7 +131,7 @@ public class MainMenu extends ScrollBarFastInv {
     }
 
     @Override
-    protected void fillPaginationItems() {
+    protected synchronized void fillPaginationItems() {
         for (Listing listing : listings) {
             String buyMode = listing.isBiddable()
                     ? getLang().getStringFormatted("listing.lore-buy.bidding")

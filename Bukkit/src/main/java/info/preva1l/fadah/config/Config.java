@@ -122,22 +122,6 @@ public class Config {
         }
     }
 
-    private Migrators migrators = new Migrators();
-
-    @Getter
-    @Configuration
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Migrators {
-        private ZAuctionHouse zAuctionHouse = new ZAuctionHouse();
-
-        @Getter
-        @Configuration
-        @NoArgsConstructor(access = AccessLevel.PRIVATE)
-        public static class ZAuctionHouse {
-            private List<String> categoriesToMigrate = List.of("Blocks", "Tools", "Weapons", "Potions", "Misc");
-        }
-    }
-
     private Database database = new Database();
 
     @Getter
@@ -146,7 +130,9 @@ public class Config {
     public static class Database {
         @Comment("Allowed: SQLITE, MYSQL, MARIADB, MONGO")
         private DatabaseType type = DatabaseType.SQLITE;
-        private String uri = "jdbc:mysql://username:password@127.0.0.1:3306/Fadah";
+        private String uri = "jdbc:mysql://127.0.0.1:3306/Fadah";
+        private String username = "username";
+        private String password = "password";
         private String database = "Fadah";
         private boolean useSsl = false;
         private Advanced advanced = new Advanced();

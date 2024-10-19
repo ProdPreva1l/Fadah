@@ -48,7 +48,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
     }
 
     @Override
-    protected void fillPaginationItems() {
+    protected synchronized void fillPaginationItems() {
         for (CollectableItem collectableItem : collectionBox) {
             ItemBuilder itemBuilder = new ItemBuilder(collectableItem.itemStack().clone())
                     .lore(getLang().getLore("lore", TimeUtil.formatTimeSince(collectableItem.dateAdded())));
