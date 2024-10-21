@@ -9,6 +9,8 @@ import info.preva1l.fadah.data.dao.sql.CollectionBoxSQLDao;
 import info.preva1l.fadah.data.dao.sql.ExpiredItemsSQLDao;
 import info.preva1l.fadah.data.dao.sql.HistorySQLDao;
 import info.preva1l.fadah.data.dao.sql.ListingSQLDao;
+import info.preva1l.fadah.data.fixers.v2.MySQLFixerV2;
+import info.preva1l.fadah.data.fixers.v2.V2Fixer;
 import info.preva1l.fadah.records.CollectionBox;
 import info.preva1l.fadah.records.ExpiredItems;
 import info.preva1l.fadah.records.History;
@@ -120,6 +122,13 @@ public class MySQLHandler implements DatabaseHandler {
     @Override
     public void wipeDatabase() {
         // nothing yet
+    }
+
+    @Override
+    public void fixData(UUID player) {
+        V2Fixer fixer = new MySQLFixerV2(dataSource);
+        fixer.fixCollectionBox(player);
+        fixer.fixExpiredItems(player);
     }
 
     @Override
