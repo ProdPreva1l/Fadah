@@ -35,8 +35,18 @@ public class ExpiredItemsHikariDao extends SqlDao<ExpiredItems> {
                         VALUES (?, ?, ?, ?, ?, ?)
                         ON DUPLICATE KEY UPDATE `item` = VALUES(`item`), `time` = VALUES(`time`), `update` = VALUES(`update`), `collected` = VALUES(`collected`);
                         """,
+                DatabaseType.POSTGRESQL, """
+                        INSERT INTO `items` (`uuid`, `owner_id`, `item`, `time`, `update`, `collected`)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                        ON CONFLICT (`uuid`) DO UPDATE SET `item` = EXCLUDED.`item`, `time` = EXCLUDED.`time`, `update` = EXCLUDED.`update`, `collected` = EXCLUDED.`collected`;
+                        """,
                 DatabaseType.SQLITE, """
                         INSERT OR REPLACE INTO `items` (`uuid`, `owner_id`, `item`, `time`, `update`, `collected`)
+                        VALUES (?, ?, ?, ?, ?, ?);
+                        """,
+                DatabaseType.H2, """
+                        MERGE INTO `items` (`uuid`, `owner_id`, `item`, `time`, `update`, `collected`)
+                        KEY (`uuid`)
                         VALUES (?, ?, ?, ?, ?, ?);
                         """);
         statement(Statement.DELETE_SPECIFIC, """

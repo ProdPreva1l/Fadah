@@ -1,5 +1,6 @@
 package info.preva1l.fadah.data.dao.hikari;
 
+import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.data.dao.SqlDao;
 import info.preva1l.fadah.data.handler.DataHandler;
 import info.preva1l.fadah.data.handler.HikariHandler;
@@ -34,6 +35,20 @@ public class HistoryHikariDao extends SqlDao<History> {
                     INSERT INTO `items` (`uuid`, `owner_id`, `buyer_id`, `item`, `price`, `time`, `update`, `collected`)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                     ON DUPLICATE KEY UPDATE `item` = VALUES(`item`), `update` = VALUES(`update`);
+                    """,
+                DatabaseType.POSTGRESQL, """
+                    INSERT INTO `items` (`uuid`, `owner_id`, `buyer_id`, `item`, `price`, `time`, `update`, `collected`)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT (`uuid`) DO UPDATE SET `item` = EXCLUDED.`item`, `update` = EXCLUDED.`update`;
+                    """,
+                DatabaseType.SQLITE, """
+                    INSERT OR REPLACE INTO `items` (`uuid`, `owner_id`, `buyer_id`, `item`, `price`, `time`, `update`, `collected`)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+                    """,
+                DatabaseType.H2, """
+                    MERGE INTO `items` (`uuid`, `owner_id`, `buyer_id`, `item`, `price`, `time`, `update`, `collected`)
+                    KEY (`uuid`)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?);
                     """);
     }
 
@@ -100,7 +115,11 @@ public class HistoryHikariDao extends SqlDao<History> {
             stmt.setDouble(5, item.getPrice() == null ? 0 : item.getPrice());
             stmt.setLong(6, -1);
             stmt.setLong(7, item.getLoggedDate());
-            stmt.setBoolean(8, item.getAction() == HistoricItem.LoggedAction.COLLECTION_BOX_CLAIM);
+            stmt.setBoolean(8, item.getAction() == HistoricItem.LoggedAction.EXPIRED_ITEM_CLAIM
+                    || item.getAction() == HistoricItem.LoggedAction.EXPIRED_ITEM_ADMIN_CLAIM
+                    || item.getAction() == HistoricItem.LoggedAction.COLLECTION_BOX_CLAIM
+                    || item.getAction() == HistoricItem.LoggedAction.COLLECTION_BOX_ADMIN_CLAIM
+            );
 
             stmt.addBatch();
         }

@@ -128,7 +128,7 @@ public class Config {
     @Configuration
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class Database {
-        @Comment("Allowed: SQLITE, MYSQL, MARIADB, MONGO")
+        @Comment("Allowed: SQLITE, H2, MYSQL, MARIADB, POSTGRESQL, MONGO")
         private DatabaseType type = DatabaseType.SQLITE;
         private String uri = "jdbc:mysql://127.0.0.1:3306/Fadah";
         private String username = "username";
@@ -150,7 +150,7 @@ public class Config {
     }
 
     @Comment({"A message broker is only required for x-server environments.",
-            "This is not compatible with SQLITE database"})
+            "This is not compatible with SQLITE and H2 database"})
     private Broker broker = new Broker();
 
     @Getter

@@ -52,22 +52,42 @@ public abstract class SqlDao<T> implements Dao<T> {
     }
 
     protected void statement(@NotNull Statement type, @NotNull String sql) {
-        this.statements.put(type, sql);
+        this.put(type, sql);
     }
 
     protected void statement(@NotNull Statement type, @NotNull String sql, @NotNull DatabaseType database1, @NotNull String sql1) {
         if (handler.getType() == database1) {
-            this.statements.put(type, sql1);
+            this.put(type, sql1);
         } else {
-            this.statements.put(type, sql);
+            this.put(type, sql);
         }
     }
 
     protected void statement(@NotNull Statement type, @NotNull String sql, @NotNull DatabaseType database1, @NotNull String sql1, @NotNull DatabaseType database2, @NotNull String sql2) {
         if (handler.getType() == database1) {
-            this.statements.put(type, sql1);
+            this.put(type, sql1);
         } else if (handler.getType() == database2) {
-            this.statements.put(type, sql2);
+            this.put(type, sql2);
+        } else {
+            this.put(type, sql);
+        }
+    }
+
+    protected void statement(@NotNull Statement type, @NotNull String sql, @NotNull DatabaseType database1, @NotNull String sql1, @NotNull DatabaseType database2, @NotNull String sql2, @NotNull DatabaseType database3, @NotNull String sql3) {
+        if (handler.getType() == database1) {
+            this.put(type, sql1);
+        } else if (handler.getType() == database2) {
+            this.put(type, sql2);
+        } else if (handler.getType() == database3) {
+            this.put(type, sql3);
+        } else {
+            this.put(type, sql);
+        }
+    }
+
+    private void put(@NotNull Statement type, @NotNull String sql) {
+        if (handler.getType() == DatabaseType.POSTGRESQL) {
+            this.statements.put(type, sql.replace('`', '"'));
         } else {
             this.statements.put(type, sql);
         }

@@ -25,6 +25,8 @@ libraries:
   - com.zaxxer:HikariCP:6.0.0
   - org.mozilla:rhino:1.7.14
   - de.exlll:configlib-yaml:4.5.0
+  - org.postgresql:postgresql:42.7.4
+  - com.h2database:h2:2.3.232
 
 permissions:
   fadah.max-listings.<amount>:

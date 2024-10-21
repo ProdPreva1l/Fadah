@@ -42,7 +42,7 @@ public class ListingHikariDao extends SqlDao<Listing> {
                         """);
         statement(Statement.DELETE, """
                         DELETE FROM `items`
-                        WHERE uuid = ?;
+                        WHERE `uuid` = ?;
                         """);
     }
 

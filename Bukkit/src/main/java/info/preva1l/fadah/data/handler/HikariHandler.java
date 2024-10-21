@@ -57,7 +57,9 @@ public class HikariHandler implements DatabaseHandler {
             case MONGO -> throw new IllegalArgumentException();
             case MYSQL -> "com.mysql.cj.jdbc.Driver";
             case MARIADB -> "org.mariadb.jdbc.Driver";
+            case POSTGRESQL -> "org.postgresql.Driver";
             case SQLITE -> "org.sqlite.JDBC";
+            case H2 -> "org.h2.Driver";
         };
     }
 

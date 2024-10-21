@@ -35,8 +35,18 @@ public class CollectionBoxHikariDao extends SqlDao<CollectionBox> {
                         VALUES (?, ?, ?, ?, ?, ?, ?)
                         ON DUPLICATE KEY UPDATE `buyer_id` = VALUES(`buyer_id`), `item` = VALUES(`item`), `update` = VALUES(`update`), `collected` = VALUES(`collected`);
                         """,
+                DatabaseType.POSTGRESQL, """
+                        INSERT INTO `items` (`uuid`, `owner_id`, `buyer_id`, `item`, `time`, `update`, `collected`)
+                        VALUES (?, ?, ?, ?, ?, ?, ?)
+                        ON CONFLICT (`uuid`) DO UPDATE SET `buyer_id` = EXCLUDED.`buyer_id`, `item` = EXCLUDED.`item`, `update` = EXCLUDED.`update`, `collected` = EXCLUDED.`collected`;
+                        """,
                 DatabaseType.SQLITE, """
                         INSERT OR REPLACE INTO `items` (`uuid`, `owner_id`, `buyer_id`, `item`, `time`, `update`, `collected`)
+                        VALUES (?, ?, ?, ?, ?, ?, ?);
+                        """,
+                DatabaseType.H2, """
+                        MERGE INTO `items` (`uuid`, `owner_id`, `buyer_id`, `item`, `time`, `update`, `collected`)
+                        KEY (`uuid`)
                         VALUES (?, ?, ?, ?, ?, ?, ?);
                         """);
         statement(Statement.DELETE_SPECIFIC, """
