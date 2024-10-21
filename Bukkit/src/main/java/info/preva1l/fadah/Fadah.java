@@ -144,11 +144,13 @@ public final class Fadah extends JavaPlugin {
                 Listing listing = ListingCache.getListing(key);
                 if (Instant.now().toEpochMilli() >= listing.getDeletionDate()) {
                     ListingCache.removeListing(listing);
-                    DatabaseManager.getInstance().delete(Listing.class, listing);
+                    if (Config.i().getDatabase().getType() == DatabaseType.MONGO) {
+                        DatabaseManager.getInstance().delete(Listing.class, listing);
 
-                    CollectableItem item = new CollectableItem(listing.getItemStack(), Instant.now().toEpochMilli());
-                    ExpiredListingsCache.addItem(listing.getOwner(), item);
-                    DatabaseManager.getInstance().save(ExpiredItems.class, ExpiredItems.of(listing.getOwner()));
+                        CollectableItem item = new CollectableItem(listing.getItemStack(), Instant.now().toEpochMilli());
+                        ExpiredListingsCache.addItem(listing.getOwner(), item);
+                        DatabaseManager.getInstance().save(ExpiredItems.class, ExpiredItems.of(listing.getOwner()));
+                    }
 
                     TransactionLogger.listingExpired(listing);
 

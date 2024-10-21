@@ -4,9 +4,8 @@ import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.ListingCache;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.data.handler.DatabaseHandler;
+import info.preva1l.fadah.data.handler.HikariHandler;
 import info.preva1l.fadah.data.handler.MongoHandler;
-import info.preva1l.fadah.data.handler.MySQLHandler;
-import info.preva1l.fadah.data.handler.SQLiteHandler;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -24,9 +23,9 @@ public final class DatabaseManager {
 
     private DatabaseManager() {
         Fadah.getConsole().info("Connecting to Database and populating caches...");
-        databaseHandlers.put(DatabaseType.SQLITE, SQLiteHandler.class);
-        databaseHandlers.put(DatabaseType.MARIADB, MySQLHandler.class);
-        databaseHandlers.put(DatabaseType.MYSQL, MySQLHandler.class);
+        databaseHandlers.put(DatabaseType.SQLITE, HikariHandler.class);
+        databaseHandlers.put(DatabaseType.MARIADB, HikariHandler.class);
+        databaseHandlers.put(DatabaseType.MYSQL, HikariHandler.class);
         databaseHandlers.put(DatabaseType.MONGO, MongoHandler.class);
 
         this.handler = initHandler();

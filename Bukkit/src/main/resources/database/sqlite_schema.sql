@@ -1,37 +1,17 @@
-CREATE TABLE IF NOT EXISTS collection_box
-(
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    playerUUID TEXT    NOT NULL,
-    itemStack  TEXT    NOT NULL,
-    dateAdded  INTEGER NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS expired_items
-(
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    playerUUID TEXT    NOT NULL,
-    itemStack  TEXT    NOT NULL,
-    dateAdded  INTEGER NOT NULL
-);
-
-CREATE TABLE IF NOT EXISTS listings
-(
-    id           INTEGER PRIMARY KEY AUTOINCREMENT,
-    uuid         TEXT    NOT NULL,
-    ownerUUID    TEXT    NOT NULL,
-    ownerName    TEXT    NOT NULL,
-    category     TEXT    NOT NULL,
-    creationDate INTEGER NOT NULL,
-    deletionDate INTEGER NOT NULL,
-    price        REAL    NOT NULL,
-    tax          REAL    NOT NULL,
-    itemStack    TEXT    NOT NULL,
-    biddable     INTEGER NOT NULL,
-    bids         TEXT NULLABLE
-);
-
-CREATE TABLE IF NOT EXISTS historyV2
-(
-    playerUUID TEXT NOT NULL PRIMARY KEY,
-    items TEXT NOT NULL
+CREATE TABLE `items` (
+    `id`         INTEGER PRIMARY KEY NOT NULL,
+    `uuid`       VARCHAR(36)         NOT NULL UNIQUE,
+    `owner_id`   VARCHAR(36)         NOT NULL,
+    `owner_name` VARCHAR(255),
+    `buyer_id`   VARCHAR(36),
+    `item`       TEXT                NOT NULL,
+    `category`   VARCHAR(255),
+    `price`      DOUBLE,
+    `tax`        DOUBLE,
+    `time`       BIGINT              NOT NULL,
+    `biddable`   BOOLEAN,
+    `bids`       TEXT,
+    `update`     BIGINT,
+    `collected`  BOOLEAN,
+    PRIMARY KEY (`id`)
 );

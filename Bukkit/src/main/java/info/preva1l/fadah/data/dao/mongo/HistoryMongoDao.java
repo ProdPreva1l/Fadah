@@ -4,6 +4,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
 import info.preva1l.fadah.data.dao.Dao;
+import info.preva1l.fadah.data.handler.DataHandler;
 import info.preva1l.fadah.records.HistoricItem;
 import info.preva1l.fadah.records.History;
 import info.preva1l.fadah.utils.ItemSerializer;
@@ -40,7 +41,7 @@ public class HistoryMongoDao implements Dao<History> {
                 final ItemStack itemStack = ItemSerializer.deserialize(document.getString("itemStack"))[0];
                 final HistoricItem.LoggedAction loggedAction = HistoricItem.LoggedAction.values()[document.getInteger("loggedAction")];
                 final UUID purchaserUUID = document.getString("purchaserUUID") == null ? null : UUID.fromString(document.getString("purchaserUUID"));
-                list.add(new HistoricItem(id, loggedDate, loggedAction, itemStack, price, purchaserUUID));
+                list.add(new HistoricItem(DataHandler.DUMMY_ID, id, loggedDate, loggedAction, itemStack, price, purchaserUUID));
             } catch (Exception e) {
                 e.printStackTrace();
             }

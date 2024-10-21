@@ -12,6 +12,7 @@ import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.ListHelper;
 import info.preva1l.fadah.config.Tuple;
 import info.preva1l.fadah.data.DatabaseManager;
+import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.multiserver.Payload;
 import info.preva1l.fadah.utils.TaskManager;
@@ -60,11 +61,13 @@ public final class CurrentListing extends Listing {
                     .payload(Payload.withUUID(this.getId()))
                     .build().send(Fadah.getINSTANCE().getBroker());
         }
-        DatabaseManager.getInstance().delete(Listing.class, this);
+        if (Config.i().getDatabase().getType() == DatabaseType.MONGO) {
+            DatabaseManager.getInstance().delete(Listing.class, this);
+        }
 
         // Add to collection box
         ItemStack itemStack = this.getItemStack().clone();
-        CollectableItem collectableItem = new CollectableItem(itemStack, Instant.now().toEpochMilli());
+        CollectableItem collectableItem = new CollectableItem(this.getId(), this.getOwner(), itemStack, Instant.now().toEpochMilli());
         CollectionBoxCache.addItem(buyer.getUniqueId(), collectableItem);
         DatabaseManager.getInstance().save(CollectionBox.class, CollectionBox.of(buyer.getUniqueId()));
 
@@ -117,9 +120,11 @@ public final class CurrentListing extends Listing {
                     .payload(Payload.withUUID(this.getId()))
                     .build().send(Fadah.getINSTANCE().getBroker());
         }
-        DatabaseManager.getInstance().delete(Listing.class, this);
+        if (Config.i().getDatabase().getType() == DatabaseType.MONGO) {
+            DatabaseManager.getInstance().delete(Listing.class, this);
+        }
 
-        CollectableItem collectableItem = new CollectableItem(this.getItemStack(), Instant.now().toEpochMilli());
+        CollectableItem collectableItem = new CollectableItem(this.getId(), this.getOwner(), this.getItemStack(), Instant.now().toEpochMilli());
         ExpiredListingsCache.addItem(getOwner(), collectableItem);
         Message.builder()
                 .type(Message.Type.EXPIRED_LISTINGS_UPDATE)

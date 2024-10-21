@@ -12,4 +12,8 @@ public enum DatabaseType {
     SQLITE("sqlite", "SQLite");
     private final String id;
     private final String friendlyName;
+
+    public boolean isLocal() {
+        return this == SQLITE;
+    }
 }

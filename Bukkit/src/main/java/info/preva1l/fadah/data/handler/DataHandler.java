@@ -5,6 +5,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DataHandler {
+
+    UUID DUMMY_ID = new UUID(0, 0);
+
     <T> List<T> getAll(Class<T> clazz);
     <T> Optional<T> get(Class<T> clazz, UUID id);
     <T> void save(Class<T> clazz, T t);
