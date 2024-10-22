@@ -9,6 +9,8 @@ import info.preva1l.fadah.data.dao.sqlite.CollectionBoxSQLiteDao;
 import info.preva1l.fadah.data.dao.sqlite.ExpiredItemsSQLiteDao;
 import info.preva1l.fadah.data.dao.sqlite.HistorySQLiteDao;
 import info.preva1l.fadah.data.dao.sqlite.ListingSQLiteDao;
+import info.preva1l.fadah.data.fixers.v2.SQLiteFixerV2;
+import info.preva1l.fadah.data.fixers.v2.V2Fixer;
 import info.preva1l.fadah.records.CollectionBox;
 import info.preva1l.fadah.records.ExpiredItems;
 import info.preva1l.fadah.records.History;
@@ -34,6 +36,7 @@ public class SQLiteHandler implements DatabaseHandler {
     private static final String DATABASE_FILE_NAME = "FadahData.db";
     private File databaseFile;
     private HikariDataSource dataSource;
+    @Getter private V2Fixer v2Fixer;
 
     @Override
     @Blocking
@@ -74,6 +77,7 @@ public class SQLiteHandler implements DatabaseHandler {
             destroy();
         }
         registerDaos();
+        v2Fixer = new SQLiteFixerV2(dataSource);
         connected = true;
     }
 

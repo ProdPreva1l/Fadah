@@ -7,6 +7,8 @@ import info.preva1l.fadah.data.dao.mongo.CollectionBoxMongoDao;
 import info.preva1l.fadah.data.dao.mongo.ExpiredItemsMongoDao;
 import info.preva1l.fadah.data.dao.mongo.HistoryMongoDao;
 import info.preva1l.fadah.data.dao.mongo.ListingMongoDao;
+import info.preva1l.fadah.data.fixers.v2.MongoFixerV2;
+import info.preva1l.fadah.data.fixers.v2.V2Fixer;
 import info.preva1l.fadah.records.CollectionBox;
 import info.preva1l.fadah.records.ExpiredItems;
 import info.preva1l.fadah.records.History;
@@ -26,6 +28,7 @@ public class MongoHandler implements DatabaseHandler {
 
     private MongoConnectionHandler connectionHandler;
     private CollectionHelper collectionHelper;
+    @Getter private V2Fixer v2Fixer;
 
     @Override
     public void connect() {
@@ -45,6 +48,7 @@ public class MongoHandler implements DatabaseHandler {
         }
 
         registerDaos();
+        v2Fixer = new MongoFixerV2();
     }
 
     @Override

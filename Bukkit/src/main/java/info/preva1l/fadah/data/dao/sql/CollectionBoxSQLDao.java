@@ -1,27 +1,31 @@
 package info.preva1l.fadah.data.dao.sql;
 
-import com.google.common.collect.Lists;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.zaxxer.hikari.HikariDataSource;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.data.dao.Dao;
+import info.preva1l.fadah.data.gson.ConfigurationSerializableAdapter;
 import info.preva1l.fadah.records.CollectableItem;
 import info.preva1l.fadah.records.CollectionBox;
-import info.preva1l.fadah.utils.ItemSerializer;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang.NotImplementedException;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.logging.Level;
+import java.util.*;
 
 @RequiredArgsConstructor
 public class CollectionBoxSQLDao implements Dao<CollectionBox> {
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
+            .serializeNulls().create();
+    private static final Type COLLECTION_LIST_TYPE = new TypeToken<ArrayList<CollectableItem>>() {}.getType();
     private final HikariDataSource dataSource;
 
     /**
@@ -32,25 +36,28 @@ public class CollectionBoxSQLDao implements Dao<CollectionBox> {
      */
     @Override
     public Optional<CollectionBox> get(UUID id) {
-        final List<CollectableItem> retrievedData = Lists.newArrayList();
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("""
-                        SELECT `itemStack`,  `dateAdded`
-                        FROM `collection_box`
-                        WHERE `playerUUID`=?;""")) {
+                    SELECT `items`
+                    FROM `collection_boxV2`
+                    WHERE `playerUUID`=?;""")) {
                 statement.setString(1, id.toString());
                 final ResultSet resultSet = statement.executeQuery();
-                while (resultSet.next()) {
-                    final ItemStack itemStack = ItemSerializer.deserialize(resultSet.getString("itemStack"))[0];
-                    final long dateAdded = resultSet.getLong("dateAdded");
-                    retrievedData.add(new CollectableItem(itemStack, dateAdded));
+                if (resultSet.next()) {
+                    List<CollectableItem> items;
+                    try {
+                        items = GSON.fromJson(Arrays.toString(Base64.getDecoder().decode(resultSet.getString("items"))), COLLECTION_LIST_TYPE);
+                    } catch (IllegalArgumentException e) {
+                        items = GSON.fromJson(resultSet.getString("items"), COLLECTION_LIST_TYPE);
+                    }
+                    return Optional.of(new CollectionBox(id, items));
                 }
-                return Optional.of(new CollectionBox(id, retrievedData));
             }
         } catch (SQLException e) {
             Fadah.getConsole().severe("Failed to get items from collection box!");
             throw new RuntimeException(e);
         }
+        return Optional.empty();
     }
 
     /**
@@ -71,15 +78,15 @@ public class CollectionBoxSQLDao implements Dao<CollectionBox> {
     @Override
     public void save(CollectionBox collectableList) {
         try (Connection connection = getConnection()) {
-            for (CollectableItem item : collectableList.collectableItems()) {
-                try (PreparedStatement statement = connection.prepareStatement("""
-                        INSERT IGNORE INTO `collection_box` (`playerUUID`, `itemStack`, `dateAdded`)
-                        VALUES (?, ?, ?);""")) {
-                    statement.setString(1, collectableList.owner().toString());
-                    statement.setString(2, ItemSerializer.serialize(item.itemStack()));
-                    statement.setLong(3, item.dateAdded());
-                    statement.execute();
-                }
+            try (PreparedStatement statement = connection.prepareStatement("""
+                    INSERT INTO `collection_boxV2`
+                        (`playerUUID`, `items`)
+                    VALUES (?, ?)
+                    ON DUPLICATE KEY UPDATE
+                        `items` = VALUES(`items`);""")) {
+                statement.setString(1, collectableList.owner().toString());
+                statement.setString(2, Base64.getEncoder().encodeToString(GSON.toJson(collectableList.collectableItems(), COLLECTION_LIST_TYPE).getBytes()));
+                statement.execute();
             }
         } catch (SQLException e) {
             Fadah.getConsole().severe("Failed to add item to collection box!");
@@ -106,23 +113,6 @@ public class CollectionBoxSQLDao implements Dao<CollectionBox> {
     @Override
     public void delete(CollectionBox collectableItem) {
         throw new NotImplementedException();
-    }
-
-    @Override
-    public void deleteSpecific(CollectionBox collectableList, Object o) {
-        if (!(o instanceof CollectableItem item)) throw new IllegalStateException("Specific object must be a collectable item");
-        try (Connection connection = getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement("""
-                        DELETE FROM `collection_box`
-                        WHERE `playerUUID`=? AND `itemStack`=? AND `dateAdded` =?;""")) {
-                statement.setString(1, collectableList.owner().toString());
-                statement.setString(2, ItemSerializer.serialize(item.itemStack()));
-                statement.setLong(3, item.dateAdded());
-                statement.execute();
-            }
-        } catch (SQLException e) {
-            Fadah.getConsole().log(Level.SEVERE, "Failed to remove item from expired items!", e);
-        }
     }
 
     private Connection getConnection() throws SQLException {

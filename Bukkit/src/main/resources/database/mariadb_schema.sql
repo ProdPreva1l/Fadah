@@ -2,21 +2,17 @@ SET DEFAULT_STORAGE_ENGINE = INNODB;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
-CREATE TABLE IF NOT EXISTS collection_box
+CREATE TABLE IF NOT EXISTS collection_boxV2
 (
-    id         INT AUTO_INCREMENT PRIMARY KEY,
-    playerUUID VARCHAR(36) NOT NULL,
-    itemStack  TEXT        NOT NULL,
-    dateAdded  BIGINT      NOT NULL
+    playerUUID VARCHAR(36) NOT NULL PRIMARY KEY,
+    items      TEXT        NOT NULL
 ) CHARACTER SET utf8
   COLLATE utf8_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS expired_items
+CREATE TABLE IF NOT EXISTS expired_itemsV2
 (
-    id         INT AUTO_INCREMENT PRIMARY KEY,
-    playerUUID VARCHAR(36) NOT NULL,
-    itemStack  TEXT        NOT NULL,
-    dateAdded  BIGINT      NOT NULL
+    playerUUID VARCHAR(36) NOT NULL PRIMARY KEY,
+    items      TEXT        NOT NULL
 ) CHARACTER SET utf8
   COLLATE utf8_unicode_ci;
 
