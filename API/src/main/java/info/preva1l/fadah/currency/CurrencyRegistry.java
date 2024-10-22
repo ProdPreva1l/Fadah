@@ -9,10 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public final class CurrencyRegistry {
+    private static Map<String, Currency> values = new ConcurrentHashMap<>();
     public static final Currency VAULT = get("vault");
     public static final Currency REDIS_ECONOMY = get("redis_economy");
-
-    private static Map<String, Currency> values = new ConcurrentHashMap<>();
 
     public static void register(Currency currency) {
         if (values == null) {
@@ -23,13 +22,18 @@ public final class CurrencyRegistry {
             Plugin requiredPlugin = Bukkit.getPluginManager().getPlugin(currency.getRequiredPlugin());
             if (requiredPlugin == null || !requiredPlugin.isEnabled()) {
                 Logger.getLogger("Fadah")
-                        .severe("Tried enabling currency %s but the required plugin %s is not found/enabled!"
-                        .formatted(currency.getId().toLowerCase(), currency.getRequiredPlugin()));
+                        .warning("Tried enabling currency %s but the required plugin %s is not found/enabled!"
+                                .formatted(currency.getId().toLowerCase(), currency.getRequiredPlugin()));
                 return;
             }
         }
 
-        currency.preloadChecks();
+        if (!currency.preloadChecks()) {
+            Logger.getLogger("Fadah")
+                    .severe("Tried enabling currency %s but the preload checks failed!"
+                            .formatted(currency.getId().toLowerCase()));
+            return;
+        }
 
         values.put(currency.getId().toLowerCase(), currency);
     }

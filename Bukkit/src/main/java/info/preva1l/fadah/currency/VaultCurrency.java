@@ -46,14 +46,15 @@ public class VaultCurrency implements Currency {
     }
 
     @Override
-    public void preloadChecks() {
+    public boolean preloadChecks() {
         RegisteredServiceProvider<Economy> rsp = Bukkit.getServer().getServicesManager().getRegistration(Economy.class);
         if (rsp == null) {
             Fadah.getConsole().severe("---------------------------------------------------------");
             Fadah.getConsole().severe("Cannot enable vault currency! No Economy Plugin Installed");
             Fadah.getConsole().severe("---------------------------------------------------------");
-            throw new CurrencyLoadException(id, "Vault has no compatible economy plugin.");
+            return false;
         }
         economy = rsp.getProvider();
+        return true;
     }
 }

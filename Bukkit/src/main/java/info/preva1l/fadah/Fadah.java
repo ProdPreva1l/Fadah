@@ -11,6 +11,7 @@ import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
 import info.preva1l.fadah.currency.CurrencyRegistry;
+import info.preva1l.fadah.currency.RedisEconomyCurrency;
 import info.preva1l.fadah.currency.VaultCurrency;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.DatabaseType;
@@ -56,14 +57,11 @@ import java.util.stream.Stream;
 public final class Fadah extends JavaPlugin {
     private static final int METRICS_ID = 21651;
     private static final int SPIGOT_ID = 116157;
-    private Version pluginVersion;
-
     @Getter private static Fadah INSTANCE;
     @Getter @Setter private static NamespacedKey customItemKey;
-
     @Getter private static Logger console;
     @Getter private final Logger transactionLogger = Logger.getLogger("AuctionHouse-Transactions");
-
+    private Version pluginVersion;
     @Getter private BasicConfig categoriesFile;
     @Getter private BasicConfig menusFile;
 
@@ -248,7 +246,8 @@ public final class Fadah extends JavaPlugin {
     private void loadCurrencies() {
         getConsole().info("Loading currencies...");
         Stream.of(
-            new VaultCurrency()
+                new VaultCurrency(),
+                new RedisEconomyCurrency()
         ).forEach(CurrencyRegistry::register);
         getConsole().info("Currencies Loaded!");
     }

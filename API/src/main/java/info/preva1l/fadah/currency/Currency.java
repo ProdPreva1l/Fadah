@@ -19,7 +19,12 @@ public interface Currency {
         return getBalance(player) >= amount;
     }
 
-    default void preloadChecks() {
-        // Do nothing
+    /**
+     * Pre startup checks for the currency hook.
+     *
+     * @return true if the checks succeed false if they fail.
+     */
+    default boolean preloadChecks() {
+        return true;
     }
 }
