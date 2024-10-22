@@ -93,8 +93,12 @@ public final class DatabaseManager {
         });
     }
 
-    public boolean needsFixing(UUID player) {
-        return true; // todo: implement
+    public CompletableFuture<Boolean> needsFixing(UUID player) {
+        if (!isConnected()) {
+            Fadah.getConsole().severe("Tried to perform database action when the database is not connected!");
+            return CompletableFuture.completedFuture(null);
+        }
+        return CompletableFuture.supplyAsync(() -> handler.needsFixing(player));
     }
 
     public CompletableFuture<Void> fixPlayerData(UUID player) {

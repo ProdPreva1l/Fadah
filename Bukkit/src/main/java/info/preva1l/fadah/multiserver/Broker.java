@@ -1,6 +1,7 @@
 package info.preva1l.fadah.multiserver;
 
 import com.google.gson.Gson;
+import fr.maxlego08.zauctionhouse.api.utils.Logger;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
 import info.preva1l.fadah.cache.ExpiredListingsCache;
@@ -40,6 +41,7 @@ public abstract class Broker {
                     .getUUID().ifPresentOrElse(uuid -> {
                         DatabaseManager.getInstance().get(Listing.class, uuid)
                                 .thenAccept(listing -> listing.ifPresent(ListingCache::addListing));
+                        Logger.info("nigger");
                         }, () -> {
                         throw new IllegalStateException("Listing add message received with no listing UUID!");
                     });

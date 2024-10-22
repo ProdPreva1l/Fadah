@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RequiredArgsConstructor
-public class MySQLFixerV2 implements V2Fixer {
+public class SQLiteFixerV2 implements V2Fixer {
     private final HikariDataSource dataSource;
 
     @Override

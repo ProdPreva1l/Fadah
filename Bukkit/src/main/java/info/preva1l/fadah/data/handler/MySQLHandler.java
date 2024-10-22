@@ -32,6 +32,7 @@ public class MySQLHandler implements DatabaseHandler {
 
     private final String driverClass;
     private HikariDataSource dataSource;
+    @Getter private V2Fixer v2Fixer;
 
     private final Config.Database conf = Config.i().getDatabase();
 
@@ -104,6 +105,7 @@ public class MySQLHandler implements DatabaseHandler {
                     "Please check the supplied database credentials in the config file", e);
         }
         registerDaos();
+        v2Fixer = new MySQLFixerV2(dataSource);
     }
 
     @Override
@@ -122,13 +124,6 @@ public class MySQLHandler implements DatabaseHandler {
     @Override
     public void wipeDatabase() {
         // nothing yet
-    }
-
-    @Override
-    public void fixData(UUID player) {
-        V2Fixer fixer = new MySQLFixerV2(dataSource);
-        fixer.fixCollectionBox(player);
-        fixer.fixExpiredItems(player);
     }
 
     @Override

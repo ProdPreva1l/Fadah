@@ -277,6 +277,7 @@ public final class Fadah extends JavaPlugin {
 
         metrics = new Metrics(this, METRICS_ID);
         metrics.addCustomChart(new Metrics.SingleLineChart("items_listed", () -> ListingCache.getListings().size()));
+        metrics.addCustomChart(new Metrics.SimplePie("database_type", () -> Config.i().getDatabase().getType().getFriendlyName()));
 
         getConsole().info("Metrics Logging Started!");
     }
@@ -334,6 +335,11 @@ public final class Fadah extends JavaPlugin {
 
     public CompletableFuture<Void> loadPlayerData(UUID uuid) {
         return CompletableFuture.supplyAsync(() -> {
+            boolean needsFixing = DatabaseManager.getInstance().needsFixing(uuid).join();
+            if (needsFixing) {
+                DatabaseManager.getInstance().fixPlayerData(uuid).join();
+            }
+
             Optional<CollectionBox> collectionBox = DatabaseManager.getInstance().get(CollectionBox.class, uuid).join();
             collectionBox.ifPresent(list -> CollectionBoxCache.update(uuid, list.collectableItems()));
 
