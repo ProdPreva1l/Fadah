@@ -122,6 +122,7 @@ public class Config {
         }
     }
 
+
     private Migrators migrators = new Migrators();
 
     @Getter
@@ -177,7 +178,9 @@ public class Config {
     public static class Database {
         @Comment("Allowed: SQLITE, MYSQL, MARIADB, MONGO")
         private DatabaseType type = DatabaseType.SQLITE;
-        private String uri = "jdbc:mysql://username:password@127.0.0.1:3306/Fadah";
+        private String uri = "jdbc:mysql://127.0.0.1:3306/Fadah";
+        private String username = "username";
+        private String password = "password";
         private String database = "Fadah";
         private boolean useSsl = false;
         private Advanced advanced = new Advanced();

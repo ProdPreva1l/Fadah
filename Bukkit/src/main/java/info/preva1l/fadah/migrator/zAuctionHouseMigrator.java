@@ -1,10 +1,10 @@
 package info.preva1l.fadah.migrator;
 
+import com.google.common.base.Suppliers;
 import fr.maxlego08.zauctionhouse.api.AuctionItem;
 import fr.maxlego08.zauctionhouse.api.AuctionManager;
 import fr.maxlego08.zauctionhouse.api.AuctionPlugin;
-import fr.maxlego08.zauctionhouse.api.category.Category;
-import fr.maxlego08.zauctionhouse.api.category.CategoryManager;
+import fr.maxlego08.zauctionhouse.api.enums.StorageType;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CategoryCache;
 import info.preva1l.fadah.config.Config;
@@ -20,48 +20,45 @@ import org.bukkit.plugin.RegisteredServiceProvider;
 import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 @Getter
 public final class zAuctionHouseMigrator implements Migrator {
+
+    private static final Supplier<AuctionPlugin> PLUGIN = Suppliers.memoize(() -> (AuctionPlugin) Bukkit.getPluginManager().getPlugin("zAuctionHouse"));
+
     private final String migratorName = "zAuctionHouse";
     private final AuctionManager auctionManager;
-    private final CategoryManager categoryManager;
 
     public zAuctionHouseMigrator() {
         auctionManager = getProvider(AuctionManager.class);
-        categoryManager = getProvider(CategoryManager.class);
     }
 
     @Override
     public CompletableFuture<Void> startMigration(Fadah plugin) {
-        auctionManager.getStorage().save((AuctionPlugin) Bukkit.getPluginManager().getPlugin("zAuctionHouse"));
+        // auctionManager.getStorage().save(PLUGIN.get());
         return Migrator.super.startMigration(plugin);
     }
 
     @Override
     public List<Listing> migrateListings() {
         List<Listing> listings = new ArrayList<>();
-        for (String categoryName : Config.i().getMigrators().getZAuctionHouse().getCategoriesToMigrate()) {
-            Optional<Category> zCategory = categoryManager.getByName(categoryName);
-            zCategory.ifPresentOrElse((category) -> {
-                List<AuctionItem> zListings = auctionManager.getItems(category);
-                for (AuctionItem auctionItem : zListings) {
-                    UUID id = auctionItem.getUniqueId();
-                    UUID owner = auctionItem.getSellerUniqueId();
-                    String ownerName = auctionItem.getSellerName();
-                    ItemStack itemStack = auctionItem.getItemStack();
-                    double price = auctionItem.getPrice();
-                    long expiry = auctionItem.getExpireAt();
-                    String categoryId = CategoryCache.getCategoryForItem(itemStack);
-                    if (categoryId == null) {
-                        categoryId = CategoryCache.getCategories().getFirst().id();
-                    }
-                    String currency = auctionItem.getEconomy().getCurrency();
-                    if (CurrencyRegistry.get(currency) == null) currency = "vault";
-                    listings.add(new CurrentListing(id, owner, ownerName, itemStack, categoryId, currency, price, 0,
-                            Instant.now().toEpochMilli(), expiry,false, List.of()));
-                }
-            }, () -> Fadah.getConsole().warning("Not migrating category %s! (Not found on zAuctionHouse)".formatted(categoryName)));
+        for (AuctionItem item : auctionManager.getStorage().getItems(PLUGIN.get(), StorageType.STORAGE)) {
+            UUID id = item.getUniqueId();
+            UUID owner = item.getSellerUniqueId();
+            String ownerName = item.getSellerName();
+            ItemStack itemStack = item.getItemStack();
+            double price = item.getPrice();
+            long expiry = item.getExpireAt();
+            String categoryId = CategoryCache.getCategoryForItem(itemStack);
+            if (categoryId == null) {
+                categoryId = CategoryCache.getCategories().get(0).id();
+            }
+            String currency = auctionItem.getEconomy().getCurrency();
+            if (CurrencyRegistry.get(currency) == null) currency = "vault";
+            listings.add(new CurrentListing(id, owner, ownerName, itemStack, categoryId, currency, price, 0,
+                    Instant.now().toEpochMilli(), expiry, false, List.of()));
         }
         return listings;
     }
@@ -74,8 +71,20 @@ public final class zAuctionHouseMigrator implements Migrator {
 
     @Override
     public Map<UUID, List<CollectableItem>> migrateExpiredListings() {
-        Fadah.getConsole().warning("Not migrating expired listings! (zAuctionHouse API does not permit)");
-        return Collections.emptyMap();
+        Map<UUID, List<CollectableItem>> allItems = new ConcurrentHashMap<>();
+        for (AuctionItem item : auctionManager.getStorage().getItems(PLUGIN.get(), StorageType.EXPIRE)) {
+            UUID owner = item.getSellerUniqueId();
+            ItemStack itemStack = item.getItemStack();
+            CollectableItem collectableItem = new CollectableItem(itemStack, item.getExpireAt());
+            allItems.compute(owner, (uuid, items) -> {
+                if (items == null) {
+                    items = new ArrayList<>();
+                }
+                items.add(collectableItem);
+                return items;
+            });
+        }
+        return allItems;
     }
 
     private <T> T getProvider(Class<T> clazz) {

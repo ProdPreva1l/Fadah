@@ -49,7 +49,7 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
     }
 
     @Override
-    protected void fillPaginationItems() {
+    protected synchronized void fillPaginationItems() {
         for (CollectableItem collectableItem : expiredItems) {
             ItemBuilder itemStack = new ItemBuilder(collectableItem.itemStack().clone())
                     .addLore(getLang().getLore("lore", TimeUtil.formatTimeSince(collectableItem.dateAdded())));
@@ -67,7 +67,7 @@ public class ExpiredListingsMenu extends PaginatedFastInv {
                         return;
                     }
                     ExpiredListingsCache.removeItem(owner.getUniqueId(), collectableItem);
-                    DatabaseManager.getInstance().deleteSpecific(ExpiredItems.class, ExpiredItems.of(owner.getUniqueId()), collectableItem);
+                    DatabaseManager.getInstance().save(ExpiredItems.class, ExpiredItems.of(owner.getUniqueId()));
                     viewer.getInventory().setItem(slot, collectableItem.itemStack());
 
                     updatePagination();

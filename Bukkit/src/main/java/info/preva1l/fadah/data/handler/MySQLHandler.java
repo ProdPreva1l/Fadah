@@ -9,6 +9,8 @@ import info.preva1l.fadah.data.dao.sql.CollectionBoxSQLDao;
 import info.preva1l.fadah.data.dao.sql.ExpiredItemsSQLDao;
 import info.preva1l.fadah.data.dao.sql.HistorySQLDao;
 import info.preva1l.fadah.data.dao.sql.ListingSQLDao;
+import info.preva1l.fadah.data.fixers.v2.MySQLFixerV2;
+import info.preva1l.fadah.data.fixers.v2.V2Fixer;
 import info.preva1l.fadah.records.CollectionBox;
 import info.preva1l.fadah.records.ExpiredItems;
 import info.preva1l.fadah.records.History;
@@ -30,6 +32,7 @@ public class MySQLHandler implements DatabaseHandler {
 
     private final String driverClass;
     private HikariDataSource dataSource;
+    @Getter private V2Fixer v2Fixer;
 
     private final Config.Database conf = Config.i().getDatabase();
 
@@ -53,6 +56,10 @@ public class MySQLHandler implements DatabaseHandler {
         dataSource = new HikariDataSource();
         dataSource.setDriverClassName(driverClass);
         dataSource.setJdbcUrl(conf.getUri());
+        if (!conf.getUri().contains("@")) {
+            dataSource.setUsername(conf.getUsername());
+            dataSource.setPassword(conf.getPassword());
+        }
 
         dataSource.setMaximumPoolSize(conf.getAdvanced().getPoolSize());
         dataSource.setMinimumIdle(conf.getAdvanced().getMinIdle());
@@ -98,6 +105,7 @@ public class MySQLHandler implements DatabaseHandler {
                     "Please check the supplied database credentials in the config file", e);
         }
         registerDaos();
+        v2Fixer = new MySQLFixerV2(dataSource);
     }
 
     @Override

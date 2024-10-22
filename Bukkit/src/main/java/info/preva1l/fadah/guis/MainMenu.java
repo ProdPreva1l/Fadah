@@ -130,7 +130,7 @@ public class MainMenu extends ScrollBarFastInv {
     }
 
     @Override
-    protected void fillPaginationItems() {
+    protected synchronized void fillPaginationItems() {
         for (Listing listing : listings) {
             String buyMode = listing.isBiddable()
                     ? getLang().getStringFormatted("listing.lore-buy.bidding")
@@ -157,6 +157,7 @@ public class MainMenu extends ScrollBarFastInv {
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
                 if (e.isShiftClick() && (e.getWhoClicked().hasPermission("fadah.manage.active-listings") || listing.isOwner(((Player) e.getWhoClicked())))) {
                     if (listing.cancel(((Player) e.getWhoClicked()))) {
+                        needsUpdating = true;
                         updatePagination();
                     }
                     return;

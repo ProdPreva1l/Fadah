@@ -19,7 +19,7 @@ dependencies {
     compileOnly 'net.kyori:adventure-api:4.17.0'
     compileOnly 'net.kyori:adventure-platform-bukkit:4.3.3'
 
-    implementation 'de.exlll:configlib-yaml:4.5.0' // Configs
+    compileOnly 'de.exlll:configlib-yaml:4.5.0' // Configs
 
     implementation "com.github.puregero:multilib:1.2.4" // Folia & Shreddedpaper support
 
@@ -32,7 +32,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.6' // Placeholder support
 
     // Database
-    implementation 'com.zaxxer:HikariCP:5.1.0'
+    compileOnly 'com.zaxxer:HikariCP:6.0.0'
     compileOnly 'org.xerial:sqlite-jdbc:3.45.2.0'
     compileOnly 'com.mysql:mysql-connector-j:8.3.0'
     compileOnly('org.mariadb.jdbc:mariadb-java-client:3.3.3') {
@@ -42,6 +42,7 @@ dependencies {
 
     implementation 'net.wesjd:anvilgui:1.10.2-SNAPSHOT' // Search Menu
 
+    compileOnly 'org.mozilla:rhino:1.7.14'
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7' // Economy Hook
 
@@ -60,10 +61,8 @@ dependencies {
 }
 
 shadowJar {
-    relocate 'com.zaxxer', 'info.preva1l.fadah.libs'
     relocate 'net.wesjd', 'info.preva1l.fadah.libs'
     relocate 'com.github.puregero.multilib', 'info.preva1l.fadah.libs.multilib'
-    relocate 'space.arim.morepaperlib', 'info.preva1l.fadah.libs'
 
     archiveClassifier.set('')
     //minimize()

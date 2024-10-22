@@ -50,7 +50,7 @@ public class HistoryMenu extends PaginatedFastInv {
     }
 
     @Override
-    protected void fillPaginationItems() {
+    protected synchronized void fillPaginationItems() {
         for (HistoricItem historicItem : historicItems) {
             ItemBuilder itemStack = new ItemBuilder(historicItem.getItemStack().clone());
             if (historicItem.getPurchaserUUID() != null) {

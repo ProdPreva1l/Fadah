@@ -1,17 +1,13 @@
-CREATE TABLE IF NOT EXISTS collection_box
+CREATE TABLE IF NOT EXISTS collection_boxV2
 (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    playerUUID TEXT    NOT NULL,
-    itemStack  TEXT    NOT NULL,
-    dateAdded  INTEGER NOT NULL
+    playerUUID TEXT NOT NULL PRIMARY KEY,
+    items      TEXT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS expired_items
+CREATE TABLE IF NOT EXISTS expired_itemsV2
 (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT,
-    playerUUID TEXT    NOT NULL,
-    itemStack  TEXT    NOT NULL,
-    dateAdded  INTEGER NOT NULL
+    playerUUID TEXT NOT NULL PRIMARY KEY,
+    items      TEXT NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS listings
@@ -33,5 +29,5 @@ CREATE TABLE IF NOT EXISTS listings
 CREATE TABLE IF NOT EXISTS historyV2
 (
     playerUUID TEXT NOT NULL PRIMARY KEY,
-    items TEXT NOT NULL
+    items      TEXT NOT NULL
 );

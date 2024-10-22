@@ -20,9 +20,14 @@ import info.preva1l.fadah.multiserver.Payload;
 import info.preva1l.fadah.records.CurrentListing;
 import info.preva1l.fadah.records.Listing;
 import info.preva1l.fadah.utils.StringUtils;
+import info.preva1l.fadah.utils.TaskManager;
 import info.preva1l.fadah.utils.TimeUtil;
 import info.preva1l.fadah.utils.guis.*;
 import info.preva1l.fadah.utils.logging.TransactionLogger;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -234,11 +239,14 @@ public class NewListingMenu extends FastInv {
 
         DatabaseManager.getInstance().save(Listing.class, listing);
 
-        ListingCache.addListing(listing);
-        Message.builder()
-                .type(Message.Type.LISTING_ADD)
-                .payload(Payload.withUUID(listing.getId()))
-                .build().send(Fadah.getINSTANCE().getBroker());
+        if (!Config.i().getBroker().isEnabled()) {
+            ListingCache.addListing(listing);
+        } else {
+            Message.builder()
+                    .type(Message.Type.LISTING_ADD)
+                    .payload(Payload.withUUID(listing.getId()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
+        }
 
         listingStarted = true;
 
@@ -281,10 +289,20 @@ public class NewListingMenu extends FastInv {
                     Tuple.of("%price%", new DecimalFormat(Config.i().getDecimalFormat()).format(listing.getPrice()))
             ));
 
-            Message.builder()
-                    .type(Message.Type.BROADCAST)
-                    .payload(Payload.withBroadcast(advertMessage, "/ah view-listing " + listing.getId()))
-                    .build().send(Fadah.getINSTANCE().getBroker());
+            if (!Config.i().getBroker().isEnabled()) {
+                TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+                    Component textComponent = MiniMessage.miniMessage().deserialize(StringUtils.legacyToMiniMessage(advertMessage));
+                    textComponent = textComponent.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/ah view-listing " + listing.getId()));
+                    for (Player announce : Bukkit.getOnlinePlayers()) {
+                        Fadah.getINSTANCE().getAdventureAudience().player(announce).sendMessage(textComponent);
+                    }
+                });
+            } else {
+                Message.builder()
+                        .type(Message.Type.BROADCAST)
+                        .payload(Payload.withBroadcast(advertMessage, "/ah view-listing " + listing.getId()))
+                        .build().send(Fadah.getINSTANCE().getBroker());
+            }
         }
     }
 
