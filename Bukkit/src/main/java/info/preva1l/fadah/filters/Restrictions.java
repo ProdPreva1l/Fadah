@@ -15,9 +15,9 @@ public class Restrictions {
             if (lore == null) lore = new ArrayList<>();
             blacklist = blacklist
                     .replace("%material%", "\"" + item.getType() + "\"")
-                    .replace("%name%", "\"" + item.getItemMeta().getDisplayName() + "\"")
+                    .replace("%name%", "\"" + escape(item.getItemMeta().getDisplayName()) + "\"")
                     .replace("%amount%", String.valueOf(item.getAmount()))
-                    .replace("%lore%", "\"" + String.join("\n", lore) + "\"");
+                    .replace("%lore%", "\"" + escape(String.join("\n", lore)) + "\"");
 
             boolean result;
             try (Context cx = Context.enter()) {
@@ -33,5 +33,15 @@ public class Restrictions {
             }
         }
         return false;
+    }
+
+    public static String escape(String input) {
+        input = input.replace("\\", "\\\\")
+                     .replace("\"", "\\\"")
+                     .replace("\'", "\\\'")
+                     .replace("\n", "\\n")
+                     .replace("\r", "\\r")
+                     .replace("`", "\\`");
+        return input;
     }
 }
