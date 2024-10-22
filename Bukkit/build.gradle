@@ -52,6 +52,8 @@ dependencies {
     compileOnly 'com.willfp:eco:6.56.0'
     compileOnly 'com.willfp:EcoItems:5.43.1'
     compileOnly 'com.influxdb:influxdb-client-java:3.3.0' // InfluxDB logging
+    // Currency
+    compileOnly 'com.github.Emibergo02:RedisEconomy:4.3.9'
 
     // Migrators
     compileOnly 'com.github.Maxlego08:zAuctionHouseV3-API:3.2.1.9' // zAuctionHouse

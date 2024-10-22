@@ -1,5 +1,7 @@
 package info.preva1l.fadah.records;
 
+import info.preva1l.fadah.currency.Currency;
+import info.preva1l.fadah.currency.CurrencyRegistry;
 import lombok.Getter;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -15,6 +17,7 @@ public abstract class Listing {
     final @NotNull String ownerName;
     final @NotNull ItemStack itemStack;
     final @NotNull String categoryID;
+    final @NotNull String currencyId;
     final double price;
     final double tax;
     final long creationDate;
@@ -23,13 +26,14 @@ public abstract class Listing {
     final List<Bid> bids;
 
     protected Listing(@NotNull UUID id, @NotNull UUID owner, @NotNull String ownerName,
-                      @NotNull ItemStack itemStack, @NotNull String categoryID, double price,
+                      @NotNull ItemStack itemStack, @NotNull String categoryID, @NotNull String currency, double price,
                       double tax, long creationDate, long deletionDate, boolean biddable, List<Bid> bids) {
         this.id = id;
         this.owner = owner;
         this.ownerName = ownerName;
         this.itemStack = itemStack;
         this.categoryID = categoryID;
+        this.currencyId = currency;
         this.price = price;
         this.tax = tax;
         this.creationDate = creationDate;
@@ -49,6 +53,10 @@ public abstract class Listing {
         if (bidAmount <= price) return false;
         // implement
         return false;
+    }
+
+    public Currency getCurrency() {
+        return CurrencyRegistry.get(currencyId);
     }
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")

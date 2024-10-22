@@ -5,7 +5,7 @@ website: https://discord.gg/4KcF7S94HF
 version: '${version}'
 
 depend: [Vault]
-softdepend: [PlaceholderAPI, EcoItems, zAuctionHouseV3, AuctionHouse]
+softdepend: [PlaceholderAPI, EcoItems, zAuctionHouseV3, AuctionHouse, RedisEconomy]
 
 folia-supported: true
 

@@ -36,7 +36,17 @@ public class ListingMongoDao implements Dao<Listing> {
             if (doc == null) return Optional.empty();
             final UUID owner = doc.get("ownerUUID", UUID.class);
             final String ownerName = doc.getString("ownerName");
-            final String category = doc.getString("category");
+            String temp = doc.getString("category");
+            String currency;
+            String category;
+            if (temp.contains("~")) {
+                String[] t2 = temp.split("~");
+                currency = t2[1];
+                category = t2[0];
+            } else {
+                currency = "vault";
+                category = temp;
+            }
             final long creationDate = doc.getLong("creationDate");
             final long deletionDate = doc.getLong("deletionDate");
             final double price = doc.getDouble("price");
@@ -44,7 +54,7 @@ public class ListingMongoDao implements Dao<Listing> {
             final ItemStack itemStack = ItemSerializer.deserialize(doc.getString("itemStack"))[0];
             final boolean biddable = doc.getBoolean("biddable");
             final List<Bid> bids = List.of();
-            return Optional.of(new CurrentListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable, bids));
+            return Optional.of(new CurrentListing(id, owner, ownerName, itemStack, category, currency, price, tax, creationDate, deletionDate, biddable, bids));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,7 +75,17 @@ public class ListingMongoDao implements Dao<Listing> {
                 final UUID id = doc.get("uuid", UUID.class);
                 final UUID owner = doc.get("ownerUUID", UUID.class);
                 final String ownerName = doc.getString("ownerName");
-                final String category = doc.getString("category");
+                String temp = doc.getString("category");
+                String currency;
+                String category;
+                if (temp.contains("~")) {
+                    String[] t2 = temp.split("~");
+                    currency = t2[1];
+                    category = t2[0];
+                } else {
+                    currency = "vault";
+                    category = temp;
+                }
                 final long creationDate = doc.getLong("creationDate");
                 final long deletionDate = doc.getLong("deletionDate");
                 final double price = doc.getDouble("price");
@@ -73,7 +93,7 @@ public class ListingMongoDao implements Dao<Listing> {
                 final ItemStack itemStack = ItemSerializer.deserialize(doc.getString("itemStack"))[0];
                 final boolean biddable = doc.getBoolean("biddable");
                 final List<Bid> bids = List.of();
-                list.add(new CurrentListing(id, owner, ownerName, itemStack, category, price, tax, creationDate, deletionDate, biddable, bids));
+                list.add(new CurrentListing(id, owner, ownerName, itemStack, category, currency, price, tax, creationDate, deletionDate, biddable, bids));
             }
             return list;
         } catch (Exception e) {
@@ -93,7 +113,7 @@ public class ListingMongoDao implements Dao<Listing> {
             Document document = new Document("uuid", listing.getId())
                     .append("ownerUUID", listing.getOwner())
                     .append("ownerName", listing.getOwnerName())
-                    .append("category", listing.getCategoryID())
+                    .append("category", listing.getCategoryID() + "~" + listing.getCurrencyId())
                     .append("creationDate", listing.getCreationDate())
                     .append("deletionDate", listing.getDeletionDate())
                     .append("price", listing.getPrice())

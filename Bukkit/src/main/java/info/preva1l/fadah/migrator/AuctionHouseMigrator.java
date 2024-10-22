@@ -41,7 +41,7 @@ public final class AuctionHouseMigrator implements Migrator {
             if (categoryId == null) {
                 categoryId = CategoryCache.getCategories().get(0).id();
             }
-            listings.add(new CurrentListing(id, owner, ownerName, itemStack, categoryId, price, 0,
+            listings.add(new CurrentListing(id, owner, ownerName, itemStack, categoryId, "vault", price, 0,
                     Instant.now().toEpochMilli(), expiry, false, List.of()));
         }
         return listings;

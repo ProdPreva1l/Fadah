@@ -9,6 +9,8 @@ import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.ListHelper;
 import info.preva1l.fadah.config.Tuple;
+import info.preva1l.fadah.currency.Currency;
+import info.preva1l.fadah.currency.CurrencyRegistry;
 import info.preva1l.fadah.data.DatabaseManager;
 import info.preva1l.fadah.data.PermissionsData;
 import info.preva1l.fadah.filters.Restrictions;
@@ -48,6 +50,7 @@ public class NewListingMenu extends FastInv {
     private boolean listingStarted = false;
     private boolean advertise = Config.i().getListingAdverts().isEnabledByDefault();
     private boolean isBidding = false;
+    private Currency currency;
 
     public NewListingMenu(Player player, double price) {
         super(LayoutManager.MenuType.NEW_LISTING.getLayout().guiSize(),
@@ -55,6 +58,7 @@ public class NewListingMenu extends FastInv {
         this.player = player;
         this.itemToSell = player.getInventory().getItemInMainHand().clone();
         this.timeToDelete = Instant.now().plus(2, ChronoUnit.DAYS);
+        this.currency = CurrencyRegistry.get(Config.i().getCurrency().getDefaultCurrency());
         List<Integer> fillerSlots = getLayout().fillerSlots();
         if (!fillerSlots.isEmpty()) {
             setItems(fillerSlots.stream().mapToInt(Integer::intValue).toArray(),
@@ -73,6 +77,7 @@ public class NewListingMenu extends FastInv {
                         .build(), e -> startListing(timeToDelete, price));
         setClock();
         setAdvertButton();
+        setCurrencyButton();
         //setModeButton();
         addNavigationButtons();
 
@@ -152,6 +157,39 @@ public class NewListingMenu extends FastInv {
                 }
         );
     }
+
+    private void setCurrencyButton() {
+        Currency previousCurrency = CurrencyRegistry.getPrevious(currency);
+        String previous = previousCurrency == null
+                ? Lang.i().getWords().getNone()
+                : previousCurrency.getName();
+        String current = currency.getName();
+        Currency nextCurrency = CurrencyRegistry.getNext(currency);
+        String next = nextCurrency == null
+                ? Lang.i().getWords().getNone()
+                : nextCurrency.getName();
+        setItem(getLayout().buttonSlots().getOrDefault(LayoutManager.ButtonType.CURRENCY, -1),
+                new ItemBuilder(getLang().getAsMaterial("currency.icon", Material.GOLD_INGOT))
+                        .name(getLang().getStringFormatted("currency.name", "&aCurrency"))
+                        .modelData(getLang().getInt("currency.model-data"))
+                        .setAttributes(null)
+                        .flags(ItemFlag.HIDE_ATTRIBUTES)
+                        .lore(getLang().getLore("currency.lore",
+                                StringUtils.colorize(previous),
+                                StringUtils.colorize(current),
+                                StringUtils.colorize(next))).build(), e -> {
+            if (e.getClick().isLeftClick() && previousCurrency != null) {
+                currency = previousCurrency;
+            }
+
+            if (e.getClick().isRightClick() && nextCurrency != null) {
+                currency = nextCurrency;
+            }
+
+            setCurrencyButton();
+        });
+    }
+
     // Not Used (For future bidding update)
     private void setModeButton() {
         String bidding = StringUtils.formatPlaceholders(isBidding
@@ -188,7 +226,7 @@ public class NewListingMenu extends FastInv {
         double tax = PermissionsData.getHighestDouble(PermissionsData.PermissionType.LISTING_TAX, player);
 
         Listing listing = new CurrentListing(UUID.randomUUID(), player.getUniqueId(), player.getName(),
-                itemToSell, category, price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli(), isBidding, Collections.emptyList());
+                itemToSell, category, currency.getId(), price, tax, Instant.now().toEpochMilli(), deletionDate.toEpochMilli(), isBidding, Collections.emptyList());
 
         ListingCreateEvent createEvent = new ListingCreateEvent(player, listing);
         Bukkit.getServer().getPluginManager().callEvent(createEvent);
@@ -237,14 +275,13 @@ public class NewListingMenu extends FastInv {
         }
 
         if (advertise) {
-            Economy eco = Fadah.getINSTANCE().getEconomy();
             double advertPrice = PermissionsData.getHighestDouble(PermissionsData.PermissionType.ADVERT_PRICE, player);
-            if (!eco.has(player, advertPrice)) {
+            if (!listing.getCurrency().canAfford(player, advertPrice)) {
                 Lang.sendMessage(player,Lang.i().getPrefix() + Lang.i().getErrors().getAdvertExpense());
                 return;
             }
 
-            eco.withdrawPlayer(player, advertPrice);
+            listing.getCurrency().withdraw(player, advertPrice);
 
             String advertMessage = String.join("&r\n", ListHelper.replace(Lang.i().getNotifications().getAdvert(),
                     Tuple.of("%player%", player.getName()),

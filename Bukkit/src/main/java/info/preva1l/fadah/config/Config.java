@@ -122,6 +122,54 @@ public class Config {
         }
     }
 
+
+    private Migrators migrators = new Migrators();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Migrators {
+        private ZAuctionHouse zAuctionHouse = new ZAuctionHouse();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class ZAuctionHouse {
+            private List<String> categoriesToMigrate = List.of("Blocks", "Tools", "Weapons", "Potions", "Misc");
+        }
+    }
+
+    private Currency currency = new Currency();
+
+    @Getter
+    @Configuration
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
+    public static class Currency {
+        private String defaultCurrency = "vault";
+
+        private Vault vault = new Vault();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class Vault {
+            private String name = "Money";
+            private String format = "$%amount%";
+        }
+
+        private RedisEconomy redisEconomy = new RedisEconomy();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class RedisEconomy {
+            private String name = "Redis Economy";
+            @Comment("Which currency to use from redis economy, if your using the default currency use the vault currency instead.")
+            private String subCurrency = "dollar";
+            private String format = "$%amount%";
+        }
+    }
+
     private Database database = new Database();
 
     @Getter

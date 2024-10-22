@@ -172,6 +172,7 @@ public class LayoutManager {
         LISTING_ITEM,
         LISTING_MODE,
         LISTING_ADVERT,
+        CURRENCY,
         /**
          * Confirm Menu Specific Items
          */

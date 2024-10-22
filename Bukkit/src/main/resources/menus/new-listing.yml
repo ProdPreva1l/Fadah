@@ -32,6 +32,18 @@ lang:
     options:
       selected: '&8> &e{0}'
       not-selected: '&f{0}'
+  currency:
+    icon: GOLD_INGOT
+    model-data: 0
+    name: '&aCurrency'
+    lore:
+      - '&7Left Click to cycle up'
+      - '&7Right Click to cycle down'
+      - '&8-------------------------'
+      - '&f{0}'
+      - '&8> &e{1}'
+      - '&f{2}'
+      - '&8-------------------------'
   mode: # Future Feature
     icon: HOPPER
     model-data: 0
@@ -46,7 +58,7 @@ lang:
       selected: '&8> &e{0}'
       not-selected: '&f{0}'
 
-size: 5
+size: 6
 
 layout:
   '0': "FILLER"
@@ -59,21 +71,25 @@ layout:
   '7': "FILLER"
   '8': "FILLER"
   '9': "FILLER"
-  '11': "LISTING_TIME"
+  '13': "LISTING_ITEM"
   '17': "FILLER"
   '18': "FILLER"
-  '22': "LISTING_ITEM"
-  '24': "LISTING_START"
   '26': "FILLER"
   '27': "FILLER"
-  '29': "LISTING_ADVERT"
+  '31': "LISTING_START"
   '35': "FILLER"
   '36': "FILLER"
-  '37': "FILLER"
-  '38': "FILLER"
-  '39': "FILLER"
-  '40': "CLOSE"
-  '41': "FILLER"
-  '42': "FILLER"
-  '43': "FILLER"
+  #'38': "MODE"
+  '39': "CURRENCY"
+  '41': "LISTING_TIME"
+  '42': "LISTING_ADVERT"
   '44': "FILLER"
+  '45': "FILLER"
+  '46': "FILLER"
+  '47': "FILLER"
+  '48': "FILLER"
+  '49': "CLOSE"
+  '50': "FILLER"
+  '51': "FILLER"
+  '52': "FILLER"
+  '53': "FILLER"
