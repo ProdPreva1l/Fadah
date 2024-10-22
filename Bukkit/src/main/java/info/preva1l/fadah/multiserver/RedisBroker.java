@@ -66,7 +66,8 @@ public final class RedisBroker extends Broker {
         CHANNEL = conf.getChannel();
 
         final JedisPoolConfig config = new JedisPoolConfig();
-        config.setMaxIdle(0);
+        config.setMaxIdle(20);
+        config.setMaxTotal(50);
         config.setTestOnBorrow(true);
         config.setTestOnReturn(true);
 
@@ -107,6 +108,8 @@ public final class RedisBroker extends Broker {
         public void send(@NotNull Message message) {
             try (Jedis jedis = jedisPool.getResource()) {
                 jedis.publish(CHANNEL, broker.gson.toJson(message));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
