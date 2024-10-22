@@ -106,7 +106,7 @@ public abstract class Broker {
 
             case RELOAD -> {
                 Fadah.getINSTANCE().reload();
-                Bukkit.getConsoleSender().sendMessage(Lang.i().getPrefix() + Lang.i().getCommands().getReload().getRemote());
+                Lang.sendMessage(Bukkit.getConsoleSender(), Lang.i().getPrefix() + Lang.i().getCommands().getReload().getRemote());
             }
 
             case TOGGLE -> {
