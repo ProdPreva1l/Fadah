@@ -278,6 +278,7 @@ public final class Fadah extends JavaPlugin {
         metrics = new Metrics(this, METRICS_ID);
         metrics.addCustomChart(new Metrics.SingleLineChart("items_listed", () -> ListingCache.getListings().size()));
         metrics.addCustomChart(new Metrics.SimplePie("database_type", () -> Config.i().getDatabase().getType().getFriendlyName()));
+        metrics.addCustomChart(new Metrics.SimplePie("multi_server", () -> Config.i().getBroker().isEnabled() ? Config.i().getBroker().getType().getDisplayName() : "None"));
 
         getConsole().info("Metrics Logging Started!");
     }

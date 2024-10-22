@@ -68,6 +68,7 @@ public class CollectionBoxMenu extends PaginatedFastInv {
                     DatabaseManager.getInstance().save(CollectionBox.class, new CollectionBox(owner.getUniqueId(), collectionBox));
                     viewer.getInventory().setItem(slot, collectableItem.itemStack());
 
+                    needsUpdating = true;
                     updatePagination();
 
                     // In game logs
