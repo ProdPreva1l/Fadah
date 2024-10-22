@@ -27,7 +27,8 @@ public class AboutSubCommand extends SubCommand {
                         AboutMenu.Credit.of("Preva1l")
                                 .description("Click to visit website").url("https://please.vote-preva1l.today/"))
                 .credits("Contributors",
-                        AboutMenu.Credit.of("WuzzyLV"))
+                        AboutMenu.Credit.of("WuzzyLV"),
+                        AboutMenu.Credit.of("asdevjava"))
                 .buttons(AboutMenu.Link.of("https://discord.gg/4KcF7S94HF").text("Discord Support").icon("⭐"))
                 .themeColor(TextColor.fromHexString("#9555FF"))
                 .secondaryColor(TextColor.fromHexString("#bba4e0"))
