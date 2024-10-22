@@ -52,7 +52,6 @@ public class ActiveListingsMenu extends PaginatedFastInv {
 
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
                 if (listing.cancel(viewer)) {
-                    this.needsUpdating = true;
                     updatePagination();
                 }
             }));

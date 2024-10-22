@@ -141,7 +141,8 @@ public class MainMenu extends ScrollBarFastInv {
                             listing.getOwnerName(),
                             StringUtils.removeColorCodes(CategoryCache.getCatName(listing.getCategoryID())), buyMode,
                             new DecimalFormat(Config.i().getDecimalFormat())
-                                    .format(listing.getPrice()), TimeUtil.formatTimeUntil(listing.getDeletionDate())));
+                                    .format(listing.getPrice()), TimeUtil.formatTimeUntil(listing.getDeletionDate()),
+                            listing.getCurrency().getName()));
 
             if (player.getUniqueId().equals(listing.getOwner())) {
                 itemStack.addLore(getLang().getStringFormatted("listing.lore-footer.own-listing"));
@@ -157,7 +158,6 @@ public class MainMenu extends ScrollBarFastInv {
             addPaginationItem(new PaginatedItem(itemStack.build(), e -> {
                 if (e.isShiftClick() && (e.getWhoClicked().hasPermission("fadah.manage.active-listings") || listing.isOwner(((Player) e.getWhoClicked())))) {
                     if (listing.cancel(((Player) e.getWhoClicked()))) {
-                        needsUpdating = true;
                         updatePagination();
                     }
                     return;
