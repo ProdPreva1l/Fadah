@@ -3,12 +3,12 @@ package info.preva1l.fadah.currency;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 public final class CurrencyRegistry {
+    private static Map<Integer, String> enumerator = new ConcurrentHashMap<>();
     private static Map<String, Currency> values = new ConcurrentHashMap<>();
     public static final Currency VAULT = get("vault");
     public static final Currency REDIS_ECONOMY = get("redis_economy");
@@ -16,6 +16,9 @@ public final class CurrencyRegistry {
     public static void register(Currency currency) {
         if (values == null) {
             values = new ConcurrentHashMap<>();
+        }
+        if (enumerator == null) {
+            enumerator = new ConcurrentHashMap<>();
         }
 
         if (!currency.getRequiredPlugin().isEmpty()) {
@@ -36,6 +39,7 @@ public final class CurrencyRegistry {
         }
 
         values.put(currency.getId().toLowerCase(), currency);
+        enumerator.put(enumerator.size(), currency.getId().toLowerCase());
     }
 
     public static Currency get(String currencyCode) {
@@ -45,33 +49,35 @@ public final class CurrencyRegistry {
         return values.get(currencyCode.toLowerCase());
     }
 
-    public static List<Currency> getCurrencies() {
-        return values.values().stream().toList();
-    }
-
     public static Currency getNext(Currency current) {
-        List<Currency> currencyList = getCurrencies();
-        if (currencyList.isEmpty() || currencyList.size() == 1) {
+        Integer currentIndex = null;
+        for (Map.Entry<Integer, String> entry : enumerator.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(current.getId())) {
+                currentIndex = entry.getKey();
+                break;
+            }
+        }
+        if (currentIndex == null || currentIndex == enumerator.size() - 1) {
             return null;
         }
-        int index = currencyList.indexOf(current);
-        if (index == -1) {
-            return null;
-        }
-        int nextIndex = (index + 1) % currencyList.size();
-        return currencyList.get(nextIndex);
+        int nextIndex = currentIndex + 1;
+        String nextCurrencyId = enumerator.get(nextIndex);
+        return values.get(nextCurrencyId);
     }
 
     public static Currency getPrevious(Currency current) {
-        List<Currency> currencyList = getCurrencies();
-        if (currencyList.isEmpty() || currencyList.size() == 1) {
+        Integer currentIndex = null;
+        for (Map.Entry<Integer, String> entry : enumerator.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(current.getId())) {
+                currentIndex = entry.getKey();
+                break;
+            }
+        }
+        if (currentIndex == null || currentIndex == 0) {
             return null;
         }
-        int index = currencyList.indexOf(current);
-        if (index == -1) {
-            return null;
-        }
-        int previousIndex = (index - 1 + currencyList.size()) % currencyList.size();
-        return currencyList.get(previousIndex);
+        int previousIndex = currentIndex - 1;
+        String previousCurrencyId = enumerator.get(previousIndex);
+        return values.get(previousCurrencyId);
     }
 }

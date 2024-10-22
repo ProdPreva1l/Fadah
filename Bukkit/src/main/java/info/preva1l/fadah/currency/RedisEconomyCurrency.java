@@ -9,7 +9,7 @@ import org.bukkit.OfflinePlayer;
 @Getter
 public class RedisEconomyCurrency implements Currency {
     private final String id = "redis_economy";
-    private final String requiredPlugin = "Redis Economy";
+    private final String requiredPlugin = "RedisEconomy";
 
     private RedisEconomyAPI api;
 
@@ -41,6 +41,13 @@ public class RedisEconomyCurrency implements Currency {
     @Override
     public boolean preloadChecks() {
         api = RedisEconomyAPI.getAPI();
+        if (api == null) {
+            Fadah.getConsole().severe("-------------------------------------");
+            Fadah.getConsole().severe("Cannot enable redis economy currency!");
+            Fadah.getConsole().severe("Plugin did not start correctly.");
+            Fadah.getConsole().severe("-------------------------------------");
+            return false;
+        }
         if (getCurrency() == null) {
             Fadah.getConsole().severe("-------------------------------------");
             Fadah.getConsole().severe("Cannot enable redis economy currency!");
