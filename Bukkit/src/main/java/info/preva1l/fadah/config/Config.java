@@ -122,23 +122,6 @@ public class Config {
         }
     }
 
-
-    private Migrators migrators = new Migrators();
-
-    @Getter
-    @Configuration
-    @NoArgsConstructor(access = AccessLevel.PRIVATE)
-    public static class Migrators {
-        private ZAuctionHouse zAuctionHouse = new ZAuctionHouse();
-
-        @Getter
-        @Configuration
-        @NoArgsConstructor(access = AccessLevel.PRIVATE)
-        public static class ZAuctionHouse {
-            private List<String> categoriesToMigrate = List.of("Blocks", "Tools", "Weapons", "Potions", "Misc");
-        }
-    }
-
     private Currency currency = new Currency();
 
     @Getter
