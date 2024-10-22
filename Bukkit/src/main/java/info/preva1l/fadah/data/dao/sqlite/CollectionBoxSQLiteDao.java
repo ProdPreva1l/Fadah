@@ -87,7 +87,7 @@ public class CollectionBoxSQLiteDao implements Dao<CollectionBox> {
                              items = excluded.items;""")) {
                     statement.setString(1, collectableList.owner().toString());
                     statement.setString(2, Base64.getEncoder().encodeToString(GSON.toJson(collectableList.collectableItems(), COLLECTION_LIST_TYPE).getBytes()));
-                    statement.execute();
+                    statement.executeUpdate();
                 }
             }
         } catch (SQLException e) {

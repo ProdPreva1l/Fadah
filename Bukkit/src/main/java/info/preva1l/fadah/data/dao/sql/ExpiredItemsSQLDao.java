@@ -86,7 +86,7 @@ public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
                         `items` = VALUES(`items`);""")) {
                 statement.setString(1, collectableList.owner().toString());
                 statement.setString(2, Base64.getEncoder().encodeToString(GSON.toJson(collectableList.collectableItems(), EXPIRED_LIST_TYPE).getBytes()));
-                statement.execute();
+                statement.executeUpdate();
             }
         } catch (SQLException e) {
             Fadah.getConsole().severe("Failed to add item to expired listings!");

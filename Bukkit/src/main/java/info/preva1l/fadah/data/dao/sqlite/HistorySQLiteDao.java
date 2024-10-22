@@ -86,7 +86,7 @@ public class HistorySQLiteDao implements Dao<History> {
                         `items` = excluded.`items`;""")) {
                 statement.setString(1, history.owner().toString());
                 statement.setString(2, Base64.getEncoder().encodeToString(GSON.toJson(history.collectableItems(), HISTORY_LIST_TYPE).getBytes()));
-                statement.execute();
+                statement.executeUpdate();
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -51,6 +51,7 @@ public class SQLiteHandler implements DatabaseHandler {
 
             HikariConfig config = new HikariConfig();
             config.setPoolName("FadahHikariPool");
+            config.setAutoCommit(true);
             config.setDriverClassName("org.sqlite.JDBC");
             config.setJdbcUrl("jdbc:sqlite:" + databaseFile.getAbsolutePath());
             config.setConnectionTestQuery("SELECT 1");

@@ -86,7 +86,7 @@ public class HistorySQLDao implements Dao<History> {
                         `items` = VALUES(`items`);""")) {
                 statement.setString(1, history.owner().toString());
                 statement.setString(2, Base64.getEncoder().encodeToString(GSON.toJson(history.collectableItems(), HISTORY_LIST_TYPE).getBytes()));
-                statement.execute();
+                statement.executeUpdate();
             }
 
         } catch (SQLException e) {

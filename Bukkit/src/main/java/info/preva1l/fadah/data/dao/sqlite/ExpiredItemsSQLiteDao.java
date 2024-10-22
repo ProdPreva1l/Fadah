@@ -78,16 +78,18 @@ public class ExpiredItemsSQLiteDao implements Dao<ExpiredItems> {
     @Override
     public void save(ExpiredItems collectableList) {
         try (Connection connection = getConnection()) {
-                try (PreparedStatement statement = connection.prepareStatement("""
-                        INSERT INTO expired_itemsV2 (playerUUID, items)
-                        VALUES (?, ?)
-                        ON CONFLICT(playerUUID) DO UPDATE SET items = excluded.items;""")) {
-                    statement.setString(1, collectableList.owner().toString());
-                    statement.setString(2, Base64.getEncoder().encodeToString(GSON.toJson(collectableList.collectableItems(), EXPIRED_LIST_TYPE).getBytes()));
-                    statement.execute();
-                }
+            try (PreparedStatement statement = connection.prepareStatement("""
+                    INSERT INTO `expired_itemsV2`
+                    (`playerUUID`,`items`)
+                    VALUES (?,?)
+                    ON CONFLICT(`playerUUID`) DO UPDATE SET
+                        `items` = excluded.`items`;""")) {
+                statement.setString(1, collectableList.owner().toString());
+                statement.setString(2, Base64.getEncoder().encodeToString(GSON.toJson(collectableList.collectableItems(), EXPIRED_LIST_TYPE).getBytes()));
+                statement.executeUpdate();
+            }
         } catch (SQLException e) {
-            Fadah.getConsole().severe("Failed to add item to collection box!");
+            Fadah.getConsole().severe("Failed to add item to expired items!");
             throw new RuntimeException(e);
         }
     }
