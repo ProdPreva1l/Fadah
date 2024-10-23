@@ -3,7 +3,6 @@ package info.preva1l.fadah.multiserver;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.utils.TaskManager;
-import lombok.AllArgsConstructor;
 import org.jetbrains.annotations.Blocking;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
@@ -25,7 +24,7 @@ public final class RedisBroker extends Broker {
 
     public RedisBroker(@NotNull Fadah plugin) {
         super(plugin);
-        this.subscriber = new Subscriber(this);
+        this.subscriber = new Subscriber();
     }
 
     @Blocking
@@ -76,19 +75,12 @@ public final class RedisBroker extends Broker {
                 : new JedisPool(config, host, port, 0, password, false);
     }
 
-    @AllArgsConstructor
-    private static class Subscriber extends JedisPubSub {
+    private class Subscriber extends JedisPubSub {
         private static final int RECONNECTION_TIME = 8000;
-
-        private final RedisBroker broker;
 
         private Pool<Jedis> jedisPool;
         private boolean enabled;
         private boolean reconnected;
-
-        private Subscriber(@NotNull RedisBroker broker) {
-            this.broker = broker;
-        }
 
         private void enable(@NotNull Pool<Jedis> jedisPool) {
             this.jedisPool = jedisPool;
@@ -107,7 +99,7 @@ public final class RedisBroker extends Broker {
         @Blocking
         public void send(@NotNull Message message) {
             try (Jedis jedis = jedisPool.getResource()) {
-                jedis.publish(CHANNEL, broker.gson.toJson(message));
+                jedis.publish(CHANNEL, RedisBroker.this.gson.toJson(message));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -160,14 +152,18 @@ public final class RedisBroker extends Broker {
             }
             final Message message;
             try {
-                message = broker.gson.fromJson(encoded, Message.class);
+                message = RedisBroker.this.gson.fromJson(encoded, Message.class);
             } catch (Exception e) {
                 Fadah.getConsole().warning("Failed to decode message from Redis: " + e.getMessage());
                 return;
             }
 
+            if (message.getId() != null && RedisBroker.this.cachedIds.getIfPresent(message.getId()) != null) {
+                return;
+            }
+
             try {
-                broker.handle(message);
+                RedisBroker.this.handle(message);
             } catch (Exception e) {
                 e.printStackTrace();
             }

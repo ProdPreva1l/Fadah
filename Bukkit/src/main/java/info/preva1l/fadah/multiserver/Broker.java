@@ -1,5 +1,7 @@
 package info.preva1l.fadah.multiserver;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.gson.Gson;
 import info.preva1l.fadah.Fadah;
 import info.preva1l.fadah.cache.CollectionBoxCache;
@@ -25,13 +27,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.TimeUnit;
+
 public abstract class Broker {
+
+    protected static final Object DUMMY_VALUE = new Object();
+
     protected final Fadah plugin;
     protected final Gson gson;
+    protected final Cache<Integer, Object> cachedIds;
 
     protected Broker(@NotNull Fadah plugin) {
         this.plugin = plugin;
         this.gson = new Gson();
+        this.cachedIds = CacheBuilder.newBuilder().expireAfterWrite(60, TimeUnit.SECONDS).build();
     }
 
     protected void handle(@NotNull Message message) {

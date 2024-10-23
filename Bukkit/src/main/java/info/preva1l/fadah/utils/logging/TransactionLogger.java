@@ -26,11 +26,10 @@ public class TransactionLogger {
         HistoricItem historicItem = new HistoricItem(listing.getOwner(), Instant.now().toEpochMilli(), HistoricItem.LoggedAction.LISTING_START, listing.getItemStack(), listing.getPrice(), null);
         History history = History.of(listing.getOwner());
         history.collectableItems().add(historicItem);
+        HistoricItemsCache.addLog(listing.getOwner(), historicItem);
         DatabaseManager.getInstance().save(History.class, history);
 
-        if (!Config.i().getBroker().isEnabled()) {
-            HistoricItemsCache.addLog(listing.getOwner(), historicItem);
-        } else {
+        if (Config.i().getBroker().isEnabled()) {
             Message.builder()
                     .type(Message.Type.HISTORY_UPDATE)
                     .payload(Payload.withUUID(listing.getOwner()))
@@ -56,11 +55,10 @@ public class TransactionLogger {
 
         History historySeller = History.of(listing.getOwner());
         historySeller.collectableItems().add(historicItemSeller);
+        HistoricItemsCache.addLog(listing.getOwner(), historicItemSeller);
         DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
 
-        if (!Config.i().getBroker().isEnabled()) {
-            HistoricItemsCache.addLog(listing.getOwner(), historicItemSeller);
-        } else {
+        if (Config.i().getBroker().isEnabled()) {
             Message.builder()
                     .type(Message.Type.HISTORY_UPDATE)
                     .payload(Payload.withUUID(listing.getOwner()))
@@ -71,11 +69,10 @@ public class TransactionLogger {
                 HistoricItem.LoggedAction.LISTING_PURCHASED, listing.getItemStack(), listing.getPrice(), listing.getOwner());
         History historyBuyer = History.of(buyer.getUniqueId());
         historyBuyer.collectableItems().add(historicItemBuyer);
+        HistoricItemsCache.addLog(buyer.getUniqueId(), historicItemBuyer);
         DatabaseManager.getInstance().save(History.class, historyBuyer);
 
-        if (!Config.i().getBroker().isEnabled()) {
-            HistoricItemsCache.addLog(buyer.getUniqueId(), historicItemBuyer);
-        } else {
+        if (Config.i().getBroker().isEnabled()) {
             Message.builder()
                     .type(Message.Type.HISTORY_UPDATE)
                     .payload(Payload.withUUID(buyer.getUniqueId()))
@@ -99,11 +96,10 @@ public class TransactionLogger {
                 listing.getItemStack(), null, null);
         History history = History.of(listing.getOwner());
         history.collectableItems().add(historicItem);
+        HistoricItemsCache.addLog(listing.getOwner(), historicItem);
         DatabaseManager.getInstance().save(History.class, history);
 
-        if (!Config.i().getBroker().isEnabled()) {
-            HistoricItemsCache.addLog(listing.getOwner(), historicItem);
-        } else {
+        if (Config.i().getBroker().isEnabled()) {
             Message.builder()
                     .type(Message.Type.HISTORY_UPDATE)
                     .payload(Payload.withUUID(listing.getOwner()))
@@ -127,11 +123,10 @@ public class TransactionLogger {
                 listing.getItemStack(), null, null);
         History history = History.of(listing.getOwner());
         history.collectableItems().add(historicItem);
+        HistoricItemsCache.addLog(listing.getOwner(), historicItem);
         DatabaseManager.getInstance().save(History.class, history);
 
-        if (!Config.i().getBroker().isEnabled()) {
-            HistoricItemsCache.addLog(listing.getOwner(), historicItem);
-        } else {
+        if (Config.i().getBroker().isEnabled()) {
             Message.builder()
                     .type(Message.Type.HISTORY_UPDATE)
                     .payload(Payload.withUUID(listing.getOwner()))
