@@ -18,7 +18,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Level;
 
 @RequiredArgsConstructor
@@ -45,12 +48,7 @@ public class HistorySQLiteDao implements Dao<History> {
                 statement.setString(1, id.toString());
                 final ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
-                    List<HistoricItem> items;
-                    try {
-                        items = GSON.fromJson(Arrays.toString(Base64.getDecoder().decode(resultSet.getString("items"))), HISTORY_LIST_TYPE);
-                    } catch (IllegalArgumentException e) {
-                        items = GSON.fromJson(resultSet.getString("items"), HISTORY_LIST_TYPE);
-                    }
+                    List<HistoricItem> items = GSON.fromJson(resultSet.getString("items"), HISTORY_LIST_TYPE);
                     return Optional.of(new History(id, items));
                 }
             }
@@ -85,7 +83,7 @@ public class HistorySQLiteDao implements Dao<History> {
                     ON CONFLICT(`playerUUID`) DO UPDATE SET
                         `items` = excluded.`items`;""")) {
                 statement.setString(1, history.owner().toString());
-                statement.setString(2, Base64.getEncoder().encodeToString(GSON.toJson(history.collectableItems(), HISTORY_LIST_TYPE).getBytes()));
+                statement.setString(2, GSON.toJson(history.collectableItems(), HISTORY_LIST_TYPE));
                 statement.executeUpdate();
             } catch (Exception e) {
                 e.printStackTrace();

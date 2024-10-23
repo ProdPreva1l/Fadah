@@ -18,7 +18,10 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
@@ -44,12 +47,7 @@ public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
                 statement.setString(1, id.toString());
                 final ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
-                    List<CollectableItem> items;
-                    try {
-                        items = GSON.fromJson(Arrays.toString(Base64.getDecoder().decode(resultSet.getString("items"))), EXPIRED_LIST_TYPE);
-                    } catch (IllegalArgumentException e) {
-                        items = GSON.fromJson(resultSet.getString("items"), EXPIRED_LIST_TYPE);
-                    }
+                    List<CollectableItem> items = GSON.fromJson(resultSet.getString("items"), EXPIRED_LIST_TYPE);
                     return Optional.of(new ExpiredItems(id, items));
                 }
             }
@@ -85,7 +83,7 @@ public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
                     ON DUPLICATE KEY UPDATE
                         `items` = VALUES(`items`);""")) {
                 statement.setString(1, collectableList.owner().toString());
-                statement.setString(2, Base64.getEncoder().encodeToString(GSON.toJson(collectableList.collectableItems(), EXPIRED_LIST_TYPE).getBytes()));
+                statement.setString(2, GSON.toJson(collectableList.collectableItems(), EXPIRED_LIST_TYPE));
                 statement.executeUpdate();
             }
         } catch (SQLException e) {
