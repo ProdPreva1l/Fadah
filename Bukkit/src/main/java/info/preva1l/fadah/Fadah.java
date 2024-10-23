@@ -140,10 +140,10 @@ public final class Fadah extends JavaPlugin {
                     CollectableItem collectableItem = new CollectableItem(listing.getItemStack(), Instant.now().toEpochMilli());
                     ExpiredItems items = ExpiredItems.of(listing.getOwner());
                     items.collectableItems().add(collectableItem);
+                    ExpiredListingsCache.addItem(listing.getOwner(), collectableItem);
                     DatabaseManager.getInstance().save(ExpiredItems.class, items);
-                    if (!Config.i().getBroker().isEnabled()) {
-                        ExpiredListingsCache.addItem(listing.getOwner(), collectableItem);
-                    } else {
+
+                    if (Config.i().getBroker().isEnabled()) {
                         Message.builder()
                                 .type(Message.Type.EXPIRED_LISTINGS_UPDATE)
                                 .payload(Payload.withUUID(listing.getOwner()))

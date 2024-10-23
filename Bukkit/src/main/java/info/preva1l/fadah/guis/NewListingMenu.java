@@ -237,11 +237,10 @@ public class NewListingMenu extends FastInv {
             return;
         }
 
+        ListingCache.addListing(listing);
         DatabaseManager.getInstance().save(Listing.class, listing);
 
-        if (!Config.i().getBroker().isEnabled()) {
-            ListingCache.addListing(listing);
-        } else {
+        if (Config.i().getBroker().isEnabled()) {
             Message.builder()
                     .type(Message.Type.LISTING_ADD)
                     .payload(Payload.withUUID(listing.getId()))
@@ -289,15 +288,15 @@ public class NewListingMenu extends FastInv {
                     Tuple.of("%price%", new DecimalFormat(Config.i().getDecimalFormat()).format(listing.getPrice()))
             ));
 
-            if (!Config.i().getBroker().isEnabled()) {
-                TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
-                    Component textComponent = MiniMessage.miniMessage().deserialize(StringUtils.legacyToMiniMessage(advertMessage));
-                    textComponent = textComponent.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/ah view-listing " + listing.getId()));
-                    for (Player announce : Bukkit.getOnlinePlayers()) {
-                        Fadah.getINSTANCE().getAdventureAudience().player(announce).sendMessage(textComponent);
-                    }
-                });
-            } else {
+            TaskManager.Async.run(Fadah.getINSTANCE(), () -> {
+                Component textComponent = MiniMessage.miniMessage().deserialize(StringUtils.legacyToMiniMessage(advertMessage));
+                textComponent = textComponent.clickEvent(ClickEvent.clickEvent(ClickEvent.Action.RUN_COMMAND, "/ah view-listing " + listing.getId()));
+                for (Player announce : Bukkit.getOnlinePlayers()) {
+                    Fadah.getINSTANCE().getAdventureAudience().player(announce).sendMessage(textComponent);
+                }
+            });
+
+            if (Config.i().getBroker().isEnabled()) {
                 Message.builder()
                         .type(Message.Type.BROADCAST)
                         .payload(Payload.withBroadcast(advertMessage, "/ah view-listing " + listing.getId()))

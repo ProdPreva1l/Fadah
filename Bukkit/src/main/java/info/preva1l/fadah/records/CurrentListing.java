@@ -12,6 +12,7 @@ import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.ListHelper;
 import info.preva1l.fadah.config.Tuple;
 import info.preva1l.fadah.data.DatabaseManager;
+import info.preva1l.fadah.data.DatabaseType;
 import info.preva1l.fadah.multiserver.Message;
 import info.preva1l.fadah.multiserver.Payload;
 import info.preva1l.fadah.utils.TaskManager;
@@ -50,27 +51,27 @@ public final class CurrentListing extends Listing {
         getCurrency().add(Bukkit.getOfflinePlayer(this.getOwner()), this.getPrice() - taxed);
 
         // Remove Listing
-        if (!Config.i().getBroker().isEnabled()) {
-            ListingCache.removeListing(this);
-        } else {
+        ListingCache.removeListing(this);
+        if (Config.i().getBroker().isEnabled()) {
             Message.builder()
                     .type(Message.Type.LISTING_REMOVE)
                     .payload(Payload.withUUID(this.getId()))
                     .build().send(Fadah.getINSTANCE().getBroker());
         }
-        DatabaseManager.getInstance().delete(Listing.class, this);
+        if (Config.i().getDatabase().getType() == DatabaseType.MONGO) {
+            DatabaseManager.getInstance().delete(Listing.class, this);
+        }
 
         // Add to collection box
         ItemStack itemStack = this.getItemStack().clone();
         CollectableItem collectableItem = new CollectableItem(itemStack, Instant.now().toEpochMilli());
         CollectionBox box = CollectionBox.of(buyer.getUniqueId());
         box.collectableItems().add(collectableItem);
+        CollectionBoxCache.addItem(buyer.getUniqueId(), collectableItem);
         DatabaseManager.getInstance().save(CollectionBox.class, box);
 
         // Send Cache Updates
-        if (!Config.i().getBroker().isEnabled()) {
-            CollectionBoxCache.addItem(buyer.getUniqueId(), collectableItem);
-        } else {
+        if (Config.i().getBroker().isEnabled()) {
             Message.builder()
                     .type(Message.Type.COLLECTION_BOX_UPDATE)
                     .payload(Payload.withUUID(buyer.getUniqueId()))
@@ -108,24 +109,25 @@ public final class CurrentListing extends Listing {
             return false;
         }
         Lang.sendMessage(canceller, Lang.i().getPrefix() + Lang.i().getNotifications().getCancelled());
-        if (!Config.i().getBroker().isEnabled()) {
-            ListingCache.removeListing(this);
-        } else {
+        ListingCache.removeListing(this);
+        if (Config.i().getBroker().isEnabled()) {
             Message.builder()
                     .type(Message.Type.LISTING_REMOVE)
                     .payload(Payload.withUUID(this.getId()))
                     .build().send(Fadah.getINSTANCE().getBroker());
         }
-        DatabaseManager.getInstance().delete(Listing.class, this);
+        if (Config.i().getDatabase().getType() == DatabaseType.MONGO) {
+            DatabaseManager.getInstance().delete(Listing.class, this);
+        }
 
 
         CollectableItem collectableItem = new CollectableItem(this.getItemStack(), Instant.now().toEpochMilli());
         ExpiredItems items = ExpiredItems.of(getOwner());
         items.collectableItems().add(collectableItem);
+        ExpiredListingsCache.addItem(getOwner(), collectableItem);
         DatabaseManager.getInstance().save(ExpiredItems.class, items);
-        if (!Config.i().getBroker().isEnabled()) {
-            ExpiredListingsCache.addItem(getOwner(), collectableItem);
-        } else {
+
+        if (Config.i().getBroker().isEnabled()) {
             Message.builder()
                     .type(Message.Type.EXPIRED_LISTINGS_UPDATE)
                     .payload(Payload.withUUID(this.getOwner()))
