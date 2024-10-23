@@ -25,7 +25,7 @@ import java.util.logging.Level;
 public class HistorySQLDao implements Dao<History> {
     private static final Gson GSON = new GsonBuilder()
             .registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
-            .serializeNulls().create();
+            .serializeNulls().disableHtmlEscaping().create();
     private static final Type HISTORY_LIST_TYPE = new TypeToken<ArrayList<HistoricItem>>() {}.getType();
     private final HikariDataSource dataSource;
 

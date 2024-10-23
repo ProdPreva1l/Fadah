@@ -24,7 +24,7 @@ import java.util.*;
 public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
     private static final Gson GSON = new GsonBuilder()
             .registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
-            .serializeNulls().create();
+            .serializeNulls().disableHtmlEscaping().create();
     private static final Type EXPIRED_LIST_TYPE = new TypeToken<ArrayList<CollectableItem>>() {}.getType();
     private final HikariDataSource dataSource;
 

@@ -24,13 +24,18 @@ public class TransactionLogger {
     public void listingCreated(Listing listing) {
         // In game logs
         HistoricItem historicItem = new HistoricItem(listing.getOwner(), Instant.now().toEpochMilli(), HistoricItem.LoggedAction.LISTING_START, listing.getItemStack(), listing.getPrice(), null);
-        HistoricItemsCache.addLog(listing.getOwner(), historicItem);
-        DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
+        History history = History.of(listing.getOwner());
+        history.collectableItems().add(historicItem);
+        DatabaseManager.getInstance().save(History.class, history);
 
-        Message.builder()
-                .type(Message.Type.HISTORY_UPDATE)
-                .payload(Payload.withUUID(listing.getOwner()))
-                .build().send(Fadah.getINSTANCE().getBroker());
+        if (!Config.i().getBroker().isEnabled()) {
+            HistoricItemsCache.addLog(listing.getOwner(), historicItem);
+        } else {
+            Message.builder()
+                    .type(Message.Type.HISTORY_UPDATE)
+                    .payload(Payload.withUUID(listing.getOwner()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
+        }
 
         // Log file logs
         String logMessage = StringUtils.formatPlaceholders("[NEW LISTING] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
@@ -49,24 +54,33 @@ public class TransactionLogger {
         HistoricItem historicItemSeller = new HistoricItem(listing.getOwner(), Instant.now().toEpochMilli(),
                 HistoricItem.LoggedAction.LISTING_SOLD, listing.getItemStack(), listing.getPrice(), buyer.getUniqueId());
 
-        HistoricItemsCache.addLog(listing.getOwner(), historicItemSeller);
+        History historySeller = History.of(listing.getOwner());
+        historySeller.collectableItems().add(historicItemSeller);
         DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
 
-        Message.builder()
-                .type(Message.Type.HISTORY_UPDATE)
-                .payload(Payload.withUUID(listing.getOwner()))
-                .build().send(Fadah.getINSTANCE().getBroker());
+        if (!Config.i().getBroker().isEnabled()) {
+            HistoricItemsCache.addLog(listing.getOwner(), historicItemSeller);
+        } else {
+            Message.builder()
+                    .type(Message.Type.HISTORY_UPDATE)
+                    .payload(Payload.withUUID(listing.getOwner()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
+        }
 
         HistoricItem historicItemBuyer = new HistoricItem(buyer.getUniqueId(), Instant.now().toEpochMilli(),
                 HistoricItem.LoggedAction.LISTING_PURCHASED, listing.getItemStack(), listing.getPrice(), listing.getOwner());
+        History historyBuyer = History.of(buyer.getUniqueId());
+        historyBuyer.collectableItems().add(historicItemBuyer);
+        DatabaseManager.getInstance().save(History.class, historyBuyer);
 
-        HistoricItemsCache.addLog(buyer.getUniqueId(), historicItemBuyer);
-        DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
-
-        Message.builder()
-                .type(Message.Type.HISTORY_UPDATE)
-                .payload(Payload.withUUID(buyer.getUniqueId()))
-                .build().send(Fadah.getINSTANCE().getBroker());
+        if (!Config.i().getBroker().isEnabled()) {
+            HistoricItemsCache.addLog(buyer.getUniqueId(), historicItemBuyer);
+        } else {
+            Message.builder()
+                    .type(Message.Type.HISTORY_UPDATE)
+                    .payload(Payload.withUUID(buyer.getUniqueId()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
+        }
 
         // Log file logs
         String logMessage = StringUtils.formatPlaceholders("[LISTING SOLD] Seller: {0} ({1}), Buyer: {2} ({3}), Price: {4}, ItemStack: {5}",
@@ -83,13 +97,18 @@ public class TransactionLogger {
         HistoricItem historicItem = new HistoricItem(listing.getOwner(), Instant.now().toEpochMilli(),
                 isAdmin ? HistoricItem.LoggedAction.LISTING_ADMIN_CANCEL : HistoricItem.LoggedAction.LISTING_CANCEL,
                 listing.getItemStack(), null, null);
-        HistoricItemsCache.addLog(listing.getOwner(), historicItem);
-        DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
+        History history = History.of(listing.getOwner());
+        history.collectableItems().add(historicItem);
+        DatabaseManager.getInstance().save(History.class, history);
 
-        Message.builder()
-                .type(Message.Type.HISTORY_UPDATE)
-                .payload(Payload.withUUID(listing.getOwner()))
-                .build().send(Fadah.getINSTANCE().getBroker());
+        if (!Config.i().getBroker().isEnabled()) {
+            HistoricItemsCache.addLog(listing.getOwner(), historicItem);
+        } else {
+            Message.builder()
+                    .type(Message.Type.HISTORY_UPDATE)
+                    .payload(Payload.withUUID(listing.getOwner()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
+        }
 
         // Log file logs
         String logMessage = StringUtils.formatPlaceholders("[LISTING REMOVED] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",
@@ -106,13 +125,18 @@ public class TransactionLogger {
         // In game logs
         HistoricItem historicItem = new HistoricItem(listing.getOwner(), Instant.now().toEpochMilli(), HistoricItem.LoggedAction.LISTING_EXPIRE,
                 listing.getItemStack(), null, null);
-        HistoricItemsCache.addLog(listing.getOwner(), historicItem);
-        DatabaseManager.getInstance().save(History.class, History.of(listing.getOwner()));
+        History history = History.of(listing.getOwner());
+        history.collectableItems().add(historicItem);
+        DatabaseManager.getInstance().save(History.class, history);
 
-        Message.builder()
-                .type(Message.Type.HISTORY_UPDATE)
-                .payload(Payload.withUUID(listing.getOwner()))
-                .build().send(Fadah.getINSTANCE().getBroker());
+        if (!Config.i().getBroker().isEnabled()) {
+            HistoricItemsCache.addLog(listing.getOwner(), historicItem);
+        } else {
+            Message.builder()
+                    .type(Message.Type.HISTORY_UPDATE)
+                    .payload(Payload.withUUID(listing.getOwner()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
+        }
 
         // Log file logs
         String logMessage = StringUtils.formatPlaceholders("[LISTING EXPIRED] Seller: {0} ({1}), Price: {2}, ItemStack: {3}",

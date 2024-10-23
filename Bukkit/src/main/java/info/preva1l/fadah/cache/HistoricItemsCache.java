@@ -33,7 +33,7 @@ public class HistoricItemsCache {
 
     public List<HistoricItem> getHistory(UUID playerUUID) {
         if (historicItems.get(playerUUID) == null) {
-            return List.of();
+            return new ArrayList<>();
         }
         List<HistoricItem> ret = new ArrayList<>();
         historicItems.computeIfPresent(playerUUID, (uuid, items) -> {

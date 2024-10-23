@@ -24,6 +24,8 @@ import info.preva1l.fadah.migrator.AuctionHouseMigrator;
 import info.preva1l.fadah.migrator.MigratorManager;
 import info.preva1l.fadah.migrator.zAuctionHouseMigrator;
 import info.preva1l.fadah.multiserver.Broker;
+import info.preva1l.fadah.multiserver.Message;
+import info.preva1l.fadah.multiserver.Payload;
 import info.preva1l.fadah.multiserver.RedisBroker;
 import info.preva1l.fadah.records.*;
 import info.preva1l.fadah.utils.Metrics;
@@ -135,9 +137,18 @@ public final class Fadah extends JavaPlugin {
                     ListingCache.removeListing(listing);
                     DatabaseManager.getInstance().delete(Listing.class, listing);
 
-                    CollectableItem item = new CollectableItem(listing.getItemStack(), Instant.now().toEpochMilli());
-                    ExpiredListingsCache.addItem(listing.getOwner(), item);
-                    DatabaseManager.getInstance().save(ExpiredItems.class, ExpiredItems.of(listing.getOwner()));
+                    CollectableItem collectableItem = new CollectableItem(listing.getItemStack(), Instant.now().toEpochMilli());
+                    ExpiredItems items = ExpiredItems.of(listing.getOwner());
+                    items.collectableItems().add(collectableItem);
+                    DatabaseManager.getInstance().save(ExpiredItems.class, items);
+                    if (!Config.i().getBroker().isEnabled()) {
+                        ExpiredListingsCache.addItem(listing.getOwner(), collectableItem);
+                    } else {
+                        Message.builder()
+                                .type(Message.Type.EXPIRED_LISTINGS_UPDATE)
+                                .payload(Payload.withUUID(listing.getOwner()))
+                                .build().send(Fadah.getINSTANCE().getBroker());
+                    }
 
                     TransactionLogger.listingExpired(listing);
 
@@ -329,7 +340,6 @@ public final class Fadah extends JavaPlugin {
 
             Optional<History> history = DatabaseManager.getInstance().get(History.class, uuid).join();
             history.ifPresent(list -> HistoricItemsCache.update(uuid, list.collectableItems()));
-
             return null;
         });
     }
@@ -349,5 +359,6 @@ public final class Fadah extends JavaPlugin {
         Fadah.getINSTANCE().getLayoutManager().reloadLayout(LayoutManager.MenuType.HISTORY);
         Fadah.getINSTANCE().getCategoriesFile().load();
         CategoryCache.update();
+        loadBroker();
     }
 }

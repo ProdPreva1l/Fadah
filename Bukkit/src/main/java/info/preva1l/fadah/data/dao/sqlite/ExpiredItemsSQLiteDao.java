@@ -24,7 +24,7 @@ import java.util.*;
 public class ExpiredItemsSQLiteDao implements Dao<ExpiredItems> {
     private static final Gson GSON = new GsonBuilder()
             .registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
-            .serializeNulls().create();
+            .serializeNulls().disableHtmlEscaping().create();
     private static final Type EXPIRED_LIST_TYPE = new TypeToken<ArrayList<CollectableItem>>() {}.getType();
     private final HikariDataSource dataSource;
 
@@ -87,6 +87,8 @@ public class ExpiredItemsSQLiteDao implements Dao<ExpiredItems> {
                 statement.setString(1, collectableList.owner().toString());
                 statement.setString(2, Base64.getEncoder().encodeToString(GSON.toJson(collectableList.collectableItems(), EXPIRED_LIST_TYPE).getBytes()));
                 statement.executeUpdate();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } catch (SQLException e) {
             Fadah.getConsole().severe("Failed to add item to expired items!");

@@ -63,18 +63,19 @@ public final class CurrentListing extends Listing {
         // Add to collection box
         ItemStack itemStack = this.getItemStack().clone();
         CollectableItem collectableItem = new CollectableItem(itemStack, Instant.now().toEpochMilli());
-        CollectionBoxCache.addItem(buyer.getUniqueId(), collectableItem);
-        DatabaseManager.getInstance().save(CollectionBox.class, CollectionBox.of(buyer.getUniqueId()));
+        CollectionBox box = CollectionBox.of(buyer.getUniqueId());
+        box.collectableItems().add(collectableItem);
+        DatabaseManager.getInstance().save(CollectionBox.class, box);
 
         // Send Cache Updates
-        Message.builder()
-                .type(Message.Type.COLLECTION_BOX_UPDATE)
-                .payload(Payload.withUUID(buyer.getUniqueId()))
-                .build().send(Fadah.getINSTANCE().getBroker());
-        Message.builder()
-                .type(Message.Type.EXPIRED_LISTINGS_UPDATE)
-                .payload(Payload.withUUID(this.getOwner()))
-                .build().send(Fadah.getINSTANCE().getBroker());
+        if (!Config.i().getBroker().isEnabled()) {
+            CollectionBoxCache.addItem(buyer.getUniqueId(), collectableItem);
+        } else {
+            Message.builder()
+                    .type(Message.Type.COLLECTION_BOX_UPDATE)
+                    .payload(Payload.withUUID(buyer.getUniqueId()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
+        }
 
         // Notify Both Players
         Lang.sendMessage(buyer, String.join("\n", Lang.i().getNotifications().getNewItem()));
@@ -117,13 +118,19 @@ public final class CurrentListing extends Listing {
         }
         DatabaseManager.getInstance().delete(Listing.class, this);
 
+
         CollectableItem collectableItem = new CollectableItem(this.getItemStack(), Instant.now().toEpochMilli());
-        ExpiredListingsCache.addItem(getOwner(), collectableItem);
-        Message.builder()
-                .type(Message.Type.EXPIRED_LISTINGS_UPDATE)
-                .payload(Payload.withUUID(this.getOwner()))
-                .build().send(Fadah.getINSTANCE().getBroker());
-        DatabaseManager.getInstance().save(ExpiredItems.class, ExpiredItems.of(getOwner()));
+        ExpiredItems items = ExpiredItems.of(getOwner());
+        items.collectableItems().add(collectableItem);
+        DatabaseManager.getInstance().save(ExpiredItems.class, items);
+        if (!Config.i().getBroker().isEnabled()) {
+            ExpiredListingsCache.addItem(getOwner(), collectableItem);
+        } else {
+            Message.builder()
+                    .type(Message.Type.EXPIRED_LISTINGS_UPDATE)
+                    .payload(Payload.withUUID(this.getOwner()))
+                    .build().send(Fadah.getINSTANCE().getBroker());
+        }
 
         boolean isAdmin = !this.isOwner(canceller);
         TransactionLogger.listingRemoval(this, isAdmin);

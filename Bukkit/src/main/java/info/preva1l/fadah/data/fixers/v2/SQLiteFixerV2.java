@@ -100,11 +100,20 @@ public class SQLiteFixerV2 implements V2Fixer {
                 collectionStatement.setString(1, player.toString());
                 try (ResultSet collectionResult = collectionStatement.executeQuery()) {
                     collection = collectionResult.next();
+                } catch (Exception e) {
+                    expired = false;
+                    collection = false;
                 }
                 expiredStatement.setString(1, player.toString());
                 try (ResultSet expiredResult = expiredStatement.executeQuery()) {
                     expired = expiredResult.next();
+                } catch (Exception e) {
+                    expired = false;
+                    collection = false;
                 }
+            } catch (Exception e) {
+                expired = false;
+                collection = false;
             }
         } catch (SQLException e) {
             Fadah.getConsole().severe("Failed to check if player needs fixing!");

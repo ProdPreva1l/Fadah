@@ -24,7 +24,7 @@ import java.util.*;
 public class CollectionBoxSQLiteDao implements Dao<CollectionBox> {
     private static final Gson GSON = new GsonBuilder()
             .registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
-            .serializeNulls().create();
+            .serializeNulls().disableHtmlEscaping().create();
     private static final Type COLLECTION_LIST_TYPE = new TypeToken<ArrayList<CollectableItem>>() {
     }.getType();
     private final HikariDataSource dataSource;

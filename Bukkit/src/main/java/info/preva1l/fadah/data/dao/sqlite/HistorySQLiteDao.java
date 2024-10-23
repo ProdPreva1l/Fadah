@@ -26,7 +26,7 @@ public class HistorySQLiteDao implements Dao<History> {
     private final HikariDataSource dataSource;
     private static final Gson GSON = new GsonBuilder()
             .registerTypeHierarchyAdapter(ConfigurationSerializable.class, new ConfigurationSerializableAdapter())
-            .serializeNulls().create();
+            .serializeNulls().disableHtmlEscaping().create();
     private static final Type HISTORY_LIST_TYPE = new TypeToken<ArrayList<HistoricItem>>(){}.getType();
 
     /**
