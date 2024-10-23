@@ -93,7 +93,7 @@ public class Lang {
             private List<String> aliases = List.of("auctionhouse", "ah", "auctions", "auction");
         }
 
-        private Sell Sell = new Sell();
+        private Sell sell = new Sell();
 
         @Getter
         @Configuration
