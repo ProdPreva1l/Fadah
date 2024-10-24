@@ -42,9 +42,9 @@ public class HistorySQLDao implements Dao<History> {
     public Optional<History> get(UUID id) {
         try (Connection connection = getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("""
-                    SELECT `playerUUID`, `items`
-                    FROM `historyV2`
-                    WHERE `playerUUID`=?;""")) {
+                        SELECT `items`
+                        FROM `historyV2`
+                        WHERE `playerUUID`=?;""")) {
                 statement.setString(1, id.toString());
                 final ResultSet resultSet = statement.executeQuery();
                 if (resultSet.next()) {
@@ -53,7 +53,7 @@ public class HistorySQLDao implements Dao<History> {
                 }
             }
         } catch (SQLException e) {
-            Fadah.getConsole().severe("Failed to get items from collection box!");
+            Fadah.getConsole().log(Level.SEVERE, "Failed to get item from history!", e);
         }
         return Optional.empty();
     }

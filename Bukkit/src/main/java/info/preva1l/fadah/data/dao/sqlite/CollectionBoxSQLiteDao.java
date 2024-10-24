@@ -77,16 +77,14 @@ public class CollectionBoxSQLiteDao implements Dao<CollectionBox> {
     @Override
     public void save(CollectionBox collectableList) {
         try (Connection connection = getConnection()) {
-            for (CollectableItem item : collectableList.collectableItems()) {
-                try (PreparedStatement statement = connection.prepareStatement("""
-                         INSERT INTO collection_boxV2 (playerUUID, items)
-                         VALUES (?, ?)
-                         ON CONFLICT(playerUUID) DO UPDATE SET
-                             items = excluded.items;""")) {
-                    statement.setString(1, collectableList.owner().toString());
-                    statement.setString(2, GSON.toJson(collectableList.collectableItems(), COLLECTION_LIST_TYPE));
-                    statement.executeUpdate();
-                }
+            try (PreparedStatement statement = connection.prepareStatement("""
+                     INSERT INTO collection_boxV2 (playerUUID, items)
+                     VALUES (?, ?)
+                     ON CONFLICT(playerUUID) DO UPDATE SET
+                         items = excluded.items;""")) {
+                statement.setString(1, collectableList.owner().toString());
+                statement.setString(2, GSON.toJson(collectableList.collectableItems(), COLLECTION_LIST_TYPE));
+                statement.executeUpdate();
             }
         } catch (SQLException e) {
             Fadah.getConsole().severe("Failed to add item to collection box!");

@@ -52,7 +52,7 @@ public class ExpiredItemsSQLDao implements Dao<ExpiredItems> {
                 }
             }
         } catch (SQLException e) {
-            Fadah.getConsole().severe("Failed to get items from collection box!");
+            Fadah.getConsole().severe("Failed to get items from expired listings!");
             throw new RuntimeException(e);
         }
         return Optional.empty();

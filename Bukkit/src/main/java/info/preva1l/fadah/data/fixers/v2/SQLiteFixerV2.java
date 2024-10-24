@@ -90,37 +90,54 @@ public class SQLiteFixerV2 implements V2Fixer {
 
     @Override
     public boolean needsFixing(UUID player) {
-        boolean collection;
-        boolean expired;
+        boolean collection = false;
+        boolean expired = false;
+
         try (Connection connection = getConnection()) {
-            try (PreparedStatement collectionStatement = connection.prepareStatement("""
-            SELECT * FROM `collection_box` WHERE `playerUUID`=?;""");
-                 PreparedStatement expiredStatement = connection.prepareStatement("""
-            SELECT * FROM `expired_items` WHERE `playerUUID`=?;""")) {
-                collectionStatement.setString(1, player.toString());
-                try (ResultSet collectionResult = collectionStatement.executeQuery()) {
-                    collection = collectionResult.next();
-                } catch (Exception e) {
-                    expired = false;
-                    collection = false;
+            if (tableExists(connection, "collection_box")) {
+                try (PreparedStatement collectionStatement = connection.prepareStatement("""
+                SELECT * FROM `collection_box` WHERE `playerUUID`=?;""")) {
+
+                    collectionStatement.setString(1, player.toString());
+                    try (ResultSet collectionResult = collectionStatement.executeQuery()) {
+                        collection = collectionResult.next();
+                    }
+                } catch (SQLException e) {
+                    if (e.getErrorCode() != 1146) {
+                        e.printStackTrace();
+                    }
                 }
-                expiredStatement.setString(1, player.toString());
-                try (ResultSet expiredResult = expiredStatement.executeQuery()) {
-                    expired = expiredResult.next();
-                } catch (Exception e) {
-                    expired = false;
-                    collection = false;
-                }
-            } catch (Exception e) {
-                expired = false;
-                collection = false;
             }
+            if (tableExists(connection, "expired_items")) {
+                try (PreparedStatement expiredStatement = connection.prepareStatement("""
+                SELECT * FROM `expired_items` WHERE `playerUUID`=?;""")) {
+
+                    expiredStatement.setString(1, player.toString());
+                    try (ResultSet expiredResult = expiredStatement.executeQuery()) {
+                        expired = expiredResult.next();
+                    }
+                } catch (SQLException e) {
+                    if (e.getErrorCode() != 1146) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
         } catch (SQLException e) {
             Fadah.getConsole().severe("Failed to check if player needs fixing!");
             throw new RuntimeException(e);
         }
 
         return collection || expired;
+    }
+
+    private boolean tableExists(Connection connection, String tableName) {
+        try (ResultSet rs = connection.getMetaData().getTables(null, null, tableName, null)) {
+            return rs.next();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private Connection getConnection() throws SQLException {
