@@ -139,6 +139,19 @@ public class Config {
             private String name = "Money";
         }
 
+        private CoinsEngine coinsEngine = new CoinsEngine();
+
+        @Getter
+        @Configuration
+        @NoArgsConstructor(access = AccessLevel.PRIVATE)
+        public static class CoinsEngine {
+            private String name = "Coins Engine";
+            @Comment("Which currencies to use from coins engine.")
+            private List<SubEconomy> currencies = List.of(
+                    new SubEconomy("mob_coins", "Mob Coins"),
+                    new SubEconomy("coins", "Coins"));
+        }
+
         private RedisEconomy redisEconomy = new RedisEconomy();
 
         @Getter
@@ -146,7 +159,7 @@ public class Config {
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class RedisEconomy {
             private String name = "Redis Economy";
-            @Comment("Which currency to use from redis economy, if your using the default currency use the vault currency instead.")
+            @Comment("Which currencies to use from redis economy, if your using the default currency use the vault currency instead.")
             private List<SubEconomy> currencies = List.of(
                     new SubEconomy("dollar", "Dollar"),
                     new SubEconomy("euro", "Euro"));

@@ -11,7 +11,6 @@ public final class CurrencyRegistry {
     private static Map<Integer, String> enumerator = new ConcurrentHashMap<>();
     private static Map<String, Currency> values = new ConcurrentHashMap<>();
     public static final Currency VAULT = get("vault");
-    public static final Currency REDIS_ECONOMY = get("redis_economy");
 
     public static void registerMulti(MultiCurrency currency) {
         if (!currency.getRequiredPlugin().isEmpty()) {

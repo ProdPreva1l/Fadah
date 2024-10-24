@@ -54,6 +54,7 @@ dependencies {
     compileOnly 'com.influxdb:influxdb-client-java:3.3.0' // InfluxDB logging
     // Currency
     compileOnly 'com.github.Emibergo02:RedisEconomy:4.3.9'
+    compileOnly files('../libs/CoinsEngine-2.3.5.jar')
 
     // Migrators
     compileOnly 'com.github.Maxlego08:zAuctionHouseV3-API:3.2.1.9' // zAuctionHouse

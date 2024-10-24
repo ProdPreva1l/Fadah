@@ -10,6 +10,7 @@ import info.preva1l.fadah.commands.MigrateCommand;
 import info.preva1l.fadah.config.Config;
 import info.preva1l.fadah.config.Lang;
 import info.preva1l.fadah.config.Menus;
+import info.preva1l.fadah.currency.CoinsEngineCurrency;
 import info.preva1l.fadah.currency.CurrencyRegistry;
 import info.preva1l.fadah.currency.RedisEconomyCurrency;
 import info.preva1l.fadah.currency.VaultCurrency;
@@ -260,7 +261,8 @@ public final class Fadah extends JavaPlugin {
                 new VaultCurrency()
         ).forEach(CurrencyRegistry::register);
         Stream.of(
-                new RedisEconomyCurrency()
+                new RedisEconomyCurrency(),
+                new CoinsEngineCurrency()
         ).forEach(CurrencyRegistry::registerMulti);
         getConsole().info("Currencies Loaded!");
     }
