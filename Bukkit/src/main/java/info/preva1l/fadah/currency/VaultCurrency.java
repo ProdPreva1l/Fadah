@@ -23,7 +23,7 @@ public class VaultCurrency implements Currency {
     @Override
     public void withdraw(OfflinePlayer player, double amountToTake) {
         if (economy == null) {
-            throw new CurrencyLoadException(id, "Vault has no compatible economy plugin.");
+            throw new RuntimeException("Vault has no compatible economy plugin.");
         }
         economy.withdrawPlayer(player, amountToTake);
     }
@@ -31,7 +31,7 @@ public class VaultCurrency implements Currency {
     @Override
     public void add(OfflinePlayer player, double amountToAdd) {
         if (economy == null) {
-            throw new CurrencyLoadException(id, "Vault has no compatible economy plugin.");
+            throw new RuntimeException("Vault has no compatible economy plugin.");
         }
         economy.depositPlayer(player, amountToAdd);
     }
@@ -40,7 +40,7 @@ public class VaultCurrency implements Currency {
     @Override
     public double getBalance(OfflinePlayer player) {
         if (economy == null) {
-            throw new CurrencyLoadException(id, "Vault has no compatible economy plugin.");
+            throw new RuntimeException("Vault has no compatible economy plugin.");
         }
         return economy.getBalance(player);
     }

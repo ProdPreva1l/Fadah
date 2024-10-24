@@ -257,9 +257,11 @@ public final class Fadah extends JavaPlugin {
     private void loadCurrencies() {
         getConsole().info("Loading currencies...");
         Stream.of(
-                new VaultCurrency(),
-                new RedisEconomyCurrency()
+                new VaultCurrency()
         ).forEach(CurrencyRegistry::register);
+        Stream.of(
+                new RedisEconomyCurrency()
+        ).forEach(CurrencyRegistry::registerMulti);
         getConsole().info("Currencies Loaded!");
     }
 

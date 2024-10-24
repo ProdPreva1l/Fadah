@@ -13,6 +13,29 @@ public final class CurrencyRegistry {
     public static final Currency VAULT = get("vault");
     public static final Currency REDIS_ECONOMY = get("redis_economy");
 
+    public static void registerMulti(MultiCurrency currency) {
+        if (!currency.getRequiredPlugin().isEmpty()) {
+            Plugin requiredPlugin = Bukkit.getPluginManager().getPlugin(currency.getRequiredPlugin());
+            if (requiredPlugin == null || !requiredPlugin.isEnabled()) {
+                Logger.getLogger("Fadah")
+                        .warning("Tried enabling currency %s but the required plugin %s is not found/enabled!"
+                                .formatted(currency.getId().toLowerCase(), currency.getRequiredPlugin()));
+                return;
+            }
+        }
+
+        if (!currency.preloadChecks()) {
+            Logger.getLogger("Fadah")
+                    .severe("Tried enabling currency %s but the preload checks failed!"
+                            .formatted(currency.getId().toLowerCase()));
+            return;
+        }
+
+        for (Currency curr : currency.getCurrencies()) {
+            register(curr);
+        }
+    }
+
     public static void register(Currency currency) {
         if (values == null) {
             values = new ConcurrentHashMap<>();

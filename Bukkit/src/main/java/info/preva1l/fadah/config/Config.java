@@ -137,7 +137,6 @@ public class Config {
         @NoArgsConstructor(access = AccessLevel.PRIVATE)
         public static class Vault {
             private String name = "Money";
-            private String format = "$%amount%";
         }
 
         private RedisEconomy redisEconomy = new RedisEconomy();
@@ -148,8 +147,9 @@ public class Config {
         public static class RedisEconomy {
             private String name = "Redis Economy";
             @Comment("Which currency to use from redis economy, if your using the default currency use the vault currency instead.")
-            private String subCurrency = "dollar";
-            private String format = "$%amount%";
+            private List<SubEconomy> currencies = List.of(
+                    new SubEconomy("dollar", "Dollar"),
+                    new SubEconomy("euro", "Euro"));
         }
     }
 
